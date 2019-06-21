@@ -1,0 +1,29 @@
+server:
+  port: 8881
+spring:
+  application:
+    name: yanwu-base
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/yanwu_base
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          auto: update
+        jdbc:
+          lob:
+            non_contextual_creation=: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8880/eureka/
+logging:
+  file: /log/yanwu-base.log
+  level:
+    com: info
+    org: info
+    cn: info
