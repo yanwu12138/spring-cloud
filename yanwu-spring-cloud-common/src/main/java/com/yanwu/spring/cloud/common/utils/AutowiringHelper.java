@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.core.utils;
+package com.yanwu.spring.cloud.common.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;

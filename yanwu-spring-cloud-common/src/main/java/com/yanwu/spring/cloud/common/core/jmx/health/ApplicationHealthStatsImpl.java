@@ -5,7 +5,7 @@ import com.yanwu.spring.cloud.common.core.jmx.BaseMBean;
 import com.yanwu.spring.cloud.common.core.jmx.JmxNotificationSequence;
 import com.yanwu.spring.cloud.common.core.logging.CustomLogger;
 import com.yanwu.spring.cloud.common.core.logging.LoggerFactory;
-import com.yanwu.spring.cloud.common.core.utils.JsonUtil;
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

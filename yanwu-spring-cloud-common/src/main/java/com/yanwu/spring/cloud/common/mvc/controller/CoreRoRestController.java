@@ -1,8 +1,8 @@
 package com.yanwu.spring.cloud.common.mvc.controller;
 
 import com.yanwu.spring.cloud.common.core.exception.BusinessException;
-import com.yanwu.spring.cloud.common.core.utils.ReflectionUtil;
-import com.yanwu.spring.cloud.common.core.utils.VoDoUtil;
+import com.yanwu.spring.cloud.common.utils.ReflectionUtil;
+import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import com.yanwu.spring.cloud.common.data.entity.BaseObject;
 import com.yanwu.spring.cloud.common.mvc.res.PaginationInfo;
 import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;

@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.core.utils;
+package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.TimeStringFormat;
 import com.yanwu.spring.cloud.common.core.enums.FileType;

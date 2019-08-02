@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.core.jmx.health;
 
-import com.yanwu.spring.cloud.common.core.utils.AutowiringHelper;
+import com.yanwu.spring.cloud.common.utils.AutowiringHelper;
 import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;

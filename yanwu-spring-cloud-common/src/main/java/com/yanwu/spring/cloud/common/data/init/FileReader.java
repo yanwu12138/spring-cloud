@@ -1,8 +1,8 @@
 package com.yanwu.spring.cloud.common.data.init;
 
 import com.google.common.base.Stopwatch;
-import com.yanwu.spring.cloud.common.core.utils.JsonUtil;
-import com.yanwu.spring.cloud.common.core.utils.Resources;
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
+import com.yanwu.spring.cloud.common.utils.Resources;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 

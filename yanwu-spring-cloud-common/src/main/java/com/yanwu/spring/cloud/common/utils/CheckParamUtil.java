@@ -2,7 +2,7 @@
  * zjdyiot.com Inc.
  * Copyright (c) 2013-2017 All Rights Reserved.
  */
-package com.yanwu.spring.cloud.common.core.utils;
+package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.exception.BusinessException;
 import com.yanwu.spring.cloud.common.core.exception.ExceptionDefinition;

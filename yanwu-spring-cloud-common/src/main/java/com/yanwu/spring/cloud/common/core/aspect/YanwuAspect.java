@@ -2,8 +2,8 @@ package com.yanwu.spring.cloud.common.core.aspect;
 
 import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
 import com.yanwu.spring.cloud.common.core.enums.CheckEnum;
-import com.yanwu.spring.cloud.common.core.utils.ArrayUtil;
-import com.yanwu.spring.cloud.common.core.utils.CheckParamUtil;
+import com.yanwu.spring.cloud.common.utils.ArrayUtil;
+import com.yanwu.spring.cloud.common.utils.CheckParamUtil;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import lombok.extern.slf4j.Slf4j;

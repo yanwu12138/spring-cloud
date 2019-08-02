@@ -3,7 +3,7 @@ package com.yanwu.spring.cloud.base.controller.backend;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
-import com.yanwu.spring.cloud.common.core.utils.VoDoUtil;
+import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;

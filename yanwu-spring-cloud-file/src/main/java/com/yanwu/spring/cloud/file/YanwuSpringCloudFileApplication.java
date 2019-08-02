@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.file;
 
-import com.yanwu.spring.cloud.common.core.utils.VoDoUtil;
+import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.boot.SpringApplication;
