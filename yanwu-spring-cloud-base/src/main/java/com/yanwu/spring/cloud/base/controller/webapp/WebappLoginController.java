@@ -5,13 +5,10 @@ import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
 import com.yanwu.spring.cloud.common.core.exception.ExceptionDefinition;
-import com.yanwu.spring.cloud.common.utils.AccessTokenUtil;
-import com.yanwu.spring.cloud.common.utils.Aes128Util;
-import com.yanwu.spring.cloud.common.utils.CheckParamUtil;
-import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.LoginVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
+import com.yanwu.spring.cloud.common.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -55,14 +52,14 @@ public class WebappLoginController {
         String token = AccessTokenUtil.loginSuccess(userVO.getId(), userVO.getUserName());
         userVO.setToken(token);
         tokenCache.put(user.getId(), token);
-        return new BackVO<>(userVO);
+        return BackVOUtil.operateAccess(userVO);
     }
 
     @YanwuLog
     @PostMapping(value = "logout/{id}")
     public BackVO<Boolean> logout(@PathVariable("id") Long id) throws Exception {
         tokenCache.remove(id);
-        return new BackVO<>(Boolean.TRUE);
+        return BackVOUtil.operateAccess(Boolean.TRUE);
     }
 
 }

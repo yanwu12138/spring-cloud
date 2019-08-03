@@ -4,19 +4,19 @@ import com.yanwu.spring.cloud.common.amqp.Reader;
 import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
 import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
-import com.yanwu.spring.cloud.common.utils.ExcelUtil;
-import com.yanwu.spring.cloud.common.utils.FileUtil;
-import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.common.mvc.vo.file.AttachmentVO;
+import com.yanwu.spring.cloud.common.utils.BackVOUtil;
+import com.yanwu.spring.cloud.common.utils.ExcelUtil;
+import com.yanwu.spring.cloud.common.utils.FileUtil;
+import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import com.yanwu.spring.cloud.file.consumer.base.YanwuUserConsumer;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +67,7 @@ public class AttachmentController {
     @PostMapping(value = "upPortrait")
     public BackVO<AttachmentVO> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);
-        return new BackVO<>(voDoUtil.convertDoToVo(attachment, AttachmentVO.class));
+        return BackVOUtil.operateAccess(voDoUtil.convertDoToVo(attachment, AttachmentVO.class));
     }
 
     /**
@@ -82,7 +82,7 @@ public class AttachmentController {
     @PostMapping(value = "uploadFile")
     public BackVO<List<AttachmentVO>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
         List<Attachment> attachments = attachmentService.uploadFile(request, id);
-        return new BackVO<>(voDoUtil.mapList(attachments, AttachmentVO.class));
+        return BackVOUtil.operateAccess(voDoUtil.mapList(attachments, AttachmentVO.class));
     }
 
     /**
@@ -111,7 +111,7 @@ public class AttachmentController {
     @PostMapping(value = "uploadExcel")
     public BackVO<AttachmentVO> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
         Attachment attachment = attachmentService.uploadExcel(file, id);
-        return new BackVO<>(voDoUtil.convertDoToVo(attachment, AttachmentVO.class));
+        return BackVOUtil.operateAccess(voDoUtil.convertDoToVo(attachment, AttachmentVO.class));
     }
 
     /**
@@ -128,19 +128,6 @@ public class AttachmentController {
         SXSSFWorkbook workbook = ExcelUtil.assembleExcel(head, contents);
         String fileName = FileUtil.getFileNameByType("downloadExcel", FileType.EXCEL);
         return ExcelUtil.export(workbook, fileName);
-    }
-
-    /**
-     * 下载Excel
-     *
-     * @return
-     * @throws Exception
-     */
-    @YanwuLog
-    @GetMapping(value = "reader")
-    public BackVO<Object> reader() throws Exception {
-        Object o = reader.receiveAndConvert("test_queue_work_1", 1000);
-        return new BackVO<>(o);
     }
 
 }

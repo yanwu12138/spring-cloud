@@ -4,8 +4,8 @@ spring:
   application:
     name: yanwu-base
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/yanwu_base
-    username: xubaofeng
+    url: jdbc:postgresql://39.97.229.71:5432/yanwu_base
+    username: postgres
     password: xbf12138
     driver-class-name: org.postgresql.Driver
   jpa:

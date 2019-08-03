@@ -8,6 +8,7 @@ import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
+import com.yanwu.spring.cloud.common.utils.BackVOUtil;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
  * description:
  */
 @Slf4j
-@YanwuLog
 @RestController
 @RequestMapping("webapp/yanwuUser/")
 public class WebappYanwuUserController {
@@ -49,14 +49,13 @@ public class WebappYanwuUserController {
         }
         YanwuUser yanwuUser = userService.save(userDO);
         YanwuUserVO vo = voDoUtil.convertDoToVo(yanwuUser, YanwuUserVO.class);
-        return new BackVO<>(vo);
+        return BackVOUtil.operateAccess(vo);
     }
 
     @YanwuLog
     @PostMapping(value = "update")
     public BackVO<YanwuUserVO> update(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
-        sender.convertAndSend("test_exchange_fanout", "test_queue_work_1", yanwuUserVO);
-        return new BackVO<>(null);
+        return BackVOUtil.operateAccess();
     }
 
 }
