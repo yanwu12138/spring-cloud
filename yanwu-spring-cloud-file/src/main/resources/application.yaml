@@ -5,8 +5,8 @@ spring:
     name: yanwu-file
   datasource:
     url: jdbc:postgresql://127.0.0.1:5432/yanwu_file
-    username: postgres
-    password: 123456
+    username: xubaofeng
+    password: xbf12138
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
@@ -17,6 +17,11 @@ spring:
         jdbc:
           lob:
             non_contextual_creation=: true
+  rabbitmq:
+    host: 39.97.229.71
+    port: 5672
+    username: root
+    password: xbf12138
 eureka:
   client:
     serviceUrl:

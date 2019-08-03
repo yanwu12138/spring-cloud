@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.webapp;
 
+import com.yanwu.spring.cloud.common.amqp.Reader;
 import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
 import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
@@ -15,6 +16,7 @@ import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +45,9 @@ public class AttachmentController {
 
     @Autowired
     private AttachmentService attachmentService;
+
+    @Autowired
+    private Reader reader;
 
     @CheckParam
     @PostMapping(value = "findYanwuUser")
@@ -123,6 +128,19 @@ public class AttachmentController {
         SXSSFWorkbook workbook = ExcelUtil.assembleExcel(head, contents);
         String fileName = FileUtil.getFileNameByType("downloadExcel", FileType.EXCEL);
         return ExcelUtil.export(workbook, fileName);
+    }
+
+    /**
+     * 下载Excel
+     *
+     * @return
+     * @throws Exception
+     */
+    @YanwuLog
+    @GetMapping(value = "reader")
+    public BackVO<Object> reader() throws Exception {
+        Object o = reader.receiveAndConvert("test_queue_work_1", 1000);
+        return new BackVO<>(o);
     }
 
 }
