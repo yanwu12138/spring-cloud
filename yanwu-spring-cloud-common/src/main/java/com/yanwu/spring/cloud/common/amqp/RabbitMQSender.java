@@ -18,48 +18,48 @@ import org.springframework.stereotype.Component;
 public class RabbitMQSender {
 
     @Autowired
-    private AmqpTemplate template;
+    private AmqpTemplate amqpTemplate;
 
     public void convertAndSend(String queueName, Object message) {
         log.info("rabbitMQ  : send message, [queueName]: {}, [message]: {}", queueName, message);
-        template.convertAndSend(queueName, JsonUtil.toJsonString(message));
+        amqpTemplate.convertAndSend(queueName, JsonUtil.toJsonString(message));
     }
 
     public void convertAndSend(String exchange, String routingKey, Object message) {
         log.info("rabbitMQ  : send message, [exchange]: {}, [routingKey]: {}, [message]: {}", exchange, routingKey, message);
-        template.convertAndSend(exchange, routingKey, JsonUtil.toJsonString(message));
+        amqpTemplate.convertAndSend(exchange, routingKey, JsonUtil.toJsonString(message));
     }
 
     public void convertAndSend(String queueName, Object message, MessagePostProcessor messagePostProcessor) {
         log.info("rabbitMQ  : send message, [queueName]: {}, [message]: {}", queueName, message);
-        template.convertAndSend(queueName, message, messagePostProcessor);
+        amqpTemplate.convertAndSend(queueName, message, messagePostProcessor);
     }
 
     public void convertAndSend(String exchange, String routingKey, Object message, MessagePostProcessor messagePostProcessor) {
         log.info("rabbitMQ  : send message, [exchange]: {}, [routingKey]: {}, [message]: {}", exchange, routingKey, message);
-        template.convertAndSend(exchange, routingKey, JsonUtil.toJsonString(message), messagePostProcessor);
+        amqpTemplate.convertAndSend(exchange, routingKey, JsonUtil.toJsonString(message), messagePostProcessor);
     }
 
     public Object convertSendAndReceive(String queueName, Object message) {
-        Object result = template.convertSendAndReceive(queueName, JsonUtil.toJsonString(message));
+        Object result = amqpTemplate.convertSendAndReceive(queueName, JsonUtil.toJsonString(message));
         log.info("rabbitMQ  : send message, [queueName]: {},  [message]: {}, [result]: {}", queueName, message, result);
         return result;
     }
 
     public Object convertSendAndReceive(String exchange, String routingKey, Object message) {
-        Object result = template.convertSendAndReceive(exchange, routingKey, JsonUtil.toJsonString(message));
+        Object result = amqpTemplate.convertSendAndReceive(exchange, routingKey, JsonUtil.toJsonString(message));
         log.info("rabbitMQ  : send message, [exchange]: {}, [routingKey]: {}, [message]: {}, [result]: {}", exchange, routingKey, message, result);
         return result;
     }
 
     public Object convertSendAndReceive(String queueName, Object message, MessagePostProcessor messagePostProcessor) {
-        Object result = template.convertSendAndReceive(queueName, message, messagePostProcessor);
+        Object result = amqpTemplate.convertSendAndReceive(queueName, message, messagePostProcessor);
         log.info("rabbitMQ  : send message, [queueName]: {}, [message]: {}, [result]: {}", queueName, message, result);
         return result;
     }
 
     public Object convertSendAndReceive(String exchange, String routingKey, Object message, MessagePostProcessor messagePostProcessor) {
-        Object result = template.convertSendAndReceive(exchange, routingKey, JsonUtil.toJsonString(message), messagePostProcessor);
+        Object result = amqpTemplate.convertSendAndReceive(exchange, routingKey, JsonUtil.toJsonString(message), messagePostProcessor);
         log.info("rabbitMQ  : send message, exchange: {}, routingKey: {}, message: {}, result: {}", exchange, routingKey, message, result);
         return result;
     }
