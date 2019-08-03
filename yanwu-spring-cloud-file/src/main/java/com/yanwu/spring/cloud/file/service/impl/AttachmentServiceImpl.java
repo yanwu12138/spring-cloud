@@ -147,7 +147,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         YanwuUserVO yanwuUserVO = new YanwuUserVO();
         yanwuUserVO.setId(userId);
         yanwuUserVO.setPortrait(attachment.getId());
-        yanwuUserConsumer.updatePortrait(new BaseParam<>(yanwuUserVO, null));
+        yanwuUserConsumer.updatePortrait(new BaseParam<>(yanwuUserVO));
         return attachment;
     }
 }

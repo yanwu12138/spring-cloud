@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.file.controller.webapp;
 
-import com.yanwu.spring.cloud.common.amqp.Reader;
 import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
 import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.Part;
+import java.io.Reader;
 import java.util.List;
 
 /**
@@ -46,8 +46,6 @@ public class AttachmentController {
     @Autowired
     private AttachmentService attachmentService;
 
-    @Autowired
-    private Reader reader;
 
     @CheckParam
     @PostMapping(value = "findYanwuUser")

@@ -19,21 +19,24 @@ public class BackVOUtil {
      */
     public static <T> BackVO<T> operateError(Exception e) {
         String message = e.getMessage();
+        Integer code = -800000;
         if (!ExceptionDefinition.isExist(message)) {
+            code = ExceptionDefinition.SYSTEM_ERROR.code;
             message = ExceptionDefinition.SYSTEM_ERROR.key;
         }
-        return operateError(message);
+        return operateError(code, message);
     }
 
     /**
      * 当web端传递的参数不符合该接口的参数定义, 则直接返回该BackVO
      *
+     * @param code
      * @param message
      * @param <T>
      * @return
      */
-    public static <T> BackVO<T> operateError(String message) {
-        return assembleErrorBackVO(message);
+    public static <T> BackVO<T> operateError(Integer code, String message) {
+        return assembleErrorBackVO(code, message);
     }
 
     /**
@@ -56,12 +59,13 @@ public class BackVOUtil {
     /**
      * 组建请求错误返回的vo
      *
+     * @param code
      * @param message
      * @param <T>
      * @return
      */
-    private static <T> BackVO<T> assembleErrorBackVO(String message) {
-        return assembleBackVO(null, message, Boolean.FALSE);
+    private static <T> BackVO<T> assembleErrorBackVO(Integer code, String message) {
+        return assembleBackVO(null, code, message, Boolean.FALSE);
     }
 
     /**
@@ -73,20 +77,22 @@ public class BackVOUtil {
      * @return
      */
     private static <T> BackVO<T> assembleAccessBackVO(T data, String message) {
-        return assembleBackVO(data, message, Boolean.TRUE);
+        return assembleBackVO(data, null, message, Boolean.TRUE);
     }
 
     /**
      * 组建vo
      *
      * @param data
+     * @param code
      * @param message
      * @param <T>
      * @return
      */
-    private static <T> BackVO<T> assembleBackVO(T data, String message, Boolean boo) {
+    private static <T> BackVO<T> assembleBackVO(T data, Integer code, String message, Boolean boo) {
         BackVO<T> backVO = new BackVO<>();
         backVO.setData(data);
+        backVO.setCode(code);
         backVO.setMessage(message);
         backVO.setStatus(boo);
         return backVO;

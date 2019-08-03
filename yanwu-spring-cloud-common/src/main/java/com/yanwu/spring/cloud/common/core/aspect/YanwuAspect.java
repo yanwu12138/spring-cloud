@@ -2,12 +2,11 @@ package com.yanwu.spring.cloud.common.core.aspect;
 
 import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
 import com.yanwu.spring.cloud.common.core.enums.CheckEnum;
-import com.yanwu.spring.cloud.common.utils.ArrayUtil;
-import com.yanwu.spring.cloud.common.utils.CheckParamUtil;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
+import com.yanwu.spring.cloud.common.utils.ArrayUtil;
+import com.yanwu.spring.cloud.common.utils.BackVOUtil;
+import com.yanwu.spring.cloud.common.utils.CheckParamUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.UUID;
 
 import static com.yanwu.spring.cloud.common.core.exception.ExceptionDefinition.SYSTEM_ERROR;
 
@@ -41,7 +39,6 @@ public class YanwuAspect {
 
     @Around("yanwuPointcut()")
     public Object doAround(ProceedingJoinPoint joinPoint) {
-        String traceId;
         BaseParam param;
         Method method = getMethodSignature(joinPoint);
         Annotation[] annotations = method.getAnnotations();
@@ -51,10 +48,6 @@ public class YanwuAspect {
                 for (Object arg : args) {
                     if (arg instanceof BaseParam) {
                         param = (BaseParam) arg;
-                        if (StringUtils.isBlank(param.getTraceId())) {
-                            traceId = UUID.randomUUID().toString().replaceAll("-", "");
-                            param.setTraceId(traceId);
-                        }
                         // ===== 校验参数
                         checkParam(param, annotations);
                     }
@@ -62,9 +55,8 @@ public class YanwuAspect {
             }
             return joinPoint.proceed(args);
         } catch (Throwable e) {
-            traceId = getTraceId(joinPoint);
-            log.error("Exception : [traceId]: {}, [method]: {}, [param]: {}", traceId, method, args, e);
-            return new BackVO<>(SYSTEM_ERROR.code, SYSTEM_ERROR.key, traceId);
+            log.error("Exception : [method]: {}, [param]: {}", method, args, e);
+            return BackVOUtil.operateError(SYSTEM_ERROR.code, SYSTEM_ERROR.key);
         }
     }
 
@@ -75,10 +67,9 @@ public class YanwuAspect {
      */
     @Before("yanwuPointcut()")
     public void doBefore(JoinPoint joinPoint) {
-        String traceId = getTraceId(joinPoint);
         Object[] args = joinPoint.getArgs();
         Method method = getMethodSignature(joinPoint);
-        log.info("Request   : [traceId]: {}, [method]: {}, [param]: {}", traceId, method, args);
+        log.info("Request   : [method]: {}, [param]: {}", method, args);
     }
 
     /**
@@ -89,10 +80,9 @@ public class YanwuAspect {
      */
     @AfterReturning(returning = "result", pointcut = "yanwuPointcut()")
     public void doAfterReturning(JoinPoint joinPoint, Object result) {
-        String traceId = getTraceId(joinPoint);
         Object[] args = joinPoint.getArgs();
         Method method = getMethodSignature(joinPoint);
-        log.info("Response  : [traceId]: {}, [method]: {}, [param]: {}, [return]: {}", traceId, method, args, result);
+        log.info("Response  : [method]: {}, [param]: {}, [return]: {}", method, args, result);
     }
 
     /**
@@ -103,10 +93,9 @@ public class YanwuAspect {
      */
     @AfterThrowing(pointcut = "yanwuPointcut()", throwing = "e")
     public void doAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        String traceId = getTraceId(joinPoint);
         Object[] args = joinPoint.getArgs();
         Method method = getMethodSignature(joinPoint);
-        log.error("Exception : [traceId]: {}, [method]: {}, [param]: {}", traceId, method, args, e);
+        log.error("Exception : [method]: {}, [param]: {}", method, args, e);
     }
 
     /**
@@ -137,25 +126,6 @@ public class YanwuAspect {
                 }
             }
         }
-    }
-
-    /**
-     * 获取TraceId
-     *
-     * @param joinPoint
-     * @return
-     */
-    private String getTraceId(JoinPoint joinPoint) {
-        String traceId = "";
-        Object[] args = joinPoint.getArgs();
-        if (ArrayUtil.isNotEmpty(args)) {
-            for (Object arg : args) {
-                if (arg instanceof BaseParam) {
-                    traceId = ((BaseParam) arg).getTraceId();
-                }
-            }
-        }
-        return traceId;
     }
 
     /**

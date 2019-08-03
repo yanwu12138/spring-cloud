@@ -20,6 +20,4 @@ public class BaseParam<T> implements Serializable {
 
     private T data;
 
-    private String traceId;
-
 }

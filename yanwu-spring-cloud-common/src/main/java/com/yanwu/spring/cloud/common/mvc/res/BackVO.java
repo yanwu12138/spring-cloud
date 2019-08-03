@@ -1,8 +1,9 @@
 package com.yanwu.spring.cloud.common.mvc.res;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * @author XuBaofeng.
@@ -12,7 +13,8 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class BackVO<T> {
+public class BackVO<T> implements Serializable {
+    private static final long serialVersionUID = -436487128792148712L;
 
     private T data;
 
@@ -21,8 +23,5 @@ public class BackVO<T> {
     private Integer code;
 
     private String message;
-
-    private String traceId;
-
 
 }
