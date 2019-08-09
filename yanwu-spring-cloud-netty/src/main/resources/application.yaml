@@ -8,7 +8,7 @@ eureka:
     serviceUrl:
       defaultZone: http://127.0.0.1:8880/eureka/
 logging:
-  file: /log/yanwu-file.log
+  file: /log/yanwu-netty.log
   level:
     com: info
     org: info

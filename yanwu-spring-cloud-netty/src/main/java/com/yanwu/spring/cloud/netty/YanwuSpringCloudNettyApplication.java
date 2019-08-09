@@ -29,10 +29,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  * * @EnableHystrix             启动断路器
  */
 @EnableHystrix
-@SpringBootApplication
 @EnableEurekaClient
 @EnableDiscoveryClient
 @EnableFeignClients
+@SpringBootApplication
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud.netty", "com.yanwu.spring.cloud.common"})
 public class YanwuSpringCloudNettyApplication {
 
@@ -59,19 +59,19 @@ public class YanwuSpringCloudNettyApplication {
     @Bean
     public Executor nettyExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        // 设置核心线程数
+        // ----- 设置核心线程数
         executor.setCorePoolSize(50);
-        // 设置最大线程数
+        // ----- 设置最大线程数
         executor.setMaxPoolSize(100);
-        // 设置队列容量
+        // ----- 设置队列容量
         executor.setQueueCapacity(Integer.MAX_VALUE);
-        // 设置线程活跃时间（秒）
+        // ----- 设置线程活跃时间（秒）
         executor.setKeepAliveSeconds(120);
-        // 设置默认线程名称
+        // ----- 设置默认线程名称
         executor.setThreadNamePrefix("netty-pool-");
-        // 设置拒绝策略
+        // ----- 设置拒绝策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        //执行初始化
+        // ----- 执行初始化
         executor.initialize();
         return executor;
     }
