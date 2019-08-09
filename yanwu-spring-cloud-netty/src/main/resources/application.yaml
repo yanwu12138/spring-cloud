@@ -1,0 +1,15 @@
+server:
+  port: 8883
+spring:
+  application:
+    name: yanwu-netty
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8880/eureka/
+logging:
+  file: /log/yanwu-file.log
+  level:
+    com: info
+    org: info
+    cn: info

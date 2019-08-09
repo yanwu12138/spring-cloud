@@ -1,0 +1,13 @@
+<ehcache>
+    <diskStore path="java.io.tmpdir"/>
+    <cache
+            name="ctxId_ctx_local_cache"
+            maxElementsInMemory="100000"
+            eternal="true"
+            overflowToDisk="false"
+            maxElementsOnDisk="6000000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU">
+    </cache>
+</ehcache>

@@ -1,5 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -97,15 +99,15 @@ public class ByteUtil {
     /**
      * 数组转16进制字符串
      *
-     * @param arrB
+     * @param arr
      * @return
      */
-    public static String byteArr2HexStr(byte[] arrB) {
-        int iLen = arrB.length;
+    public static String byteArr2HexStr(byte[] arr) {
+        int iLen = arr.length;
         // 每个byte用两个字符才能表示，所以字符串的长度是数组长度的两倍
         StringBuffer sb = new StringBuffer(iLen * 2);
         for (int i = 0; i < iLen; i++) {
-            int intTmp = arrB[i];
+            int intTmp = arr[i];
             // 把负数转换为正数
             while (intTmp < 0) {
                 intTmp = intTmp + 256;
@@ -117,20 +119,19 @@ public class ByteUtil {
             sb.append(Integer.toString(intTmp, 16));
         }
         // 最大128位
-        String result = sb.toString();
-        return result;
+        return sb.toString();
     }
 
     /**
      * 数组转16进制字符串
      *
-     * @param buf
+     * @param arr
      * @return
      */
-    public static String parseByte2HexStr(byte[] buf) {
+    public static String parseByte2HexStr(byte[] arr) {
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < buf.length; i++) {
-            String hex = Integer.toHexString(buf[i] & 0xFF);
+        for (int i = 0; i < arr.length; i++) {
+            String hex = Integer.toHexString(arr[i] & 0xFF);
             if (hex.length() == 1) {
                 hex = '0' + hex;
             }
@@ -142,14 +143,14 @@ public class ByteUtil {
     /**
      * 16进制转中文
      *
-     * @param s
+     * @param str
      * @return
      */
-    public static String hexToStringGBK(String s) {
-        byte[] baKeyword = new byte[s.length() / 2];
+    public static String hexToStringGBK(String str) {
+        byte[] baKeyword = new byte[str.length() / 2];
         for (int i = 0; i < baKeyword.length; i++) {
             try {
-                baKeyword[i] = (byte) (0xff & Integer.parseInt(s.substring(
+                baKeyword[i] = (byte) (0xff & Integer.parseInt(str.substring(
                         i * 2, i * 2 + 2), 16));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -158,23 +159,23 @@ public class ByteUtil {
         }
         try {
             // UTF-16le:Not
-            s = new String(baKeyword, "GBK");
+            str = new String(baKeyword, "GBK");
         } catch (Exception e1) {
             e1.printStackTrace();
             return "";
         }
-        return s;
+        return str;
     }
 
     /**
      * 字符转16进制(含中文)
      *
-     * @param s
+     * @param str
      * @return
      */
-    public static String gbkToHex(String s) {
+    public static String gbkToHex(String str) {
         try {
-            return byteArr2HexStr(s.getBytes("GBK")).toUpperCase();
+            return byteArr2HexStr(str.getBytes("GBK")).toUpperCase();
         } catch (Exception e) {
             return "";
         }
@@ -202,11 +203,11 @@ public class ByteUtil {
     /**
      * 10进制转16进制
      *
-     * @param deString
+     * @param str
      * @return
      */
-    public static String decimalToHex(int deString) {
-        String tmpValue = Integer.toHexString(deString).toUpperCase();
+    public static String decimalToHex(int str) {
+        String tmpValue = Integer.toHexString(str).toUpperCase();
         if (tmpValue.length() % 2 == 1) {
             tmpValue = "0" + tmpValue;
         }
@@ -216,12 +217,12 @@ public class ByteUtil {
     /**
      * 16进制转10进制
      *
-     * @param hexString
+     * @param str
      * @return
      */
-    public static int hexToDecimal(String hexString) {
-        if (hexString != null && !"".equals(hexString)) {
-            return Integer.parseInt(hexString, 16);
+    public static int hexToDecimal(String str) {
+        if (str != null && !"".equals(str)) {
+            return Integer.parseInt(str, 16);
         } else {
             return 0;
         }
@@ -230,13 +231,13 @@ public class ByteUtil {
     /**
      * 16进制转成二进制
      *
-     * @param hexString
+     * @param str
      * @return
      */
-    public static String convertHexToBinary(String hexString) {
-        long l = Long.parseLong(hexString, 16);
+    public static String convertHexToBinary(String str) {
+        long l = Long.parseLong(str, 16);
         String binaryString = Long.toBinaryString(l);
-        int shouldBinaryLen = hexString.length() * 4;
+        int shouldBinaryLen = str.length() * 4;
         StringBuffer addZero = new StringBuffer();
         int addZeroNum = shouldBinaryLen - binaryString.length();
         for (int i = 1; i <= addZeroNum; i++) {
@@ -248,37 +249,38 @@ public class ByteUtil {
     /**
      * 二进制转成十进制
      *
-     * @param binaryString
+     * @param str
      * @return
      */
-    public static String convertBinaryToDecimal(String binaryString) {
-        BigInteger src = new BigInteger(binaryString, 2);// 转换为BigInteger类型
+    public static String convertBinaryToDecimal(String str) {
+        // 转换为BigInteger类型
+        BigInteger src = new BigInteger(str, 2);
         return src.toString();
     }
 
     /**
      * 带符号位进制转换
      *
-     * @param bytes 要转换的字节数组
+     * @param arr   要转换的字节数组
      * @param radix 要转换的进制值，如2,8,10,16
      * @return
      */
-    public static String convertDecimal(byte[] bytes, int radix) {
+    public static String convertDecimal(byte[] arr, int radix) {
         // 这里的1代表正数
-        return new BigInteger(1, bytes).toString(radix);
+        return new BigInteger(1, arr).toString(radix);
     }
 
     /**
      * 16进制带符号位进制转换
      *
-     * @param hex   16进制字符串
+     * @param str   16进制字符串
      * @param radix 要转换的进制值，如2,8,10,16
      * @return
      */
-    public static String convertHexToDecimal(String hex, int radix) {
-        byte[] bytes = hexStr2ByteArr(hex);
+    public static String convertHexToDecimal(String str, int radix) {
+        byte[] bytes = hexStr2ByteArr(str);
         // 这里的1代表正数
-        return convertDecimal(bytes,radix);
+        return convertDecimal(bytes, radix);
     }
 
     /**
@@ -411,10 +413,10 @@ public class ByteUtil {
         return rtsValue;
     }
 
-    public static String byteToGBK(byte[] bytes) throws Exception {
-        String hexStr = byteArr2HexStr(bytes);
-        if (hexStr != null && !hexStr.isEmpty()) {
-            return hexToStringGBK(hexStr);
+    public static String byteToGBK(byte[] arr) throws Exception {
+        String str = byteArr2HexStr(arr);
+        if (StringUtils.isNotBlank(str)) {
+            return hexToStringGBK(str);
         }
         return null;
     }
@@ -427,7 +429,7 @@ public class ByteUtil {
      */
     public static byte[] strToAscBytes(String str) {
         try {
-            return str.toString().getBytes("US-ASCII");
+            return str.getBytes("US-ASCII");
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -440,10 +442,10 @@ public class ByteUtil {
      *
      * @return
      */
-    public static String bytesToHexPrint(byte[] bs) {
-        String[] cs = new String[bs.length];
-        for (int i = 0; i < bs.length; i++) {
-            String hex = Integer.toHexString(bs[i] & 0xFF);
+    public static String bytesToHexPrint(byte[] arr) {
+        String[] cs = new String[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            String hex = Integer.toHexString(arr[i] & 0xFF);
             if (hex.length() == 1) {
                 hex = '0' + hex;
             }
@@ -539,7 +541,7 @@ public class ByteUtil {
      * @return
      */
     public static String fill0(String str, int length) {
-        if (str == null || str.isEmpty()) {
+        if (StringUtils.isNotBlank(str)) {
             return str;
         }
         int strLen = str.length();

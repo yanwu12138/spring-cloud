@@ -15,6 +15,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisServer {
 
+    public static final String FACE_GARDEN = "";
+    public static final String RUNWAY = "";
+    public static final String INTERACTION = "";
+    public static final String TRAJECTORY = "";
+    public static final String GREENING = "";
+
     @Autowired
     private RedisTemplate redisTemplate;
 

@@ -3,26 +3,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.yanwu.spring.cloud.file</groupId>
-    <artifactId>yanwu-spring-cloud-file</artifactId>
+    <groupId>com.yanwu.spring.cloud.netty</groupId>
+    <artifactId>netty</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>yanwu-spring-cloud-file</name>
-    <description>yanwu Spring Cloud File project for Spring Boot</description>
+    <name>yanwu-spring-cloud-netty</name>
+    <description>Demo project for Spring Boot</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.0.RELEASE</version>
+        <version>2.1.7.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
         <java.version>1.8</java.version>
+        <spring-cloud.version>Greenwich.M1</spring-cloud.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-cloud.version>Greenwich.M1</spring-cloud.version>
     </properties>
 
     <dependencies>
@@ -34,14 +34,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -65,9 +57,15 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -75,9 +73,14 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.22.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.10.2</version>
         </dependency>
     </dependencies>
 
@@ -92,17 +95,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!--<repositories>-->
-        <!--<repository>-->
-            <!--<id>spring-milestones</id>-->
-            <!--<name>Spring Milestones</name>-->
-            <!--<url>https://repo.spring.io/milestone</url>-->
-            <!--<snapshots>-->
-                <!--<enabled>false</enabled>-->
-            <!--</snapshots>-->
-        <!--</repository>-->
-    <!--</repositories>-->
 
     <repositories>
         <repository>
@@ -120,7 +112,7 @@
         </repository>
         <repository>
             <id>org.springframework</id>
-            <url> http://maven.springframework.org/snapshot</url>
+            <url>http://maven.springframework.org/snapshot</url>
         </repository>
         <repository>
             <id>spring-milestone</id>

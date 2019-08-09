@@ -37,7 +37,7 @@ public final class Resources {
 
         if (is == null) {
             throw new IllegalArgumentException("Cannot load [" + resourceName
-                    + "] from any place, please check the name and the environment.");
+                    + "] from any place, please check the name and the .");
         }
 
         return is;
