@@ -13,3 +13,5 @@ logging:
     com: info
     org: info
     cn: info
+netty:
+  port: 5000

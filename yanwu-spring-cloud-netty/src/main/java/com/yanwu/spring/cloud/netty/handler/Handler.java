@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.netty.handler;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
 import com.yanwu.spring.cloud.netty.util.NettyUtils;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
         String ctxId = NettyUtils.getChannelId(ctx);
         String port = NettyUtils.getPort(ctx);
         ClientSessionMap.put(ctxId, ctx);
-        log.info("port: {}, channel: {}, message: {}", port, ctxId, ByteUtil.bytesToHexPrint(bytes));
+        log.info("port: {}, channel: {}, message: {}", port, ctxId, bytes);
         // ===== 处理上行业务
         handler.nettyExecutor.execute(() -> log.info("业务处理"));
     }

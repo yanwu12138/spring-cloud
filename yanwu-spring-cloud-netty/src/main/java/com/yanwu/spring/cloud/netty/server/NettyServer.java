@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.netty.server;
 
 import com.yanwu.spring.cloud.netty.handler.ChannelHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -12,6 +11,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -42,7 +42,8 @@ public class NettyServer {
      */
     private EventLoopGroup workGroup = new NioEventLoopGroup();
 
-    private String nettyPort = "5000";
+    @Value("${netty.port}")
+    private String nettyPort;
 
     @Resource
     Executor nettyExecutor;
