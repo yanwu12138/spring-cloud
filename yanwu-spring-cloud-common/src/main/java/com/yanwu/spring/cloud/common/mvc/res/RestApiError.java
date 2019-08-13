@@ -11,65 +11,65 @@ import java.util.Map;
 @JsonInclude(Include.NON_NULL)
 public class RestApiError {
 
-	public final static String CODE_OK="0";
-	
-	public final static String MESSAGE_SUCCEED="";
+    public final static String CODE_OK = "0";
 
-	public final static String DEFAULT_ERROR_PARAMS="";
-/**
-	 * HTTP Status
-	 */
-	private int status;
-	
-	/**
-	 * Business Code
-	 */
-	private String code;
+    public final static String MESSAGE_SUCCEED = "";
 
-	/**
-	 * A code that the server uses as a key to retrieve the localized message.
-	 * reserved
-	 */
-	private String messageKey;
+    public final static String DEFAULT_ERROR_PARAMS = "";
+    /**
+     * HTTP Status
+     */
+    private int status;
 
-	/**
-	 * The localized message with substituted parameters.
-	 */
-	private String message;
+    /**
+     * Business Code
+     */
+    private String code;
 
-	/**
-	 * Raw error message, which is not localized. It is for debugging purposes.
-	 */
-	private String rawMessage;
+    /**
+     * A code that the server uses as a key to retrieve the localized message.
+     * reserved
+     */
+    private String messageKey;
 
-	/**
-	 * map of parameters that the client can use to generate it's own error
-	 * message if needed
-	 */
-	private Map<String, Object> errorParams;
+    /**
+     * The localized message with substituted parameters.
+     */
+    private String message;
 
-	/**
-	 * map of validation errors <BR>
-	 * key: path of the invalid value in the request. <BR>
-	 * value: collection of messages.properties indicating the errors for that
-	 * field/object.<BR>
-	 * Ex: A JSON representation of validationErrors looks like this: <BR>
-	 * {<BR>
-	 * "firewallRules[0].destinationMac.entries[0].tags[2].value": ["size must
-	 * be between 0 and 64"],<BR>
-	 * "firewallRules[0].destinationMac.entries[1].description": ["cannot be
-	 * null or empty"],<BR>
-	 * "firewallRules[0].destinationMac.entries[1].somefield": [<BR>
-	 * "size must be less than 128",<BR>
-	 * "cannot use special chars (*,$,%)"<BR>
-	 * ]<BR>
-	 * }<BR>
-	 */
-	private Map<String, Collection<String>> validationErrors;
+    /**
+     * Raw error message, which is not localized. It is for debugging purposes.
+     */
+    private String rawMessage;
 
-	/**
-	 * Typically a link to a document where more information can be accesses -
-	 * hivenation/helpdoc etc.
-	 */
-	private String moreInfo;
+    /**
+     * map of parameters that the client can use to generate it's own error
+     * message if needed
+     */
+    private Map<String, Object> errorParams;
+
+    /**
+     * map of validation errors <BR>
+     * key: path of the invalid value in the request. <BR>
+     * value: collection of messages.properties indicating the errors for that
+     * field/object.<BR>
+     * Ex: A JSON representation of validationErrors looks like this: <BR>
+     * {<BR>
+     * "firewallRules[0].destinationMac.entries[0].tags[2].value": ["size must
+     * be between 0 and 64"],<BR>
+     * "firewallRules[0].destinationMac.entries[1].description": ["cannot be
+     * null or empty"],<BR>
+     * "firewallRules[0].destinationMac.entries[1].somefield": [<BR>
+     * "size must be less than 128",<BR>
+     * "cannot use special chars (*,$,%)"<BR>
+     * ]<BR>
+     * }<BR>
+     */
+    private Map<String, Collection<String>> validationErrors;
+
+    /**
+     * Typically a link to a document where more information can be accesses -
+     * hivenation/helpdoc etc.
+     */
+    private String moreInfo;
 }

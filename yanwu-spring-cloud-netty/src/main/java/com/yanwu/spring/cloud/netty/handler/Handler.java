@@ -3,7 +3,6 @@ package com.yanwu.spring.cloud.netty.handler;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
 import com.yanwu.spring.cloud.netty.util.NettyUtils;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +42,13 @@ public class Handler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         byte[] bytes = (byte[]) msg;
+        String message = ByteUtil.bytesToHexPrint(bytes);
         String ctxId = NettyUtils.getChannelId(ctx);
-        String port = NettyUtils.getPort(ctx);
         ClientSessionMap.put(ctxId, ctx);
-        log.info("port: {}, channel: {}, message: {}", port, ctxId, bytes);
         // ===== 处理上行业务
-        handler.nettyExecutor.execute(() -> log.info("业务处理"));
+        handler.nettyExecutor.execute(() -> {
+            log.info("业务处理 >> ctxId: {}, message: {}", ctxId, message);
+        });
     }
 
     @Override
@@ -78,13 +78,13 @@ public class Handler extends ChannelInboundHandlerAdapter {
      * @param message
      */
     public void send(String ctxId, String message) {
+        message = message.replaceAll(" ", "");
         ChannelHandlerContext channel = ClientSessionMap.get(ctxId);
         if (channel == null || StringUtils.isBlank(message)) {
             return;
         }
-        byte[] bytes = message.getBytes();
-        String port = NettyUtils.getPort(channel);
-        log.info("send message, port: {}, channel: {}, message: {}", port, ctxId, ByteUtil.bytesToHexPrint(bytes));
+        byte[] bytes = ByteUtil.hexStr2ByteArr(message);
+        log.info("send message, channel: {}, message: {}", ctxId, message);
         channel.writeAndFlush(bytes);
     }
 
