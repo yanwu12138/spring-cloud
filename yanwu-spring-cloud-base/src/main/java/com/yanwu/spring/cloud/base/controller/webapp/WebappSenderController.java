@@ -26,7 +26,7 @@ public class WebappSenderController {
     @Autowired
     private RabbitMQSender sender;
 
-    @YanwuLog
+    @YanwuLog("发送失败")
     @PostMapping(value = "sender")
     public BackVO<Void> sender(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
         // ===== test1

@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.file.controller.webapp;
 
-import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
 import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.Part;
-import java.io.Reader;
 import java.util.List;
 
 /**
@@ -46,8 +44,7 @@ public class AttachmentController {
     @Autowired
     private AttachmentService attachmentService;
 
-
-    @CheckParam
+    @YanwuLog
     @PostMapping(value = "findYanwuUser")
     public BackVO<YanwuUserVO> findYanwuUser(@RequestBody BaseParam<String> param) throws Exception {
         return yanwuUserConsumer.findByUserName(param);
@@ -61,7 +58,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @CheckParam
+    @YanwuLog
     @PostMapping(value = "upPortrait")
     public BackVO<AttachmentVO> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);

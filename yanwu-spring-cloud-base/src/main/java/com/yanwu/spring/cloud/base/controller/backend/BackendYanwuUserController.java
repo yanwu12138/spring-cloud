@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.base.controller.backend;
 
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
+import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
@@ -32,15 +32,15 @@ public class BackendYanwuUserController {
     @Autowired
     private YanwuUserService userService;
 
-    @CheckParam
+    @YanwuLog
     @PostMapping(value = "findByUserName")
     public BackVO<YanwuUserVO> findByUserName(@RequestBody BaseParam<String> param) throws Exception {
         YanwuUser yanwuUser = userService.findByUserName(param.getData());
         YanwuUserVO vo = voDoUtil.convertDoToVo(yanwuUser, YanwuUserVO.class);
         return BackVOUtil.operateAccess(vo);
     }
-
-    @CheckParam
+    
+    @YanwuLog
     @PostMapping(value = "updatePortrait")
     public BackVO<Void> updatePortrait(@RequestBody BaseParam<YanwuUserVO> param) throws Exception {
         YanwuUser yanwuUser = voDoUtil.convertVoToDo(param.getData(), YanwuUser.class);

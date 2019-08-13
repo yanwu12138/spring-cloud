@@ -13,4 +13,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface YanwuLog {
 
+    String value() default "";
+
 }

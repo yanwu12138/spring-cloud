@@ -1,11 +1,8 @@
 package com.yanwu.spring.cloud.common.core.aspect;
 
-import com.yanwu.spring.cloud.common.core.annotation.CheckParam;
-import com.yanwu.spring.cloud.common.core.enums.CheckEnum;
-import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
-import com.yanwu.spring.cloud.common.utils.ArrayUtil;
+import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
+import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.utils.BackVOUtil;
-import com.yanwu.spring.cloud.common.utils.CheckParamUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,9 +12,7 @@ import org.aspectj.lang.reflect.AdviceSignature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import static com.yanwu.spring.cloud.common.core.exception.ExceptionDefinition.SYSTEM_ERROR;
 
@@ -32,31 +27,19 @@ import static com.yanwu.spring.cloud.common.core.exception.ExceptionDefinition.S
 @Component
 public class YanwuAspect {
 
-    @Pointcut("@annotation(com.yanwu.spring.cloud.common.core.annotation.YanwuLog) || " +
-            "@annotation(com.yanwu.spring.cloud.common.core.annotation.CheckParam)")
+    @Pointcut("@annotation(com.yanwu.spring.cloud.common.core.annotation.YanwuLog)")
     public void yanwuPointcut() {
     }
 
     @Around("yanwuPointcut()")
     public Object doAround(ProceedingJoinPoint joinPoint) {
-        BaseParam param;
         Method method = getMethodSignature(joinPoint);
-        Annotation[] annotations = method.getAnnotations();
         Object[] args = joinPoint.getArgs();
         try {
-            if (ArrayUtil.isNotEmpty(args)) {
-                for (Object arg : args) {
-                    if (arg instanceof BaseParam) {
-                        param = (BaseParam) arg;
-                        // ===== 校验参数
-                        checkParam(param, annotations);
-                    }
-                }
-            }
             return joinPoint.proceed(args);
         } catch (Throwable e) {
             log.error("Exception : [method]: {}, [param]: {}", method, args, e);
-            return BackVOUtil.operateError(SYSTEM_ERROR.code, SYSTEM_ERROR.key);
+            return getBackVO(method);
         }
     }
 
@@ -73,6 +56,7 @@ public class YanwuAspect {
     }
 
     /**
+     * Ø
      * 输出所有controller方法的出参
      *
      * @param joinPoint
@@ -99,36 +83,6 @@ public class YanwuAspect {
     }
 
     /**
-     * 参数校验
-     *
-     * @param param
-     * @param annotations
-     * @throws Exception
-     */
-    private void checkParam(BaseParam param, Annotation[] annotations) throws Exception {
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof CheckParam) {
-                CheckEnum check = ((CheckParam) annotation).check();
-                switch (check) {
-                    case STRING_NOT_BLANK:
-                        CheckParamUtil.checkStringNotBlank((String) param.getData());
-                        break;
-                    case LONG_GREATER_THAN_ZERO:
-                        CheckParamUtil.checkLongNotThanZero((Long) param.getData());
-                        break;
-                    case LIST_NOT_EMPTY:
-                        CheckParamUtil.checkListNotNullAndSizeGreaterZero((List) param.getData());
-                        break;
-                    case DATA_NOT_NULL:
-                    default:
-                        CheckParamUtil.checkObjectNotNull(param.getData());
-                        break;
-                }
-            }
-        }
-    }
-
-    /**
      * 获取方法签名
      *
      * @param joinPoint
@@ -146,6 +100,21 @@ public class YanwuAspect {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 根据 @YanwuLog 注解的 value 值组装返回的BackVO
+     *
+     * @param method
+     * @return
+     */
+    private BackVO getBackVO(Method method) {
+        String key = SYSTEM_ERROR.key;
+        YanwuLog yanwuLog = method.getAnnotation(YanwuLog.class);
+        if (yanwuLog != null) {
+            key = yanwuLog.value();
+        }
+        return BackVOUtil.operateError(SYSTEM_ERROR.code, key);
     }
 
 }
