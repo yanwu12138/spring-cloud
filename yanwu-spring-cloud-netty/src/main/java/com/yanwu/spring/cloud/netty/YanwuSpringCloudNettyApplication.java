@@ -30,11 +30,11 @@ import java.util.concurrent.ThreadPoolExecutor;
  * * @EnableHystrix             启动断路器
  * * @EnableScheduling          启用scheduler定时任务
  */
-@EnableScheduling
 @EnableHystrix
+@EnableScheduling
 @EnableEurekaClient
-@EnableDiscoveryClient
 @EnableFeignClients
+@EnableDiscoveryClient
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud.netty", "com.yanwu.spring.cloud.common"})
 public class YanwuSpringCloudNettyApplication {

@@ -10,7 +10,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -28,23 +27,15 @@ import java.util.concurrent.Executor;
 @Slf4j
 @Component
 public class NettyServer {
-
-    /**
-     * 创建bootstrap
-     */
+    /*** 创建bootstrap */
     private ServerBootstrap serverBootstrap = new ServerBootstrap();
-    /**
-     * BOSS
-     */
+    /*** BOSS */
     private EventLoopGroup bossGroup = new NioEventLoopGroup();
-    /**
-     * Worker
-     */
+    /*** Worker */
     private EventLoopGroup workGroup = new NioEventLoopGroup();
 
     @Value("${netty.port}")
-    private String nettyPort;
-
+    private int nettyPort;
     @Resource
     Executor nettyExecutor;
 
@@ -60,10 +51,10 @@ public class NettyServer {
                             .option(ChannelOption.SO_BACKLOG, 1024)
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
                             .childHandler(new ChannelHandler());
-                    if (StringUtils.isBlank(nettyPort)) {
+                    if (nettyPort < 1 || nettyPort > 65535) {
                         throw new RuntimeException("netty server start error, port is null!");
                     }
-                    ChannelFuture channel = serverBootstrap.bind(Integer.valueOf(nettyPort)).sync();
+                    ChannelFuture channel = serverBootstrap.bind(nettyPort).sync();
                     channel.channel().closeFuture().sync();
                     log.info("netty server start success, port: {}", nettyPort);
                 }

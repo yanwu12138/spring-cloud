@@ -34,21 +34,19 @@ public class Handler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * 建立连接
+     * 上行
      *
      * @param ctx
      * @param msg
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        byte[] bytes = (byte[]) msg;
-        String message = ByteUtil.bytesToHexPrint(bytes);
         String ctxId = NettyUtils.getChannelId(ctx);
         ClientSessionMap.put(ctxId, ctx);
+        byte[] bytes = (byte[]) msg;
+        String message = ByteUtil.bytesToHexPrint(bytes);
         // ===== 处理上行业务
-        handler.nettyExecutor.execute(() -> {
-            log.info("业务处理 >> ctxId: {}, message: {}", ctxId, message);
-        });
+        handler.nettyExecutor.execute(() -> log.info("read message, channel: {}, message: {}", ctxId, message));
     }
 
     @Override
@@ -63,7 +61,19 @@ public class Handler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        offLine(ctx);
+        try {
+            String ctxId = NettyUtils.getChannelId(ctx);
+            if (ClientSessionMap.get(ctxId) == null) {
+                return;
+            }
+            log.info("channel close connection, channel: {}", ctxId);
+            ClientSessionMap.remove(ctxId);
+            ctx.channel().close();
+            ctx.close();
+            // ===== 处理断线业务
+        } catch (Exception e) {
+            log.error("channel close error: ", e);
+        }
     }
 
     @Override
@@ -72,7 +82,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * 发送报文
+     * 下行
      *
      * @param ctxId
      * @param message
@@ -84,24 +94,8 @@ public class Handler extends ChannelInboundHandlerAdapter {
             return;
         }
         byte[] bytes = ByteUtil.hexStr2ByteArr(message);
-        log.info("send message, channel: {}, message: {}", ctxId, message);
+        log.info("send message, channel: {}, message: {}", ctxId, ByteUtil.bytesToHexPrint(bytes));
         channel.writeAndFlush(bytes);
     }
 
-    private void offLine(ChannelHandlerContext ctx) {
-        try {
-            String ctxId = NettyUtils.getChannelId(ctx);
-            if (ClientSessionMap.get(ctxId) == null) {
-                return;
-            }
-            String port = NettyUtils.getPort(ctx);
-            log.info("channel close connection, channel: {}, port: {}", ctxId, port);
-            ClientSessionMap.remove(ctxId);
-            ctx.channel().close();
-            ctx.close();
-            // ===== 处理断线业务
-        } catch (Exception e) {
-            log.error("channel close error: ", e);
-        }
-    }
 }
