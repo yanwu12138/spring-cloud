@@ -40,7 +40,7 @@ public class ZipUtils {
      * @param compressedStr
      * @return
      */
-    public static String gunzip(String compressedStr) {
+    public static String ungzip(String compressedStr) {
         if (compressedStr == null) {
             return null;
         }
