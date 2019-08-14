@@ -31,7 +31,7 @@ public final class ClientSessionMap {
             }
             log.info("当前检测到长连接数目: {}", size);
         } catch (Exception e) {
-            log.error("[local cache]monitor has occured error,cause:" + e);
+            log.error("[local cache] monitor has occured error, cause: " + e);
         }
     }
 

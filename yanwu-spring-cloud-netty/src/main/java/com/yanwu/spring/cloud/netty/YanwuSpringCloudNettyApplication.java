@@ -12,6 +12,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,7 +28,9 @@ import java.util.concurrent.ThreadPoolExecutor;
  * * @EnableDiscoveryClient     启动ribbon负载均衡
  * * @EnableFeignClients        启动feign服务发现功能
  * * @EnableHystrix             启动断路器
+ * * @EnableScheduling          启用scheduler定时任务
  */
+@EnableScheduling
 @EnableHystrix
 @EnableEurekaClient
 @EnableDiscoveryClient
