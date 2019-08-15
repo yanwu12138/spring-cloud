@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.base.service;
 
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
-import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 
 /**
  * @author XuBaofeng.
@@ -52,5 +51,5 @@ public interface YanwuUserService {
      *
      * @param yanwuUser
      */
-    void updatePortrait(YanwuUser yanwuUser);
+    void updatePortrait(YanwuUser yanwuUser) throws Exception;
 }

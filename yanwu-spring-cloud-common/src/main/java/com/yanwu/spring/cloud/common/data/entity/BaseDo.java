@@ -7,6 +7,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Comparator;
 
+/**
+ * @author Administrator
+ */
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false, of = {})
@@ -28,7 +31,7 @@ public abstract class BaseDo<PK extends Serializable> extends BaseTimeStamp impl
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     @Setter
     @Column(name = "ID")

@@ -10,13 +10,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * <p>
  * description:
  */
-@Configuration
-public class ConfigAdapter implements WebMvcConfigurer {
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new TokenInterceptor())
-                .addPathPatterns("/**")
-                .excludePathPatterns("/webapp/base/login");
-    }
-}
+// @Configuration
+// public class ConfigAdapter implements WebMvcConfigurer {
+//
+//     @Override
+//     public void addInterceptors(InterceptorRegistry registry) {
+//         registry.addInterceptor(new TokenInterceptor())
+//                 .addPathPatterns("/**")
+//                 .excludePathPatterns("/webapp/base/login");
+//     }
+// }

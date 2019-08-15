@@ -10,10 +10,7 @@ import com.yanwu.spring.cloud.common.utils.BackVOUtil;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author XuBaofeng.
@@ -39,11 +36,12 @@ public class BackendYanwuUserController {
         YanwuUserVO vo = voDoUtil.convertDoToVo(yanwuUser, YanwuUserVO.class);
         return BackVOUtil.operateAccess(vo);
     }
-    
+
     @YanwuLog
     @PostMapping(value = "updatePortrait")
-    public BackVO<Void> updatePortrait(@RequestBody BaseParam<YanwuUserVO> param) throws Exception {
-        YanwuUser yanwuUser = voDoUtil.convertVoToDo(param.getData(), YanwuUser.class);
+    @ResponseBody
+    public BackVO<Void> updatePortrait(@RequestBody YanwuUserVO param) throws Exception {
+        YanwuUser yanwuUser = voDoUtil.convertVoToDo(param, YanwuUser.class);
         userService.updatePortrait(yanwuUser);
         return BackVOUtil.operateAccess();
     }

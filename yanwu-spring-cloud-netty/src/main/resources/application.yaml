@@ -3,6 +3,11 @@ server:
 spring:
   application:
     name: yanwu-netty
+  ### seata 配置
+  cloud:
+    alibaba:
+      seata:
+        tx-service-group: business-service-fescar-service-group
 eureka:
   client:
     serviceUrl:

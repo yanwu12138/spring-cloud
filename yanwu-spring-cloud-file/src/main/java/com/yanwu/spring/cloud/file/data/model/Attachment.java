@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Table(name = "ATTACHMENT", indexes = {@Index(name = "IX_ATTACHMENT_ID", columnList = "ID")})
 @EqualsAndHashCode(callSuper = true)
 public class Attachment extends BaseMonopolyNamedBo {
-
+    private static final long serialVersionUID = 8065372703000616904L;
     /**
      * 关联id
      */
@@ -37,7 +37,7 @@ public class Attachment extends BaseMonopolyNamedBo {
     /**
      * 附件名称
      */
-    @Column(name = "ATTACHMENT_Name")
+    @Column(name = "ATTACHMENT_NAME")
     private String attachmentName;
 
     /**
@@ -61,6 +61,6 @@ public class Attachment extends BaseMonopolyNamedBo {
     /**
      * 创建人
      */
-    @Column(name = "CREATE_BY_USER_Name")
+    @Column(name = "CREATE_BY_USER_NAME")
     private String createByUserName;
 }

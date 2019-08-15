@@ -34,5 +34,5 @@ public interface YanwuUserConsumer {
      * @param param
      */
     @PostMapping(value = "backend/yanwuUser/updatePortrait")
-    void updatePortrait(@RequestBody BaseParam<YanwuUserVO> param);
+    void updatePortrait(@RequestBody YanwuUserVO param);
 }

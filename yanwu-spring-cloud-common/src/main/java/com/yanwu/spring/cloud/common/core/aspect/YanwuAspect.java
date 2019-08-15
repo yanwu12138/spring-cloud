@@ -4,6 +4,7 @@ import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.utils.BackVOUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -111,7 +112,7 @@ public class YanwuAspect {
     private BackVO getBackVO(Method method) {
         String key = SYSTEM_ERROR.key;
         YanwuLog yanwuLog = method.getAnnotation(YanwuLog.class);
-        if (yanwuLog != null) {
+        if (yanwuLog != null && StringUtils.isNotBlank(yanwuLog.value())) {
             key = yanwuLog.value();
         }
         return BackVOUtil.operateError(SYSTEM_ERROR.code, key);
