@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.file.service.impl;
 
 import com.yanwu.spring.cloud.common.core.common.TimeStringFormat;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.common.utils.CheckParamUtil;
 import com.yanwu.spring.cloud.common.utils.DataUtil;
@@ -11,8 +10,6 @@ import com.yanwu.spring.cloud.file.consumer.base.YanwuUserConsumer;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.data.repository.AttachmentRepository;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
-import io.seata.core.context.RootContext;
-import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -140,39 +137,16 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    @GlobalTransactional
+    @Transactional(rollbackFor = Exception.class)
     public Attachment upPortrait(MultipartHttpServletRequest request, Long userId) throws Exception {
         // ----- 上传文件
-        log.info("当前 XID: {}", RootContext.getXID());
-        MultiValueMap<String, MultipartFile> multiValueMap = request.getMultiFileMap();
-        List<MultipartFile> multipartFileList = multiValueMap.get("file");
-        CheckParamUtil.checkListNotNullAndSizeGreaterZero(multipartFileList);
-        MultipartFile multipartFile = multipartFileList.get(0);
-        String fileName = multipartFile.getOriginalFilename();
-        FileType fileType = FileUtil.getFileTypeByName(fileName);
-        String name = FileUtil.getNameByFileName(fileName);
-        String basePath = "/src/file/" + fileType + File.separatorChar + DataUtil.getTimeString(System.currentTimeMillis(), TimeStringFormat.YYYY_MM_DD4);
-        File myFilePath = new File(basePath);
-        if (!myFilePath.exists()) {
-            myFilePath.mkdirs();
-        }
-        String dataPath = basePath + File.separatorChar + fileName;
-        FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), new File(dataPath));
-        log.info("attachment upload attachmentAddress: {}", dataPath);
-        Attachment attachment = new Attachment();
-        attachment.setRelationId(userId);
-        attachment.setName(name);
-        attachment.setAttachmentName(fileName);
-        attachment.setAttachmentType(fileType);
-        attachment.setAttachmentAddress(dataPath);
-        attachment.setAttachmentSize(multipartFile.getSize());
-        Attachment save = attachmentRepository.save(attachment);
+        List<Attachment> attachments = uploadFile(request, userId);
+        Attachment attachment = attachments.stream().findFirst().orElse(new Attachment());
         // ----- 修改用户头像
         YanwuUserVO yanwuUserVO = new YanwuUserVO();
         yanwuUserVO.setId(userId);
-        yanwuUserVO.setPortrait(save.getId());
-        restTemplate.postForObject("http://yanwu-base/backend/yanwuUser/updatePortrait", yanwuUserVO, BackVO.class);
-        // yanwuUserConsumer.updatePortrait(yanwuUserVO);
+        yanwuUserVO.setPortrait(attachment.getId());
+        yanwuUserConsumer.updatePortrait(yanwuUserVO);
         return attachment;
     }
 }

@@ -32,7 +32,8 @@ public interface YanwuUserConsumer {
      * 修改用户头像
      *
      * @param param
+     * @return
      */
     @PostMapping(value = "backend/yanwuUser/updatePortrait")
-    void updatePortrait(@RequestBody YanwuUserVO param);
+    BackVO<Void> updatePortrait(@RequestBody YanwuUserVO param) throws Exception;
 }
