@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @SuppressWarnings("all")
 public class Crc16Util {
+    private static final Integer ONE = 1;
     private static final Integer TWO = 2;
     private static final Integer HEX = 16;
     private static final String NUL = "";
@@ -98,7 +99,7 @@ public class Crc16Util {
     private static byte[] getByteArr(String str) {
         str = str.replaceAll(SPACE, NUL);
         int strLen = str.length();
-        if ((strLen & (TWO - 1)) == 1) {
+        if (strLen % TWO == ONE) {
             // ----- 报文字符串必须是以一个字节为单位（两位为一个字节），所以当去除空格后的报文长度为单数时说明报文错误
             throw new RuntimeException("Incorrect message format!");
         }
