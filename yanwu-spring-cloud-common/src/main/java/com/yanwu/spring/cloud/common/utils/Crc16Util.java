@@ -99,7 +99,7 @@ public class Crc16Util {
     private static byte[] getByteArr(String str) {
         str = str.replaceAll(SPACE, NUL);
         int strLen = str.length();
-        if (strLen % TWO == ONE) {
+        if ((strLen & ONE) == ONE) {
             // ----- 报文字符串必须是以一个字节为单位（两位为一个字节），所以当去除空格后的报文长度为单数时说明报文错误
             throw new RuntimeException("Incorrect message format!");
         }
