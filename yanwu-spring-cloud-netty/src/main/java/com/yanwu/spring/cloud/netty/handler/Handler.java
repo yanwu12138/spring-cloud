@@ -1,7 +1,10 @@
 package com.yanwu.spring.cloud.netty.handler;
 
+import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
+import com.yanwu.spring.cloud.netty.protocol.up.AbstractHandler;
+import com.yanwu.spring.cloud.netty.util.DeviceUtil;
 import com.yanwu.spring.cloud.netty.util.NettyUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -44,9 +47,16 @@ public class Handler extends ChannelInboundHandlerAdapter {
         String ctxId = NettyUtils.getChannelId(ctx);
         ClientSessionMap.put(ctxId, ctx);
         byte[] bytes = (byte[]) msg;
-        String message = ByteUtil.bytesToHexStrPrint(bytes);
         // ===== 处理上行业务
-        handler.nettyExecutor.execute(() -> log.info("read message, channel: {}, message: {}", ctxId, message));
+        handler.nettyExecutor.execute(() -> {
+            log.info("read message, channel: {}, message: {}", ctxId, ByteUtil.bytesToHexStrPrint(bytes));
+            // ----- 根据协议获取设备类型
+            DeviceTypeEnum deviceType = DeviceUtil.getDeviceType(bytes);
+            // ----- 根据设备类型获取对应的解析实现类
+            AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
+            // ----- 解析报文，业务处理
+            handler.analysis(bytes);
+        });
     }
 
     @Override

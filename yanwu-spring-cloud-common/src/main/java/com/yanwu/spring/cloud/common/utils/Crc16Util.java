@@ -193,7 +193,7 @@ public class Crc16Util {
      * @param str 报文字符串
      * @return 报文数组
      */
-    private static byte[] hexStrToByteArr(String str) {
+    public static byte[] hexStrToByteArr(String str) {
         str = Crc16Util.processingString(str);
         int strLen = str.length();
         if ((strLen & ONE) == ONE) {
@@ -216,7 +216,7 @@ public class Crc16Util {
      * @param data CRC值（10进制）
      * @return CRC值（16进制）
      */
-    private static String crc16ToHexStr(int data) {
+    public static String crc16ToHexStr(int data) {
         String crcStr = Integer.toHexString(data).toUpperCase();
         int size = 4 - crcStr.length();
         StringBuffer buffer = new StringBuffer();
