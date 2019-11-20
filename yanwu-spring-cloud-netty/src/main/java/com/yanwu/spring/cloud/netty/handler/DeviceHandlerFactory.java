@@ -16,13 +16,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeviceHandlerFactory {
 
-    public static AbstractHandler newInstance(DeviceTypeEnum deviceType) {
-        AbstractHandler handler = null;
-        if (deviceType != null) {
-            String type = deviceType.getType();
-            handler = (AbstractHandler) SpringUtil.getBean(type);
+    static AbstractHandler newInstance(DeviceTypeEnum deviceType) {
+        if (deviceType == null) {
+            return null;
         }
-        return handler;
+        String type = deviceType.getType();
+        return (AbstractHandler) SpringUtil.getBean(type);
     }
 
 }

@@ -27,7 +27,7 @@ import java.util.concurrent.Executor;
 public class Handler extends ChannelInboundHandlerAdapter {
 
     @Resource
-    Executor nettyExecutor;
+    private Executor nettyExecutor;
 
     private static Handler handler;
 
@@ -55,6 +55,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
             // ----- 根据设备类型获取对应的解析实现类
             AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
             // ----- 解析报文，业务处理
+            assert handler != null;
             handler.analysis(bytes);
         });
     }
