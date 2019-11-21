@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.netty.handler;
 import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
+import com.yanwu.spring.cloud.netty.protocol.factory.DeviceHandlerFactory;
 import com.yanwu.spring.cloud.netty.protocol.up.AbstractHandler;
 import com.yanwu.spring.cloud.netty.util.DeviceUtil;
 import com.yanwu.spring.cloud.netty.util.NettyUtils;
@@ -56,7 +57,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
             AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
             // ----- 解析报文，业务处理
             assert handler != null;
-            handler.analysis(bytes);
+            handler.analysis(ctxId, bytes);
         });
     }
 

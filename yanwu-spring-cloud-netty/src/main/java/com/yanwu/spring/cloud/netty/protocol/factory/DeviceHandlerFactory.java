@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.netty.handler;
+package com.yanwu.spring.cloud.netty.protocol.factory;
 
 import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.netty.protocol.up.AbstractHandler;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeviceHandlerFactory {
 
-    static AbstractHandler newInstance(DeviceTypeEnum deviceType) {
+    public static AbstractHandler newInstance(DeviceTypeEnum deviceType) {
         if (deviceType == null) {
             return null;
         }

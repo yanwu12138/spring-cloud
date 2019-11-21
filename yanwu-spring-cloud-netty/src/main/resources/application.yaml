@@ -3,6 +3,12 @@ server:
 spring:
   application:
     name: yanwu-netty
+  redis:
+    host: 39.97.229.71
+    port: 6379
+    password: xxxxxxxx
+    timeout: 10000
+    database: 1
 eureka:
   client:
     serviceUrl:

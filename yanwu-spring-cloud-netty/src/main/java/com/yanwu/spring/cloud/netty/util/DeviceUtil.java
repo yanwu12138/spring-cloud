@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.netty.util;
 
 import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -9,7 +10,7 @@ import lombok.Data;
  * <p>
  * description:
  */
-@Data
+@Slf4j
 public class DeviceUtil {
 
     /**

@@ -12,7 +12,8 @@ public abstract class AbstractHandler {
      * 协议解析
      *
      * @param bytes
+     * @param ctxId
      */
-    abstract public void analysis(byte[] bytes);
+    abstract public void analysis(String ctxId, byte[] bytes);
 
 }
