@@ -23,10 +23,10 @@ import java.io.Serializable;
 public class YanwuUser extends BaseMonopolyNamedBo implements Serializable {
     private static final long serialVersionUID = -5667178676337792115L;
 
-    @Column(name = "USER_NAME")
+    @Column(name = "USER_NAME", nullable = false)
     private String userName;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
     @Column(name = "SEX")
@@ -38,7 +38,7 @@ public class YanwuUser extends BaseMonopolyNamedBo implements Serializable {
     @Column(name = "EMAIL")
     private String email;
 
-    @Column(name = "ROLE_ID")
+    @Column(name = "ROLE_ID", nullable = false)
     private Long roleId;
 
     @Column(name = "PORTRAIT")

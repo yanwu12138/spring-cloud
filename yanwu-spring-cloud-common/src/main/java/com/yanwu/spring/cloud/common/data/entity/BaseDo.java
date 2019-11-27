@@ -15,7 +15,7 @@ public abstract class BaseDo<PK extends Serializable> extends BaseTimeStamp impl
 
     private static final long serialVersionUID = -4088076756365147614L;
 
-    public static final String[] PROPERTIES = {"id", "createdAt", "updatedAt"};
+    public static final String[] PROPERTIES = {"id", "createdAt", "updatedAt", "enable"};
 
     static public class LongIdComparator implements Comparator<BaseDo<Long>> {
         @Override
@@ -34,6 +34,11 @@ public abstract class BaseDo<PK extends Serializable> extends BaseTimeStamp impl
     @Column(name = "ID")
     private PK id;
 
+    @Getter
+    @Setter
+    @Column(name = "ENABLE", nullable = false)
+    private Boolean enable;
+
     @JsonIgnore
     public boolean isNew() {
         return null == getId();
@@ -42,5 +47,12 @@ public abstract class BaseDo<PK extends Serializable> extends BaseTimeStamp impl
     @Override
     public String getLogging() {
         return String.valueOf(id);
+    }
+
+    @PreUpdate
+    protected void onEnable() {
+        if (enable == null) {
+            enable = Boolean.TRUE;
+        }
     }
 }
