@@ -1,0 +1,29 @@
+server:
+  port: 8884
+spring:
+  application:
+    name: yanwu-device
+  datasource:
+    url: jdbc:postgresql://39.97.229.71:5432/yanwu_device
+    username: postgres
+    password: xbf12138
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          auto: update
+        jdbc:
+          lob:
+            non_contextual_creation=: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8880/eureka/
+logging:
+  file: /log/yanwu-device.log
+  level:
+    com: info
+    org: info
+    cn: info

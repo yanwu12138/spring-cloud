@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * @author XuBaofeng.
@@ -19,7 +20,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "YANWU_USER", indexes = {@Index(name = "IX_YANWU_USER_ID", columnList = "ID")})
 @EqualsAndHashCode(callSuper = true)
-public class YanwuUser extends BaseMonopolyNamedBo {
+public class YanwuUser extends BaseMonopolyNamedBo implements Serializable {
+    private static final long serialVersionUID = -5667178676337792115L;
 
     @Column(name = "USER_NAME")
     private String userName;
