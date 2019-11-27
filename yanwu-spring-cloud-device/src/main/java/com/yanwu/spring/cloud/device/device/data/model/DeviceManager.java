@@ -19,12 +19,15 @@ import java.math.BigDecimal;
  */
 @Data
 @Entity
-@Table(name = "DEVICE_MANAGER", indexes = {@Index(name = "IX_DEVICE_MANAGER_ID", columnList = "ID")})
+@Table(name = "DEVICE_MANAGER", indexes = {
+        @Index(name = "PK_DEVICE_MANAGER_ID", columnList = "ID"),
+        @Index(name = "IDX_GROUP_ID", columnList = "GROUP_ID")
+})
 @EqualsAndHashCode(callSuper = true)
 public class DeviceManager extends BaseMonopolyNamedBo implements Serializable {
     private static final long serialVersionUID = 6137280284276233324L;
     /*** 设备编号 */
-    @Column(name = "DEVICE_NO", nullable = false, length = DEFAULT_STRING_LENGTH)
+    @Column(name = "DEVICE_NO", unique = true, nullable = false, length = DEFAULT_STRING_LENGTH)
     private String deviceNo;
     /*** 安装地址 */
     @Column(name = "INSTALL_ADDRESS", length = DEFAULT_LONG_STRING_LENGTH)

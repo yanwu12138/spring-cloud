@@ -31,7 +31,7 @@ public abstract class BaseDo<PK extends Serializable> extends BaseTimeStamp impl
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Getter
     @Setter
-    @Column(name = "ID")
+    @Column(name = "ID", unique = true, nullable = false)
     private PK id;
 
     @Getter
