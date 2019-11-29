@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * @author XuBaofeng.
@@ -18,49 +19,25 @@ import javax.persistence.Table;
  */
 @Data
 @Entity
-@Table(name = "ATTACHMENT", indexes = {@Index(name = "IX_ATTACHMENT_ID", columnList = "ID")})
+@Table(name = "ATTACHMENT", indexes = {
+        @Index(name = "PX_ATTACHMENT_ID", columnList = "ID")
+})
 @EqualsAndHashCode(callSuper = true)
-public class Attachment extends BaseMonopolyNamedBo {
-
-    /**
-     * 关联id
-     */
+public class Attachment extends BaseMonopolyNamedBo implements Serializable {
+    private static final long serialVersionUID = 5026290395793755932L;
+    /*** 关联id */
     @Column(name = "RELATION_ID")
     private Long relationId;
-
-    /**
-     * 附件地址
-     */
+    /*** 附件地址 */
     @Column(name = "ATTACHMENT_ADDRESS")
     private String attachmentAddress;
-
-    /**
-     * 附件名称
-     */
-    @Column(name = "ATTACHMENT_Name")
+    /*** 附件名称 */
+    @Column(name = "ATTACHMENT_NAME")
     private String attachmentName;
-
-    /**
-     * 附件类型
-     */
+    /*** 附件类型 */
     @Column(name = "ATTACHMENT_TYPE")
     private FileType attachmentType;
-
-    /**
-     * 附件大小
-     */
+    /*** 附件大小 */
     @Column(name = "ATTACHMENT_SIZE")
     private Long attachmentSize;
-
-    /**
-     * 创建人
-     */
-    @Column(name = "CREATE_BY_USER_ID")
-    private Long createByUserId;
-
-    /**
-     * 创建人
-     */
-    @Column(name = "CREATE_BY_USER_Name")
-    private String createByUserName;
 }

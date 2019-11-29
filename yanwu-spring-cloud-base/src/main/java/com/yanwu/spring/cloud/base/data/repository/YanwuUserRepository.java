@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @SuppressWarnings("all")
 public interface YanwuUserRepository extends BaseDoRepository<YanwuUser> {
 
-    @Query("select y from YanwuUser y where y.name=?1 or y.phone=?1 or y.email=?1")
+    @Query("select y from YanwuUser y where y.account=?1 or y.phone=?1 or y.email=?1")
     YanwuUser findByAccount(String account) throws Exception;
 
-    @Query("select y.userName from YanwuUser y where y.id=?1")
+    @Query("select y.account from YanwuUser y where y.id=?1")
     String findUserNameById(Long id) throws Exception;
 
-    @Query("select y from YanwuUser y where y.userName=?1")
+    @Query("select y from YanwuUser y where y.name=?1")
     YanwuUser findByUserName(String userName) throws Exception;
 
     @Transactional
