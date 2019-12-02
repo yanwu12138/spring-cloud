@@ -22,7 +22,7 @@ public enum DeviceTypeEnum {
     @Getter
     private byte[] end;
 
-    private DeviceTypeEnum(Integer code, String type, byte[] head, byte[] end) {
+    DeviceTypeEnum(Integer code, String type, byte[] head, byte[] end) {
         this.code = code;
         this.type = type;
         this.head = head;

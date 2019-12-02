@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.base.controller.webapp;
 
 import com.yanwu.spring.cloud.common.amqp.RabbitMQSender;
-import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
+import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.common.utils.BackVOUtil;
@@ -26,7 +26,7 @@ public class WebappSenderController {
     @Autowired
     private RabbitMQSender sender;
 
-    @YanwuLog("发送失败")
+    @LogAndParam("发送失败")
     @PostMapping(value = "sender")
     public BackVO<Void> sender(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
         // ===== test1

@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.webapp;
 
-import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
+import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
@@ -44,7 +44,7 @@ public class AttachmentController {
     @Autowired
     private AttachmentService attachmentService;
 
-    @YanwuLog
+    @LogAndParam
     @PostMapping(value = "findYanwuUser")
     public BackVO<YanwuUserVO> findYanwuUser(@RequestBody BaseParam<String> param) throws Exception {
         return yanwuUserConsumer.findByUserName(param);
@@ -58,7 +58,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @YanwuLog
+    @LogAndParam
     @PostMapping(value = "upPortrait")
     public BackVO<AttachmentVO> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);
@@ -73,7 +73,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @YanwuLog
+    @LogAndParam
     @PostMapping(value = "uploadFile")
     public BackVO<List<AttachmentVO>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
         List<Attachment> attachments = attachmentService.uploadFile(request, id);
@@ -87,7 +87,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @YanwuLog
+    @LogAndParam
     @GetMapping(value = "downloadFile/{id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("id") Long id) throws Exception {
         Attachment attachment = attachmentService.findById(id);
@@ -102,7 +102,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @YanwuLog
+    @LogAndParam
     @PostMapping(value = "uploadExcel")
     public BackVO<AttachmentVO> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
         Attachment attachment = attachmentService.uploadExcel(file, id);
@@ -115,7 +115,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @YanwuLog
+    @LogAndParam
     @GetMapping(value = "downloadExcel")
     public ResponseEntity<Resource> downloadExcel() throws Exception {
         List<List<String>> contents = attachmentService.downloadExcel();

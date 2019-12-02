@@ -6,11 +6,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
+ * @date 2019-12-02 13:56.
+ * <p>
+ * description:
+ */
 @Slf4j
 @Component
-public class ApplicationContextProvider implements ApplicationContextAware {
+public class ContextUtil implements ApplicationContextAware {
 
-    private ApplicationContextProvider() {
+    private ContextUtil() {
     }
 
     private static ApplicationContext applicationContext = null;
@@ -21,8 +27,16 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        log.info("ApplicationContextProvider:setApplicationContext: {}", applicationContext);
-        ApplicationContextProvider.applicationContext = applicationContext;
+        log.info("ContextUtil: setApplicationContext: {}", applicationContext);
+        ContextUtil.applicationContext = applicationContext;
     }
 
+    public static Object getBean(String beanName) {
+        return applicationContext.getBean(beanName);
+    }
+
+    public static <T> T getBean(Class<T> clazz) {
+        return applicationContext.getBean(clazz);
+    }
+    
 }

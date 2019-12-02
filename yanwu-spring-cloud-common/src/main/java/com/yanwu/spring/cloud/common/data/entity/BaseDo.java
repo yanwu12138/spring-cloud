@@ -49,10 +49,12 @@ public abstract class BaseDo<PK extends Serializable> extends BaseTimeStamp impl
         return String.valueOf(id);
     }
 
+    @Override
     @PreUpdate
-    protected void onEnable() {
+    protected void onCreate() {
+        super.onCreate();
         if (enable == null) {
-            enable = Boolean.TRUE;
+            enable = true;
         }
     }
 }

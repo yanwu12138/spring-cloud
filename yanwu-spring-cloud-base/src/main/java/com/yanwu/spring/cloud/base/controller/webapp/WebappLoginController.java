@@ -3,7 +3,7 @@ package com.yanwu.spring.cloud.base.controller.webapp;
 import com.yanwu.spring.cloud.base.cache.YanwuCacheManager;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
+import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
 import com.yanwu.spring.cloud.common.core.exception.ExceptionDefinition;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.LoginVO;
@@ -33,7 +33,7 @@ public class WebappLoginController {
     @Autowired
     private YanwuUserService yanwuUserService;
 
-    @YanwuLog
+    @LogAndParam
     @PostMapping(value = "login")
     public BackVO<YanwuUserVO> login(@RequestBody LoginVO vo) throws Exception {
         // ----- 校验入参
@@ -49,13 +49,13 @@ public class WebappLoginController {
         CheckParamUtil.checkStringEquals(password, user.getPassword(), new ExceptionDefinition.CodeAndKey(1, ""), "password error");
         YanwuUserVO userVO = voDoUtil.convertDoToVo(user, YanwuUserVO.class);
         // ----- 得到token, 保存缓存
-        String token = AccessTokenUtil.loginSuccess(userVO.getId(), userVO.getUserName());
+        String token = AccessTokenUtil.loginSuccess(userVO.getId(), userVO.getAccount());
         userVO.setToken(token);
         tokenCache.put(user.getId(), token);
         return BackVOUtil.operateAccess(userVO);
     }
 
-    @YanwuLog
+    @LogAndParam
     @PostMapping(value = "logout/{id}")
     public BackVO<Boolean> logout(@PathVariable("id") Long id) throws Exception {
         tokenCache.remove(id);

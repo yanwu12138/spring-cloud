@@ -17,6 +17,6 @@ public class ConfigAdapter implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TokenInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/webapp/base/login");
+                .excludePathPatterns("/**");
     }
 }

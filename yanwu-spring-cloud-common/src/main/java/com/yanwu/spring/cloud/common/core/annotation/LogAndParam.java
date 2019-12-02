@@ -11,8 +11,10 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface YanwuLog {
+public @interface LogAndParam {
 
     String value() default "";
+
+    boolean check() default false;
 
 }

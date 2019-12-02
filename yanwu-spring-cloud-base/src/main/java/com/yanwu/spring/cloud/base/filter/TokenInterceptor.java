@@ -3,7 +3,7 @@ package com.yanwu.spring.cloud.base.filter;
 import com.yanwu.spring.cloud.base.cache.YanwuCacheManager;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.common.AccessToken;
-import com.yanwu.spring.cloud.common.core.common.ApplicationContextProvider;
+import com.yanwu.spring.cloud.common.core.common.ContextUtil;
 import com.yanwu.spring.cloud.common.core.exception.AuthorizationException;
 import com.yanwu.spring.cloud.common.utils.AccessTokenUtil;
 import com.yanwu.spring.cloud.common.utils.IpMacUtil;
@@ -67,14 +67,14 @@ public class TokenInterceptor implements HandlerInterceptor {
         if (null != token) {
             try {
                 AccessToken tokenObj = AccessTokenUtil.verifyToken(token);
-                YanwuCacheManager tokenCache = (YanwuCacheManager) ApplicationContextProvider.getApplicationContext().getBean("tokenCache");
+                YanwuCacheManager tokenCache = (YanwuCacheManager) ContextUtil.getBean("tokenCache");
                 String tokenStr = tokenCache.get(tokenObj.getUserId());
                 if (StringUtils.isBlank(tokenStr) || !token.equals(tokenStr)) {
                     response.setHeader("Access-Control-Allow-Origin", "*");
                     throw new AuthorizationException(AuthorizationException.EXCEPTIONCODE_AUTH_TOKEN_ISNULL,
                             "request.token.notoken", "no token in request");
                 }
-                YanwuUserService userService = ApplicationContextProvider.getApplicationContext().getBean(YanwuUserService.class);
+                YanwuUserService userService = ContextUtil.getBean(YanwuUserService.class);
                 String userName = userService.findUserNameById(tokenObj.getUserId());
 
                 HiveContext context = new HiveContext();
