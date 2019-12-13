@@ -18,6 +18,7 @@
         <commons.collections.version>3.2.2</commons.collections.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
+        <commons.net.version>3.6</commons.net.version>
         <guava.version>21.0</guava.version>
         <hibernate.version>5.2.10.Final</hibernate.version>
         <hibernate-validator.version>5.4.0.Final</hibernate-validator.version>
@@ -199,6 +200,11 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
             <version>${aspectjrt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>${commons.net.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
