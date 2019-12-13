@@ -63,12 +63,12 @@ public class FtpUtil {
             ftpClient.login(username, password);
             // ----- 检测连接是否成功
             if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-                log.info(" ----- connect success ftp server host: {}, post: {}, user: {}", host, port, username);
+                log.info(" ----- init ftp server success host: {}, post: {}, user: {}", host, port, username);
                 return;
             }
-            log.error(" ----- connect failed ftp server host: {}, post: {}, user: {}", host, port, username);
+            log.error(" ----- init ftp server failed host: {}, post: {}, user: {}", host, port, username);
         } catch (Exception e) {
-            log.error(" ----- connect failed ftp server, ", e);
+            log.error(" ----- init ftp server failed, ", e);
         }
         instance.close();
     }
@@ -104,7 +104,7 @@ public class FtpUtil {
         }
         String filePath = getFilePath(projectId, targetPath);
         StringBuilder sb = new StringBuilder();
-        try (FileInputStream fis = new FileInputStream(file)) {
+        try (InputStream is = new FileInputStream(file)) {
             // ----- 切换到对应目录
             changeDirectory(filePath.split(SEPARATOR));
             ftpClient.setBufferSize(1024);
@@ -112,18 +112,17 @@ public class FtpUtil {
             // ----- 设置文件类型
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
             // ----- 上传
-            if (!ftpClient.storeFile(file.getName(), fis)) {
+            if (!ftpClient.storeFile(file.getName(), is)) {
                 log.error(" ----- upload file failed, projectId: {}, file: {}", projectId, file.getName());
                 return null;
-            } else {
-                sb.append(filePath).append(SEPARATOR).append(file.getName());
-                log.info(" ----- upload file success, file: {}", sb.toString());
             }
         } catch (Exception e) {
             log.error(" ----- upload file failed, ", e);
         } finally {
             instance.close();
         }
+        sb.append(filePath).append(SEPARATOR).append(file.getName());
+        log.info(" ----- upload file success, file: {}", sb.toString());
         return sb.toString();
     }
 
@@ -152,17 +151,19 @@ public class FtpUtil {
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(target)) {
             return false;
         }
-        boolean flag = false;
         try {
             changeDirectory(splitFtpFilePath(target));
-            flag = ftpClient.deleteFile(target.substring(target.lastIndexOf(SEPARATOR) + 1));
-            log.info(" ----- remove file {}, file: {}", flag ? "success" : "failed", target);
+            if (!ftpClient.deleteFile(target.substring(target.lastIndexOf(SEPARATOR) + 1))) {
+                log.error(" ----- remove file failed, file: {}", target);
+                return false;
+            }
         } catch (Exception e) {
             log.error(" ----- remove file failed, ", e);
         } finally {
             instance.close();
         }
-        return flag;
+        log.info(" ----- remove file success, file: {}", target);
+        return true;
     }
 
     /**
@@ -188,26 +189,28 @@ public class FtpUtil {
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return null;
         }
-        File file = null;
-        try {
+        // ----- 获取文件名和文件
+        String fileName = filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1);
+        File file = new File(targetPath + SEPARATOR + fileName);
+        try (OutputStream os = new FileOutputStream(file)) {
             // ----- 切换到对应目录
             changeDirectory(splitFtpFilePath(filePath));
-            // ----- 获取文件名和文件
-            String fileName = filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1);
+            ftpClient.setBufferSize(1024);
+            ftpClient.setControlEncoding("GBK");
             FTPFile ftpFile = ftpClient.mdtmFile(fileName);
             if (Objects.nonNull(ftpFile)) {
-                file = new File(targetPath + SEPARATOR + fileName);
                 // ----- 下载
-                try (OutputStream out = new FileOutputStream(file)) {
-                    ftpClient.retrieveFile(fileName, out);
+                if (!ftpClient.retrieveFile(fileName, os)) {
+                    log.error(" ----- download file failed, filePath: {}, targetPath: {}", filePath, targetPath);
+                    return null;
                 }
             }
-            log.info(" ----- download file {}, filePath: {}, targetPath: {}", file != null ? "success" : "failed", filePath, targetPath);
         } catch (Exception e) {
             log.error(" ----- download file failed, ", e);
         } finally {
             instance.close();
         }
+        log.info(" ----- download file success, filePath: {}, targetPath: {}", filePath, targetPath);
         return file;
     }
 
@@ -279,7 +282,7 @@ public class FtpUtil {
 
     public static void main(String[] args) {
         FtpUtil instance = FtpUtil.getInstance();
-        String filePath = "F:\\document\\协议文档\\02 HOOLINK协议\\文档\\HOOLINK传输协议.docx";
+        String filePath = "F:\\document\\公司日常.zip";
         String targetPath = "F:\\file";
         Long projectId = 269L;
         String file = instance.upload(new File(filePath), projectId, DEFAULT_PATH);
