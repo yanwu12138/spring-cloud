@@ -8,6 +8,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -23,20 +24,19 @@ public final class ClientSessionMap {
 
     public static void sessionSync() {
         try {
-            int size = 0;
             List keys = SESSION_MAP.getKeys();
-            if (CollectionUtils.isNotEmpty(keys)) {
-                size = keys.size();
-            }
-            log.info("当前检测到长连接数目: {}", size);
+            int size = CollectionUtils.isEmpty(keys) ? 0 : keys.size();
+            log.info("number of long connections currently detected: {}", size);
         } catch (Exception e) {
             log.error("[local cache] monitor has occur error, cause: " + e);
         }
     }
 
     public static void put(String ctxId, ChannelHandlerContext channel) {
-        Element ctxElement = new Element(ctxId, channel);
-        SESSION_MAP.put(ctxElement);
+        if (Objects.nonNull(SESSION_MAP.get(ctxId))) {
+            return;
+        }
+        SESSION_MAP.put(new Element(ctxId, channel));
     }
 
     public static ChannelHandlerContext get(String ctxId) {
