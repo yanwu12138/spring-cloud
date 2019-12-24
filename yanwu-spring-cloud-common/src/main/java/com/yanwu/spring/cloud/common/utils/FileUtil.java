@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.common.utils;
 import com.yanwu.spring.cloud.common.core.common.TimeStringFormat;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -12,6 +13,11 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -225,4 +231,66 @@ public class FileUtil {
                 .header(HttpHeaders.CONTENT_DISPOSITION, fileDisposition)
                 .body(new InputStreamResource(file.getInputStream()));
     }
+
+    /**
+     * 分片读取文件块
+     *
+     * @param path      文件路径
+     * @param position  角标
+     * @param blockSize 文件块大小
+     * @return 文件块内容
+     */
+    public static byte[] read(String path, long position, int blockSize) throws Exception {
+        // ----- 校验文件，当文件不存在时，抛出文件不存在异常
+        checkFilePath(path);
+        // ----- 读取文件
+        ByteBuffer block = ByteBuffer.allocate(blockSize);
+        try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(Paths.get(path), StandardOpenOption.READ)) {
+            Future<Integer> read = channel.read(block, position);
+            while (!read.isDone()) {
+                // ----- 睡1毫秒， 不抢占资源
+                Thread.sleep(1L);
+            }
+        }
+        return block.array();
+    }
+
+    /**
+     * 分片写文件
+     *
+     * @param path     文件目标位置
+     * @param block    文件块内容
+     * @param position 角标
+     * @throws Exception
+     */
+    public static void write(String path, byte[] block, long position) throws Exception {
+        // ----- 校验文件，当文件不存在时，创建新文件
+        checkFilePath(path);
+        // ----- 写文件
+        ByteBuffer buffer = ByteBuffer.wrap(block);
+        try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(Paths.get(path), StandardOpenOption.WRITE)) {
+            Future<Integer> write = channel.write(buffer, position);
+            while (!write.isDone()) {
+                // ----- 睡1毫秒， 不抢占资源
+                Thread.sleep(1L);
+            }
+        }
+    }
+
+    /**
+     * 校验文件
+     *
+     * @param path 文件路径
+     * @throws Exception
+     */
+    private static void checkFilePath(String path) throws Exception {
+        if (StringUtils.isBlank(path)) {
+            throw new RuntimeException("The file path cannot be empty.");
+        }
+        File file = new File(path);
+        if (!file.exists() || !file.isFile()) {
+            throw new RuntimeException("File does not exist.");
+        }
+    }
+
 }
