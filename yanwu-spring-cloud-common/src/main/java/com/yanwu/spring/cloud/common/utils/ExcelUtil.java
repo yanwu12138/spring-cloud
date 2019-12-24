@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.core.io.ByteArrayResource;
@@ -11,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -61,15 +60,9 @@ public class ExcelUtil {
      */
     public static List<String> assembleHead(String... value) {
         if (ArrayUtil.isEmpty(value)) {
-            return null;
+            throw new RuntimeException("Excel headers cannot be empty");
         }
-        List<String> list = new ArrayList<>();
-        for (String str : value) {
-            if (StringUtils.isNotBlank(str)) {
-                list.add(str);
-            }
-        }
-        return list;
+        return Arrays.asList(value);
     }
 
     /**
@@ -80,7 +73,7 @@ public class ExcelUtil {
      * @return
      * @throws Exception
      */
-    public static ResponseEntity<Resource> export(SXSSFWorkbook workbook, String fileName) throws Exception {
+    public static ResponseEntity<Resource> exportExcel(SXSSFWorkbook workbook, String fileName) throws Exception {
         ByteArrayResource resource;
         // ===== response输出excel
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {

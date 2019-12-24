@@ -122,7 +122,7 @@ public class AttachmentController {
         List<String> head = ExcelUtil.assembleHead("id", "created", "update", "name", "att_name", "att_size", "att_type");
         SXSSFWorkbook workbook = ExcelUtil.assembleExcel(head, contents);
         String fileName = FileUtil.getFileNameByType("downloadExcel", FileType.EXCEL);
-        return ExcelUtil.export(workbook, fileName);
+        return ExcelUtil.exportExcel(workbook, fileName);
     }
 
 }
