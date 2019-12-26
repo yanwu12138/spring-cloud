@@ -2,9 +2,11 @@ package com.yanwu.spring.cloud.common.utils;
 
 import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -36,15 +38,11 @@ public class Crc16Util {
      * @return
      */
     public static String convertHighLow(String str) {
-        if (StringUtils.isBlank(str)) {
-            throw new RuntimeException("The string cannot be empty!");
-        }
+        Assert.isTrue(StringUtils.isNotBlank(str), "The string cannot be empty!");
         str = Crc16Util.processingString(str);
         int strLen = str.length();
-        if ((strLen & ONE) == ONE) {
-            // ----- 报文字符串必须是以一个字节为单位（两个字符为一个字节），所以当去除所有空格后的字符串为单数时说明字符串错误
-            throw new RuntimeException("Incorrect String format!");
-        }
+        // ----- 报文字符串必须是以一个字节为单位（两个字符为一个字节），所以当去除所有空格后的字符串为单数时说明字符串错误
+        Assert.isTrue(((strLen & ONE) != ONE), "Incorrect String format!");
         StringBuffer buffer = new StringBuffer();
         for (int i = strLen; i > 0; i -= TWO) {
             buffer.append(str.substring(i - TWO, i));
@@ -73,9 +71,7 @@ public class Crc16Util {
      * @return CRC值（10进制）
      */
     public static <T> int getCrc16ByJson(T data) throws Exception {
-        if (data == null) {
-            throw new RuntimeException("The data cannot be empty!");
-        }
+        Assert.isTrue(Objects.nonNull(data), "The data cannot be empty!");
         return getCrc16ByJson(JsonUtil.toJsonString(data));
     }
 
@@ -100,14 +96,10 @@ public class Crc16Util {
      * @return CRC值（10进制）
      */
     public static int getCrc16ByJson(String data) throws Exception {
-        if (StringUtils.isBlank(data)) {
-            throw new RuntimeException("The string cannot be empty!");
-        }
+        Assert.isTrue(StringUtils.isNotBlank(data), "The string cannot be empty!");
         data = Crc16Util.processingString(data);
-        if (!CharMatcher.ascii().matchesAllOf(data)) {
-            // ===== 所有的字符必须属于ASCII码
-            throw new RuntimeException("All characters must belong to ASCII code!");
-        }
+        // ===== 所有的字符必须属于ASCII码
+        Assert.isTrue(CharMatcher.ascii().matchesAllOf(data), "All characters must belong to ASCII code!");
         return getCrc16ByHex(data.getBytes(ASCII));
     }
 
@@ -130,10 +122,8 @@ public class Crc16Util {
      * @return CRC值（10进制）
      */
     public static int getCrc16ByHex(String data) {
-        if (StringUtils.isBlank(data)) {
-            // ----- 校验：报文字符串不能为空，否则抛异常
-            throw new RuntimeException("The string cannot be empty!");
-        }
+        // ----- 校验：报文字符串不能为空，否则抛异常
+        Assert.isTrue(StringUtils.isNotBlank(data), "The string cannot be empty!");
         return getCrc16ByHex(hexStrToByteArr(data));
     }
 
@@ -156,10 +146,8 @@ public class Crc16Util {
      * @return CRC值（10进制）
      */
     public static int getCrc16ByHex(byte[] data) {
-        if (data.length == 0) {
-            // ----- 校验：报文数组不能为空，否则抛异常
-            throw new RuntimeException("The array cannot be empty!");
-        }
+        // ----- 校验：报文数组不能为空，否则抛异常
+        Assert.isTrue((data.length > 0), "The array cannot be empty!");
         // ----- 预置一个CRC寄存器，初始值为0xFFFF
         int crc = 0xFFFF;
         byte byteLen;
@@ -196,10 +184,8 @@ public class Crc16Util {
     public static byte[] hexStrToByteArr(String str) {
         str = Crc16Util.processingString(str);
         int strLen = str.length();
-        if ((strLen & ONE) == ONE) {
-            // ----- 报文字符串必须是以一个字节为单位（两个字符为一个字节），所以当去除所有空格后的报文长度为单数时说明报文错误
-            throw new RuntimeException("Incorrect message format!");
-        }
+        // ----- 报文字符串必须是以一个字节为单位（两个字符为一个字节），所以当去除所有空格后的报文长度为单数时说明报文错误
+        Assert.isTrue(((strLen & ONE) != ONE), "Incorrect message format!");
         byte[] result = new byte[strLen / TWO];
         // ----- 两位一个字节
         for (int i = 0; i < strLen; i += TWO) {

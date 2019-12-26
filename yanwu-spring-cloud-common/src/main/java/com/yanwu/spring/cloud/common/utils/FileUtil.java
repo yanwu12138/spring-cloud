@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -42,7 +43,7 @@ public class FileUtil {
      */
     public static void fileToZip(String sourceFilePath, String zipFilePath, String fileName) throws Exception {
         File sourceFile = new File(sourceFilePath);
-        assert !sourceFile.exists() : sourceFilePath + " >>>> is not exists";
+        Assert.isTrue((!sourceFile.exists()), sourceFilePath + " >>>> is not exists");
         File file = new File(zipFilePath);
         if (!file.exists()) {
             file.mkdirs();
@@ -284,13 +285,9 @@ public class FileUtil {
      * @throws Exception
      */
     private static void checkFilePath(String path) throws Exception {
-        if (StringUtils.isBlank(path)) {
-            throw new RuntimeException("The file path cannot be empty.");
-        }
+        Assert.isTrue(StringUtils.isNotBlank(path), "The file path cannot be empty.");
         File file = new File(path);
-        if (!file.exists() || !file.isFile()) {
-            throw new RuntimeException("File does not exist.");
-        }
+        Assert.isTrue((file.exists() && file.isFile()), "File does not exist.");
     }
 
 }

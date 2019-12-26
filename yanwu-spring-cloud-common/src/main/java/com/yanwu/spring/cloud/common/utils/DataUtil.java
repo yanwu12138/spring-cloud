@@ -5,14 +5,12 @@ import org.hibernate.Hibernate;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.springframework.util.Assert;
 
 import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class DataUtil {
 
@@ -33,13 +31,9 @@ public class DataUtil {
     }
 
     public static <T> T initializeAndUnproxy(T entity) throws IllegalArgumentException, IllegalAccessException {
-        if (entity == null) {
-            throw new NullPointerException("Entity passed for initialization or unproxy is null");
-        }
-
+        Assert.isTrue(Objects.nonNull(entity), "Entity passed for initialization or unproxy is null");
         Hibernate.initialize(entity);
         T result = unboxProxy(entity);
-
         initializeRecursively(result);
         return result;
     }
@@ -50,18 +44,15 @@ public class DataUtil {
         if (!BaseObject.class.isAssignableFrom(clazz)) {
             return;
         }
-
         for (Field field : ReflectionUtil.getAllFields(clazz)) {
             Class<?> fieldClazz = field.getType();
             // only BaseObject field or Collection field might need unproxy
             if (!(BaseObject.class.isAssignableFrom(fieldClazz) || Collection.class.isAssignableFrom(fieldClazz))) {
                 continue;
             }
-
             field.setAccessible(true);
             Object value = field.get(entity);
             Hibernate.initialize(value);
-
             if (value instanceof HibernateProxy) {
                 value = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
                 field.set(entity, value);

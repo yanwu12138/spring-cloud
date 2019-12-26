@@ -1,0 +1,13 @@
+server:
+  port: 8883
+spring:
+  application:
+    name: udp-server
+logging:
+  file: /log/yanwu-netty.log
+  level:
+    com: info
+    org: info
+    cn: info
+netty:
+  port: 8888

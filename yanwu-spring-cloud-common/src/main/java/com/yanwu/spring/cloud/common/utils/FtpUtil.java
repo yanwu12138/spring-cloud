@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.springframework.util.Assert;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -51,9 +52,7 @@ public class FtpUtil {
      * 初始化FTP
      */
     private void initClient(String host, Integer port, String username, String password) {
-        if (StringUtils.isBlank(host)) {
-            throw new RuntimeException("init ftp client failed, host is null");
-        }
+        Assert.isTrue(StringUtils.isNotBlank(host), "init ftp client failed, host is null");
         // ----- 当端口为空时使用默认端口
         port = port == null ? FTP_PORT : port;
         try {
@@ -255,9 +254,7 @@ public class FtpUtil {
      * @return 文件所在目录
      */
     private String[] splitFtpFilePath(String filePath) {
-        if (StringUtils.isBlank(filePath)) {
-            throw new NullPointerException("file path is null");
-        }
+        Assert.isTrue(StringUtils.isNotBlank(filePath), "file path is null");
         // ----- 去掉尾[文件名]
         filePath = filePath.substring(0, filePath.lastIndexOf(SEPARATOR));
         return filePath.split(SEPARATOR);

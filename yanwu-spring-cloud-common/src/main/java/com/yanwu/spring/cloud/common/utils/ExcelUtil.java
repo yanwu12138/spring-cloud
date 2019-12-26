@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
@@ -59,9 +60,7 @@ public class ExcelUtil {
      * @return
      */
     public static List<String> assembleHead(String... value) {
-        if (ArrayUtil.isEmpty(value)) {
-            throw new RuntimeException("Excel headers cannot be empty");
-        }
+        Assert.isTrue(ArrayUtil.isNotEmpty(value), "Excel headers cannot be empty");
         return Arrays.asList(value);
     }
 

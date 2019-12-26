@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -81,12 +82,12 @@ public class EmailUtil {
                                  String subject, String content, String... attachments) throws Exception {
         log.info("发送人: [{}], 接收人: [{}], 抄送人: {}, 主题: [{}], 内容: [{}], 附件: {}", sendAddress, toRecipient, ccRecipient, subject, content, attachments);
         // ===== 参数校验
-        checkParam(sendAddress, "sender address cannot be empty!");
-        checkParam(account, "sender account cannot be empty!");
-        checkParam(password, "sender password cannot be empty!");
-        checkParam(toRecipient, "recipient address cannot be empty!");
-        checkParam(subject, "mail subject cannot be empty!");
-        checkParam(content, "mail content cannot be empty!");
+        Assert.isTrue(StringUtils.isNotBlank(sendAddress), "sender address cannot be empty!");
+        Assert.isTrue(StringUtils.isNotBlank(account), "sender account cannot be empty!");
+        Assert.isTrue(StringUtils.isNotBlank(password), "sender password cannot be empty!");
+        Assert.isTrue(StringUtils.isNotBlank(toRecipient), "recipient address cannot be empty!");
+        Assert.isTrue(StringUtils.isNotBlank(subject), "mail subject cannot be empty!");
+        Assert.isTrue(StringUtils.isNotBlank(content), "mail content cannot be empty!");
         // ===== 创建定义整个应用程序所需的环境信息的 Session 对象
         Session session = Session.getInstance(PROPERTIES);
         // ===== 创建邮件的实例对象
@@ -128,7 +129,7 @@ public class EmailUtil {
             Address[] addresses = new InternetAddress[ccRecipient.length];
             for (int i = 0; i < ccRecipient.length; i++) {
                 String cc = ccRecipient[i];
-                checkParam(cc, "Cc address cannot be empty!");
+                Assert.isTrue(StringUtils.isNotBlank(cc), "Cc address cannot be empty!");
                 addresses[i] = new InternetAddress(cc);
             }
             msg.setRecipients(MimeMessage.RecipientType.CC, addresses);
@@ -175,7 +176,7 @@ public class EmailUtil {
      * @param str 参数
      * @param msg 异常信息
      */
-    private static void checkParam(String str, String msg) {
+    private static void aaa(String str, String msg) {
         if (StringUtils.isBlank(str)) {
             throw new RuntimeException(msg);
         }
