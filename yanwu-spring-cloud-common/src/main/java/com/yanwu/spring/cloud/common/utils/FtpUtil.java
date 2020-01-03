@@ -18,6 +18,7 @@ import java.util.Objects;
  * description: 简单操作FTP工具类
  */
 @Slf4j
+@SuppressWarnings("all")
 public class FtpUtil {
 
     private static final String DEFAULT_PATH = "test";
@@ -50,6 +51,11 @@ public class FtpUtil {
 
     /**
      * 初始化FTP
+     *
+     * @param host     ftp服务器地址
+     * @param port     ftp端口
+     * @param username ftp用户
+     * @param password ftp密码
      */
     private void initClient(String host, Integer port, String username, String password) {
         Assert.isTrue(StringUtils.isNotBlank(host), "init ftp client failed, host is null");
@@ -75,12 +81,13 @@ public class FtpUtil {
     /**
      * ftp上传文件
      *
-     * @param file      文件
-     * @param projectId 项目ID
-     * @return true||false
+     * @param file       文件
+     * @param userId     用户ID
+     * @param targetPath 文件存放目录
+     * @return 文件存放在ftp服务器地址
      */
-    public String upload(File file, Long projectId, String filePath) {
-        return instance.upload(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, file, projectId, filePath);
+    public String upload(File file, Long userId, String targetPath) {
+        return instance.upload(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, file, userId, targetPath);
     }
 
     /**
@@ -91,17 +98,17 @@ public class FtpUtil {
      * @param username   ftp用户
      * @param password   ftp密码
      * @param file       文件
-     * @param projectId  项目ID
+     * @param userId     用户ID
      * @param targetPath 文件存放目录
-     * @return true||false
+     * @return 文件存放在ftp服务器地址
      */
     public String upload(String host, Integer port, String username, String password,
-                         File file, Long projectId, String targetPath) {
+                         File file, Long userId, String targetPath) {
         instance.initClient(host, port, username, password);
         if (Objects.isNull(ftpClient) || Objects.isNull(file)) {
             return null;
         }
-        String filePath = getFilePath(projectId, targetPath);
+        String filePath = getFilePath(userId, targetPath);
         StringBuilder sb = new StringBuilder();
         try (InputStream is = new FileInputStream(file)) {
             // ----- 切换到对应目录
@@ -112,7 +119,7 @@ public class FtpUtil {
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
             // ----- 上传
             if (!ftpClient.storeFile(file.getName(), is)) {
-                log.error(" ----- upload file failed, projectId: {}, file: {}", projectId, file.getName());
+                log.error(" ----- upload file failed, projectId: {}, file: {}", userId, file.getName());
                 return null;
             }
         } catch (Exception e) {
@@ -128,11 +135,11 @@ public class FtpUtil {
     /**
      * 删除ftp上的文件
      *
-     * @param target 资源文件
+     * @param filePath 资源文件
      * @return true || false
      */
-    public boolean remove(String target) {
-        return instance.remove(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, target);
+    public boolean remove(String filePath) {
+        return instance.remove(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
     }
 
     /**
@@ -142,18 +149,18 @@ public class FtpUtil {
      * @param port     ftp端口
      * @param username ftp用户
      * @param password ftp密码
-     * @param target   资源文件
+     * @param filePath 资源文件
      * @return true || false
      */
-    public boolean remove(String host, Integer port, String username, String password, String target) {
+    public boolean remove(String host, Integer port, String username, String password, String filePath) {
         instance.initClient(host, port, username, password);
-        if (Objects.isNull(ftpClient) || StringUtils.isBlank(target)) {
+        if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return false;
         }
         try {
-            changeDirectory(splitFtpFilePath(target));
-            if (!ftpClient.deleteFile(target.substring(target.lastIndexOf(SEPARATOR) + 1))) {
-                log.error(" ----- remove file failed, file: {}", target);
+            changeDirectory(splitFtpFilePath(filePath));
+            if (!ftpClient.deleteFile(filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1))) {
+                log.error(" ----- remove file failed, file: {}", filePath);
                 return false;
             }
         } catch (Exception e) {
@@ -161,7 +168,7 @@ public class FtpUtil {
         } finally {
             instance.close();
         }
-        log.info(" ----- remove file success, file: {}", target);
+        log.info(" ----- remove file success, file: {}", filePath);
         return true;
     }
 
@@ -216,12 +223,11 @@ public class FtpUtil {
     /**
      * 判断文件是否存在
      *
-     * @param filePath 文件目录
-     * @param fileName 文件名
-     * @return true|false
+     * @param filePath 文件地址
+     * @return true || false
      */
-    public boolean exists(String filePath, String fileName) {
-        return exists(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath, fileName);
+    public boolean exists(String filePath) {
+        return exists(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
     }
 
     /**
@@ -231,34 +237,33 @@ public class FtpUtil {
      * @param port     ftp端口
      * @param username ftp用户
      * @param password ftp密码
-     * @param filePath 文件目录
-     * @param fileName 文件名
-     * @return true|false
+     * @param filePath 文件地址
+     * @return true || false
      */
-    public boolean exists(String host, Integer port, String username, String password, String filePath, String fileName) {
+    public boolean exists(String host, Integer port, String username, String password, String filePath) {
         instance.initClient(host, port, username, password);
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return false;
         }
         try {
+            String fileName = filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1);
             changeDirectory(splitFtpFilePath(filePath));
             FTPFile ftpFile = ftpClient.mdtmFile(fileName);
+            log.info(" ----- file exists success, filePath: {}, exists: {}", filePath, Objects.nonNull(ftpFile));
             return Objects.nonNull(ftpFile);
         } catch (Exception e) {
             log.error(" ----- file exists failed, ", e);
         } finally {
             instance.close();
         }
-        log.info(" ----- file exists success, filePath: {}, fileName: {}", filePath, fileName);
+        log.info(" ----- file exists failed, filePath: {}", filePath);
         return false;
     }
 
     /**
      * 释放资源
-     *
-     * @author tangw 2010-12-26
      */
-    public void close() {
+    private void close() {
         if (Objects.isNull(ftpClient)) {
             return;
         }
@@ -277,7 +282,7 @@ public class FtpUtil {
      *
      * @param filePath 文件目录
      */
-    private void changeDirectory(String[] filePath) throws Exception {
+    private void changeDirectory(String... filePath) throws Exception {
         for (String path : filePath) {
             if (StringUtils.isBlank(path) || ftpClient.changeWorkingDirectory(path)) {
                 continue;
@@ -301,17 +306,17 @@ public class FtpUtil {
     }
 
     /**
-     * 根据项目ID获取目录
+     * 根据用户ID获取目录
      *
-     * @param projectId 项目ID
+     * @param userId 用户ID
      * @return 目录
      */
-    private static String getFilePath(Long projectId, String targetPath) {
+    private static String getFilePath(Long userId, String targetPath) {
         StringBuilder sb = new StringBuilder();
         targetPath = targetPath == null ? DEFAULT_PATH : targetPath;
         LocalDate now = LocalDate.now();
         return sb.append(targetPath).append(SEPARATOR)
-                .append(projectId).append(SEPARATOR)
+                .append(userId).append(SEPARATOR)
                 .append(now.getYear()).append(SEPARATOR)
                 .append(now.getMonthValue()).append(SEPARATOR)
                 .append(now.getDayOfMonth()).toString();
@@ -319,12 +324,13 @@ public class FtpUtil {
 
     public static void main(String[] args) {
         FtpUtil instance = FtpUtil.getInstance();
-        String filePath = "F:\\document\\公司日常.zip";
+        String localPath = "F:\\UnxUtils.zip";
         String targetPath = "F:\\file";
-        Long projectId = 269L;
-        String file = instance.upload(new File(filePath), projectId, DEFAULT_PATH);
-        instance.download(file, targetPath);
-        instance.remove(file);
+        Long userId = 269L;
+        String filePath = instance.upload(new File(localPath), userId, DEFAULT_PATH);
+        instance.exists(filePath);
+        instance.download(filePath, targetPath);
+        instance.remove(filePath);
     }
 
 }
