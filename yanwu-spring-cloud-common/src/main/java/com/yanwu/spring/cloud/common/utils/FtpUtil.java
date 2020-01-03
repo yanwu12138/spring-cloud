@@ -113,13 +113,14 @@ public class FtpUtil {
         try (InputStream is = new FileInputStream(file)) {
             // ----- 切换到对应目录
             changeDirectory(filePath.split(SEPARATOR));
+            // ----- 设置ftp对应的配置
             ftpClient.setBufferSize(1024);
+            ftpClient.enterLocalPassiveMode();
             ftpClient.setControlEncoding("GBK");
-            // ----- 设置文件类型
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
             // ----- 上传
             if (!ftpClient.storeFile(file.getName(), is)) {
-                log.error(" ----- upload file failed, projectId: {}, file: {}", userId, file.getName());
+                log.error(" ----- upload file failed, userId: {}, file: {}", userId, file.getName());
                 return null;
             }
         } catch (Exception e) {
