@@ -214,6 +214,46 @@ public class FtpUtil {
     }
 
     /**
+     * 判断文件是否存在
+     *
+     * @param filePath 文件目录
+     * @param fileName 文件名
+     * @return true|false
+     */
+    public boolean exists(String filePath, String fileName) {
+        return exists(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath, fileName);
+    }
+
+    /**
+     * 判断文件是否存在
+     *
+     * @param host     ftp服务器地址
+     * @param port     ftp端口
+     * @param username ftp用户
+     * @param password ftp密码
+     * @param filePath 文件目录
+     * @param fileName 文件名
+     * @return true|false
+     */
+    public boolean exists(String host, Integer port, String username, String password, String filePath, String fileName) {
+        instance.initClient(host, port, username, password);
+        if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
+            return false;
+        }
+        try {
+            changeDirectory(splitFtpFilePath(filePath));
+            FTPFile ftpFile = ftpClient.mdtmFile(fileName);
+            return Objects.nonNull(ftpFile);
+        } catch (Exception e) {
+            log.error(" ----- file exists failed, ", e);
+        } finally {
+            instance.close();
+        }
+        log.info(" ----- file exists success, filePath: {}, fileName: {}", filePath, fileName);
+        return false;
+    }
+
+    /**
      * 释放资源
      *
      * @author tangw 2010-12-26
