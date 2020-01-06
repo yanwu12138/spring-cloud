@@ -29,26 +29,6 @@ public class FtpUtil {
     private static final String USERNAME = "hoolink";
     private static final String PASSWORD = "hoolink123";
 
-    private static FTPClient ftpClient;
-    private static FtpUtil instance;
-
-    private FtpUtil() {
-    }
-
-    static {
-        instance = new FtpUtil();
-        ftpClient = new FTPClient();
-    }
-
-    /**
-     * 获取工具类示例
-     *
-     * @return FtpUtil
-     */
-    public static FtpUtil getInstance() {
-        return instance;
-    }
-
     /**
      * 初始化FTP
      *
@@ -57,25 +37,27 @@ public class FtpUtil {
      * @param username ftp用户
      * @param password ftp密码
      */
-    private void initClient(String host, Integer port, String username, String password) {
+    private static FTPClient initClient(String host, Integer port, String username, String password) {
         Assert.isTrue(StringUtils.isNotBlank(host), "init ftp client failed, host is null.");
         // ----- 当端口为空时使用默认端口
         port = port == null ? FTP_PORT : port;
+        FTPClient ftpClient = new FTPClient();
         try {
+            ftpClient.setControlEncoding("UTF-8");
             // ----- 连接
             ftpClient.connect(host, port);
             ftpClient.login(username, password);
-            ftpClient.setControlEncoding("UTF-8");
             // ----- 检测连接是否成功
             if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
                 log.info(" ----- init ftp server success host: {}, post: {}, user: {}", host, port, username);
-                return;
+                return ftpClient;
             }
             log.error(" ----- init ftp server failed host: {}, post: {}, user: {}", host, port, username);
-            instance.close();
         } catch (Exception e) {
             log.error(" ----- init ftp server failed host: {}, post: {}, user: {}", host, port, username, e);
         }
+        close(ftpClient);
+        return null;
     }
 
     /**
@@ -86,7 +68,7 @@ public class FtpUtil {
      * @param targetPath 文件存放目录
      * @return 文件存放在ftp服务器地址
      */
-    public String upload(File file, Long userId, String targetPath) {
+    public static String upload(File file, Long userId, String targetPath) {
         return upload(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, file, userId, targetPath);
     }
 
@@ -102,32 +84,32 @@ public class FtpUtil {
      * @param targetPath 文件存放目录
      * @return 文件存放在ftp服务器地址
      */
-    public String upload(String host, Integer port, String username, String password, File file, Long userId, String targetPath) {
-        instance.initClient(host, port, username, password);
+    public static String upload(String host, Integer port, String username, String password, File file, Long userId, String targetPath) {
+        FTPClient ftpClient = initClient(host, port, username, password);
         if (Objects.isNull(ftpClient) || Objects.isNull(file)) {
             return null;
         }
+        String fileName = file.getName();
+        String filePath = getFilePath(userId, targetPath);
         try (InputStream is = new FileInputStream(file)) {
-            String filePath = getFilePath(userId, targetPath);
             StringBuilder sb = new StringBuilder();
             // ----- 切换到对应目录
-            changeDirectory(filePath.split(SEPARATOR));
+            changeDirectory(ftpClient, filePath.split(SEPARATOR));
             // ----- 设置ftp对应的配置
             ftpClient.setBufferSize(1024);
             ftpClient.enterLocalPassiveMode();
-            ftpClient.setControlEncoding("UTF-8");
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
             // ----- 上传
-            if (ftpClient.storeFile(file.getName(), is)) {
-                sb.append(filePath).append(SEPARATOR).append(file.getName());
+            if (ftpClient.storeFile(fileName, is)) {
+                sb.append(filePath).append(SEPARATOR).append(fileName);
                 log.info(" ----- upload file success, filePath: {}", sb.toString());
                 return sb.toString();
             }
-            log.error(" ----- upload file failed, userId: {}, file: {}", userId, file.getName());
+            log.error(" ----- upload file failed, userId: {}, file: {}", userId, fileName);
         } catch (Exception e) {
-            log.error(" ----- upload file failed, userId: {}, file: {}", userId, file.getName(), e);
+            log.error(" ----- upload file failed, userId: {}, file: {}", userId, fileName, e);
         } finally {
-            instance.close();
+            close(ftpClient);
         }
         return null;
     }
@@ -138,7 +120,7 @@ public class FtpUtil {
      * @param filePath 资源文件
      * @return true || false
      */
-    public boolean remove(String filePath) {
+    public static boolean remove(String filePath) {
         return remove(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
     }
 
@@ -152,13 +134,13 @@ public class FtpUtil {
      * @param filePath 资源文件
      * @return true || false
      */
-    public boolean remove(String host, Integer port, String username, String password, String filePath) {
-        instance.initClient(host, port, username, password);
+    public static boolean remove(String host, Integer port, String username, String password, String filePath) {
+        FTPClient ftpClient = initClient(host, port, username, password);
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return false;
         }
         try {
-            changeDirectory(splitFtpFilePath(filePath));
+            changeDirectory(ftpClient, splitFtpFilePath(filePath));
             if (ftpClient.deleteFile(filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1))) {
                 log.info(" ----- remove file success, file: {}", filePath);
                 return true;
@@ -167,7 +149,7 @@ public class FtpUtil {
         } catch (Exception e) {
             log.error(" ----- remove file failed, file: {}", filePath, e);
         } finally {
-            instance.close();
+            close(ftpClient);
         }
         return false;
     }
@@ -177,7 +159,7 @@ public class FtpUtil {
      * @param targetPath 目标路径
      * @return 文件
      */
-    public File download(String filePath, String targetPath) {
+    public static File download(String filePath, String targetPath) {
         return download(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath, targetPath);
     }
 
@@ -190,8 +172,8 @@ public class FtpUtil {
      * @param targetPath 目标路径
      * @return 文件
      */
-    public File download(String host, Integer port, String username, String password, String filePath, String targetPath) {
-        instance.initClient(host, port, username, password);
+    public static File download(String host, Integer port, String username, String password, String filePath, String targetPath) {
+        FTPClient ftpClient = initClient(host, port, username, password);
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return null;
         }
@@ -200,9 +182,8 @@ public class FtpUtil {
         File file = new File(targetPath + SEPARATOR + fileName);
         try (OutputStream os = new FileOutputStream(file)) {
             // ----- 切换到对应目录
-            changeDirectory(splitFtpFilePath(filePath));
+            changeDirectory(ftpClient, splitFtpFilePath(filePath));
             ftpClient.setBufferSize(1024);
-            ftpClient.setControlEncoding("UTF-8");
             FTPFile ftpFile = ftpClient.mdtmFile(fileName);
             // ----- 判断文件是否存在
             Assert.notNull(ftpFile, "file not exists");
@@ -215,7 +196,7 @@ public class FtpUtil {
         } catch (Exception e) {
             log.error(" ----- download file failed, filePath: {}, targetPath: {}", filePath, targetPath, e);
         } finally {
-            instance.close();
+            close(ftpClient);
         }
         return null;
     }
@@ -226,7 +207,7 @@ public class FtpUtil {
      * @param filePath 文件地址
      * @return true || false
      */
-    public boolean exists(String filePath) {
+    public static boolean exists(String filePath) {
         return exists(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
     }
 
@@ -240,21 +221,21 @@ public class FtpUtil {
      * @param filePath 文件地址
      * @return true || false
      */
-    public boolean exists(String host, Integer port, String username, String password, String filePath) {
-        instance.initClient(host, port, username, password);
+    public static boolean exists(String host, Integer port, String username, String password, String filePath) {
+        FTPClient ftpClient = initClient(host, port, username, password);
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return false;
         }
         try {
             String fileName = filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1);
-            changeDirectory(splitFtpFilePath(filePath));
+            changeDirectory(ftpClient, splitFtpFilePath(filePath));
             FTPFile ftpFile = ftpClient.mdtmFile(fileName);
             log.info(" ----- file exists success, filePath: {}, exists: {}", filePath, Objects.nonNull(ftpFile));
             return Objects.nonNull(ftpFile);
         } catch (Exception e) {
             log.error(" ----- file exists failed, filePath: {}", filePath, e);
         } finally {
-            instance.close();
+            close(ftpClient);
         }
         return false;
     }
@@ -262,7 +243,7 @@ public class FtpUtil {
     /**
      * 释放资源
      */
-    private void close() {
+    private static void close(FTPClient ftpClient) {
         if (Objects.isNull(ftpClient)) {
             return;
         }
@@ -281,7 +262,7 @@ public class FtpUtil {
      *
      * @param filePath 文件目录
      */
-    private void changeDirectory(String... filePath) throws Exception {
+    private static void changeDirectory(FTPClient ftpClient, String... filePath) throws Exception {
         for (String path : filePath) {
             if (StringUtils.isBlank(path) || ftpClient.changeWorkingDirectory(path)) {
                 continue;
@@ -297,7 +278,7 @@ public class FtpUtil {
      * @param filePath 文件地址
      * @return 文件所在目录
      */
-    private String[] splitFtpFilePath(String filePath) {
+    private static String[] splitFtpFilePath(String filePath) {
         Assert.isTrue(StringUtils.isNotBlank(filePath), "file path is null");
         // ----- 去掉尾[文件名]
         filePath = filePath.substring(0, filePath.lastIndexOf(SEPARATOR));
@@ -321,15 +302,14 @@ public class FtpUtil {
                 .append(now.getDayOfMonth()).toString();
     }
 
-    public static void main(String[] args) {
-        FtpUtil instance = FtpUtil.getInstance();
+    public static void main(String[] args) throws Exception {
         String localPath = "F:\\UnxUtils.zip";
         String targetPath = "F:\\file";
         Long userId = 269L;
-        String filePath = instance.upload(new File(localPath), userId, DEFAULT_PATH);
-        instance.exists(filePath);
-        instance.download(filePath, targetPath);
-        instance.remove(filePath);
+        String filePath = FtpUtil.upload(new File(localPath), userId, DEFAULT_PATH);
+        FtpUtil.exists(filePath);
+        FtpUtil.download(filePath, targetPath);
+        FtpUtil.remove(filePath);
     }
 
 }
