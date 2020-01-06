@@ -86,7 +86,7 @@ public class FtpUtil {
      */
     public static String upload(String host, Integer port, String username, String password, File file, Long userId, String targetPath) {
         FTPClient ftpClient = initClient(host, port, username, password);
-        if (Objects.isNull(ftpClient) || Objects.isNull(file)) {
+        if (Objects.isNull(ftpClient) || Objects.isNull(file) || !file.isFile()) {
             return null;
         }
         String fileName = file.getName();
