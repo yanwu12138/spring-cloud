@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -111,6 +112,83 @@ public class FtpUtil {
         } finally {
             close(ftpClient);
         }
+        return null;
+    }
+
+    /**
+     * 断点续传FTP
+     *
+     * @param inputStream 文件
+     * @param projectId   项目ID
+     * @param targetPath  目标地址
+     * @param fileName    文件名称
+     * @param partNum     块数
+     * @param ftpUrl      路径
+     * @return 文件路径
+     */
+    public static String uploadPart(InputStream inputStream, Long projectId, String targetPath, String fileName, Integer partNum, String ftpUrl) {
+        return uploadPart(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, inputStream, projectId, targetPath, fileName, partNum, ftpUrl);
+    }
+
+    /**
+     * 断点续传FTP
+     *
+     * @param host       服务
+     * @param port       端口
+     * @param username   用户名
+     * @param password   密码
+     * @param is         文件流
+     * @param projectId  项目ID
+     * @param targetPath 目标地址
+     * @param fileName   文件名
+     * @param partNum    块数
+     * @param ftpUrl     地址
+     * @return 文件路径
+     */
+    public static String uploadPart(String host, Integer port, String username, String password,
+                                    InputStream is, Long projectId, String targetPath, String fileName, Integer partNum, String ftpUrl) {
+        FTPClient ftpClient = initClient(host, port, username, password);
+        if (Objects.isNull(ftpClient) || Objects.isNull(is)) {
+            return null;
+        }
+        String filePath = ftpUrl == null ? getFilePath(projectId, targetPath) : ftpUrl.substring(0, ftpUrl.lastIndexOf(SEPARATOR));
+        StringBuilder sb = new StringBuilder(filePath).append(SEPARATOR).append(fileName);
+        try {
+            // ----- 切换到对应目录
+            changeDirectory(ftpClient, filePath.split(SEPARATOR));
+            ftpClient.setBufferSize(1024);
+            ftpClient.enterLocalPassiveMode();
+            // ----- 设置文件类型
+            ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+            // ----- 第一次上传
+            if (partNum == 0) {
+                if (ftpClient.storeFile(fileName, is)) {
+                    log.info(" ----- upload part file success, projectId: {}, file: {}, partNum: {}", projectId, fileName, partNum);
+                    return sb.toString();
+                }
+            } else {
+                //分片续传，检查远程是否存在文件
+                FTPFile ftpFile = ftpClient.mdtmFile(fileName);
+                if (Objects.nonNull(ftpFile)) {
+                    try (OutputStream os = ftpClient.appendFileStream(fileName)) {
+                        ftpClient.setRestartOffset(partNum * 1024 * 1024);
+                        IOUtils.copy(is, os);
+                        log.info(" ----- upload part file success, projectId: {}, file: {}, partNum: {}", projectId, fileName, partNum);
+                        return sb.toString();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(" ----- upload part file failed, ", e);
+        } finally {
+            close(ftpClient);
+            try {
+                is.close();
+            } catch (IOException e) {
+                log.error(" ----- inputStream close failed, ", e);
+            }
+        }
+        log.error(" ----- upload part file failed because file not exists, projectId: {}, file: {}, partNum: {}", projectId, fileName, partNum);
         return null;
     }
 
