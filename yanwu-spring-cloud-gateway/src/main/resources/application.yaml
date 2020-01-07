@@ -1,0 +1,34 @@
+# 端口
+server:
+  port: 8761
+
+spring:
+  application:
+    # 应用名称
+    name: yanwu-gateway
+  redis:
+    host: 39.97.229.71
+    port: 6379
+    password: xbf12138
+    timeout: 10000
+    database: 1
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          # 是否和服务注册与发现组件结合，设置为 true 后可以直接使用应用名称调用服务
+          enabled: true
+
+
+eureka:
+  client:
+    serviceUrl:
+      # 注册中心地址
+      defaultZone: http://127.0.0.1:8880/eureka/
+
+logging:
+  file: /log/yanwu-gateway.log
+  level:
+    com: info
+    org: info
+    cn: info
