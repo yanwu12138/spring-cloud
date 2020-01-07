@@ -4,9 +4,7 @@ import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
-import com.yanwu.spring.cloud.common.utils.BackVOUtil;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,18 +32,16 @@ public class BackendYanwuUserController {
 
     @LogAndParam
     @PostMapping(value = "findByUserName")
-    public BackVO<YanwuUserVO> findByUserName(@RequestBody BaseParam<String> param) throws Exception {
+    public YanwuUserVO findByUserName(@RequestBody BaseParam<String> param) throws Exception {
         YanwuUser yanwuUser = userService.findByUserName(param.getData());
-        YanwuUserVO vo = voDoUtil.convertDoToVo(yanwuUser, YanwuUserVO.class);
-        return BackVOUtil.operateAccess(vo);
+        return voDoUtil.convertDoToVo(yanwuUser, YanwuUserVO.class);
     }
-    
+
     @LogAndParam
     @PostMapping(value = "updatePortrait")
-    public BackVO<Void> updatePortrait(@RequestBody BaseParam<YanwuUserVO> param) throws Exception {
+    public void updatePortrait(@RequestBody BaseParam<YanwuUserVO> param) throws Exception {
         YanwuUser yanwuUser = voDoUtil.convertVoToDo(param.getData(), YanwuUser.class);
         userService.updatePortrait(yanwuUser);
-        return BackVOUtil.operateAccess();
     }
 
 }

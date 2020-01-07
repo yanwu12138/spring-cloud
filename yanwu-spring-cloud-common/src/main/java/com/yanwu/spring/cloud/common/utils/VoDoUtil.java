@@ -16,16 +16,17 @@ import javax.annotation.Resource;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * voDoUtil could copy properties of A to B Please use @Mapping to map different
  * field It also support to transfer List to List List to Array Array to Array
  * Set to Set Set to Array Set to List
+ *
+ * @author Administrator
  */
-@Component
 @Slf4j
+@Component
 public class VoDoUtil implements ApplicationContextAware, InitializingBean {
 
     private ApplicationContext ctx;
@@ -71,8 +72,7 @@ public class VoDoUtil implements ApplicationContextAware, InitializingBean {
             return null;
         }
         List<T> destinationList = new ArrayList<T>();
-        for (Iterator<?> i = sourceList.iterator(); i.hasNext(); ) {
-            Object sourceObject = i.next();
+        for (Object sourceObject : sourceList) {
             T destinationObject = dozer.map(sourceObject, destinationClass);
             destinationList.add(destinationObject);
         }
@@ -97,8 +97,8 @@ public class VoDoUtil implements ApplicationContextAware, InitializingBean {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        log.info("setApplicationContext ={}", applicationContext);
         ctx = applicationContext;
+        log.info("setApplicationContext: {}", applicationContext);
     }
 
 }

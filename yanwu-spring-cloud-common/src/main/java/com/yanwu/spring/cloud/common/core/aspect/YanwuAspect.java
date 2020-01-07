@@ -2,8 +2,7 @@ package com.yanwu.spring.cloud.common.core.aspect;
 
 import com.yanwu.spring.cloud.common.core.annotation.CheckFiled;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
-import com.yanwu.spring.cloud.common.utils.BackVOUtil;
+import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -15,6 +14,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.AdviceSignature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -48,7 +49,7 @@ public class YanwuAspect {
             return joinPoint.proceed(args);
         } catch (Throwable e) {
             log.error("Exception : [method]: {}, [param]: {}", method, args, e);
-            return getBackVO(method, e.getMessage());
+            return new ResponseEntity<>(new ResponseEnvelope<>(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -82,24 +83,6 @@ public class YanwuAspect {
         } else {
             return null;
         }
-    }
-
-    /**
-     * 根据 @YanwuLog 注解的 value 值组装返回的BackVO
-     *
-     * @param method
-     * @return
-     */
-    private BackVO getBackVO(Method method, String message) {
-        // ExceptionDefinition definition = ExceptionDefinition.getByKey(message);
-        // String key = definition.getKey();
-        // if (SYSTEM_ERROR.equals(definition)) {
-        //     LogAndParam logAndParam = method.getAnnotation(LogAndParam.class);
-        //     if (logAndParam != null) {
-        //         key = logAndParam.value();
-        //     }
-        // }
-        return BackVOUtil.operateError(-1, message);
     }
 
     /**

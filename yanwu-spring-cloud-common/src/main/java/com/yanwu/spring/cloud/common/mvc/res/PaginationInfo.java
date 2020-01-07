@@ -4,9 +4,14 @@ import lombok.Data;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
-@Data
-public class PaginationInfo {
+import java.io.Serializable;
 
+/**
+ * @author Administrator
+ */
+@Data
+public class PaginationInfo implements Serializable {
+    private static final long serialVersionUID = -8995739058536574371L;
     /**
      * The offset for pagination i.e the index at which the current page started
      */

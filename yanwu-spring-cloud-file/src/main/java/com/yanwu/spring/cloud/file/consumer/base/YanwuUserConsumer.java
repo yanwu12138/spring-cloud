@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.file.consumer.base;
 
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,7 @@ public interface YanwuUserConsumer {
      * @throws Exception
      */
     @PostMapping(value = "backend/yanwuUser/findByUserName")
-    BackVO<YanwuUserVO> findByUserName(@RequestBody BaseParam<String> param) throws Exception;
+    YanwuUserVO findByUserName(@RequestBody BaseParam<String> param) throws Exception;
 
     /**
      * 修改用户头像

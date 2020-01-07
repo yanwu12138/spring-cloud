@@ -7,6 +7,9 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Random;
 
+/**
+ * @author Administrator
+ */
 public class RandomUtil {
 
     final static private Random random = new Random();
@@ -41,18 +44,15 @@ public class RandomUtil {
     }
 
     public static Long generateRandomLong(long min, long max) {
-        long randomLong = (long) (Math.random() * (max - min + 1)) + min;
-        return Long.valueOf(randomLong);
+        return (long) (Math.random() * (max - min + 1)) + min;
     }
 
     public static Double generateRandomDouble() {
-        double randomDouble = Math.random() * Integer.MAX_VALUE;
-        return Double.valueOf(randomDouble);
+        return Math.random() * Integer.MAX_VALUE;
     }
 
     public static Float generateRandomFloat() {
-        float randomFloat = (float) (Math.random() * Float.MAX_VALUE);
-        return Float.valueOf(randomFloat);
+        return (float) (Math.random() * Float.MAX_VALUE);
     }
 
     public static Boolean generateRandomBoolean() {
@@ -60,8 +60,7 @@ public class RandomUtil {
     }
 
     public static Character generateRandomCharacter() {
-        String string = RandomStringUtils.randomAlphabetic(1);
-        return string.charAt(0);
+        return RandomStringUtils.randomAlphabetic(1).charAt(0);
     }
 
     public static String generateRandomString(int length) {
@@ -69,8 +68,7 @@ public class RandomUtil {
     }
 
     public static Date generateRandomDate(long baseTime) {
-        long time = (long) (Math.random() * 86400000) + baseTime;
-        return new Date(time);
+        return new Date((long) (Math.random() * 86400000) + baseTime);
     }
 
     public static Date generateRandomDate() {

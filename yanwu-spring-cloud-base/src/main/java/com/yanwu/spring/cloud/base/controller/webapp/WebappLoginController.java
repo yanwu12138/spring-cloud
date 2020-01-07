@@ -4,16 +4,17 @@ import com.yanwu.spring.cloud.base.cache.YanwuCacheManager;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
+import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.LoginVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.common.utils.AccessTokenUtil;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
-import com.yanwu.spring.cloud.common.utils.BackVOUtil;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class WebappLoginController {
 
     @LogAndParam
     @PostMapping(value = "login")
-    public BackVO<YanwuUserVO> login(@RequestBody LoginVO vo) throws Exception {
+    public ResponseEntity<ResponseEnvelope<YanwuUserVO>> login(@RequestBody LoginVO vo) throws Exception {
         // ----- 校验入参
         Assert.isTrue(StringUtils.isNotBlank(vo.getAccount()), "Account cannot be empty when login.");
         Assert.isTrue(StringUtils.isNotBlank(vo.getPassword()), "Password cannot be empty when login.");
@@ -58,14 +59,13 @@ public class WebappLoginController {
         String token = AccessTokenUtil.loginSuccess(userVO.getId(), userVO.getAccount());
         userVO.setToken(token);
         tokenCache.put(user.getId(), token);
-        return BackVOUtil.operateAccess(userVO);
+        return new ResponseEntity<>(new ResponseEnvelope<>(userVO), HttpStatus.OK);
     }
 
     @LogAndParam
     @PostMapping(value = "logout/{id}")
-    public BackVO<Boolean> logout(@PathVariable("id") Long id) throws Exception {
-        tokenCache.remove(id);
-        return BackVOUtil.operateAccess(Boolean.TRUE);
+    public ResponseEntity<ResponseEnvelope<Boolean>> logout(@PathVariable("id") Long id) throws Exception {
+        return new ResponseEntity<>(new ResponseEnvelope<>(tokenCache.remove(id)), HttpStatus.OK);
     }
 
 }

@@ -1,9 +1,7 @@
 package com.yanwu.spring.cloud.netty.controller;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.command.CommandVO;
-import com.yanwu.spring.cloud.common.utils.BackVOUtil;
 import com.yanwu.spring.cloud.netty.handler.Handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +27,8 @@ public class NettyController {
 
     @LogAndParam
     @PostMapping("send")
-    public BackVO<Void> send(@RequestBody CommandVO command) {
+    public void send(@RequestBody CommandVO command) {
         handler.send(command.getCtxId(), String.valueOf(command.getData()));
-        return BackVOUtil.operateAccess();
     }
 
 }

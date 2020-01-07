@@ -4,14 +4,15 @@ import com.yanwu.spring.cloud.base.common.YanwuConstants;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
+import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
-import com.yanwu.spring.cloud.common.utils.BackVOUtil;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,7 @@ public class WebappYanwuUserController {
 
     @LogAndParam(check = true)
     @PostMapping(value = "create")
-    public BackVO<YanwuUserVO> create(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
+    public ResponseEntity<ResponseEnvelope<YanwuUserVO>> create(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
         YanwuUser userDO = voDoUtil.convertVoToDo(yanwuUserVO, YanwuUser.class);
         if (StringUtils.isBlank(userDO.getPassword())) {
             userDO.setPassword(Aes128Util.encrypt(YanwuConstants.DEFAULT_PASSWORD));
@@ -45,13 +46,13 @@ public class WebappYanwuUserController {
         }
         YanwuUser yanwuUser = userService.save(userDO);
         YanwuUserVO vo = voDoUtil.convertDoToVo(yanwuUser, YanwuUserVO.class);
-        return BackVOUtil.operateAccess(vo);
+        return new ResponseEntity<>(new ResponseEnvelope<>(vo), HttpStatus.OK);
     }
 
     @LogAndParam
     @PostMapping(value = "update")
-    public BackVO<YanwuUserVO> update(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
-        return BackVOUtil.operateAccess();
+    public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
+        return new ResponseEntity<>(new ResponseEnvelope<>(Boolean.TRUE), HttpStatus.OK);
     }
 
 }
