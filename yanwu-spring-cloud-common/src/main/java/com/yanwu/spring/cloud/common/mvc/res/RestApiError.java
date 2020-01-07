@@ -4,12 +4,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * @author Administrator
+ */
 @Data
 @JsonInclude(Include.NON_NULL)
-public class RestApiError {
+public class RestApiError implements Serializable {
+    private static final long serialVersionUID = 6773758863518219601L;
 
     public final static String CODE_OK = "0";
 

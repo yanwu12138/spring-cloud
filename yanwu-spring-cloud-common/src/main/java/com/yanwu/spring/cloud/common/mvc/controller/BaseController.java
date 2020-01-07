@@ -5,6 +5,7 @@ package com.yanwu.spring.cloud.common.mvc.controller;
 
 /**
  * Base class for the REST MVC controller.
+ * @author Administrator
  */
 public class BaseController {
 //	@Autowired

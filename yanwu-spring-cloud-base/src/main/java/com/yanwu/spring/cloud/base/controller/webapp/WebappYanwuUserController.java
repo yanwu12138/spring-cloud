@@ -3,7 +3,7 @@ package com.yanwu.spring.cloud.base.controller.webapp;
 import com.yanwu.spring.cloud.base.common.YanwuConstants;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
+import com.yanwu.spring.cloud.common.core.annotation.Log;
 import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
@@ -35,7 +35,7 @@ public class WebappYanwuUserController {
     @Autowired
     private YanwuUserService userService;
 
-    @LogAndParam(check = true)
+    @Log
     @PostMapping(value = "create")
     public ResponseEntity<ResponseEnvelope<YanwuUserVO>> create(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
         YanwuUser userDO = voDoUtil.convertVoToDo(yanwuUserVO, YanwuUser.class);
@@ -49,7 +49,7 @@ public class WebappYanwuUserController {
         return new ResponseEntity<>(new ResponseEnvelope<>(vo), HttpStatus.OK);
     }
 
-    @LogAndParam
+    @Log
     @PostMapping(value = "update")
     public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
         return new ResponseEntity<>(new ResponseEnvelope<>(Boolean.TRUE), HttpStatus.OK);

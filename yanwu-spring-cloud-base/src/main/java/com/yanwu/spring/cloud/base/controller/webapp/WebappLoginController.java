@@ -3,7 +3,7 @@ package com.yanwu.spring.cloud.base.controller.webapp;
 import com.yanwu.spring.cloud.base.cache.YanwuCacheManager;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
+import com.yanwu.spring.cloud.common.core.annotation.Log;
 import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.LoginVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
@@ -40,7 +40,7 @@ public class WebappLoginController {
     @Autowired
     private YanwuUserService yanwuUserService;
 
-    @LogAndParam
+    @Log
     @PostMapping(value = "login")
     public ResponseEntity<ResponseEnvelope<YanwuUserVO>> login(@RequestBody LoginVO vo) throws Exception {
         // ----- 校验入参
@@ -62,7 +62,7 @@ public class WebappLoginController {
         return new ResponseEntity<>(new ResponseEnvelope<>(userVO), HttpStatus.OK);
     }
 
-    @LogAndParam
+    @Log
     @PostMapping(value = "logout/{id}")
     public ResponseEntity<ResponseEnvelope<Boolean>> logout(@PathVariable("id") Long id) throws Exception {
         return new ResponseEntity<>(new ResponseEnvelope<>(tokenCache.remove(id)), HttpStatus.OK);

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @Slf4j
-public class CoreCrudRestController<VO extends ValueObject, DO extends BaseObject, SERVICE extends SimpleCrudService<DO>>
-        extends CoreRoRestController<VO, DO, SERVICE> {
+public class AbsreactCoreCrudRestController<VO extends ValueObject, DO extends BaseObject, SERVICE extends SimpleCrudService<DO>>
+        extends AbsreactCoreRoRestController<VO, DO, SERVICE> {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})

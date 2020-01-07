@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 /**
  * This class no ownerId and jsonType. Used for those objects not belong to
  * user.
+ *
+ * @author Administrator
  */
 @Data
 @EqualsAndHashCode(callSuper = false, of = {})

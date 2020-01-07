@@ -2,6 +2,9 @@ package com.yanwu.spring.cloud.common.mvc.exception;
 
 import lombok.Data;
 
+/**
+ * @author Administrator
+ */
 @Data
 public class HttpException extends RuntimeException {
 

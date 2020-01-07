@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.netty.controller;
 
-import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
+import com.yanwu.spring.cloud.common.core.annotation.Log;
 import com.yanwu.spring.cloud.common.mvc.vo.command.CommandVO;
 import com.yanwu.spring.cloud.netty.handler.Handler;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class NettyController {
     @Resource
     private Handler handler;
 
-    @LogAndParam
+    @Log
     @PostMapping("send")
     public void send(@RequestBody CommandVO command) {
         handler.send(command.getCtxId(), String.valueOf(command.getData()));

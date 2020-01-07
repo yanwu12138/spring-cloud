@@ -3,6 +3,9 @@ package com.yanwu.spring.cloud.common.mvc.vo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * @author Administrator
+ */
 @Data
 @EqualsAndHashCode(callSuper = false, of = {})
 public abstract class BaseQuoteVo extends BaseVo {

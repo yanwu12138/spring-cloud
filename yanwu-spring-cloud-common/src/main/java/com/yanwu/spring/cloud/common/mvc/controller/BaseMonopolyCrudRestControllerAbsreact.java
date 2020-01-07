@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-public abstract class BaseMonopolyCrudRestController<VO extends ValueObject, DO extends BaseObject, SERVICE extends SimpleCrudService<DO>>
-		extends CoreCrudRestController<VO, DO, SERVICE> {
+public abstract class BaseMonopolyCrudRestControllerAbsreact<VO extends ValueObject, DO extends BaseObject, SERVICE extends SimpleCrudService<DO>>
+		extends AbsreactCoreCrudRestController<VO, DO, SERVICE> {
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	protected ResponseEntity<ResponseEnvelope<VO>> findByName(

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-public abstract class CoreRoRestController<VO extends ValueObject, DO extends BaseObject, SERVICE extends SimpleRoService<DO>>
+public abstract class AbsreactCoreRoRestController<VO extends ValueObject, DO extends BaseObject, SERVICE extends SimpleRoService<DO>>
         implements ApplicationContextAware {
 
     protected SERVICE service;

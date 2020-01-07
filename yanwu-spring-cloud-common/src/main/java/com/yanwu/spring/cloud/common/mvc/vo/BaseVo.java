@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 import java.util.Comparator;
 import java.util.Map;
 
+/**
+ * @author Administrator
+ */
 @Data
 @EqualsAndHashCode(of = {})
 public abstract class BaseVo implements ValueObject {
@@ -27,7 +30,7 @@ public abstract class BaseVo implements ValueObject {
     private Long createdAt;
 
     private Long updatedAt;
-    
-    private Map<String,Object> logMap;
-    
+
+    private Map<String, Object> logMap;
+
 }

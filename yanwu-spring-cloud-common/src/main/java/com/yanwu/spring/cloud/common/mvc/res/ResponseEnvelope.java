@@ -5,12 +5,16 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Administrator
+ */
 @JsonInclude(Include.NON_NULL)
-public class ResponseEnvelope<T> {
-
+public class ResponseEnvelope<T> implements Serializable {
+    private static final long serialVersionUID = 5713406382349859603L;
     @Getter
     private T data;
     @Getter

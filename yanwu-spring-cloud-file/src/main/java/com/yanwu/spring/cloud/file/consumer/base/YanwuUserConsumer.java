@@ -1,8 +1,10 @@
 package com.yanwu.spring.cloud.file.consumer.base;
 
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
+import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,20 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface YanwuUserConsumer {
 
     /**
-     * 根据名称查找用户
-     *
-     * @param param
-     * @return
-     * @throws Exception
-     */
-    @PostMapping(value = "backend/yanwuUser/findByUserName")
-    YanwuUserVO findByUserName(@RequestBody BaseParam<String> param) throws Exception;
-
-    /**
      * 修改用户头像
      *
      * @param param
+     * @return
      */
     @PostMapping(value = "backend/yanwuUser/updatePortrait")
-    void updatePortrait(@RequestBody BaseParam<YanwuUserVO> param);
+    ResponseEntity<ResponseEnvelope<Void>> updatePortrait(@RequestBody BaseParam<YanwuUserVO> param);
 }

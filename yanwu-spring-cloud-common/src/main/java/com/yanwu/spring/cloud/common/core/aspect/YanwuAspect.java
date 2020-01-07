@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.common.core.aspect;
 
 import com.yanwu.spring.cloud.common.core.annotation.CheckFiled;
-import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
 import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +31,7 @@ import java.lang.reflect.Method;
 @Component
 public class YanwuAspect {
 
-    @Pointcut("@annotation(com.yanwu.spring.cloud.common.core.annotation.LogAndParam)")
+    @Pointcut("@annotation(com.yanwu.spring.cloud.common.core.annotation.Log)")
     public void yanwuPointcut() {
     }
 
@@ -40,12 +39,8 @@ public class YanwuAspect {
     public Object doAround(ProceedingJoinPoint joinPoint) {
         Method method = getMethodSignature(joinPoint);
         Object[] args = joinPoint.getArgs();
-        log.info("Request   : [method]: {}, [param]: {}", method, args);
         try {
-            LogAndParam logAndParam = method.getAnnotation(LogAndParam.class);
-            if (logAndParam.check()) {
-                checkParam(args);
-            }
+            log.info("Request   : [method]: {}, [param]: {}", method, args);
             return joinPoint.proceed(args);
         } catch (Throwable e) {
             log.error("Exception : [method]: {}, [param]: {}", method, args, e);
@@ -54,7 +49,6 @@ public class YanwuAspect {
     }
 
     /**
-     * Ø
      * 输出所有controller方法的出参
      *
      * @param joinPoint
