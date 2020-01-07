@@ -2,16 +2,16 @@ package com.yanwu.spring.cloud.file.service.impl;
 
 import com.yanwu.spring.cloud.common.core.common.TimeStringFormat;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
-import com.yanwu.spring.cloud.common.utils.CheckParamUtil;
-import com.yanwu.spring.cloud.common.utils.DataUtil;
-import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
+import com.yanwu.spring.cloud.common.utils.DataUtil;
+import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.file.consumer.base.YanwuUserConsumer;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.data.repository.AttachmentRepository;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -19,6 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -106,7 +107,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         List<Attachment> attachments = new ArrayList<>();
         MultiValueMap<String, MultipartFile> multiValueMap = request.getMultiFileMap();
         List<MultipartFile> multipartFileList = multiValueMap.get("file");
-        CheckParamUtil.checkListNotNullAndSizeGreaterZero(multipartFileList);
+        Assert.isTrue(CollectionUtils.isNotEmpty(multipartFileList), "file list is empty.");
         for (MultipartFile multipartFile : multipartFileList) {
             String fileName = multipartFile.getOriginalFilename();
             FileType fileType = FileUtil.getFileTypeByName(fileName);

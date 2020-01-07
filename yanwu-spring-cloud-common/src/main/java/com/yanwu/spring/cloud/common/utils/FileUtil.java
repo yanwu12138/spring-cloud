@@ -150,7 +150,7 @@ public class FileUtil {
     }
 
     public static String getFileNameByType(String fileName, FileType fileType) throws Exception {
-        CheckParamUtil.checkStringNotBlank(fileName);
+        Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
         StringBuilder buffer = new StringBuilder("downloadExcel");
         buffer.append(DataUtil.getTimeString(System.currentTimeMillis(), TimeStringFormat.YYYY_MM_DD1));
         switch (fileType) {
@@ -182,7 +182,7 @@ public class FileUtil {
     }
 
     public static FileType getFileTypeByName(String fileName) {
-        CheckParamUtil.checkStringNotBlank(fileName);
+        Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
         if (fileName.contains(POINT)) {
             String[] split = fileName.split(POINT);
             if (ArrayUtil.isNotEmpty(split)) {
@@ -213,7 +213,7 @@ public class FileUtil {
     }
 
     public static String getNameByFileName(String fileName) {
-        CheckParamUtil.checkStringNotBlank(fileName);
+        Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
         String name = "";
         if (fileName.contains(POINT)) {
             name = fileName.split(POINT)[0];

@@ -4,14 +4,20 @@ import com.yanwu.spring.cloud.base.cache.YanwuCacheManager;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndParam;
-import com.yanwu.spring.cloud.common.core.exception.ExceptionDefinition;
 import com.yanwu.spring.cloud.common.mvc.res.BackVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.LoginVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
-import com.yanwu.spring.cloud.common.utils.*;
+import com.yanwu.spring.cloud.common.utils.AccessTokenUtil;
+import com.yanwu.spring.cloud.common.utils.Aes128Util;
+import com.yanwu.spring.cloud.common.utils.BackVOUtil;
+import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 /**
  * @author XuBaofeng.
@@ -37,16 +43,16 @@ public class WebappLoginController {
     @PostMapping(value = "login")
     public BackVO<YanwuUserVO> login(@RequestBody LoginVO vo) throws Exception {
         // ----- 校验入参
-        CheckParamUtil.checkStringNotBlank(vo.getAccount(), "Account cannot be empty when login.");
-        CheckParamUtil.checkStringNotBlank(vo.getPassword(), "Password cannot be empty when login.");
-        CheckParamUtil.checkStringNotBlank(vo.getCaptcha(), "Captcha cannot be empty when login.");
+        Assert.isTrue(StringUtils.isNotBlank(vo.getAccount()), "Account cannot be empty when login.");
+        Assert.isTrue(StringUtils.isNotBlank(vo.getPassword()), "Password cannot be empty when login.");
+        Assert.isTrue(StringUtils.isNotBlank(vo.getCaptcha()), "Captcha cannot be empty when login.");
         // ----- 根据 用户名 邮箱 手机号 检索用户
         YanwuUser user = yanwuUserService.findByAccount(vo.getAccount());
         // ----- 校验: 当结果为null时, 说明该用户不存在
-        CheckParamUtil.checkObjectNotNull(user, "user does not exist");
+        Assert.isTrue(Objects.nonNull(user), "user does not exist.");
         // ----- 校验密码: 当密码不匹配是说明密码错误
         String password = Aes128Util.encrypt(vo.getPassword());
-        CheckParamUtil.checkStringEquals(password, user.getPassword(), new ExceptionDefinition.CodeAndKey(1, ""), "password error");
+        Assert.isTrue(StringUtils.equals(password, user.getPassword()), "password error.");
         YanwuUserVO userVO = voDoUtil.convertDoToVo(user, YanwuUserVO.class);
         // ----- 得到token, 保存缓存
         String token = AccessTokenUtil.loginSuccess(userVO.getId(), userVO.getAccount());
