@@ -41,21 +41,24 @@ public class FtpUtil {
     private static FTPClient initClient(String host, Integer port, String username, String password) {
         Assert.isTrue(StringUtils.isNotBlank(host), "init ftp client failed, host is null.");
         // ----- 当端口为空时使用默认端口
+        int code = -1;
         port = port == null ? FTP_PORT : port;
         FTPClient ftpClient = new FTPClient();
         try {
             ftpClient.setControlEncoding("UTF-8");
+            ftpClient.enterLocalPassiveMode();
             // ----- 连接
             ftpClient.connect(host, port);
             ftpClient.login(username, password);
             // ----- 检测连接是否成功
-            if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-                log.info(" ----- init ftp server success host: {}, post: {}, user: {}", host, port, username);
+            code = ftpClient.getReplyCode();
+            if (FTPReply.isPositiveCompletion(code)) {
+                log.info(" ----- init ftp server success host: {}, post: {}, user: {}, code: {}", host, port, username, code);
                 return ftpClient;
             }
-            log.error(" ----- init ftp server failed host: {}, post: {}, user: {}", host, port, username);
+            log.error(" ----- init ftp server success host: {}, post: {}, user: {}, code: {}", host, port, username, code);
         } catch (Exception e) {
-            log.error(" ----- init ftp server failed host: {}, post: {}, user: {}", host, port, username, e);
+            log.error(" ----- init ftp server success host: {}, post: {}, user: {}, code: {}", host, port, username, code, e);
         }
         close(ftpClient);
         return null;
@@ -98,7 +101,6 @@ public class FtpUtil {
             changeDirectory(ftpClient, filePath.split(SEPARATOR));
             // ----- 设置ftp对应的配置
             ftpClient.setBufferSize(1024);
-            ftpClient.enterLocalPassiveMode();
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
             // ----- 上传
             if (ftpClient.storeFile(fileName, is)) {
@@ -381,7 +383,7 @@ public class FtpUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        String localPath = "F:\\UnxUtils.zip";
+        String localPath = "F:\\document\\协议文档.zip";
         String targetPath = "F:\\file";
         Long userId = 269L;
         String filePath = FtpUtil.upload(new File(localPath), userId, DEFAULT_PATH);
