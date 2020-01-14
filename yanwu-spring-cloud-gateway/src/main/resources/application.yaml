@@ -1,10 +1,7 @@
-# 端口
 server:
   port: 8761
-
 spring:
   application:
-    # 应用名称
     name: yanwu-gateway
   redis:
     host: 39.97.229.71
@@ -14,16 +11,17 @@ spring:
     database: 1
   cloud:
     gateway:
-      discovery:
-        locator:
-          # 是否和服务注册与发现组件结合，设置为 true 后可以直接使用应用名称调用服务
-          enabled: true
+      routes:
+        id: after_routes
+        uri: "http://127.0.0.1:8881/*"
+        predicates:
+          - After=2017-01-20T17:42:47.789-07:00[America/Denver]
+
 
 
 eureka:
   client:
     serviceUrl:
-      # 注册中心地址
       defaultZone: http://127.0.0.1:8880/eureka/
 
 logging:

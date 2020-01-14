@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.netty.protocol.up;
 
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.netty.model.AlarmLampReqBO;
-import com.yanwu.spring.cloud.netty.protocol.Service.AlarmLampService;
+import com.yanwu.spring.cloud.netty.protocol.service.AlarmLampService;
 import com.yanwu.spring.cloud.netty.util.AlarmLampUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -22,6 +22,12 @@ spring:
     port: 5672
     username: root
     password: xbf12138
+  redis:
+    host: 39.97.229.71
+    port: 6379
+    password: xbf12138
+    timeout: 10000
+    database: 2
 eureka:
   client:
     serviceUrl:

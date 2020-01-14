@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.netty.protocol.Service;
+package com.yanwu.spring.cloud.netty.protocol.service;
 
 import com.yanwu.spring.cloud.netty.model.AlarmLampReqBO;
 import org.springframework.data.redis.core.HashOperations;

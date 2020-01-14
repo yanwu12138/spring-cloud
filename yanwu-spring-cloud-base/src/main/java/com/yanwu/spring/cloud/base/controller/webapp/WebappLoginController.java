@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.base.controller.webapp;
 
-import com.yanwu.spring.cloud.base.cache.YanwuCacheManager;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.Log;
@@ -13,11 +12,13 @@ import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
@@ -30,12 +31,14 @@ import java.util.Objects;
 @RestController
 @RequestMapping("webapp/login/")
 public class WebappLoginController {
+    private static final String LOGIN_TOKEN = "login_token";
 
     @Autowired
     private VoDoUtil voDoUtil;
 
-    @Autowired
-    private YanwuCacheManager tokenCache;
+    @SuppressWarnings("all")
+    @Resource(name = "redisTemplate")
+    private HashOperations<String, String, String> loginTokenOperations;
 
     @Autowired
     private YanwuUserService yanwuUserService;
@@ -58,14 +61,15 @@ public class WebappLoginController {
         // ----- 得到token, 保存缓存
         String token = AccessTokenUtil.loginSuccess(userVO.getId(), userVO.getAccount());
         userVO.setToken(token);
-        tokenCache.put(user.getId(), token);
+        loginTokenOperations.put(LOGIN_TOKEN, String.valueOf(user.getId()), token);
         return new ResponseEntity<>(new ResponseEnvelope<>(userVO), HttpStatus.OK);
     }
 
     @Log
     @PostMapping(value = "logout/{id}")
     public ResponseEntity<ResponseEnvelope<Boolean>> logout(@PathVariable("id") Long id) throws Exception {
-        return new ResponseEntity<>(new ResponseEnvelope<>(tokenCache.remove(id)), HttpStatus.OK);
+        Long delete = loginTokenOperations.delete(LOGIN_TOKEN, String.valueOf(id));
+        return new ResponseEntity<>(new ResponseEnvelope<>(delete > 0), HttpStatus.OK);
     }
 
 }
