@@ -30,4 +30,5 @@ public class YanwuSpringCloudGatewayApplication {
     public VoDoUtil getVoDoUtil() {
         return new VoDoUtil();
     }
+
 }

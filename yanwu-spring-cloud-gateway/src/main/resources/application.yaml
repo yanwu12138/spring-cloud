@@ -1,5 +1,5 @@
 server:
-  port: 8761
+  port: 9999
 spring:
   application:
     name: yanwu-gateway
@@ -8,17 +8,17 @@ spring:
     port: 6379
     password: xbf12138
     timeout: 10000
-    database: 1
+    database: 3
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
       routes:
-        id: after_routes
-        uri: "http://127.0.0.1:8881/*"
+      - id: route_simple
+        uri: http://127.0.0.1:9999/api
         predicates:
-          - After=2017-01-20T17:42:47.789-07:00[America/Denver]
-
-
-
+        - Path=/api/webapp/login/login
 eureka:
   client:
     serviceUrl:

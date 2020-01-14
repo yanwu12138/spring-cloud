@@ -6,13 +6,14 @@ import com.yanwu.spring.cloud.common.core.annotation.Log;
 import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.LoginVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
+import com.yanwu.spring.cloud.common.redis.Contents;
 import com.yanwu.spring.cloud.common.utils.AccessTokenUtil;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author XuBaofeng.
@@ -31,14 +33,13 @@ import java.util.Objects;
 @RestController
 @RequestMapping("webapp/login/")
 public class WebappLoginController {
-    private static final String LOGIN_TOKEN = "login_token";
 
     @Autowired
     private VoDoUtil voDoUtil;
 
     @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
-    private HashOperations<String, String, String> loginTokenOperations;
+    private ValueOperations<String, YanwuUserVO> loginTokenOperations;
 
     @Autowired
     private YanwuUserService yanwuUserService;
@@ -61,15 +62,21 @@ public class WebappLoginController {
         // ----- 得到token, 保存缓存
         String token = AccessTokenUtil.loginSuccess(userVO.getId(), userVO.getAccount());
         userVO.setToken(token);
-        loginTokenOperations.put(LOGIN_TOKEN, String.valueOf(user.getId()), token);
+        loginTokenOperations.set(Contents.LOGIN_TOKEN + user.getId(), userVO, Contents.TOKEN_TIME_OUT, TimeUnit.SECONDS);
         return new ResponseEntity<>(new ResponseEnvelope<>(userVO), HttpStatus.OK);
     }
 
     @Log
     @PostMapping(value = "logout/{id}")
     public ResponseEntity<ResponseEnvelope<Boolean>> logout(@PathVariable("id") Long id) throws Exception {
-        Long delete = loginTokenOperations.delete(LOGIN_TOKEN, String.valueOf(id));
-        return new ResponseEntity<>(new ResponseEnvelope<>(delete > 0), HttpStatus.OK);
+        Boolean result;
+        YanwuUserVO yanwuUserVO = loginTokenOperations.get(Contents.LOGIN_TOKEN + id);
+        if (yanwuUserVO == null) {
+            result = true;
+        } else {
+            result = loginTokenOperations.getOperations().delete(Contents.LOGIN_TOKEN + id);
+        }
+        return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
     }
 
 }
