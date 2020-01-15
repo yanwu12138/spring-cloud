@@ -14,11 +14,12 @@ spring:
       discovery:
         locator:
           enabled: true
+          lower-case-service-id: true
       routes:
       - id: route_simple
-        uri: http://127.0.0.1:9999/api
+        uri: http://127.0.0.1:8881
         predicates:
-        - Path=/api/webapp/login/login
+        - Method=POST
 eureka:
   client:
     serviceUrl:

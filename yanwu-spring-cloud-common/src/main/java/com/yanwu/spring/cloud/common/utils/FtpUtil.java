@@ -257,6 +257,9 @@ public class FtpUtil {
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return null;
         }
+        if (!checkTargetPath(targetPath)) {
+            return null;
+        }
         // ----- 获取文件名和文件
         String fileName = filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1);
         File file = new File(targetPath + SEPARATOR + fileName);
@@ -335,6 +338,20 @@ public class FtpUtil {
                 log.error(" ----- close ftp server failed, ", e);
             }
         }
+    }
+
+    /**
+     * 检查目标目录是否存在，不存在时新建文件夹
+     *
+     * @param targetPath 目标目录
+     * @return [true: 存在; false: 不存在]
+     */
+    private static boolean checkTargetPath(String targetPath) {
+        File file = new File(targetPath);
+        if (!file.exists()) {
+            return file.mkdirs();
+        }
+        return true;
     }
 
     /**

@@ -13,9 +13,13 @@ import java.lang.annotation.*;
 @Documented
 public @interface CheckFiled {
 
+    /*** 参数字段 ***/
+    String field();
+
     /*** 正则表达式 */
     String regex();
 
     /*** 当校验不合法时的返回提示信息 */
     String message();
+
 }

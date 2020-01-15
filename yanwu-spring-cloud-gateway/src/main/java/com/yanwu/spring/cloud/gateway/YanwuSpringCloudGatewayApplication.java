@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.gateway;
 
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 /**
  * @author Administrator
  */
+@Slf4j
 @EnableEurekaClient
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud.gateway", "com.yanwu.spring.cloud.common"})

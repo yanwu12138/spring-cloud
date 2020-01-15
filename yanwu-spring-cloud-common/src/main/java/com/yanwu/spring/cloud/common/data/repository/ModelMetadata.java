@@ -197,8 +197,7 @@ final public class ModelMetadata implements ApplicationContextAware, Initializin
             modelClassesFromAppCtx.add(s.getEntityInformation().getJavaType());
         }
         for (Class<?> modelClass : modelClassesFromAppCtx) {
-            Assert.isTrue(repoMap.containsKey(modelClass),
-                    String.format("Model class %s not detected, but it should be", modelClass.getSimpleName()));
+            Assert.isTrue(repoMap.containsKey(modelClass), String.format("Model class %s not detected, but it should be", modelClass.getSimpleName()));
         }
         for (Class<?> modelClass : repoMap.keySet()) {
             if (modelClassesFromAppCtx.contains(modelClass) == false) {

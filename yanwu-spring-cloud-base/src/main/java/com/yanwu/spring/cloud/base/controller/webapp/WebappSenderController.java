@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.base.controller.webapp;
 
 import com.yanwu.spring.cloud.common.amqp.RabbitMQSender;
-import com.yanwu.spring.cloud.common.core.annotation.Log;
+import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
 import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class WebappSenderController {
     @Autowired
     private RabbitMQSender sender;
 
-    @Log
+    @LogAndCheckParam
     @PostMapping(value = "sender")
     public ResponseEntity<ResponseEnvelope<Void>> sender(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
         // ===== test1

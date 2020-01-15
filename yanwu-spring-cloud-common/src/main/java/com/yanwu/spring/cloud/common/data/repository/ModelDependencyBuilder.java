@@ -1,8 +1,8 @@
 package com.yanwu.spring.cloud.common.data.repository;
 
 import com.yanwu.spring.cloud.common.core.logging.LoggerFactory;
-import com.yanwu.spring.cloud.common.utils.ReflectionUtil;
 import com.yanwu.spring.cloud.common.data.entity.BaseDo;
+import com.yanwu.spring.cloud.common.utils.ReflectionUtil;
 import org.slf4j.Logger;
 import org.springframework.util.Assert;
 

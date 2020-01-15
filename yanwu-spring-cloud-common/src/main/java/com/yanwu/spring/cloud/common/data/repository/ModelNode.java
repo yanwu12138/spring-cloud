@@ -36,7 +36,6 @@ final public class ModelNode implements Comparable<ModelNode> {
 
     @Override
     public String toString() {
-        return String.format("%s [%d, %d, %d]", modelClass.getSimpleName(), subclasses.size(), parents.size(),
-                children.size());
+        return String.format("%s [%d, %d, %d]", modelClass.getSimpleName(), subclasses.size(), parents.size(), children.size());
     }
 }

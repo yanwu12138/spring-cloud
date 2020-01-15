@@ -15,5 +15,8 @@ public interface CheckParamRegex {
     String EMAIL = "\\w+@([\\w]+[\\w-]*)(\\.[\\w]+[-\\w]*)+";
     /*** 字符串不全为空格 */
     String STRING_NOT_NULL = "^[^ ]+$";
-
+    /*** 验证码 ***/
+    String CAPTCHA = "^[0-9]{6}$";
+    /*** 密码 ***/
+    String PASSWORD = "^[a-zA-Z0-9]{6,12}$";
 }
