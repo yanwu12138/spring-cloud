@@ -46,7 +46,6 @@ public class FtpUtil {
         FTPClient ftpClient = new FTPClient();
         try {
             ftpClient.setControlEncoding("UTF-8");
-            ftpClient.enterLocalPassiveMode();
             // ----- 连接
             ftpClient.connect(host, port);
             ftpClient.login(username, password);
@@ -101,6 +100,7 @@ public class FtpUtil {
             changeDirectory(ftpClient, filePath.split(SEPARATOR));
             // ----- 设置ftp对应的配置
             ftpClient.setBufferSize(1024);
+            ftpClient.enterLocalPassiveMode();
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
             // ----- 上传
             if (ftpClient.storeFile(fileName, is)) {
@@ -267,6 +267,8 @@ public class FtpUtil {
             // ----- 切换到对应目录
             changeDirectory(ftpClient, splitFtpFilePath(filePath));
             ftpClient.setBufferSize(1024);
+            ftpClient.enterLocalPassiveMode();
+            ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
             FTPFile ftpFile = ftpClient.mdtmFile(fileName);
             // ----- 判断文件是否存在
             Assert.notNull(ftpFile, "file not exists");
@@ -401,7 +403,7 @@ public class FtpUtil {
 
     public static void main(String[] args) throws Exception {
         String localPath = "F:\\document\\协议文档.zip";
-        String targetPath = "F:\\file";
+        String targetPath = "F:\\file\\111";
         Long userId = 269L;
         String filePath = FtpUtil.upload(new File(localPath), userId, DEFAULT_PATH);
         FtpUtil.exists(filePath);
