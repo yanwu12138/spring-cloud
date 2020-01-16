@@ -173,7 +173,6 @@ public class FtpUtil {
                 FTPFile ftpFile = ftpClient.mdtmFile(fileName);
                 if (Objects.nonNull(ftpFile)) {
                     try (OutputStream os = ftpClient.appendFileStream(fileName)) {
-                        ftpClient.setRestartOffset(partNum * 1024 * 1024);
                         IOUtils.copy(is, os);
                         log.info(" ----- upload part file success, projectId: {}, file: {}, partNum: {}", projectId, fileName, partNum);
                         return sb.toString();
