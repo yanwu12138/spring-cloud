@@ -8,7 +8,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   datasource:
-    url: jdbc:mysql://39.97.229.71:5432/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://39.97.229.71:3306/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
     username: xbf12138
     password: xbf12138
     driver-class-name: com.mysql.cj.jdbc.Driver
