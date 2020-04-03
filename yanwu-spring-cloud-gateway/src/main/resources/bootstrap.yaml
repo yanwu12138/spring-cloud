@@ -36,6 +36,18 @@ spring:
           - Path=/base/**
         filters:
           - StripPrefix=1
+      - id: yanwy-device
+        uri: lb://yanwy-device
+        predicates:
+          - Path=/device/**
+        filters:
+          - StripPrefix=1
+      - id: yanwy-file
+        uri: lb://yanwy-file
+        predicates:
+          - Path=/file/**
+        filters:
+          - StripPrefix=1
   main:
     allow-bean-definition-overriding: true
 feign:
