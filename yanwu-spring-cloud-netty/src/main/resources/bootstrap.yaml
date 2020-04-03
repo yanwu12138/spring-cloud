@@ -8,7 +8,7 @@ spring:
     port: 6379
     password: xbf12138
     timeout: 10000
-    database: 1
+    database: 3
   cloud:
     nacos:
       discovery:
