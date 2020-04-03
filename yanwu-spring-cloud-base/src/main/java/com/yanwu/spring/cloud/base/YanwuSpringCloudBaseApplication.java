@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableFeignClients
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan("com.yanwu.spring.cloud.base.data.repository")
+@MapperScan("com.yanwu.spring.cloud.base.data.mapper")
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud.base", "com.yanwu.spring.cloud.common"})
 public class YanwuSpringCloudBaseApplication {
 

@@ -4,7 +4,7 @@ import com.yanwu.spring.cloud.base.common.YanwuConstants;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
-import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;

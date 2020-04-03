@@ -1,12 +1,11 @@
 package com.yanwu.spring.cloud.device.device.data.model;
 
-import com.yanwu.spring.cloud.common.data.entity.BaseMonopolyNamedBo;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.yanwu.spring.cloud.common.pojo.BaseDo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -16,12 +15,10 @@ import java.io.Serializable;
  * description:
  */
 @Data
-@Entity
-@Table(name = "DEVICE_GROUP", indexes = {
-        @Index(name = "PK_GROUP_ID", columnList = "ID")
-})
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-public class DeviceGroup extends BaseMonopolyNamedBo implements Serializable {
+@TableName("device_group")
+public class DeviceGroup extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = -9038961024530589134L;
 
 }

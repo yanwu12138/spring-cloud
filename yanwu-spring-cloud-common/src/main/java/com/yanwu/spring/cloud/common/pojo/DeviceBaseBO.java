@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.pojo;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * description:
  */
 @Data
+@Accessors(chain = true)
 public class DeviceBaseBO implements Serializable {
     private static final long serialVersionUID = 7222723385380290982L;
     /*** 帧头 */

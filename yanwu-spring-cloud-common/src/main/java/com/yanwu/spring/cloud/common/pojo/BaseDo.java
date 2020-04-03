@@ -18,8 +18,8 @@ import java.util.Comparator;
  * <p>
  * description:
  */
-@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 public class BaseDo<PK extends Serializable> extends Model implements Serializable {
     private static final long serialVersionUID = -5667178676337792115L;
 

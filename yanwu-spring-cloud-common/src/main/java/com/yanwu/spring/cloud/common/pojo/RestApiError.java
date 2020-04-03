@@ -1,8 +1,9 @@
-package com.yanwu.spring.cloud.common.mvc.res;
+package com.yanwu.spring.cloud.common.pojo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
  * @author Administrator
  */
 @Data
+@Accessors(chain = true)
 @JsonInclude(Include.NON_NULL)
 public class RestApiError implements Serializable {
     private static final long serialVersionUID = 6773758863518219601L;

@@ -7,7 +7,7 @@ import com.yanwu.spring.cloud.common.config.Contents;
 import com.yanwu.spring.cloud.common.core.annotation.CheckFiled;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
 import com.yanwu.spring.cloud.common.core.aspect.CheckParamRegex;
-import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;

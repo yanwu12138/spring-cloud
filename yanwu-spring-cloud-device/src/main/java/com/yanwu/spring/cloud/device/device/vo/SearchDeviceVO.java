@@ -1,8 +1,9 @@
 package com.yanwu.spring.cloud.device.device.vo;
 
-import com.yanwu.spring.cloud.common.mvc.req.PageParam;
+import com.yanwu.spring.cloud.common.pojo.PageParam;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -15,9 +16,10 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class SearchDeviceVO extends PageParam implements Serializable {
     private static final long serialVersionUID = -1926901020895248999L;
 
     private String name;
+
 }

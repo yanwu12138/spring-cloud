@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.base.data.repository;
+package com.yanwu.spring.cloud.base.data.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;

@@ -3,7 +3,7 @@ package com.yanwu.spring.cloud.common.core.aspect;
 import com.yanwu.spring.cloud.common.core.annotation.CheckFiled;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
 import com.yanwu.spring.cloud.common.core.exception.ParamException;
-import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;

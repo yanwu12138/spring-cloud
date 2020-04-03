@@ -42,7 +42,7 @@
     </appender>
 
     <!--fishbone服务-->
-    <logger name="com.yanwu.spring.cloud.netty" level="INFO" additivity="false">
+    <logger name="com.yanwu.spring.cloud" level="INFO" additivity="false">
         <appender-ref ref="logAppender"/>
         <appender-ref ref="STDOUT"/>
     </logger>

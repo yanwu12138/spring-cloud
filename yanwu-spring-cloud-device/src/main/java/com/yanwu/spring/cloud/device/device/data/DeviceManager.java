@@ -1,10 +1,11 @@
 package com.yanwu.spring.cloud.device.device.data;
 
-import com.yanwu.spring.cloud.common.data.entity.BaseMonopolyNamedBo;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.yanwu.spring.cloud.common.pojo.BaseDo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -15,26 +16,26 @@ import java.math.BigDecimal;
  * description:
  */
 @Data
-@MappedSuperclass
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-public class DeviceManager extends BaseMonopolyNamedBo implements Serializable {
+public class DeviceManager extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = 6137280284276233324L;
     /*** 设备编号 */
-    @Column(name = "DEVICE_NO", unique = true, nullable = false, length = DEFAULT_STRING_LENGTH)
+    @TableField("DEVICE_NO")
     private String deviceNo;
     /*** 安装地址 */
-    @Column(name = "INSTALL_ADDRESS", length = DEFAULT_LONG_STRING_LENGTH)
+    @TableField("INSTALL_ADDRESS")
     private String installAddress;
     /*** 经度 */
-    @Column(name = "LONGITUDE")
+    @TableField("LONGITUDE")
     private BigDecimal longitude;
     /*** 经度 */
-    @Column(name = "LATITUDE")
+    @TableField("LATITUDE")
     private BigDecimal latitude;
     /*** 分组 */
-    @Column(name = "GROUP_ID")
+    @TableField("GROUP_ID")
     private Long groupId;
     /*** 状态 */
-    @Column(name = "STATUS")
+    @TableField("STATUS")
     private Integer status;
 }

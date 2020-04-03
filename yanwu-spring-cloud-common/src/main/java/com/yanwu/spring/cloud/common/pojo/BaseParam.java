@@ -1,8 +1,9 @@
-package com.yanwu.spring.cloud.common.mvc.req;
+package com.yanwu.spring.cloud.common.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * description:
  */
 @Data
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseParam<T> implements Serializable {

@@ -1,7 +1,8 @@
-package com.yanwu.spring.cloud.common.mvc.res;
+package com.yanwu.spring.cloud.common.pojo;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.springframework.data.domain.Page;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Administrator
  */
 @Data
+@Accessors(chain = true)
 public class PaginationInfo implements Serializable {
     private static final long serialVersionUID = -8995739058536574371L;
     /**

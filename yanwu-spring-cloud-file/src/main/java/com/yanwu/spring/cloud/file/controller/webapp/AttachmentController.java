@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.file.controller.webapp;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
-import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.file.AttachmentVO;
 import com.yanwu.spring.cloud.common.utils.ExcelUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;

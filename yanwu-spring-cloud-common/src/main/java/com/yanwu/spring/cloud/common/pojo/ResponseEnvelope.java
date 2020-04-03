@@ -1,9 +1,10 @@
-package com.yanwu.spring.cloud.common.mvc.res;
+package com.yanwu.spring.cloud.common.pojo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @author Administrator
  */
 @ToString
+@Accessors(chain = true)
 @JsonInclude(Include.NON_NULL)
 public class ResponseEnvelope<T> implements Serializable {
     private static final long serialVersionUID = 5713406382349859603L;

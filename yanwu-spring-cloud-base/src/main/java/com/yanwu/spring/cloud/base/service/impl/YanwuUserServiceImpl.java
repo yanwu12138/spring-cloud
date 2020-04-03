@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.base.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
-import com.yanwu.spring.cloud.base.data.repository.YanwuUserMapper;
+import com.yanwu.spring.cloud.base.data.mapper.YanwuUserMapper;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import org.springframework.stereotype.Service;
 

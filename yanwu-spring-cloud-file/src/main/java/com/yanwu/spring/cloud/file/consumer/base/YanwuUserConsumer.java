@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.file.consumer.base;
 
-import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
-import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.BaseParam;
+import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

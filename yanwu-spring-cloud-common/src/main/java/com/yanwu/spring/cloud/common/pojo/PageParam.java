@@ -1,6 +1,7 @@
-package com.yanwu.spring.cloud.common.mvc.req;
+package com.yanwu.spring.cloud.common.pojo;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * description:
  */
 @Data
+@Accessors(chain = true)
 public class PageParam extends BaseParam implements Serializable {
     private static final long serialVersionUID = -5028954569050562020L;
 
