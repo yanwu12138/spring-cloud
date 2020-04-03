@@ -12,182 +12,70 @@
 
     <properties>
         <aspectjrt.version>1.8.13</aspectjrt.version>
-        <c3p0.version>0.9.5.2</c3p0.version>
         <cglib.version>3.2.5</cglib.version>
-        <com.fasterxml.jackson.version>2.8.7</com.fasterxml.jackson.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
         <commons.net.version>3.6</commons.net.version>
         <guava.version>21.0</guava.version>
-        <hibernate.version>5.2.10.Final</hibernate.version>
-        <hibernate-validator.version>5.4.0.Final</hibernate-validator.version>
         <httpcomponents.httpclient.version>4.5</httpcomponents.httpclient.version>
         <java.mail.version>1.4.7</java.mail.version>
         <java.version>1.8</java.version>
         <jdk.version>1.8</jdk.version>
-        <jedis.client.version>2.9.0</jedis.client.version>
-        <jsp-api.version>2.3.1</jsp-api.version>
-        <jstl.version>1.2</jstl.version>
-        <jwt.version>3.2.0</jwt.version>
-        <jxl.version>2.6.12</jxl.version>
-        <logback.version>1.2.3</logback.version>
         <lombol.version>1.16.18</lombol.version>
         <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
-        <metrics.version>3.1.0</metrics.version>
         <net.sf.dozer.version>5.5.1</net.sf.dozer.version>
         <poi.version>3.17</poi.version>
-        <postgresql-jdbc.version>42.1.4</postgresql-jdbc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reflections.version>0.9.11</reflections.version>
-        <servlet-api.version>3.1.0</servlet-api.version>
-        <slf4j.version>1.7.24</slf4j.version>
-        <spring.amqp.version>1.7.3.RELEASE</spring.amqp.version>
-        <spring.data.redis.version>1.8.4.RELEASE</spring.data.redis.version>
-        <spring.rabbit.version>1.7.3.RELEASE</spring.rabbit.version>
-        <spring.version>5.1.2.RELEASE</spring.version>
-        <spring-data-jpa.version>1.10.8.RELEASE</spring-data-jpa.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+        <fastjson.version>1.2.66</fastjson.version>
+        <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
+        <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
     </properties>
 
     <dependencies>
-        <!-- spring support -->
+        <!-- spring -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>2.2.5.RELEASE</version>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${spring.version}</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.1.1</version>
         </dependency>
+        <!-- fastjson -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
         <!-- AOP relate -->
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>${cglib.version}</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <!-- servlet support -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>javax.servlet.jsp-api</artifactId>
-            <version>${jsp-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>${jstl.version}</version>
-        </dependency>
-
-        <!-- hibernate jpa support -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>${spring-data-jpa.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit-dep</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-orm</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-aop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-tx</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-beans</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-ehcache</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <!-- Database support -->
-        <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>${c3p0.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql-jdbc.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
@@ -224,22 +112,6 @@
             <artifactId>commons-collections</artifactId>
             <version>${commons.collections.version}</version>
         </dependency>
-        <!-- jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${com.fasterxml.jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${com.fasterxml.jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${com.fasterxml.jackson.version}</version>
-        </dependency>
         <!-- Excel工具 -->
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -250,11 +122,6 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.jexcelapi</groupId>
-            <artifactId>jxl</artifactId>
-            <version>${jxl.version}</version>
         </dependency>
         <!-- guava -->
         <dependency>
@@ -273,26 +140,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-log4j12</artifactId> <version>${slf4j.version}</version>
-            <scope>runtime</scope> </dependency> -->
-        <!-- common-logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
         <!-- dozer support -->
         <dependency>
             <groupId>net.sf.dozer</groupId>
@@ -303,17 +150,6 @@
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer-spring</artifactId>
             <version>${net.sf.dozer.version}</version>
-        </dependency>
-        <!-- redis support -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-            <version>${spring.data.redis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>${jedis.client.version}</version>
         </dependency>
         <!-- http client -->
         <dependency>
@@ -326,22 +162,6 @@
             <artifactId>httpclient-cache</artifactId>
             <version>${httpcomponents.httpclient.version}</version>
         </dependency>
-        <!-- messaging -->
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-amqp</artifactId>
-            <version>${spring.amqp.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit</artifactId>
-            <version>${spring.rabbit.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
         <!-- 邮件处理 -->
         <dependency>
             <groupId>javax.mail</groupId>
@@ -349,6 +169,25 @@
             <version>${java.mail.version}</version>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <finalName>yanwu-core</finalName>
