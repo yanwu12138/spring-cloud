@@ -1,8 +1,5 @@
 package com.yanwu.spring.cloud.base;
 
-import com.yanwu.spring.cloud.common.utils.VoDoUtil;
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -34,16 +31,6 @@ public class YanwuSpringCloudBaseApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(YanwuSpringCloudBaseApplication.class, args);
-    }
-
-    @Bean
-    public Mapper getMapper() {
-        return new DozerBeanMapper();
-    }
-
-    @Bean
-    public VoDoUtil getVoDoUtil() {
-        return new VoDoUtil();
     }
 
     @Bean

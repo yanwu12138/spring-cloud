@@ -3,7 +3,6 @@ package com.yanwu.spring.cloud.file.controller.webapp;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
-import com.yanwu.spring.cloud.common.mvc.vo.file.AttachmentVO;
 import com.yanwu.spring.cloud.common.utils.ExcelUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
@@ -48,9 +47,9 @@ public class AttachmentController {
      */
     @LogAndCheckParam
     @PostMapping(value = "upPortrait")
-    public ResponseEntity<ResponseEnvelope<AttachmentVO>> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
+    public ResponseEntity<ResponseEnvelope<Attachment>> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);
-        AttachmentVO result = voDoUtil.convertDoToVo(attachment, AttachmentVO.class);
+        Attachment result = voDoUtil.convertDoToVo(attachment, Attachment.class);
         return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
     }
 
@@ -64,10 +63,9 @@ public class AttachmentController {
      */
     @LogAndCheckParam
     @PostMapping(value = "uploadFile")
-    public ResponseEntity<ResponseEnvelope<List<AttachmentVO>>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
+    public ResponseEntity<ResponseEnvelope<List<Attachment>>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
         List<Attachment> attachments = attachmentService.uploadFile(request, id);
-        List<AttachmentVO> list = voDoUtil.mapList(attachments, AttachmentVO.class);
-        return new ResponseEntity<>(new ResponseEnvelope<>(list), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseEnvelope<>(attachments), HttpStatus.OK);
     }
 
     /**
@@ -94,10 +92,9 @@ public class AttachmentController {
      */
     @LogAndCheckParam
     @PostMapping(value = "uploadExcel")
-    public ResponseEntity<ResponseEnvelope<AttachmentVO>> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
+    public ResponseEntity<ResponseEnvelope<Attachment>> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
         Attachment attachment = attachmentService.uploadExcel(file, id);
-        AttachmentVO result = voDoUtil.convertDoToVo(attachment, AttachmentVO.class);
-        return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseEnvelope<>(attachment), HttpStatus.OK);
     }
 
     /**

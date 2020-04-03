@@ -1,8 +1,5 @@
 package com.yanwu.spring.cloud.netty;
 
-import com.yanwu.spring.cloud.common.utils.VoDoUtil;
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -39,16 +36,6 @@ public class YanwuSpringCloudNettyApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(YanwuSpringCloudNettyApplication.class, args);
-    }
-
-    @Bean
-    public Mapper getMapper() {
-        return new DozerBeanMapper();
-    }
-
-    @Bean
-    public VoDoUtil getVoDoUtil() {
-        return new VoDoUtil();
     }
 
     @Bean

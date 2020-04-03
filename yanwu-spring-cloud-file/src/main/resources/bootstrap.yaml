@@ -1,14 +1,14 @@
 server:
-  port: 8881
+  port: 8882
 spring:
   application:
-    name: yanwu-base
+    name: yanwu-file
   ### 解决数据库查询结果返回数据时的时区问题
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   datasource:
-    url: jdbc:mysql://39.97.229.71:5432/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://39.97.229.71:5432/yanwu_file?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
     username: xbf12138
     password: xbf12138
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -17,7 +17,7 @@ spring:
     port: 6379
     password: xbf12138
     timeout: 10000
-    database: 1
+    database: 2
   cloud:
     nacos:
       discovery:
@@ -29,7 +29,7 @@ mybatis-plus:
   ### Mapper.xml文件所在目录
   mapper-locations: classpath:/mapper/*Mapper.xml
   ### 实体类所在目录，多个目录用逗号分开
-  type-aliases-package: com.yanwu.spring.cloud.base.data.model
+  type-aliases-package: com.yanwu.spring.cloud.file.data.model
   global-config:
     refresh: true
     db-config:

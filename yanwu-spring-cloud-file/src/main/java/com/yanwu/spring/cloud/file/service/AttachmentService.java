@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.file.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -13,13 +14,11 @@ import java.util.List;
  * description:
  */
 @SuppressWarnings("all")
-public interface AttachmentService {
+public interface AttachmentService extends IService<Attachment> {
 
     Attachment uploadExcel(Part file, Long id) throws Exception;
 
     List<List<String>> downloadExcel() throws Exception;
-
-    Attachment save(Attachment attachment) throws Exception;
 
     List<Attachment> uploadFile(MultipartHttpServletRequest request, Long id) throws Exception;
 

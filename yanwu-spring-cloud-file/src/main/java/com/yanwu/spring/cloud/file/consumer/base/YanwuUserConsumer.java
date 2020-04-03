@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.file.consumer.base;
 
 import com.yanwu.spring.cloud.common.pojo.BaseParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
-import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
+import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -26,5 +26,5 @@ public interface YanwuUserConsumer {
      * @return
      */
     @PostMapping(value = "backend/yanwuUser/updatePortrait")
-    ResponseEntity<ResponseEnvelope<Void>> updatePortrait(@RequestBody BaseParam<YanwuUserVO> param);
+    ResponseEntity<ResponseEnvelope<Void>> updatePortrait(@RequestBody BaseParam<YanwuUser> param);
 }
