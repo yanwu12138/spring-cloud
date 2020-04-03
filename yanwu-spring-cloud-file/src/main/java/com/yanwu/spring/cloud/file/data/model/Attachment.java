@@ -23,21 +23,21 @@ import java.io.Serializable;
 public class Attachment extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = 5026290395793755932L;
     /*** 关联id */
-    @TableField("RELATION_ID")
+    @TableField("relation_id")
     private Long relationId;
     /*** 文件名 */
-    @TableField("NAME")
+    @TableField("name")
     private String name;
     /*** 附件地址 */
-    @TableField("ATTACHMENT_ADDRESS")
+    @TableField("attachment_address")
     private String attachmentAddress;
     /*** 附件名称 */
-    @TableField("ATTACHMENT_NAME")
+    @TableField("attachment_name")
     private String attachmentName;
     /*** 附件类型 */
-    @TableField("ATTACHMENT_TYPE")
+    @TableField("attachment_type")
     private FileType attachmentType;
     /*** 附件大小 */
-    @TableField("ATTACHMENT_SIZE")
+    @TableField("attachment_size")
     private Long attachmentSize;
 }

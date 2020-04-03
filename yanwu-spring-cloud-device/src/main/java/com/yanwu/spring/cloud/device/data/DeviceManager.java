@@ -21,21 +21,21 @@ import java.math.BigDecimal;
 public class DeviceManager extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = 6137280284276233324L;
     /*** 设备编号 */
-    @TableField("DEVICE_NO")
+    @TableField("device_no")
     private String deviceNo;
     /*** 安装地址 */
-    @TableField("INSTALL_ADDRESS")
+    @TableField("install_address")
     private String installAddress;
     /*** 经度 */
-    @TableField("LONGITUDE")
+    @TableField("longitude")
     private BigDecimal longitude;
     /*** 经度 */
-    @TableField("LATITUDE")
+    @TableField("latitude")
     private BigDecimal latitude;
     /*** 分组 */
-    @TableField("GROUP_ID")
+    @TableField("groupId")
     private Long groupId;
     /*** 状态 */
-    @TableField("STATUS")
+    @TableField("status")
     private Integer status;
 }

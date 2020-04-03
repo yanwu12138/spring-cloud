@@ -22,18 +22,18 @@ import java.io.Serializable;
 public class DeviceLight extends DeviceManager implements Serializable {
     private static final long serialVersionUID = -4312299924027104281L;
     /*** 调光值 */
-    @TableField("DIMMING")
+    @TableField("dimming")
     private Integer dimming;
     /*** 电流 */
-    @TableField("CURRENT")
+    @TableField("current")
     private Integer current;
     /*** 电压 */
-    @TableField("VOLTAGE")
+    @TableField("voltage")
     private Integer voltage;
     /*** 功率 */
-    @TableField("POWER")
+    @TableField("power")
     private Integer power;
     /*** 所属灯杆 */
-    @TableField("POLE_ID")
+    @TableField("pole_id")
     private Long poleId;
 }

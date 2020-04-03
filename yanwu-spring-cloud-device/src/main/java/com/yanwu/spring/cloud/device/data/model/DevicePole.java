@@ -23,9 +23,9 @@ import java.math.BigDecimal;
 public class DevicePole extends DeviceManager implements Serializable {
     private static final long serialVersionUID = -8121691962120028153L;
     /*** 高度 */
-    @TableField("HEIGHT")
+    @TableField("height")
     private BigDecimal height;
     /*** 叉数 */
-    @TableField("FORK_NUMBER")
+    @TableField("fork_number")
     private BigDecimal forkNumber;
 }

@@ -22,25 +22,25 @@ import java.io.Serializable;
 public class YanwuUser extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = -5667178676337792115L;
     /*** 账号 */
-    @TableField("ACCOUNT")
+    @TableField("account")
     private String account;
     /*** 密码 */
-    @TableField("PASSWORD")
+    @TableField("password")
     private String password;
     /*** 性别 */
-    @TableField("SEX")
+    @TableField("sex")
     private Boolean sex;
     /*** 手机号 */
-    @TableField("PHONE")
+    @TableField("phone")
     private String phone;
     /*** 邮箱 */
-    @TableField("EMAIL")
+    @TableField("email")
     private String email;
     /*** 角色ID */
-    @TableField("ROLE_ID")
+    @TableField("role_id")
     private Long roleId;
     /*** 头像 */
-    @TableField("PORTRAIT")
+    @TableField("portrait")
     private Long portrait;
     /*** 状态 ***/
     @TableField("status")
