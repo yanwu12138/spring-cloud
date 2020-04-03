@@ -4,7 +4,6 @@ import com.yanwu.spring.cloud.common.core.common.TimeStringFormat;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
-import com.yanwu.spring.cloud.common.utils.DataUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.file.consumer.base.YanwuUserConsumer;
 import com.yanwu.spring.cloud.file.data.model.Attachment;

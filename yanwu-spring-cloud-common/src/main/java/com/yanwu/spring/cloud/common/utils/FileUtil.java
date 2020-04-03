@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import com.yanwu.spring.cloud.common.core.common.TimeStringFormat;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -151,34 +150,7 @@ public class FileUtil {
 
     public static String getFileNameByType(String fileName, FileType fileType) throws Exception {
         Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
-        StringBuilder buffer = new StringBuilder("downloadExcel");
-        buffer.append(DataUtil.getTimeString(System.currentTimeMillis(), TimeStringFormat.YYYY_MM_DD1));
-        switch (fileType) {
-            case WORD:
-                buffer.append(".docx");
-                break;
-            case EXCEL:
-                buffer.append(".xlsx");
-                break;
-            case PPT:
-                buffer.append(".pptx");
-                break;
-            case PDF:
-                buffer.append(".pdf");
-                break;
-            case SQL:
-                buffer.append(".sql");
-                break;
-            case TXT:
-                buffer.append(".txt");
-                break;
-            case JSON:
-                buffer.append(".json");
-                break;
-            default:
-                break;
-        }
-        return buffer.toString();
+        return "downloadExcel" + System.currentTimeMillis() + FileType.getSuffix(fileType);
     }
 
     public static FileType getFileTypeByName(String fileName) {

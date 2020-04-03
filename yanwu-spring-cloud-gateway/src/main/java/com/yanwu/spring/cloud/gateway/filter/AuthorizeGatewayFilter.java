@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.gateway.filter;
 
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
-import com.yanwu.spring.cloud.common.redis.Contents;
+import com.yanwu.spring.cloud.common.config.Contents;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

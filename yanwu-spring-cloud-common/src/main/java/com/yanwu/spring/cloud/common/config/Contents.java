@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.redis;
+package com.yanwu.spring.cloud.common.config;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>

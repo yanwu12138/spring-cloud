@@ -8,8 +8,7 @@ import com.yanwu.spring.cloud.common.core.aspect.CheckParamRegex;
 import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.mvc.vo.base.LoginVO;
 import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
-import com.yanwu.spring.cloud.common.redis.Contents;
-import com.yanwu.spring.cloud.common.utils.AccessTokenUtil;
+import com.yanwu.spring.cloud.common.config.Contents;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -61,9 +60,7 @@ public class WebappLoginController {
         String password = Aes128Util.encrypt(vo.getPassword());
         Assert.isTrue(StringUtils.equals(password, user.getPassword()), "password error.");
         YanwuUserVO userVO = voDoUtil.convertDoToVo(user, YanwuUserVO.class);
-        // ----- 得到token, 保存缓存
-        String token = AccessTokenUtil.loginSuccess(userVO.getId(), userVO.getAccount());
-        userVO.setToken(token);
+        // ----- TODO 得到token, 保存缓存
         loginTokenOperations.set(Contents.LOGIN_TOKEN + user.getId(), userVO, Contents.TOKEN_TIME_OUT, TimeUnit.SECONDS);
         return new ResponseEntity<>(new ResponseEnvelope<>(userVO), HttpStatus.OK);
     }

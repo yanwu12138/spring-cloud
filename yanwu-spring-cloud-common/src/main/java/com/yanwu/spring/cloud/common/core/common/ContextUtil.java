@@ -19,24 +19,24 @@ public class ContextUtil implements ApplicationContextAware {
     private ContextUtil() {
     }
 
-    private static ApplicationContext applicationContext = null;
+    private static ApplicationContext context = null;
 
-    public static ApplicationContext getApplicationContext() {
-        return applicationContext;
+    public static ApplicationContext getContext() {
+        return context;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         log.info("ContextUtil: setApplicationContext: {}", applicationContext);
-        ContextUtil.applicationContext = applicationContext;
+        ContextUtil.context = applicationContext;
     }
 
     public static Object getBean(String beanName) {
-        return applicationContext.getBean(beanName);
+        return context.getBean(beanName);
     }
 
     public static <T> T getBean(Class<T> clazz) {
-        return applicationContext.getBean(clazz);
+        return context.getBean(clazz);
     }
-    
+
 }

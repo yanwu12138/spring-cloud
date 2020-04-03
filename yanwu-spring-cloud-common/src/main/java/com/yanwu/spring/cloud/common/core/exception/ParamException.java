@@ -13,4 +13,8 @@ public class ParamException extends RuntimeException {
         super(message);
     }
 
+    public ParamException(String message, Throwable e) {
+        super(message, e);
+    }
+
 }
