@@ -37,23 +37,27 @@ public class YanwuUserServiceImpl extends ServiceImpl<YanwuUserMapper, YanwuUser
     }
 
     @Override
-    public boolean checkAccount(String account) {
+    public YanwuUser checkAccount(String account) {
         QueryWrapper<YanwuUser> wrapper = new QueryWrapper<>();
         wrapper.eq("account", account);
-        return getOne(wrapper) != null;
+        wrapper.eq("enabled", Boolean.TRUE);
+        return getOne(wrapper);
     }
 
     @Override
-    public boolean checkEmail(String email) {
+    public YanwuUser checkEmail(String email) {
         QueryWrapper<YanwuUser> wrapper = new QueryWrapper<>();
         wrapper.eq("email", email);
-        return getOne(wrapper) != null;
+        wrapper.eq("enabled", Boolean.TRUE);
+        return getOne(wrapper);
     }
 
     @Override
-    public boolean checkPhone(String phone) {
+    public YanwuUser checkPhone(String phone) {
         QueryWrapper<YanwuUser> wrapper = new QueryWrapper<>();
         wrapper.eq("phone", phone);
-        return getOne(wrapper) != null;
+        wrapper.eq("enabled", Boolean.TRUE);
+        return getOne(wrapper);
     }
+
 }

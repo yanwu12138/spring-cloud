@@ -42,7 +42,7 @@ public interface YanwuUserService extends IService<YanwuUser> {
      * @param account
      * @return
      */
-    boolean checkAccount(String account);
+    YanwuUser checkAccount(String account);
 
     /**
      * 检查邮箱是否存在
@@ -50,7 +50,7 @@ public interface YanwuUserService extends IService<YanwuUser> {
      * @param email
      * @return
      */
-    boolean checkEmail(String email);
+    YanwuUser checkEmail(String email);
 
     /**
      * 校验手机号是否存在
@@ -58,5 +58,5 @@ public interface YanwuUserService extends IService<YanwuUser> {
      * @param phone
      * @return
      */
-    boolean checkPhone(String phone);
+    YanwuUser checkPhone(String phone);
 }

@@ -38,17 +38,17 @@ public class WebappYanwuUserController {
     @LogAndCheckParam(check = {
             @CheckFiled(field = "account", message = "账号格式错误", regex = CheckParamRegex.STRING_NOT_NULL),
             @CheckFiled(field = "email", message = "邮箱格式错误", regex = CheckParamRegex.EMAIL),
-            @CheckFiled(field = "sex", message = "性别不能为空", regex = CheckParamRegex.STRING_NOT_NULL),
+            @CheckFiled(field = "sex", message = "性别不能为空", regex = CheckParamRegex.BOOLEAN_NOT_NULL),
             @CheckFiled(field = "phone", message = "手机号格式错误", regex = CheckParamRegex.PHONE_NO),
-            @CheckFiled(field = "roleId", message = "所属角色不能为空", regex = CheckParamRegex.STRING_NOT_NULL)
+            @CheckFiled(field = "roleId", message = "所属角色不能为空", regex = CheckParamRegex.LONG_NOT_NULL)
     })
     public ResponseEntity<ResponseEnvelope<Long>> create(@RequestBody YanwuUser user) {
         // ===== 校验账号、邮箱、手机号是否存在
-        Assert.isTrue(!userService.checkAccount(user.getAccount()), "账号已存在");
+        Assert.isNull(userService.checkAccount(user.getAccount()), "账号已存在");
         // ===== 校验邮箱是否存在
-        Assert.isTrue(!userService.checkEmail(user.getEmail()), "邮箱已存在");
+        Assert.isNull(userService.checkEmail(user.getEmail()), "邮箱已存在");
         // ===== 校验手机号是否存在
-        Assert.isTrue(!userService.checkPhone(user.getPhone()), "手机号有已存在");
+        Assert.isNull(userService.checkPhone(user.getPhone()), "手机号有已存在");
         if (StringUtils.isBlank(user.getPassword())) {
             user.setPassword(Aes128Util.encrypt(YanwuConstants.DEFAULT_PASSWORD));
         } else {

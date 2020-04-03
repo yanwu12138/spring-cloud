@@ -130,7 +130,7 @@ public class LogAndCheckParamAspect {
                 if (checkMap.containsKey(name)) {
                     CheckFiled checkFiled = checkMap.get(name);
                     try {
-                        String value = (String) field.get(obj);
+                        String value = String.valueOf(field.get(obj));
                         if (StringUtils.isBlank(value) || !value.matches(checkFiled.regex())) {
                             result.put(name, checkFiled.message());
                         }
