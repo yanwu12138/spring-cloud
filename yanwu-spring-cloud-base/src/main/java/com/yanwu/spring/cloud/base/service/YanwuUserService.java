@@ -21,16 +21,6 @@ public interface YanwuUserService extends IService<YanwuUser> {
     YanwuUser findByAccount(String account) throws Exception;
 
     /**
-     * 根据用户ID查找用户
-     *
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    String findUserNameById(Long id) throws Exception;
-
-
-    /**
      * 根据用户名查找用户
      *
      * @param userName
@@ -45,4 +35,28 @@ public interface YanwuUserService extends IService<YanwuUser> {
      * @param yanwuUser
      */
     void updatePortrait(YanwuUser yanwuUser);
+
+    /**
+     * 检查账号是否重复
+     *
+     * @param account
+     * @return
+     */
+    boolean checkAccount(String account);
+
+    /**
+     * 检查邮箱是否存在
+     *
+     * @param email
+     * @return
+     */
+    boolean checkEmail(String email);
+
+    /**
+     * 校验手机号是否存在
+     *
+     * @param phone
+     * @return
+     */
+    boolean checkPhone(String phone);
 }

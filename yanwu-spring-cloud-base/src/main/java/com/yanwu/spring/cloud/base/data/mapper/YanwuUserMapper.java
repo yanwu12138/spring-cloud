@@ -16,16 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 @SuppressWarnings("all")
 public interface YanwuUserMapper extends BaseMapper<YanwuUser> {
 
-    @Select("select y from YanwuUser y where y.account=?1 or y.phone=${account} or y.email=${account}")
+    @Select("select y.* from yanwu_user as y where y.account=#{account} or y.phone=#{account} or y.email=#{account}")
     YanwuUser findByAccount(@Param("account") String account) throws Exception;
 
-    @Select("select y.account from YanwuUser y where y.id=${id}")
+    @Select("select y.account from yanwu_user as where y.id=${id}")
     String findUserNameById(@Param("id") Long id) throws Exception;
 
-    @Select("select y from YanwuUser y where y.name=${userName}")
+    @Select("select y.* from yanwu_user as where y.name=${userName}")
     YanwuUser findByUserName(@Param("userName") String userName) throws Exception;
 
     @Transactional
-    @Update("update YanwuUser y set y.portrait=${portrait} where y.id=${id}")
+    @Update("update yanwu_user set y.portrait=${portrait} where y.id=${id}")
     void updatePortrait(@Param("id") Long id, @Param("portrait") Long portrait);
 }

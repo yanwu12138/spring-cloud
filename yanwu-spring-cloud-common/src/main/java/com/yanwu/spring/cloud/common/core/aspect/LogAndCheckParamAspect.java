@@ -20,7 +20,10 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -37,6 +40,7 @@ import java.util.Map;
 @Aspect
 @Component
 public class LogAndCheckParamAspect {
+    private static final String TX_ID = "txId";
     private static final Integer ERROR_PARAM_MAP_SIZE = 0;
 
     @Pointcut("@annotation(com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam)")
@@ -49,7 +53,7 @@ public class LogAndCheckParamAspect {
         Object[] args = joinPoint.getArgs();
         Map<String, Object> errorParams = new HashMap<>(ERROR_PARAM_MAP_SIZE);
         try {
-            log.info("Request   : [method]: {}, [param]: {}", method, args);
+            log.info("Request   : [txId]: {}, [method]: {}, [param]: {}", getTxId(), method, args);
             LogAndCheckParam annotation = method.getAnnotation(LogAndCheckParam.class);
             CheckFiled[] checks = annotation.check();
             if (ArrayUtils.isNotEmpty(checks)) {
@@ -60,7 +64,7 @@ public class LogAndCheckParamAspect {
             }
             return joinPoint.proceed(args);
         } catch (Throwable e) {
-            log.error("Exception : [method]: {}, [param]: {}, errorParams: {}", method, args, errorParams, e);
+            log.error("Exception : [txId]: {}, [method]: {}, [param]: {}, errorParams: {}", getTxId(), method, args, errorParams, e);
             ResponseEnvelope<Object> envelope = new ResponseEnvelope<>();
             if (e instanceof ParamException) {
                 envelope.getResult().setErrorParams(errorParams);
@@ -80,9 +84,9 @@ public class LogAndCheckParamAspect {
     @AfterReturning(returning = "result", pointcut = "logAndCheckParamPointcut()")
     public void doAfterReturning(JoinPoint joinPoint, Object result) {
         if (result instanceof Serializable || result instanceof ResponseEntity) {
-            log.info("Response  : [method]: {}, [return]: {}", getMethodSignature(joinPoint), result);
+            log.info("Response  : [txId]: {}, [method]: {}, [return]: {}", getTxId(), getMethodSignature(joinPoint), result);
         } else {
-            log.info("Response  : [method]: {}, [return]: {}", getMethodSignature(joinPoint), "The response could not be serialized.");
+            log.info("Response  : [txId]: {}, [method]: {}, [return]: {}", getTxId(), getMethodSignature(joinPoint), "The response could not be serialized.");
         }
     }
 
@@ -139,4 +143,24 @@ public class LogAndCheckParamAspect {
         return result;
     }
 
+    /**
+     * 获取每次请求的全局txID
+     *
+     * @return txId
+     */
+    private static String getTxId() {
+        HttpServletRequest request = request();
+        return request != null ? request.getHeader(TX_ID) : null;
+    }
+
+
+    /**
+     * 获取请求信息
+     *
+     * @return request
+     */
+    private static HttpServletRequest request() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        return attributes != null ? attributes.getRequest() : null;
+    }
 }
