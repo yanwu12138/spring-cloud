@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.device.device.vo;
+package com.yanwu.spring.cloud.device.vo;
 
 import com.yanwu.spring.cloud.common.pojo.PageParam;
 import lombok.AllArgsConstructor;

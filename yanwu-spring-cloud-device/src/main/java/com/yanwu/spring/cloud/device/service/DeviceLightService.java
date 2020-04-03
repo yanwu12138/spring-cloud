@@ -1,7 +1,7 @@
-package com.yanwu.spring.cloud.device.device.service;
+package com.yanwu.spring.cloud.device.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yanwu.spring.cloud.device.device.data.model.DeviceLight;
+import com.yanwu.spring.cloud.device.data.model.DeviceLight;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>

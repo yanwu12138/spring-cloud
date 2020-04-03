@@ -1,9 +1,9 @@
-package com.yanwu.spring.cloud.device.device.service.impl;
+package com.yanwu.spring.cloud.device.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yanwu.spring.cloud.device.device.data.mapper.DeviceLightMapper;
-import com.yanwu.spring.cloud.device.device.data.model.DeviceLight;
-import com.yanwu.spring.cloud.device.device.service.DeviceLightService;
+import com.yanwu.spring.cloud.device.data.mapper.DeviceLightMapper;
+import com.yanwu.spring.cloud.device.data.model.DeviceLight;
+import com.yanwu.spring.cloud.device.service.DeviceLightService;
 import org.springframework.stereotype.Service;
 
 /**

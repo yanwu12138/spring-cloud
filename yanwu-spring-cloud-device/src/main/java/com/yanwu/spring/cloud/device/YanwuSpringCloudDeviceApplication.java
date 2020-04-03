@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.device.device;
+package com.yanwu.spring.cloud.device;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

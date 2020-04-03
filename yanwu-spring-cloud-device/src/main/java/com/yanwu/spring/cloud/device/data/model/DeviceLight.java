@@ -1,8 +1,8 @@
-package com.yanwu.spring.cloud.device.device.data.model;
+package com.yanwu.spring.cloud.device.data.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.yanwu.spring.cloud.device.device.data.DeviceManager;
+import com.yanwu.spring.cloud.device.data.DeviceManager;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

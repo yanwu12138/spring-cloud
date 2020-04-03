@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.device.device.data.model;
+package com.yanwu.spring.cloud.device.data.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yanwu.spring.cloud.common.pojo.BaseDo;

@@ -1,7 +1,7 @@
-package com.yanwu.spring.cloud.device.device.data.mapper;
+package com.yanwu.spring.cloud.device.data.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.yanwu.spring.cloud.device.device.data.model.DeviceGroup;
+import com.yanwu.spring.cloud.device.data.model.DeviceGroup;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
