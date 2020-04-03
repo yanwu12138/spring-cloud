@@ -30,20 +30,20 @@ spring:
         ###  uri：lb[固定写法，启动负载均衡]；fishbone-base[根据注册中心服务名进行请求转发]
         ###  predicates：配置规则，所有的/base/开头的请求全部会被转发到fishbone-base服务
         ###  filters：过滤器，若有StripPrefix过滤器时，gateway会根据StripPrefix=1所配的值（这里是1）去掉URL路径中的部分前缀（这里去掉一个前缀，即去掉base）
-      - id: yanwy-base
-        uri: lb://yanwy-base
+      - id: yanwu-base
+        uri: lb://yanwu-base
         predicates:
           - Path=/base/**
         filters:
           - StripPrefix=1
-      - id: yanwy-device
-        uri: lb://yanwy-device
+      - id: yanwu-device
+        uri: lb://yanwu-device
         predicates:
           - Path=/device/**
         filters:
           - StripPrefix=1
-      - id: yanwy-file
-        uri: lb://yanwy-file
+      - id: yanwu-file
+        uri: lb://yanwu-file
         predicates:
           - Path=/file/**
         filters:

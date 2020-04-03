@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.base.data.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.yanwu.spring.cloud.common.pojo.BaseDo;
 import lombok.Data;
@@ -17,8 +18,14 @@ import java.io.Serializable;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@TableName("base_user")
+@TableName("yanwu_role")
 public class YanwuRole extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = -7133802858877953995L;
 
+    /*** 角色名称 ***/
+    @TableField("role_name")
+    private String roleName;
+    /*** 状态 ***/
+    @TableField("status")
+    private Boolean status;
 }

@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@TableName("base_user")
+@TableName("yanwu_user")
 public class YanwuUser extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = -5667178676337792115L;
     /*** 账号 */
@@ -42,4 +42,7 @@ public class YanwuUser extends BaseDo<Long> implements Serializable {
     /*** 头像 */
     @TableField("PORTRAIT")
     private Long portrait;
+    /*** 状态 ***/
+    @TableField("status")
+    private Boolean status;
 }
