@@ -93,7 +93,7 @@
 
 
     <build>
-        <finalName>yanwu-file</finalName>
+        <finalName>yanwu-device</finalName>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
