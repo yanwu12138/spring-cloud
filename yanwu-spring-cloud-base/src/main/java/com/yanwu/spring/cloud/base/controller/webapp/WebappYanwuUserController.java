@@ -5,7 +5,6 @@ import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
 import com.yanwu.spring.cloud.common.mvc.res.ResponseEnvelope;
-import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author XuBaofeng.
@@ -37,21 +33,19 @@ public class WebappYanwuUserController {
 
     @LogAndCheckParam
     @PostMapping(value = "create")
-    public ResponseEntity<ResponseEnvelope<YanwuUserVO>> create(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
-        YanwuUser userDO = voDoUtil.convertVoToDo(yanwuUserVO, YanwuUser.class);
-        if (StringUtils.isBlank(userDO.getPassword())) {
-            userDO.setPassword(Aes128Util.encrypt(YanwuConstants.DEFAULT_PASSWORD));
+    public ResponseEntity<ResponseEnvelope<Long>> create(@RequestBody YanwuUser user) throws Exception {
+        if (StringUtils.isBlank(user.getPassword())) {
+            user.setPassword(Aes128Util.encrypt(YanwuConstants.DEFAULT_PASSWORD));
         } else {
-            userDO.setPassword(Aes128Util.encrypt(userDO.getPassword()));
+            user.setPassword(Aes128Util.encrypt(user.getPassword()));
         }
-        YanwuUser yanwuUser = userService.save(userDO);
-        YanwuUserVO vo = voDoUtil.convertDoToVo(yanwuUser, YanwuUserVO.class);
-        return new ResponseEntity<>(new ResponseEnvelope<>(vo), HttpStatus.OK);
+        userService.save(user);
+        return new ResponseEntity<>(new ResponseEnvelope<>(user.getId()), HttpStatus.OK);
     }
 
     @LogAndCheckParam
-    @PostMapping(value = "update")
-    public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
+    @PutMapping(value = "update")
+    public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUser user) throws Exception {
         return new ResponseEntity<>(new ResponseEnvelope<>(Boolean.TRUE), HttpStatus.OK);
     }
 
