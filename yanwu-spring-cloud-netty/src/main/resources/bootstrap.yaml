@@ -1,0 +1,29 @@
+server:
+  port: 8883
+spring:
+  application:
+    name: yanwu-netty
+  redis:
+    host: 39.97.229.71
+    port: 6379
+    password: xbf12138
+    timeout: 10000
+    database: 1
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${CONFIG_SERVER_URL:192.168.0.177:8848}
+        group: develop
+        namespace: 5d00ad42-827e-4e99-8509-19e0a618e1aa
+      # # 配置中心
+      # config:
+      #  server-addr: ${CONFIG_SERVER_URL:192.168.0.177:8848}
+      #  file-extension: yaml
+      #  group: develop
+      #  namespace: 5d00ad42-827e-4e99-8509-19e0a618e1aa
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+netty:
+  port: 6000

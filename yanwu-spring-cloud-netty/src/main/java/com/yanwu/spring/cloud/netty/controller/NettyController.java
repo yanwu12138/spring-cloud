@@ -1,11 +1,9 @@
 package com.yanwu.spring.cloud.netty.controller;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
-import com.yanwu.spring.cloud.common.mvc.vo.command.CommandVO;
 import com.yanwu.spring.cloud.netty.handler.Handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,8 +25,8 @@ public class NettyController {
 
     @LogAndCheckParam
     @PostMapping("send")
-    public void send(@RequestBody CommandVO command) {
-        handler.send(command.getCtxId(), String.valueOf(command.getData()));
+    public void send() {//@RequestBody CommandVO command
+//        handler.send(command.getCtxId(), String.valueOf(command.getData()));
     }
 
 }
