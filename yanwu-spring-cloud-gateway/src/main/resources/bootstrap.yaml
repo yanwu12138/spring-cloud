@@ -1,0 +1,43 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: yanwu-gateway
+  redis:
+    host: 39.97.229.71
+    port: 6379
+    password: xbf12138
+    timeout: 10000
+    database: 3
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${CONFIG_SERVER_URL:192.168.0.177:8848}
+        group: develop
+        namespace: 5d00ad42-827e-4e99-8509-19e0a618e1aa
+      # # 配置中心
+      # config:
+      #  server-addr: ${CONFIG_SERVER_URL:192.168.0.177:8848}
+      #  file-extension: yaml
+      #  group: develop
+      #  namespace: 5d00ad42-827e-4e99-8509-19e0a618e1aa
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        ###  id: 路由的唯一标识
+        ###  uri：lb[固定写法，启动负载均衡]；fishbone-base[根据注册中心服务名进行请求转发]
+        ###  predicates：配置规则，所有的/base/开头的请求全部会被转发到fishbone-base服务
+        ###  filters：过滤器，若有StripPrefix过滤器时，gateway会根据StripPrefix=1所配的值（这里是1）去掉URL路径中的部分前缀（这里去掉一个前缀，即去掉base）
+      - id: yanwy-base
+        uri: lb://yanwy-base
+        predicates:
+          - Path=/base/**
+        filters:
+          - StripPrefix=1
+  main:
+    allow-bean-definition-overriding: true
+feign:
+  hystrix:
+    enabled:  true
