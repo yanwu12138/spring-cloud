@@ -41,3 +41,6 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
+ribbon:
+  ReadTimeout: 3000
+  ConnectTimeout: 3000

@@ -41,7 +41,7 @@ public class BackendYanwuUserController {
     @LogAndCheckParam
     @PostMapping("updateAccountById")
     public ResponseEntity<ResponseEnvelope<YanwuUser>> updateAccountById(@RequestBody YanwuUser user) {
-        userService.updateById(user);
+        user = userService.updateAccountById(user);
         return new ResponseEntity<>(new ResponseEnvelope<>(user), HttpStatus.OK);
     }
 

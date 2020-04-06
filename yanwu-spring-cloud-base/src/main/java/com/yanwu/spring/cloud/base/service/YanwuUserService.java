@@ -59,4 +59,12 @@ public interface YanwuUserService extends IService<YanwuUser> {
      * @return
      */
     YanwuUser checkPhone(String phone);
+
+    /**
+     * 根据用户ID修改用户名
+     *
+     * @param user
+     * @return
+     */
+    YanwuUser updateAccountById(YanwuUser user);
 }

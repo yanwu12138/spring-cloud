@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.base.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yanwu.spring.cloud.base.consumer.DeviceLightConsumer;
 import com.yanwu.spring.cloud.base.data.mapper.YanwuUserMapper;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
@@ -18,6 +19,8 @@ import javax.annotation.Resource;
 @Service
 public class YanwuUserServiceImpl extends ServiceImpl<YanwuUserMapper, YanwuUser> implements YanwuUserService {
 
+    @Resource
+    private DeviceLightConsumer lightConsumer;
     @Resource
     private YanwuUserMapper yanwuUserMapper;
 
@@ -58,6 +61,13 @@ public class YanwuUserServiceImpl extends ServiceImpl<YanwuUserMapper, YanwuUser
         wrapper.eq("phone", phone);
         wrapper.eq("enabled", Boolean.TRUE);
         return getOne(wrapper);
+    }
+
+    @Override
+    public YanwuUser updateAccountById(YanwuUser user) {
+        updateById(user);
+        lightConsumer.create();
+        return user;
     }
 
 }

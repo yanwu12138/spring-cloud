@@ -27,3 +27,7 @@ spring:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
 netty:
   port: 6000
+
+ribbon:
+  ReadTimeout: 3000
+  ConnectTimeout: 3000
