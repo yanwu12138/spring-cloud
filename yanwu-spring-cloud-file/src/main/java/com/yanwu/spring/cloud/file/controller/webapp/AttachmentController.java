@@ -7,6 +7,7 @@ import com.yanwu.spring.cloud.common.utils.ExcelUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
+import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -111,6 +112,13 @@ public class AttachmentController {
         SXSSFWorkbook workbook = ExcelUtil.assembleExcel(head, contents);
         String fileName = FileUtil.getFileNameByType("downloadExcel", FileType.EXCEL);
         return ExcelUtil.exportExcel(workbook, fileName);
+    }
+
+    @LogAndCheckParam
+    @PostMapping("updateUser")
+    public ResponseEntity<ResponseEnvelope<YanwuUser>> updateUser(@RequestBody YanwuUser user) {
+        user = attachmentService.updateAccountById(user);
+        return new ResponseEntity<>(new ResponseEnvelope<>(user), HttpStatus.OK);
     }
 
 }

@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.file.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
+import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.Part;
@@ -25,4 +26,6 @@ public interface AttachmentService extends IService<Attachment> {
     Attachment findById(Long id) throws Exception;
 
     Attachment upPortrait(MultipartHttpServletRequest request, Long userId) throws Exception;
+
+    YanwuUser updateAccountById(YanwuUser user);
 }

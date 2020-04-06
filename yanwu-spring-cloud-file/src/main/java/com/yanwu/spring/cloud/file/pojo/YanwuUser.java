@@ -18,4 +18,5 @@ public class YanwuUser extends BaseDo<Long> {
 
     /*** 头像 */
     private Long portrait;
+
 }

@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.file.consumer.base;
 
-import com.yanwu.spring.cloud.common.pojo.BaseParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.file.consumer.base.fallback.YanwuUserFallbackFactory;
 import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +16,18 @@ import org.springframework.web.bind.annotation.RequestBody;
  * description:
  */
 @Component
-@FeignClient(name = "yanwu-base", url = "127.0.0.1:8881")
+@FeignClient(name = "yanwu-base", fallbackFactory = YanwuUserFallbackFactory.class)
 public interface YanwuUserConsumer {
 
     /**
      * 修改用户头像
      *
-     * @param param
+     * @param yanwuUser
      * @return
      */
     @PostMapping(value = "backend/yanwuUser/updatePortrait")
-    ResponseEntity<ResponseEnvelope<Void>> updatePortrait(@RequestBody BaseParam<YanwuUser> param);
+    ResponseEntity<ResponseEnvelope<Void>> updatePortrait(@RequestBody YanwuUser yanwuUser);
+
+    @PostMapping(value = "backend/yanwuUser/updateAccountById")
+    YanwuUser updateAccountById(@RequestBody YanwuUser user);
 }

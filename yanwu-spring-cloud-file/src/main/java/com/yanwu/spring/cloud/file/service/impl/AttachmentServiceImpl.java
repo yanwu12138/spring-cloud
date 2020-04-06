@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.file.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
-import com.yanwu.spring.cloud.common.pojo.BaseParam;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.file.consumer.base.YanwuUserConsumer;
 import com.yanwu.spring.cloud.file.data.mapper.AttachmentMapper;
@@ -15,7 +14,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -23,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.InputStream;
@@ -40,7 +39,7 @@ import java.util.List;
 @Service
 public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachment> implements AttachmentService {
 
-    @Autowired
+    @Resource
     private YanwuUserConsumer yanwuUserConsumer;
 
     @Override
@@ -140,7 +139,13 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
         YanwuUser yanwuUserVO = new YanwuUser();
         yanwuUserVO.setId(userId);
         yanwuUserVO.setPortrait(attachment.getId());
-        yanwuUserConsumer.updatePortrait(new BaseParam<>(yanwuUserVO));
+        yanwuUserConsumer.updatePortrait(yanwuUserVO);
         return attachment;
     }
+
+    @Override
+    public YanwuUser updateAccountById(YanwuUser user) {
+        return yanwuUserConsumer.updateAccountById(user);
+    }
+
 }

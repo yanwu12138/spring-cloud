@@ -8,14 +8,14 @@ import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
 import com.yanwu.spring.cloud.common.core.aspect.CheckParamRegex;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
-import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @author XuBaofeng.
@@ -28,10 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("webapp/yanwuUser/")
 public class WebappYanwuUserController {
 
-    @Autowired
-    private VoDoUtil voDoUtil;
-
-    @Autowired
+    @Resource
     private YanwuUserService userService;
 
     @PostMapping(value = "create")
@@ -62,6 +59,12 @@ public class WebappYanwuUserController {
     @PutMapping(value = "update")
     public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUser user) throws Exception {
         return new ResponseEntity<>(new ResponseEnvelope<>(Boolean.TRUE), HttpStatus.OK);
+    }
+
+    @LogAndCheckParam
+    @GetMapping("getById")
+    public ResponseEntity<ResponseEnvelope<YanwuUser>> getById(@RequestParam("id") Long id) {
+        return new ResponseEntity<>(new ResponseEnvelope<>(userService.getById(id)), HttpStatus.OK);
     }
 
 }
