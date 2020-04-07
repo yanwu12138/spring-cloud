@@ -41,6 +41,9 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
-ribbon:
-  ReadTimeout: 3000
-  ConnectTimeout: 3000
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 50000
+        readTimeout: 50000

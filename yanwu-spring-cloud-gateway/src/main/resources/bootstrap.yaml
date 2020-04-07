@@ -53,7 +53,8 @@ spring:
 feign:
   hystrix:
     enabled:  true
-
-ribbon:
-  ReadTimeout: 3000
-  ConnectTimeout: 3000
+  client:
+    config:
+      default:
+        connectTimeout: 50000
+        readTimeout: 50000
