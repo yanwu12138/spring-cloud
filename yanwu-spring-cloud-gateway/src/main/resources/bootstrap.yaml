@@ -34,20 +34,24 @@ spring:
         uri: lb://yanwu-base
         predicates:
           - Path=/base/**
-        filters:
-          - StripPrefix=1
       - id: yanwu-device
         uri: lb://yanwu-device
         predicates:
           - Path=/device/**
-        filters:
-          - StripPrefix=1
       - id: yanwu-file
         uri: lb://yanwu-file
         predicates:
           - Path=/file/**
         filters:
           - StripPrefix=1
+          - name: RequestRateLimiter
+            args:
+              # 令牌桶每秒填充平均速率
+              redis-rate-limiter.replenishRate: 1
+              # 令牌桶的上限
+              redis-rate-limiter.burstCapacity: 5
+              # 使用SpEL表达式从Spring容器中获取Bean对象
+              key-resolver: "#{@ipKeyResolver}"
   main:
     allow-bean-definition-overriding: true
 feign:
