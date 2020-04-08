@@ -49,7 +49,7 @@ spring:
               # 令牌桶每秒填充平均速率
               redis-rate-limiter.replenishRate: 1
               # 令牌桶的上限
-              redis-rate-limiter.burstCapacity: 5
+              redis-rate-limiter.burstCapacity: 2
               # 使用SpEL表达式从Spring容器中获取Bean对象
               key-resolver: "#{@routeKeyResolver}"
   main:

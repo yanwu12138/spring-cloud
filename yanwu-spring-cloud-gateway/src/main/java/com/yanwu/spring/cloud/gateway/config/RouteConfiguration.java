@@ -14,7 +14,7 @@ import java.util.Objects;
  * description:
  */
 @Configuration
-public class Raonfiguration {
+public class RouteConfiguration {
 
     /**
      * 根据IP地址去进行请求过滤
