@@ -22,8 +22,13 @@ public class Raonfiguration {
      * @return 返回对应的令牌
      */
     @Bean
-    public KeyResolver ipKeyResolver() {
+    public KeyResolver routeKeyResolver() {
+        // ===== IP地址限流
         return exchange -> Mono.just(Objects.requireNonNull(exchange.getRequest().getLocalAddress()).getAddress().toString());
+        // ===== 用户进行限流
+//        return exchange -> Mono.just(Objects.requireNonNull(exchange.getRequest().getHeaders().getFirst(Constant.CURRENT_USER)));
+        // ===== TOKEN进行限流
+//        return exchange -> Mono.just(Objects.requireNonNull(exchange.getRequest().getHeaders().getFirst(Constant.TOKEN)));
     }
 
 }

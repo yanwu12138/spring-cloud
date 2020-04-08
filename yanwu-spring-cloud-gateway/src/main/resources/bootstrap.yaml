@@ -51,7 +51,7 @@ spring:
               # 令牌桶的上限
               redis-rate-limiter.burstCapacity: 5
               # 使用SpEL表达式从Spring容器中获取Bean对象
-              key-resolver: "#{@ipKeyResolver}"
+              key-resolver: "#{@routeKeyResolver}"
   main:
     allow-bean-definition-overriding: true
 feign:
