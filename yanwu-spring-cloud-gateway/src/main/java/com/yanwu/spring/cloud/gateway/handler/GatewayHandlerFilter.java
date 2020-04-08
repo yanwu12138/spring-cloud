@@ -78,35 +78,8 @@ public class GatewayHandlerFilter implements GlobalFilter, Ordered {
      */
     private ServerWebExchange responseHandler(ServerWebExchange exchange, String txId) {
         ServerHttpResponse response = exchange.getResponse();
-        DataBufferFactory bufferFactory = response.bufferFactory();
-        ServerHttpResponseDecorator responseDecorator = new ServerHttpResponseDecorator(response) {
-            @Override
-            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-                if (body instanceof Flux) {
-                    Flux<? extends DataBuffer> fluxBody = (Flux<? extends DataBuffer>) body;
-                    return super.writeWith(fluxBody.map(dataBuffer -> {
-                        // probably should reuse buffers
-                        byte[] content = new byte[dataBuffer.readableByteCount()];
-                        dataBuffer.read(content);
-                        // 释放掉内存
-                        DataBufferUtils.release(dataBuffer);
-                        String rs = new String(content, Charset.forName("UTF-8"));
-                        Map<String, Serializable> map = new HashMap<>(4);
-                        map.put("data", rs);
-                        map.put("code", 200);
-                        map.put("message", "请求成功");
-                        byte[] newRs = JSON.toJSONString(map).getBytes(Charset.forName("UTF-8"));
-                        // --- 如果不重新设置长度则收不到消息。
-                        response.getHeaders().add(TX_ID, txId);
-                        response.getHeaders().setContentLength(newRs.length);
-                        return bufferFactory.wrap(newRs);
-                    }));
-                }
-                // if body is not a flux. never got there.
-                return super.writeWith(body);
-            }
-        };
-        return exchange.mutate().response(responseDecorator).build();
+        response.getHeaders().add(TX_ID, txId);
+        return exchange.mutate().response(response).build();
     }
 
 }
