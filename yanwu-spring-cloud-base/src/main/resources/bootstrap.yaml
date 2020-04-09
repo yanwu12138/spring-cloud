@@ -22,8 +22,11 @@ spring:
     nacos:
       discovery:
         server-addr: ${CONFIG_SERVER_URL:192.168.0.177:8848}
-        group: develop
-        namespace: 5d00ad42-827e-4e99-8509-19e0a618e1aa
+        group: DEFAULT_GROUP
+        namespace: e02de5de-d737-45d5-af22-ae87d0137308
+    alibaba:
+      seata:
+        tx-service-group: yanwu-seata-group-base
 ### mybatis-plus 配置
 mybatis-plus:
   ### Mapper.xml文件所在目录
@@ -47,3 +50,18 @@ feign:
       default:
         connectTimeout: 50000
         readTimeout: 50000
+seata:
+  service:
+    vgroup-mapping:
+      yanwu-seata-group-base: default
+    grouplist: 192.168.0.177:8091
+#  registry:
+#    type: nacos
+#    nacos:
+#      server-addr: http://192.168.0.177:8848
+#      namespace: e02de5de-d737-45d5-af22-ae87d0137308
+#  config:
+#    type: nacos
+#    nacos:
+#      server-addr: http://192.168.0.177:8848
+#      namespace: e02de5de-d737-45d5-af22-ae87d0137308

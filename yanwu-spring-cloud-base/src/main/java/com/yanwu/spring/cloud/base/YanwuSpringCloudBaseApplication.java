@@ -9,6 +9,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableFeignClients
 @SpringBootApplication
 @EnableDiscoveryClient
+@EnableTransactionManagement
 @MapperScan("com.yanwu.spring.cloud.base.data.mapper")
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud.base", "com.yanwu.spring.cloud.common"})
 public class YanwuSpringCloudBaseApplication {

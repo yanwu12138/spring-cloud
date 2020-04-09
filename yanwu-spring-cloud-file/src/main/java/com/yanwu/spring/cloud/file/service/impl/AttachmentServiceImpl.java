@@ -8,6 +8,7 @@ import com.yanwu.spring.cloud.file.data.mapper.AttachmentMapper;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -144,6 +145,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
     }
 
     @Override
+    @GlobalTransactional(timeoutMills = 30000, rollbackFor = Exception.class, name = "yanwu-seata-group-file")
     public YanwuUser updateAccountById(YanwuUser user) {
         return yanwuUserConsumer.updateAccountById(user);
     }

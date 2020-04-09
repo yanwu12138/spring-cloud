@@ -60,4 +60,8 @@
         <appender-ref ref="logAppender"/>
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="io.seata" level="INFO" additivity="false">
+        <appender-ref ref="logAppender"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
 </configuration>
