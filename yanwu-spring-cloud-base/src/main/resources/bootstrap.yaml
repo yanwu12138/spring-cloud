@@ -55,13 +55,3 @@ seata:
     vgroup-mapping:
       yanwu-seata-group-base: default
     grouplist: 192.168.0.177:8091
-#  registry:
-#    type: nacos
-#    nacos:
-#      server-addr: http://192.168.0.177:8848
-#      namespace: e02de5de-d737-45d5-af22-ae87d0137308
-#  config:
-#    type: nacos
-#    nacos:
-#      server-addr: http://192.168.0.177:8848
-#      namespace: e02de5de-d737-45d5-af22-ae87d0137308
