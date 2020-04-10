@@ -11,12 +11,9 @@ seata:1.0.0
 
 #### 安装教程
 
-1. docker nacos
-    https://www.cnblogs.com/yanwu0527/p/12666487.html
-2. docker mysql
-    https://www.cnblogs.com/yanwu0527/p/12666520.html
-3. docker seata
-    https://www.cnblogs.com/yanwu0527/p/12666572.html
+1. docker nacos >> https://www.cnblogs.com/yanwu0527/p/12666487.html
+2. docker mysql >> https://www.cnblogs.com/yanwu0527/p/12666520.html
+3. docker seata >> https://www.cnblogs.com/yanwu0527/p/12666572.html
     
 #### 使用说明
 
