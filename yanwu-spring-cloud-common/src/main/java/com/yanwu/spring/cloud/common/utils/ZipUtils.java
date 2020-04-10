@@ -44,16 +44,14 @@ public class ZipUtils {
         if (compressedStr == null) {
             return null;
         }
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayInputStream in = null;
         GZIPInputStream ginzip = null;
         byte[] compressed = null;
         String decompressed = null;
-        try {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             compressed = new sun.misc.BASE64Decoder().decodeBuffer(compressedStr);
             in = new ByteArrayInputStream(compressed);
             ginzip = new GZIPInputStream(in);
-
             byte[] buffer = new byte[1024];
             int offset = -1;
             while ((offset = ginzip.read(buffer)) != -1) {
@@ -75,12 +73,6 @@ public class ZipUtils {
                 } catch (IOException e) {
                 }
             }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                }
-            }
         }
         return decompressed;
     }
@@ -91,17 +83,14 @@ public class ZipUtils {
      * @param str 压缩前的文本
      * @return 返回压缩后的文本
      */
-    public static final String zip(String str) {
+    public static String zip(String str) {
         if (str == null) {
             return null;
         }
         byte[] compressed;
-        ByteArrayOutputStream out = null;
-        ZipOutputStream zout = null;
         String compressedStr = null;
-        try {
-            out = new ByteArrayOutputStream();
-            zout = new ZipOutputStream(out);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             ZipOutputStream zout = new ZipOutputStream(out)) {
             zout.putNextEntry(new ZipEntry("0"));
             zout.write(str.getBytes());
             zout.closeEntry();
@@ -109,19 +98,6 @@ public class ZipUtils {
             compressedStr = new sun.misc.BASE64Encoder().encodeBuffer(compressed);
         } catch (IOException e) {
             compressed = null;
-        } finally {
-            if (zout != null) {
-                try {
-                    zout.close();
-                } catch (IOException e) {
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                }
-            }
         }
         return compressedStr;
     }
@@ -136,13 +112,11 @@ public class ZipUtils {
         if (compressedStr == null) {
             return null;
         }
-        ByteArrayOutputStream out = null;
         ByteArrayInputStream in = null;
         ZipInputStream zin = null;
         String decompressed = null;
-        try {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] compressed = new sun.misc.BASE64Decoder().decodeBuffer(compressedStr);
-            out = new ByteArrayOutputStream();
             in = new ByteArrayInputStream(compressed);
             zin = new ZipInputStream(in);
             zin.getNextEntry();
@@ -164,12 +138,6 @@ public class ZipUtils {
             if (in != null) {
                 try {
                     in.close();
-                } catch (IOException e) {
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
                 } catch (IOException e) {
                 }
             }

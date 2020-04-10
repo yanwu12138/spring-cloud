@@ -1,10 +1,14 @@
 package com.yanwu.spring.cloud.base.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yanwu.spring.cloud.base.consumer.DeviceLightConsumer;
+import com.yanwu.spring.cloud.base.data.mapper.YanwuUserMapper;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
-import com.yanwu.spring.cloud.base.data.repository.YanwuUserRepository;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @author XuBaofeng.
@@ -13,33 +17,57 @@ import org.springframework.stereotype.Service;
  * description:
  */
 @Service
-public class YanwuUserServiceImpl implements YanwuUserService {
+public class YanwuUserServiceImpl extends ServiceImpl<YanwuUserMapper, YanwuUser> implements YanwuUserService {
 
-    @Autowired
-    private YanwuUserRepository yanwuUserRepository;
+    @Resource
+    private DeviceLightConsumer lightConsumer;
+    @Resource
+    private YanwuUserMapper yanwuUserMapper;
 
     @Override
     public YanwuUser findByAccount(String account) throws Exception {
-        return yanwuUserRepository.findByAccount(account);
-    }
-
-    @Override
-    public String findUserNameById(Long id) throws Exception {
-        return yanwuUserRepository.findUserNameById(id);
-    }
-
-    @Override
-    public YanwuUser save(YanwuUser yanwuUser) throws Exception {
-        return yanwuUserRepository.save(yanwuUser);
+        return yanwuUserMapper.findByAccount(account);
     }
 
     @Override
     public YanwuUser findByUserName(String userName) throws Exception {
-        return yanwuUserRepository.findByUserName(userName);
+        return yanwuUserMapper.findByUserName(userName);
     }
 
     @Override
     public void updatePortrait(YanwuUser yanwuUser) {
-        yanwuUserRepository.updatePortrait(yanwuUser.getId(), yanwuUser.getPortrait());
+        yanwuUserMapper.updatePortrait(yanwuUser.getId(), yanwuUser.getPortrait());
     }
+
+    @Override
+    public YanwuUser checkAccount(String account) {
+        QueryWrapper<YanwuUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("account", account);
+        wrapper.eq("enabled", Boolean.TRUE);
+        return getOne(wrapper);
+    }
+
+    @Override
+    public YanwuUser checkEmail(String email) {
+        QueryWrapper<YanwuUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("email", email);
+        wrapper.eq("enabled", Boolean.TRUE);
+        return getOne(wrapper);
+    }
+
+    @Override
+    public YanwuUser checkPhone(String phone) {
+        QueryWrapper<YanwuUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("phone", phone);
+        wrapper.eq("enabled", Boolean.TRUE);
+        return getOne(wrapper);
+    }
+
+    @Override
+    public YanwuUser updateAccountById(YanwuUser user) {
+        updateById(user);
+        lightConsumer.create();
+        return user;
+    }
+
 }

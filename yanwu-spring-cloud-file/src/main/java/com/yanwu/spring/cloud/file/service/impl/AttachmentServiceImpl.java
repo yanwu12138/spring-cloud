@@ -1,28 +1,28 @@
 package com.yanwu.spring.cloud.file.service.impl;
 
-import com.yanwu.spring.cloud.common.core.common.TimeStringFormat;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
-import com.yanwu.spring.cloud.common.utils.CheckParamUtil;
-import com.yanwu.spring.cloud.common.utils.DataUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
-import com.yanwu.spring.cloud.common.mvc.req.BaseParam;
-import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 import com.yanwu.spring.cloud.file.consumer.base.YanwuUserConsumer;
+import com.yanwu.spring.cloud.file.data.mapper.AttachmentMapper;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
-import com.yanwu.spring.cloud.file.data.repository.AttachmentRepository;
+import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Part;
 import java.io.File;
 import java.io.InputStream;
@@ -38,12 +38,10 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class AttachmentServiceImpl implements AttachmentService {
+public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachment> implements AttachmentService {
 
-    @Autowired
+    @Resource
     private YanwuUserConsumer yanwuUserConsumer;
-    @Autowired
-    private AttachmentRepository attachmentRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -73,18 +71,19 @@ public class AttachmentServiceImpl implements AttachmentService {
         attachment.setAttachmentName(file.getName());
         attachment.setAttachmentSize(file.getSize());
         attachment.setAttachmentType(FileType.EXCEL);
-        return attachmentRepository.save(attachment);
+        save(attachment);
+        return attachment;
     }
 
     @Override
     public List<List<String>> downloadExcel() throws Exception {
-        List<Attachment> attachments = attachmentRepository.findAll();
+        List<Attachment> attachments = list();
         List<List<String>> contents = new ArrayList<>();
         for (Attachment attachment : attachments) {
             List<String> content = new ArrayList<>();
             content.add(String.valueOf(attachment.getId()));
-            content.add(String.valueOf(attachment.getCreatedAt()));
-            content.add(String.valueOf(attachment.getUpdatedAt()));
+            content.add(String.valueOf(attachment.getCreated()));
+            content.add(String.valueOf(attachment.getUpdated()));
             content.add(attachment.getName());
             content.add(attachment.getAttachmentName());
             content.add(String.valueOf(attachment.getAttachmentSize()));
@@ -96,22 +95,16 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Attachment save(Attachment attachment) throws Exception {
-        return attachmentRepository.save(attachment);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<Attachment> uploadFile(MultipartHttpServletRequest request, Long id) throws Exception {
         List<Attachment> attachments = new ArrayList<>();
         MultiValueMap<String, MultipartFile> multiValueMap = request.getMultiFileMap();
         List<MultipartFile> multipartFileList = multiValueMap.get("file");
-        CheckParamUtil.checkListNotNullAndSizeGreaterZero(multipartFileList);
+        Assert.isTrue(CollectionUtils.isNotEmpty(multipartFileList), "file list is empty.");
         for (MultipartFile multipartFile : multipartFileList) {
             String fileName = multipartFile.getOriginalFilename();
             FileType fileType = FileUtil.getFileTypeByName(fileName);
             String name = FileUtil.getNameByFileName(fileName);
-            String basePath = "/src/file/" + fileType + File.separatorChar + DataUtil.getTimeString(System.currentTimeMillis(), TimeStringFormat.YYYY_MM_DD4);
+            String basePath = "/src/file/" + fileType + File.separatorChar + System.currentTimeMillis();
             File myFilePath = new File(basePath);
             if (!myFilePath.exists()) {
                 myFilePath.mkdirs();
@@ -126,15 +119,15 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachment.setAttachmentType(fileType);
             attachment.setAttachmentAddress(dataPath);
             attachment.setAttachmentSize(multipartFile.getSize());
-            Attachment save = attachmentRepository.save(attachment);
-            attachments.add(save);
+            save(attachment);
+            attachments.add(attachment);
         }
         return attachments;
     }
 
     @Override
     public Attachment findById(Long id) throws Exception {
-        return attachmentRepository.findById(id).get();
+        return getById(id);
     }
 
     @Override
@@ -144,10 +137,17 @@ public class AttachmentServiceImpl implements AttachmentService {
         List<Attachment> attachments = uploadFile(request, userId);
         Attachment attachment = attachments.stream().findFirst().orElse(new Attachment());
         // ----- 修改用户头像
-        YanwuUserVO yanwuUserVO = new YanwuUserVO();
+        YanwuUser yanwuUserVO = new YanwuUser();
         yanwuUserVO.setId(userId);
         yanwuUserVO.setPortrait(attachment.getId());
-        yanwuUserConsumer.updatePortrait(new BaseParam<>(yanwuUserVO));
+        yanwuUserConsumer.updatePortrait(yanwuUserVO);
         return attachment;
     }
+
+    @Override
+    @GlobalTransactional(timeoutMills = 30000, rollbackFor = Exception.class, name = "yanwu-seata-group-file")
+    public YanwuUser updateAccountById(YanwuUser user) {
+        return yanwuUserConsumer.updateAccountById(user);
+    }
+
 }

@@ -1,13 +1,13 @@
 package com.yanwu.spring.cloud.base.data.model;
 
-import com.yanwu.spring.cloud.common.data.entity.BaseMonopolyNamedBo;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.yanwu.spring.cloud.common.pojo.BaseDo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * @author XuBaofeng.
@@ -16,29 +16,33 @@ import javax.persistence.Table;
  * description:
  */
 @Data
-@Entity
-@Table(name = "YANWU_USER", indexes = {@Index(name = "IX_YANWU_USER_ID", columnList = "ID")})
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-public class YanwuUser extends BaseMonopolyNamedBo {
-
-    @Column(name = "USER_NAME")
-    private String userName;
-
-    @Column(name = "PASSWORD")
+@TableName("yanwu_user")
+public class YanwuUser extends BaseDo<Long> implements Serializable {
+    private static final long serialVersionUID = -5667178676337792115L;
+    /*** 账号 */
+    @TableField("account")
+    private String account;
+    /*** 密码 */
+    @TableField("password")
     private String password;
-
-    @Column(name = "SEX")
+    /*** 性别 */
+    @TableField("sex")
     private Boolean sex;
-
-    @Column(name = "PHONE")
+    /*** 手机号 */
+    @TableField("phone")
     private String phone;
-
-    @Column(name = "EMAIL")
+    /*** 邮箱 */
+    @TableField("email")
     private String email;
-
-    @Column(name = "ROLE_ID")
+    /*** 角色ID */
+    @TableField("role_id")
     private Long roleId;
-
-    @Column(name = "PORTRAIT")
+    /*** 头像 */
+    @TableField("portrait")
     private Long portrait;
+    /*** 状态 ***/
+    @TableField("status")
+    private Boolean status;
 }

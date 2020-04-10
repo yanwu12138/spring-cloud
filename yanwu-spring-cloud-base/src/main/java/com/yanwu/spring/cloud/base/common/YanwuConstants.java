@@ -9,4 +9,5 @@ package com.yanwu.spring.cloud.base.common;
 public interface YanwuConstants {
 
     String DEFAULT_PASSWORD = "123456";
+
 }

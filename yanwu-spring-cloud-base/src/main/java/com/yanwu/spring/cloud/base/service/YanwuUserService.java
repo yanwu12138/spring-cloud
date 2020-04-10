@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.base.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
-import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
 
 /**
  * @author XuBaofeng.
@@ -9,7 +9,7 @@ import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
  * <p>
  * description:
  */
-public interface YanwuUserService {
+public interface YanwuUserService extends IService<YanwuUser> {
 
     /**
      * 根据用户 账号\邮箱\手机号 查找用户
@@ -19,24 +19,6 @@ public interface YanwuUserService {
      * @throws Exception
      */
     YanwuUser findByAccount(String account) throws Exception;
-
-    /**
-     * 根据用户ID查找用户
-     *
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    String findUserNameById(Long id) throws Exception;
-
-    /**
-     * 保存用户
-     *
-     * @param yanwuUser
-     * @return
-     * @throws Exception
-     */
-    YanwuUser save(YanwuUser yanwuUser) throws Exception;
 
     /**
      * 根据用户名查找用户
@@ -53,4 +35,36 @@ public interface YanwuUserService {
      * @param yanwuUser
      */
     void updatePortrait(YanwuUser yanwuUser);
+
+    /**
+     * 检查账号是否重复
+     *
+     * @param account
+     * @return
+     */
+    YanwuUser checkAccount(String account);
+
+    /**
+     * 检查邮箱是否存在
+     *
+     * @param email
+     * @return
+     */
+    YanwuUser checkEmail(String email);
+
+    /**
+     * 校验手机号是否存在
+     *
+     * @param phone
+     * @return
+     */
+    YanwuUser checkPhone(String phone);
+
+    /**
+     * 根据用户ID修改用户名
+     *
+     * @param user
+     * @return
+     */
+    YanwuUser updateAccountById(YanwuUser user);
 }

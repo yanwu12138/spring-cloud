@@ -1,13 +1,10 @@
 package com.yanwu.spring.cloud.file;
 
-import com.yanwu.spring.cloud.common.utils.VoDoUtil;
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
@@ -25,25 +22,15 @@ import org.springframework.web.client.RestTemplate;
  * * @EnableHystrix             启动断路器
  */
 @EnableHystrix
-@SpringBootApplication
-@EnableEurekaClient
-@EnableDiscoveryClient
 @EnableFeignClients
+@SpringBootApplication
+@EnableDiscoveryClient
+@MapperScan("com.yanwu.spring.cloud.file.data.mapper")
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud.file", "com.yanwu.spring.cloud.common"})
 public class YanwuSpringCloudFileApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(YanwuSpringCloudFileApplication.class, args);
-    }
-
-    @Bean
-    public Mapper getMapper() {
-        return new DozerBeanMapper();
-    }
-
-    @Bean
-    public VoDoUtil getVoDoUtil() {
-        return new VoDoUtil();
     }
 
     @Bean

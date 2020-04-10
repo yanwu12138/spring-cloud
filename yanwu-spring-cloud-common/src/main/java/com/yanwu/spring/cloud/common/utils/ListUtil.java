@@ -10,8 +10,8 @@ public class ListUtil {
      * @param ls2
      * @return
      */
-    public static List diff(List ls, List ls2) {
-        List list = new ArrayList(Arrays.asList(new Object[ls.size()]));
+    public static <T> List<T> diff(List<T> ls, List<T> ls2) {
+        List<T> list = new ArrayList(Arrays.asList(new Object[ls.size()]));
         Collections.copy(list, ls);
         list.removeAll(ls2);
         return list;
@@ -24,8 +24,8 @@ public class ListUtil {
      * @param ls2
      * @return
      */
-    public static List intersect(List ls, List ls2) {
-        List list = new ArrayList(Arrays.asList(new Object[ls.size()]));
+    public static <T> List<T> intersect(List<T> ls, List<T> ls2) {
+        List<T> list = new ArrayList(Arrays.asList(new Object[ls.size()]));
         Collections.copy(list, ls);
         list.retainAll(ls2);
         return list;
@@ -38,8 +38,8 @@ public class ListUtil {
      * @param ls2
      * @return
      */
-    public static List union(List ls, List ls2) {
-        List list = new ArrayList(Arrays.asList(new Object[ls.size()]));
+    public static <T> List<T> union(List<T> ls, List<T> ls2) {
+        List<T> list = new ArrayList(Arrays.asList(new Object[ls.size()]));
         //将ls的值拷贝一份到list中
         Collections.copy(list, ls);
         list.removeAll(ls2);
@@ -55,11 +55,7 @@ public class ListUtil {
      */
     public static <T> boolean isNotEmpty(List<T> objList) {
         removeEmpty(objList);
-        if (objList == null || objList.size() == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return objList != null && objList.size() != 0;
     }
 
     /**
@@ -72,11 +68,7 @@ public class ListUtil {
         if (source == null || source.size() == 0) {
             return;
         }
-        for (Iterator<T> it = source.iterator(); it.hasNext(); ) {
-            if (it.next() == null) {
-                it.remove();
-            }
-        }
+        source.removeIf(Objects::isNull);
     }
 
 }

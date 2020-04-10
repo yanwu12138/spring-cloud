@@ -3,19 +3,19 @@ package com.yanwu.spring.cloud.base.controller.webapp;
 import com.yanwu.spring.cloud.base.common.YanwuConstants;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import com.yanwu.spring.cloud.common.core.annotation.YanwuLog;
-import com.yanwu.spring.cloud.common.mvc.res.BackVO;
-import com.yanwu.spring.cloud.common.mvc.vo.base.YanwuUserVO;
+import com.yanwu.spring.cloud.common.core.annotation.CheckFiled;
+import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
+import com.yanwu.spring.cloud.common.core.aspect.CheckParamRegex;
+import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
-import com.yanwu.spring.cloud.common.utils.BackVOUtil;
-import com.yanwu.spring.cloud.common.utils.VoDoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @author XuBaofeng.
@@ -28,30 +28,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("webapp/yanwuUser/")
 public class WebappYanwuUserController {
 
-    @Autowired
-    private VoDoUtil voDoUtil;
-
-    @Autowired
+    @Resource
     private YanwuUserService userService;
 
-    @YanwuLog
     @PostMapping(value = "create")
-    public BackVO<YanwuUserVO> create(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
-        YanwuUser userDO = voDoUtil.convertVoToDo(yanwuUserVO, YanwuUser.class);
-        if (StringUtils.isBlank(userDO.getPassword())) {
-            userDO.setPassword(Aes128Util.encrypt(YanwuConstants.DEFAULT_PASSWORD));
+    @LogAndCheckParam(check = {
+            @CheckFiled(field = "account", message = "账号格式错误", regex = CheckParamRegex.STRING_NOT_NULL),
+            @CheckFiled(field = "email", message = "邮箱格式错误", regex = CheckParamRegex.EMAIL),
+            @CheckFiled(field = "sex", message = "性别不能为空", regex = CheckParamRegex.BOOLEAN_NOT_NULL),
+            @CheckFiled(field = "phone", message = "手机号格式错误", regex = CheckParamRegex.PHONE_NO),
+            @CheckFiled(field = "roleId", message = "所属角色不能为空", regex = CheckParamRegex.LONG_NOT_NULL)
+    })
+    public ResponseEntity<ResponseEnvelope<Long>> create(@RequestBody YanwuUser user) {
+        // ===== 校验账号、邮箱、手机号是否存在
+        Assert.isNull(userService.checkAccount(user.getAccount()), "账号已存在");
+        // ===== 校验邮箱是否存在
+        Assert.isNull(userService.checkEmail(user.getEmail()), "邮箱已存在");
+        // ===== 校验手机号是否存在
+        Assert.isNull(userService.checkPhone(user.getPhone()), "手机号有已存在");
+        if (StringUtils.isBlank(user.getPassword())) {
+            user.setPassword(Aes128Util.encrypt(YanwuConstants.DEFAULT_PASSWORD));
         } else {
-            userDO.setPassword(Aes128Util.encrypt(userDO.getPassword()));
+            user.setPassword(Aes128Util.encrypt(user.getPassword()));
         }
-        YanwuUser yanwuUser = userService.save(userDO);
-        YanwuUserVO vo = voDoUtil.convertDoToVo(yanwuUser, YanwuUserVO.class);
-        return BackVOUtil.operateAccess(vo);
+        userService.save(user);
+        return new ResponseEntity<>(new ResponseEnvelope<>(user.getId()), HttpStatus.OK);
     }
 
-    @YanwuLog
-    @PostMapping(value = "update")
-    public BackVO<YanwuUserVO> update(@RequestBody YanwuUserVO yanwuUserVO) throws Exception {
-        return BackVOUtil.operateAccess();
+    @LogAndCheckParam
+    @PutMapping(value = "update")
+    public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUser user) throws Exception {
+        return new ResponseEntity<>(new ResponseEnvelope<>(Boolean.TRUE), HttpStatus.OK);
+    }
+
+    @LogAndCheckParam
+    @GetMapping("getById")
+    public ResponseEntity<ResponseEnvelope<YanwuUser>> getById(@RequestParam("id") Long id) {
+        return new ResponseEntity<>(new ResponseEnvelope<>(userService.getById(id)), HttpStatus.OK);
     }
 
 }
