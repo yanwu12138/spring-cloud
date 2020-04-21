@@ -12,6 +12,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -56,7 +57,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
             // ----- 根据设备类型获取对应的解析实现类
             AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
             // ----- 解析报文，业务处理
-            assert handler != null;
+            Assert.notNull(handler, "handler is null");
             handler.analysis(ctxId, bytes);
         });
     }

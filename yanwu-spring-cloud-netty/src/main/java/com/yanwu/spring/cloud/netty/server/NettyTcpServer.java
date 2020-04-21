@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @Component
-public class NettyServer {
+public class NettyTcpServer {
     /*** 创建bootstrap */
     private ServerBootstrap serverBootstrap = new ServerBootstrap();
     /*** BOSS */
@@ -37,7 +37,7 @@ public class NettyServer {
     @Value("${netty.port}")
     private int nettyPort;
     @Resource
-    Executor nettyExecutor;
+    private Executor nettyExecutor;
 
     @PostConstruct
     public void start() {
