@@ -1,57 +1,14 @@
-server:
-  port: 8881
 spring:
   application:
     name: yanwu-base
-  ### 解决数据库查询结果返回数据时的时区问题
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
-  datasource:
-    url: jdbc:mysql://39.97.229.71:3306/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
-    username: xbf12138
-    password: xbf12138
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  redis:
-    host: 39.97.229.71
-    port: 6379
-    password: xbf12138
-    timeout: 10000
-    database: 1
   cloud:
     nacos:
       discovery:
-        server-addr: ${CONFIG_SERVER_URL:192.168.0.177:8848}
+        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
         group: DEFAULT_GROUP
-        namespace: e02de5de-d737-45d5-af22-ae87d0137308
-    alibaba:
-      seata:
-        tx-service-group: yanwu-seata-group-base
-### mybatis-plus 配置
-mybatis-plus:
-  ### Mapper.xml文件所在目录
-  mapper-locations: classpath:/mapper/*Mapper.xml
-  ### 实体类所在目录，多个目录用逗号分开
-  type-aliases-package: com.yanwu.spring.cloud.base.data.model
-  global-config:
-    refresh: true
-    db-config:
-      id-type: auto
-      db-type: mysql
-      table-underline: true
-      logic-delete-value: 1
-      logic-not-delete-value: 0
-  configuration:
-    map-underscore-to-camel-case: true
-    cache-enabled: false
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 50000
-        readTimeout: 50000
-seata:
-  service:
-    vgroup-mapping:
-      yanwu-seata-group-base: default
-    grouplist: 192.168.0.177:8091
+        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+      config:
+        group: DEFAULT_GROUP
+        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
+        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+        file-extension: yaml
