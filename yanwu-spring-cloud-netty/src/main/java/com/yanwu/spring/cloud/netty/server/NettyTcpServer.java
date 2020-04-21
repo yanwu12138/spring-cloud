@@ -34,8 +34,8 @@ public class NettyTcpServer {
     /*** Worker */
     private EventLoopGroup workGroup = new NioEventLoopGroup();
 
-    @Value("${netty.port}")
-    private int nettyPort;
+    @Value("${tcp.port}")
+    private int port;
     @Resource
     private Executor nettyExecutor;
     @Resource
@@ -53,12 +53,12 @@ public class NettyTcpServer {
                             .option(ChannelOption.SO_BACKLOG, 1024)
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
                             .childHandler(channelHandler);
-                    if (nettyPort < 1 || nettyPort > 65535) {
+                    if (port < 1 || port > 65535) {
                         throw new RuntimeException("netty server start error, port is null!");
                     }
-                    ChannelFuture channel = serverBootstrap.bind(nettyPort).sync();
+                    ChannelFuture channel = serverBootstrap.bind(port).sync();
                     channel.channel().closeFuture().sync();
-                    log.info("netty server start success, port: {}", nettyPort);
+                    log.info("netty server start success, port: {}", port);
                 }
             } catch (Exception e) {
                 log.error("netty server start error: " + e);
