@@ -7,6 +7,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.commons.collections.CollectionUtils;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,19 +33,31 @@ public final class ClientSessionMap {
         }
     }
 
-    public static void put(String ctxId, ChannelHandlerContext channel) {
+    public static void putContext(String ctxId, ChannelHandlerContext channel) {
         if (Objects.nonNull(SESSION_MAP.get(ctxId))) {
             return;
         }
         SESSION_MAP.put(new Element(ctxId, channel));
     }
 
-    public static ChannelHandlerContext get(String ctxId) {
+    public static void putSocket(String address, InetSocketAddress socketAddress) {
+        if (Objects.nonNull(SESSION_MAP.get(address))) {
+            return;
+        }
+        SESSION_MAP.put(new Element(address, socketAddress));
+    }
+
+    public static ChannelHandlerContext getContext(String ctxId) {
         Element element = SESSION_MAP.get(ctxId);
         return element == null ? null : (ChannelHandlerContext) element.getObjectValue();
     }
 
-    public static Boolean remove(String ctxId) {
-        return SESSION_MAP.remove(ctxId);
+    public static InetSocketAddress getSocket(String ctxId) {
+        Element element = SESSION_MAP.get(ctxId);
+        return element == null ? null : (InetSocketAddress) element.getObjectValue();
+    }
+
+    public static void remove(String ctxId) {
+        SESSION_MAP.remove(ctxId);
     }
 }

@@ -26,12 +26,12 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @Component
-public class Handler extends ChannelInboundHandlerAdapter {
+public class TcpHandler extends ChannelInboundHandlerAdapter {
 
     @Resource
     private Executor nettyExecutor;
 
-    private static Handler handler;
+    private static TcpHandler handler;
 
     @PostConstruct
     public void init() {
@@ -47,7 +47,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         String ctxId = NettyUtils.getChannelId(ctx);
-        ClientSessionMap.put(ctxId, ctx);
+        ClientSessionMap.putContext(ctxId, ctx);
         byte[] bytes = (byte[]) msg;
         // ===== 处理上行业务
         handler.nettyExecutor.execute(() -> {
@@ -76,7 +76,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) {
         try {
             String ctxId = NettyUtils.getChannelId(ctx);
-            if (ClientSessionMap.get(ctxId) == null) {
+            if (ClientSessionMap.getContext(ctxId) == null) {
                 return;
             }
             log.info("channel close connection, channel: {}", ctxId);
@@ -102,7 +102,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
      */
     public void send(String ctxId, String message) {
         message = message.replaceAll(" ", "");
-        ChannelHandlerContext channel = ClientSessionMap.get(ctxId);
+        ChannelHandlerContext channel = ClientSessionMap.getContext(ctxId);
         if (channel == null || StringUtils.isBlank(message)) {
             return;
         }

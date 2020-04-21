@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.netty.server;
 
-import com.yanwu.spring.cloud.netty.handler.ChannelHandler;
+import com.yanwu.spring.cloud.netty.handler.TcpChannelHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -28,7 +28,7 @@ import java.util.concurrent.Executor;
 @Component
 public class NettyTcpServer {
     /*** 创建bootstrap */
-    private ServerBootstrap serverBootstrap = new ServerBootstrap();
+    private ServerBootstrap bootstrap = new ServerBootstrap();
     /*** BOSS */
     private EventLoopGroup bossGroup = new NioEventLoopGroup();
     /*** Worker */
@@ -39,29 +39,28 @@ public class NettyTcpServer {
     @Resource
     private Executor nettyExecutor;
     @Resource
-    private ChannelHandler channelHandler;
+    private TcpChannelHandler channelHandler;
 
     @PostConstruct
     public void start() {
-        log.info("netty server starting ...");
+        log.info("netty tcp server starting ... port: {}", port);
         nettyExecutor.execute(() -> {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
-                    serverBootstrap.group(bossGroup, workGroup)
+                    bootstrap.group(bossGroup, workGroup)
                             .channel(NioServerSocketChannel.class)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .option(ChannelOption.SO_BACKLOG, 1024)
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
                             .childHandler(channelHandler);
                     if (port < 1 || port > 65535) {
-                        throw new RuntimeException("netty server start error, port is null!");
+                        throw new RuntimeException("netty tcp server start error, port is null!");
                     }
-                    ChannelFuture channel = serverBootstrap.bind(port).sync();
+                    ChannelFuture channel = bootstrap.bind(port).sync();
                     channel.channel().closeFuture().sync();
-                    log.info("netty server start success, port: {}", port);
                 }
             } catch (Exception e) {
-                log.error("netty server start error: " + e);
+                log.error("netty tcp server start error: " + e);
             } finally {
                 bossGroup.shutdownGracefully();
                 workGroup.shutdownGracefully();
@@ -74,11 +73,11 @@ public class NettyTcpServer {
      */
     @PreDestroy
     public void close() {
-        log.info("netty server is to stop ...");
+        log.info("netty tcp server is to stop ...");
         //优雅退出
         bossGroup.shutdownGracefully();
         workGroup.shutdownGracefully();
-        log.info("netty server stop success!");
+        log.info("netty tcp server stop success!");
     }
 
 }

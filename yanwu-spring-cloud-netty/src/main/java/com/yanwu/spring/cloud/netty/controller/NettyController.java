@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.netty.controller;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
-import com.yanwu.spring.cloud.netty.handler.Handler;
+import com.yanwu.spring.cloud.netty.handler.TcpHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 public class NettyController {
 
     @Resource
-    private Handler handler;
+    private TcpHandler tcpHandler;
 
     @LogAndCheckParam
     @PostMapping("send")

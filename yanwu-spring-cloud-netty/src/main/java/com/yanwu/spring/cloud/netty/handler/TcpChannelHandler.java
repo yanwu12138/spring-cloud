@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.netty.handler;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import org.springframework.stereotype.Component;
@@ -14,15 +14,15 @@ import org.springframework.stereotype.Component;
  * description:
  */
 @Component
-public class ChannelHandler extends ChannelInitializer<SocketChannel> {
+public class TcpChannelHandler extends ChannelInitializer<NioSocketChannel> {
 
     @Override
-    protected void initChannel(SocketChannel socketChannel) throws Exception {
-        ChannelPipeline p = socketChannel.pipeline();
-        p.addLast(new ByteArrayDecoder());
-        p.addLast(new ByteArrayEncoder());
+    protected void initChannel(NioSocketChannel channel) {
+        ChannelPipeline pipeline = channel.pipeline();
+        pipeline.addLast(new ByteArrayDecoder());
+        pipeline.addLast(new ByteArrayEncoder());
         // ===== 增加业务处理handler
-        p.addLast(new Handler());
+        pipeline.addLast(new TcpHandler());
     }
 
 }

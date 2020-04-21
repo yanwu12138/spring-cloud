@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SessionMapScheduler {
 
-    @Scheduled(fixedRate = 1000 * 60 * 5)
+    @Scheduled(fixedRate = 1000 * 30)
     public void sessionSync() {
         ClientSessionMap.sessionSync();
     }
