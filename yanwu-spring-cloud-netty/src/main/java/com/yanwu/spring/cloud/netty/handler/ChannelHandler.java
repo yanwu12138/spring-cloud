@@ -5,6 +5,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
+import org.springframework.stereotype.Component;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -12,6 +13,7 @@ import io.netty.handler.codec.bytes.ByteArrayEncoder;
  * <p>
  * description:
  */
+@Component
 public class ChannelHandler extends ChannelInitializer<SocketChannel> {
 
     @Override

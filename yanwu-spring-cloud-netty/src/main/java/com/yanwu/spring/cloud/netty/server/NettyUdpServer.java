@@ -48,9 +48,8 @@ public class NettyUdpServer {
                 while (!Thread.currentThread().isInterrupted()) {
                     // ----- 在初始化时指定读取数据的byte数组长度
                     socket.receive(packet);
-                    byte[] bytes = packet.getData();
                     // ----- 处理读取到的数据
-                    readMessage(packet.getAddress(), bytes);
+                    readMessage(packet.getAddress().getHostAddress(), splitBytes(packet.getData(), packet.getLength()));
                 }
             } catch (Exception e) {
                 log.error("udp server error.", e);
@@ -61,11 +60,13 @@ public class NettyUdpServer {
     /**
      * 解析设备报文
      *
-     * @param data 报文
+     * @param host  设备地址
+     * @param bytes 报文
      */
-    private void readMessage(InetAddress address, byte[] data) {
-        byte[] bytes = parsingBytes(data);
-        String host = address.getHostAddress();
+    private void readMessage(String host, byte[] bytes) {
+        if (StringUtils.isBlank(host) || ArrayUtils.isEmpty(bytes)) {
+            return;
+        }
         nettyExecutor.execute(() -> {
             try {
                 // ----- 根据协议获取设备类型
@@ -75,9 +76,9 @@ public class NettyUdpServer {
                 // ----- 解析报文，业务处理
                 Assert.notNull(handler, "handler is null");
                 handler.analysis(host, bytes);
-                log.info("read message, host: {}, message: {}", host, ByteUtil.bytesToHexStrPrint(bytes));
+                log.info("read message succeed, host: {}, bytes: {}", host, ByteUtil.bytesToHexStrPrint(bytes));
             } catch (Exception e) {
-                log.error("analysis message error, host: {}, message: {}.", host, ByteUtil.bytesToHexStrPrint(bytes), e);
+                log.error("read message error, host: {}, bytes: {}.", host, ByteUtil.bytesToHexStrPrint(bytes), e);
             }
         });
     }
@@ -85,11 +86,11 @@ public class NettyUdpServer {
     /**
      * 发送数据
      *
-     * @param host    ip
-     * @param message 报文
+     * @param host  设备地址
+     * @param bytes 报文
      */
-    public void sendMessage(String host, byte[] message) {
-        if (StringUtils.isBlank(host) || ArrayUtils.isEmpty(message)) {
+    public void sendMessage(String host, byte[] bytes) {
+        if (StringUtils.isBlank(host) || ArrayUtils.isEmpty(bytes)) {
             return;
         }
         nettyExecutor.execute(() -> {
@@ -97,12 +98,12 @@ public class NettyUdpServer {
                 // ----- 确定发送方的IP地址及端口号，地址为本地网络
                 InetAddress address = InetAddress.getByName(host);
                 // ----- 创建发送类型的数据报
-                DatagramPacket packet = new DatagramPacket(message, message.length, address, port);
+                DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, port);
                 // ----- 通过套接字发送数据
                 socket.send(packet);
-                log.info("send message succeed, IP: {}, message: {}", host, ByteUtil.bytesToHexStrPrint(message));
+                log.info("send message succeed, host: {}, bytes: {}", host, ByteUtil.bytesToHexStrPrint(bytes));
             } catch (Exception e) {
-                log.error("send message error, host: {}, message: {}.", host, ByteUtil.bytesToHexStrPrint(message), e);
+                log.error("send message error, host: {}, bytes: {}.", host, ByteUtil.bytesToHexStrPrint(bytes), e);
             }
         });
     }
@@ -111,16 +112,13 @@ public class NettyUdpServer {
     /**
      * 处理报文，将报文后面所有的无意义的0x00都去掉
      *
-     * @param bytes 报文
+     * @param bytes  报文
+     * @param length 报文长度
      * @return 去除0X00的报文
      */
-    private static byte[] parsingBytes(byte[] bytes) {
-        int end = bytes.length;
-        while (bytes[end - 1] == ZERO) {
-            end--;
-        }
-        byte[] result = new byte[end];
-        System.arraycopy(bytes, 0, result, 0, end);
+    private static byte[] splitBytes(byte[] bytes, int length) {
+        byte[] result = new byte[length];
+        System.arraycopy(bytes, 0, result, 0, length);
         return result;
     }
 

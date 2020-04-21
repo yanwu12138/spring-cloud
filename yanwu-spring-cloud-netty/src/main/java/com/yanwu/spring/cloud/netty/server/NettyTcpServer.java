@@ -38,6 +38,8 @@ public class NettyTcpServer {
     private int nettyPort;
     @Resource
     private Executor nettyExecutor;
+    @Resource
+    private ChannelHandler channelHandler;
 
     @PostConstruct
     public void start() {
@@ -50,7 +52,7 @@ public class NettyTcpServer {
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .option(ChannelOption.SO_BACKLOG, 1024)
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
-                            .childHandler(new ChannelHandler());
+                            .childHandler(channelHandler);
                     if (nettyPort < 1 || nettyPort > 65535) {
                         throw new RuntimeException("netty server start error, port is null!");
                     }
