@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.netty.server;
 
 import com.yanwu.spring.cloud.netty.handler.UdpChannelHandler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -47,21 +46,20 @@ public class NettyUdpServer {
                 while (!Thread.currentThread().isInterrupted()) {
                     bootstrap.group(bossGroup)
                             .channel(NioDatagramChannel.class)
-                            .handler(new LoggingHandler(LogLevel.INFO))
                             .option(ChannelOption.SO_BACKLOG, 1024)
                             // ----- 支持广播
                             .option(ChannelOption.SO_BROADCAST, true)
+                            .handler(new LoggingHandler(LogLevel.INFO))
                             .handler(channelHandler);
                     if (port < 1 || port > 65535) {
                         throw new RuntimeException("netty udp server start error, port is null!");
                     }
-                    ChannelFuture channel = bootstrap.bind(port).sync();
-                    channel.channel().closeFuture().await();
+                    bootstrap.bind(port).sync().channel().closeFuture().sync();
                 }
             } catch (Exception e) {
                 log.error("netty udp server start error: " + e);
             } finally {
-                bossGroup.shutdownGracefully();
+                close();
             }
         });
     }
@@ -72,7 +70,6 @@ public class NettyUdpServer {
     @PreDestroy
     public void close() {
         log.info("netty udp server is to stop ...");
-        //优雅退出
         bossGroup.shutdownGracefully();
         log.info("netty udp server stop success!");
     }

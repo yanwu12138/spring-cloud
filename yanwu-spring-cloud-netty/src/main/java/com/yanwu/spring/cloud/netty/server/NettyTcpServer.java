@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.netty.server;
 
 import com.yanwu.spring.cloud.netty.handler.TcpChannelHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -56,14 +55,12 @@ public class NettyTcpServer {
                     if (port < 1 || port > 65535) {
                         throw new RuntimeException("netty tcp server start error, port is null!");
                     }
-                    ChannelFuture channel = bootstrap.bind(port).sync();
-                    channel.channel().closeFuture().sync();
+                    bootstrap.bind(port).sync().channel().closeFuture().sync();
                 }
             } catch (Exception e) {
                 log.error("netty tcp server start error: " + e);
             } finally {
-                bossGroup.shutdownGracefully();
-                workGroup.shutdownGracefully();
+                close();
             }
         });
     }
@@ -74,7 +71,6 @@ public class NettyTcpServer {
     @PreDestroy
     public void close() {
         log.info("netty tcp server is to stop ...");
-        //优雅退出
         bossGroup.shutdownGracefully();
         workGroup.shutdownGracefully();
         log.info("netty tcp server stop success!");

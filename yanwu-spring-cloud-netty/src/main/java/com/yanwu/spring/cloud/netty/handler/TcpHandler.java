@@ -91,7 +91,8 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("netty error：" + cause);
+        ctx.close();
+        log.error("netty tcp error：" + cause);
     }
 
     /**

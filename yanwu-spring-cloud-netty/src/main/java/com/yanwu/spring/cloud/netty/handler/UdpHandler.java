@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executor;
 
@@ -65,6 +66,12 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
         });
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        ctx.close();
+        log.error("netty udp error：" + cause);
+    }
+
 
     /**
      * 广播
@@ -73,7 +80,13 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
      */
     public void sendMessage(String message) {
         byte[] bytes = ByteUtil.strToHexBytes(message);
-        context.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(bytes), new InetSocketAddress("255.255.255.255", 10000)));
+        try (DatagramSocket socket = new DatagramSocket(6666)) {
+            java.net.InetAddress address = java.net.InetAddress.getByName("255.255.255.255");
+            java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, 6666);
+            socket.send(packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
