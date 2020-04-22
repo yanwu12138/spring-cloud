@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.core.aspect;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.core.exception.BusinessException;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -47,9 +48,15 @@ public class LogParamAspect {
             return joinPoint.proceed(args);
         } catch (Throwable e) {
             log.error("Exception : [txId]: {}, [method]: {}, [param]: {}", getTxId(), method, args, e);
-            LogParam annotation = method.getAnnotation(LogParam.class);
+            String message = "";
+            if (e instanceof IllegalArgumentException || e instanceof BusinessException) {
+                message = e.getMessage();
+            } else {
+                LogParam annotation = method.getAnnotation(LogParam.class);
+                message = annotation.value();
+            }
             ResponseEnvelope<Object> envelope = new ResponseEnvelope<>();
-            envelope.getResult().setMessage(annotation.value());
+            envelope.getResult().setMessage(message);
             envelope.getResult().setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return new ResponseEntity<>(envelope, HttpStatus.INTERNAL_SERVER_ERROR);
         }

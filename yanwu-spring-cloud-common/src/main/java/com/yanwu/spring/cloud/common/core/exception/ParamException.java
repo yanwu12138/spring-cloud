@@ -8,13 +8,16 @@ package com.yanwu.spring.cloud.common.core.exception;
  */
 public class ParamException extends RuntimeException {
     private static final long serialVersionUID = 6950130218551404530L;
+    private String message;
 
     public ParamException(String message) {
         super(message);
+        this.message = message;
     }
 
     public ParamException(String message, Throwable e) {
         super(message, e);
+        this.message = message;
     }
 
 }
