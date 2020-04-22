@@ -1,7 +1,11 @@
 package com.yanwu.spring.cloud.netty.handler;
 
+import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
+import com.yanwu.spring.cloud.netty.protocol.factory.DeviceHandlerFactory;
+import com.yanwu.spring.cloud.netty.protocol.up.AbstractHandler;
+import com.yanwu.spring.cloud.netty.util.DeviceUtil;
 import com.yanwu.spring.cloud.netty.util.NettyUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -10,7 +14,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.DatagramPacket;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -29,6 +35,8 @@ import java.util.concurrent.Executor;
 public class UdpHandler extends ChannelInboundHandlerAdapter {
     private static final Object LOCK = new Object();
 
+    @Value("${radio.port}")
+    private Integer radioPort;
     @Resource
     private Executor nettyExecutor;
 
@@ -56,13 +64,12 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
         handler.nettyExecutor.execute(() -> {
             log.info("read message, channel: {}, bytes: {}", host, ByteUtil.bytesToHexStrPrint(bytes));
             // ----- 根据协议获取设备类型
-//            DeviceTypeEnum deviceType = DeviceUtil.getDeviceType(bytes);
+            DeviceTypeEnum deviceType = DeviceUtil.getDeviceType(bytes);
             // ----- 根据设备类型获取对应的解析实现类
-//            AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
+            AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
             // ----- 解析报文，业务处理
-//            Assert.notNull(handler, "handler is null");
-            sendMessage("AABB");
-            sendMessage(host, "FFEE");
+            Assert.notNull(handler, "handler is null");
+            handler.analysis(host, bytes);
         });
     }
 
@@ -80,9 +87,9 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
      */
     public void sendMessage(String message) {
         byte[] bytes = ByteUtil.strToHexBytes(message);
-        try (DatagramSocket socket = new DatagramSocket(6666)) {
+        try (DatagramSocket socket = new DatagramSocket(radioPort)) {
             java.net.InetAddress address = java.net.InetAddress.getByName("255.255.255.255");
-            java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, 6666);
+            java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, radioPort);
             socket.send(packet);
         } catch (Exception e) {
             e.printStackTrace();

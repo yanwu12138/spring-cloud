@@ -1,13 +1,23 @@
 <ehcache>
     <diskStore path="java.io.tmpdir"/>
-    <cache
-            name="ctxId_ctx_local_cache"
-            maxElementsInMemory="100000"
-            eternal="true"
-            overflowToDisk="false"
-            maxElementsOnDisk="6000000"
-            diskPersistent="false"
-            diskExpiryThreadIntervalSeconds="120"
-            memoryStoreEvictionPolicy="LRU">
+    <cache name="tcp_context_local_cache"
+           maxElementsInMemory="100000"
+           eternal="true"
+           overflowToDisk="false"
+           maxElementsOnDisk="6000000"
+           diskPersistent="false"
+           diskExpiryThreadIntervalSeconds="120"
+           memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <cache name="udp_socket_local_cache"
+           maxElementsInMemory="100000"
+           eternal="true"
+           overflowToDisk="false"
+           maxElementsOnDisk="6000000"
+           diskPersistent="false"
+           diskExpiryThreadIntervalSeconds="120"
+           memoryStoreEvictionPolicy="LRU"
+           timeToIdleSeconds="120"
+           timeToLiveSeconds="120">
     </cache>
 </ehcache>

@@ -5,59 +5,89 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.net.InetSocketAddress;
-import java.util.List;
 import java.util.Objects;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
  * @date 2019-08-09 11:25.
  * <p>
- * description:
+ * description: 设备通讯缓存
  */
 @Slf4j
 public final class ClientSessionMap {
 
-    private static final String CACHE_NAME = "ctxId_ctx_local_cache";
-    private static final Cache SESSION_MAP = CacheManager.create().getCache(CACHE_NAME);
+    private static final String CONTEXT_NAME = "tcp_context_local_cache";
+    private static final String SOCKET_NAME = "udp_socket_local_cache";
+    private static final Cache TCP_SESSION_MAP = CacheManager.create().getCache(CONTEXT_NAME);
+    private static final Cache UDP_SESSION_MAP = CacheManager.create().getCache(SOCKET_NAME);
 
     public static void sessionSync() {
         try {
-            List keys = SESSION_MAP.getKeys();
-            int size = CollectionUtils.isEmpty(keys) ? 0 : keys.size();
-            log.info("number of long connections currently detected: {}", size);
+            int tcpSize = TCP_SESSION_MAP.getKeys().size();
+            int udpSize = UDP_SESSION_MAP.getKeys().size();
+            log.info("Current connection number >> TCP: {}, UDP : {}", tcpSize, udpSize);
         } catch (Exception e) {
             log.error("[local cache] monitor has occur error, cause: " + e);
         }
     }
 
+    /**
+     * 缓存TCP通道
+     *
+     * @param ctxId   通道编号
+     * @param channel 通道
+     */
     public static void putContext(String ctxId, ChannelHandlerContext channel) {
-        if (Objects.nonNull(SESSION_MAP.get(ctxId))) {
+        if (Objects.nonNull(TCP_SESSION_MAP.get(ctxId))) {
             return;
         }
-        SESSION_MAP.put(new Element(ctxId, channel));
+        TCP_SESSION_MAP.put(new Element(ctxId, channel));
     }
 
-    public static void putSocket(String address, InetSocketAddress socketAddress) {
-        if (Objects.nonNull(SESSION_MAP.get(address))) {
-            return;
-        }
-        SESSION_MAP.put(new Element(address, socketAddress));
-    }
-
+    /**
+     * 根据通道编号获取TCP通道
+     *
+     * @param ctxId 通道编号
+     * @return 通道
+     */
     public static ChannelHandlerContext getContext(String ctxId) {
-        Element element = SESSION_MAP.get(ctxId);
+        Element element = TCP_SESSION_MAP.get(ctxId);
         return element == null ? null : (ChannelHandlerContext) element.getObjectValue();
     }
 
-    public static InetSocketAddress getSocket(String ctxId) {
-        Element element = SESSION_MAP.get(ctxId);
+    /**
+     * 缓存UDP通讯
+     *
+     * @param address 地址
+     * @param socket  通讯
+     */
+    public static void putSocket(String address, InetSocketAddress socket) {
+        if (Objects.nonNull(UDP_SESSION_MAP.get(address))) {
+            return;
+        }
+        UDP_SESSION_MAP.put(new Element(address, socket));
+    }
+
+    /**
+     * 根据地址获取UDP通道
+     *
+     * @param address 地址
+     * @return UDP通讯
+     */
+    public static InetSocketAddress getSocket(String address) {
+        Element element = UDP_SESSION_MAP.get(address);
         return element == null ? null : (InetSocketAddress) element.getObjectValue();
     }
 
+    /**
+     * 根据KEY删除通道
+     *
+     * @param ctxId KEY
+     */
     public static void remove(String ctxId) {
-        SESSION_MAP.remove(ctxId);
+        TCP_SESSION_MAP.remove(ctxId);
+        UDP_SESSION_MAP.remove(ctxId);
     }
 }
