@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class UdpChannelHandler extends ChannelInitializer<NioDatagramChannel> {
 
     @Override
-    protected void initChannel(NioDatagramChannel channel) throws Exception {
+    protected void initChannel(NioDatagramChannel channel) {
         ChannelPipeline pipeline = channel.pipeline();
         pipeline.addLast(new ByteArrayDecoder());
         pipeline.addLast(new ByteArrayEncoder());

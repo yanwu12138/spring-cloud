@@ -50,11 +50,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        synchronized (LOCK) {
-            if (context == null) {
-                context = ctx;
-            }
-        }
+        initContext(ctx);
         DatagramPacket packet = (DatagramPacket) msg;
         String host = NettyUtils.getAddress(packet);
         ClientSessionMap.putSocket(host, packet.sender());
@@ -77,6 +73,17 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
         log.error("netty udp error：" + cause);
+    }
+
+    private void initContext(ChannelHandlerContext channelContext) {
+        if (context != null) {
+            return;
+        }
+        synchronized (LOCK) {
+            if (context == null) {
+                context = channelContext;
+            }
+        }
     }
 
 
