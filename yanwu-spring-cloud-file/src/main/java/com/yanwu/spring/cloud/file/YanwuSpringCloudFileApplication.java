@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 @MapperScan("com.yanwu.spring.cloud.file.data.mapper")
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud.file", "com.yanwu.spring.cloud.common"})
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
 public class YanwuSpringCloudFileApplication {
 
     public static void main(String[] args) {

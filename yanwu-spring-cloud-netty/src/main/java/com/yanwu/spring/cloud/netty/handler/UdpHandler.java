@@ -35,7 +35,7 @@ import java.util.concurrent.Executor;
 public class UdpHandler extends ChannelInboundHandlerAdapter {
     private static final Object LOCK = new Object();
 
-    @Value("${radio.port}")
+    @Value("${netty.radio.port}")
     private Integer radioPort;
     @Resource
     private Executor nettyExecutor;
