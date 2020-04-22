@@ -85,7 +85,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
      *
      * @param message 报文
      */
-    public void sendMessage(String message) {
+    public void radio(String message) {
         byte[] bytes = ByteUtil.strToHexBytes(message);
         try (DatagramSocket socket = new DatagramSocket(radioPort)) {
             java.net.InetAddress address = java.net.InetAddress.getByName("255.255.255.255");
@@ -102,7 +102,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
      * @param host    设备地址
      * @param message 报文
      */
-    public void sendMessage(String host, String message) {
+    public void send(String host, String message) {
         InetSocketAddress socket = ClientSessionMap.getSocket(host);
         if (socket == null || StringUtils.isBlank(message)) {
             return;

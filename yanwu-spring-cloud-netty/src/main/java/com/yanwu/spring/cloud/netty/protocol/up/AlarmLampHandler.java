@@ -5,8 +5,9 @@ import com.yanwu.spring.cloud.netty.model.AlarmLampReqBO;
 import com.yanwu.spring.cloud.netty.protocol.service.AlarmLampService;
 import com.yanwu.spring.cloud.netty.util.AlarmLampUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component("alarmLamp")
 public class AlarmLampHandler extends AbstractHandler {
 
-    @Autowired
+    @Resource
     private AlarmLampService alarmLampService;
 
     @Override

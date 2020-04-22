@@ -26,6 +26,7 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @Component
+@SuppressWarnings("unused")
 public class TcpHandler extends ChannelInboundHandlerAdapter {
 
     @Resource
@@ -41,8 +42,8 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
     /**
      * 上行
      *
-     * @param ctx
-     * @param msg
+     * @param ctx 通道
+     * @param msg 报文
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -70,7 +71,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
     /**
      * 断开连接
      *
-     * @param ctx
+     * @param ctx 通道号
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
@@ -98,8 +99,8 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
     /**
      * 下行
      *
-     * @param ctxId
-     * @param message
+     * @param ctxId   通道号
+     * @param message 报文
      */
     public void send(String ctxId, String message) {
         message = message.replaceAll(" ", "");

@@ -25,9 +25,8 @@ public final class ClientSessionMap {
 
     public static void sessionSync() {
         try {
-            int tcpSize = TCP_SESSION_MAP.getKeys().size();
-            int udpSize = UDP_SESSION_MAP.getKeys().size();
-            log.info("Current connection number >> TCP: {}, UDP: {}", tcpSize, udpSize);
+            log.info("Current connection number >> TCP: {}, UDP: {}",
+                    TCP_SESSION_MAP.getSize(), UDP_SESSION_MAP.getKeysWithExpiryCheck().size());
         } catch (Exception e) {
             log.error("[local cache] monitor has occur error, cause: " + e);
         }
