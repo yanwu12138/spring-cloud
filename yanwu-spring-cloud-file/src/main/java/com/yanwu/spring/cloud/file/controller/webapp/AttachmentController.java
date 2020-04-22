@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.webapp;
 
-import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
+import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.ExcelUtil;
@@ -46,7 +46,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @LogAndCheckParam
+    @LogParam
     @PostMapping(value = "upPortrait")
     public ResponseEntity<ResponseEnvelope<Attachment>> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);
@@ -62,7 +62,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @LogAndCheckParam
+    @LogParam
     @PostMapping(value = "uploadFile")
     public ResponseEntity<ResponseEnvelope<List<Attachment>>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
         List<Attachment> attachments = attachmentService.uploadFile(request, id);
@@ -76,7 +76,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @LogAndCheckParam
+    @LogParam
     @GetMapping(value = "downloadFile/{id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("id") Long id) throws Exception {
         Attachment attachment = attachmentService.findById(id);
@@ -91,7 +91,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @LogAndCheckParam
+    @LogParam
     @PostMapping(value = "uploadExcel")
     public ResponseEntity<ResponseEnvelope<Attachment>> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
         Attachment attachment = attachmentService.uploadExcel(file, id);
@@ -104,7 +104,7 @@ public class AttachmentController {
      * @return
      * @throws Exception
      */
-    @LogAndCheckParam
+    @LogParam
     @GetMapping(value = "downloadExcel")
     public ResponseEntity<Resource> downloadExcel() throws Exception {
         List<List<String>> contents = attachmentService.downloadExcel();
@@ -114,7 +114,7 @@ public class AttachmentController {
         return ExcelUtil.exportExcel(workbook, fileName);
     }
 
-    @LogAndCheckParam
+    @LogParam
     @PostMapping("updateUser")
     public ResponseEntity<ResponseEnvelope<YanwuUser>> updateUser(@RequestBody YanwuUser user) {
         user = attachmentService.updateAccountById(user);

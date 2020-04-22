@@ -5,9 +5,7 @@ import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.base.vo.LoginVO;
 import com.yanwu.spring.cloud.base.vo.YanwuUserVO;
 import com.yanwu.spring.cloud.common.config.Contents;
-import com.yanwu.spring.cloud.common.core.annotation.CheckFiled;
-import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
-import com.yanwu.spring.cloud.common.core.aspect.CheckParamRegex;
+import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
 import com.yanwu.spring.cloud.common.utils.TokenUtil;
@@ -22,6 +20,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -46,13 +45,9 @@ public class WebappLoginController {
     @Autowired
     private YanwuUserService yanwuUserService;
 
-    @LogAndCheckParam(check = {
-            @CheckFiled(field = "account", message = "账号格式错误!", regex = CheckParamRegex.STRING_NOT_NULL),
-            @CheckFiled(field = "password", message = "密码格式错误!", regex = CheckParamRegex.PASSWORD),
-            @CheckFiled(field = "captcha", message = "验证码格式错误!", regex = CheckParamRegex.CAPTCHA)
-    })
+    @LogParam
     @PostMapping(value = "login")
-    public ResponseEntity<ResponseEnvelope<YanwuUserVO>> login(@RequestBody LoginVO vo) throws Exception {
+    public ResponseEntity<ResponseEnvelope<YanwuUserVO>> login(@RequestBody @Valid LoginVO vo) throws Exception {
         // ----- 根据 用户名 邮箱 手机号 检索用户
         YanwuUser user = yanwuUserService.findByAccount(vo.getAccount());
         // ----- 校验: 当结果为null时, 说明该用户不存在
@@ -70,7 +65,7 @@ public class WebappLoginController {
         return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
     }
 
-    @LogAndCheckParam
+    @LogParam
     @PostMapping(value = "logout/{id}")
     public ResponseEntity<ResponseEnvelope<Boolean>> logout(@PathVariable("id") Long id) throws Exception {
         Boolean result;
