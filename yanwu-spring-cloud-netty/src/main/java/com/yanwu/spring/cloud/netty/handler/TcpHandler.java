@@ -75,6 +75,9 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
+        if (ctx == null) {
+            return;
+        }
         try {
             String ctxId = NettyUtils.getChannelId(ctx);
             if (ClientSessionMap.getContext(ctxId) == null) {
@@ -82,11 +85,12 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
             }
             log.info("channel close connection, channel: {}", ctxId);
             ClientSessionMap.remove(ctxId);
-            ctx.channel().close();
-            ctx.close();
-            // ===== 处理断线业务
         } catch (Exception e) {
             log.error("channel close error: ", e);
+        } finally {
+            // ===== 处理断线业务
+            ctx.channel().close();
+            ctx.close();
         }
     }
 
