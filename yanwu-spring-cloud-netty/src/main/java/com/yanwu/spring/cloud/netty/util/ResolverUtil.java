@@ -23,7 +23,7 @@ public class ResolverUtil {
      * @param hexStr 16进制字符串（报文体）
      * @param regex  正则表达式
      * @param clazz  对应正则解析之后的封装类
-     * @return
+     * @return 对象
      */
     public static <T> T regexParse(String hexStr, String regex, Class<T> clazz) throws Exception {
         T obj = clazz.newInstance();

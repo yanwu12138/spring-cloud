@@ -12,6 +12,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -25,12 +26,13 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @Component
-public class Handler extends ChannelInboundHandlerAdapter {
+@SuppressWarnings("unused")
+public class TcpHandler extends ChannelInboundHandlerAdapter {
 
     @Resource
     private Executor nettyExecutor;
 
-    private static Handler handler;
+    private static TcpHandler handler;
 
     @PostConstruct
     public void init() {
@@ -40,13 +42,13 @@ public class Handler extends ChannelInboundHandlerAdapter {
     /**
      * 上行
      *
-     * @param ctx
-     * @param msg
+     * @param ctx 通道
+     * @param msg 报文
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         String ctxId = NettyUtils.getChannelId(ctx);
-        ClientSessionMap.put(ctxId, ctx);
+        ClientSessionMap.putContext(ctxId, ctx);
         byte[] bytes = (byte[]) msg;
         // ===== 处理上行业务
         handler.nettyExecutor.execute(() -> {
@@ -56,7 +58,7 @@ public class Handler extends ChannelInboundHandlerAdapter {
             // ----- 根据设备类型获取对应的解析实现类
             AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
             // ----- 解析报文，业务处理
-            assert handler != null;
+            Assert.notNull(handler, "handler is null");
             handler.analysis(ctxId, bytes);
         });
     }
@@ -69,39 +71,44 @@ public class Handler extends ChannelInboundHandlerAdapter {
     /**
      * 断开连接
      *
-     * @param ctx
+     * @param ctx 通道号
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
+        if (ctx == null) {
+            return;
+        }
         try {
             String ctxId = NettyUtils.getChannelId(ctx);
-            if (ClientSessionMap.get(ctxId) == null) {
+            if (ClientSessionMap.getContext(ctxId) == null) {
                 return;
             }
             log.info("channel close connection, channel: {}", ctxId);
             ClientSessionMap.remove(ctxId);
-            ctx.channel().close();
-            ctx.close();
-            // ===== 处理断线业务
         } catch (Exception e) {
             log.error("channel close error: ", e);
+        } finally {
+            // ===== 处理断线业务
+            ctx.channel().close();
+            ctx.close();
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("netty error：" + cause);
+        ctx.close();
+        log.error("netty tcp error：" + cause);
     }
 
     /**
      * 下行
      *
-     * @param ctxId
-     * @param message
+     * @param ctxId   通道号
+     * @param message 报文
      */
     public void send(String ctxId, String message) {
         message = message.replaceAll(" ", "");
-        ChannelHandlerContext channel = ClientSessionMap.get(ctxId);
+        ChannelHandlerContext channel = ClientSessionMap.getContext(ctxId);
         if (channel == null || StringUtils.isBlank(message)) {
             return;
         }

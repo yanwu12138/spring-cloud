@@ -1,10 +1,9 @@
 package com.yanwu.spring.cloud.netty.util;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.commons.lang3.StringUtils;
+import io.netty.channel.socket.DatagramPacket;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -18,20 +17,16 @@ public final class NettyUtils {
     private NettyUtils() {
     }
 
-    public static InetSocketAddress getRemoteAddress(ChannelHandlerContext ctx) {
-        return (InetSocketAddress) ctx.channel().remoteAddress();
-    }
-
     public static String getChannelId(ChannelHandlerContext ctx) {
         return ctx == null ? "" : ctx.channel().id().asLongText();
     }
 
-    public static String getPort(ChannelHandlerContext ctx) {
-        SocketAddress socketAddress = ctx.channel().localAddress();
-        String localAddress = String.valueOf(socketAddress).trim().toUpperCase();
-        if (StringUtils.isNotBlank(localAddress) && localAddress.contains(SPLIT_PORT)) {
-            return localAddress.split(SPLIT_PORT)[1];
+    public static String getAddress(DatagramPacket packet) {
+        if (packet == null || packet.sender() == null) {
+            return null;
         }
-        return null;
+        InetSocketAddress sender = packet.sender();
+        return sender.getAddress().getHostAddress() + SPLIT_PORT + sender.getPort();
     }
+
 }

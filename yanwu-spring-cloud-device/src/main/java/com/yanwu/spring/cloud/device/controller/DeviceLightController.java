@@ -34,7 +34,6 @@ public class DeviceLightController {
         long millis = System.currentTimeMillis();
         light.setPoleId(millis).setCreator(millis);
         lightService.save(light);
-//        int i = 1 / 0;
         return new ResponseEntity<>(new ResponseEnvelope<>(light.getId()), HttpStatus.OK);
     }
 

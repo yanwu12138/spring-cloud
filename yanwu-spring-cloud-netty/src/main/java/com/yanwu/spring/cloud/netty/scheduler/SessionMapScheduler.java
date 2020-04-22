@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class SessionMapScheduler {
 
+    /**
+     * 查看当前设备连接数量
+     */
     @Scheduled(fixedRate = 1000 * 60 * 5)
     public void sessionSync() {
         ClientSessionMap.sessionSync();
