@@ -3,9 +3,7 @@ package com.yanwu.spring.cloud.base.controller.webapp;
 import com.yanwu.spring.cloud.base.common.YanwuConstants;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import com.yanwu.spring.cloud.common.core.annotation.CheckFiled;
-import com.yanwu.spring.cloud.common.core.annotation.LogAndCheckParam;
-import com.yanwu.spring.cloud.common.core.aspect.CheckParamRegex;
+import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +29,8 @@ public class WebappYanwuUserController {
     @Resource
     private YanwuUserService userService;
 
+    @LogParam
     @PostMapping(value = "create")
-    @LogAndCheckParam(check = {
-            @CheckFiled(field = "account", message = "账号格式错误", regex = CheckParamRegex.STRING_NOT_NULL),
-            @CheckFiled(field = "email", message = "邮箱格式错误", regex = CheckParamRegex.EMAIL),
-            @CheckFiled(field = "sex", message = "性别不能为空", regex = CheckParamRegex.BOOLEAN_NOT_NULL),
-            @CheckFiled(field = "phone", message = "手机号格式错误", regex = CheckParamRegex.PHONE_NO),
-            @CheckFiled(field = "roleId", message = "所属角色不能为空", regex = CheckParamRegex.LONG_NOT_NULL)
-    })
     public ResponseEntity<ResponseEnvelope<Long>> create(@RequestBody YanwuUser user) {
         // ===== 校验账号、邮箱、手机号是否存在
         Assert.isNull(userService.checkAccount(user.getAccount()), "账号已存在");
@@ -55,13 +47,13 @@ public class WebappYanwuUserController {
         return new ResponseEntity<>(new ResponseEnvelope<>(user.getId()), HttpStatus.OK);
     }
 
-    @LogAndCheckParam
+    @LogParam
     @PutMapping(value = "update")
-    public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUser user) throws Exception {
+    public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUser user) {
         return new ResponseEntity<>(new ResponseEnvelope<>(Boolean.TRUE), HttpStatus.OK);
     }
 
-    @LogAndCheckParam
+    @LogParam
     @GetMapping("getById")
     public ResponseEntity<ResponseEnvelope<YanwuUser>> getById(@RequestParam("id") Long id) {
         return new ResponseEntity<>(new ResponseEnvelope<>(userService.getById(id)), HttpStatus.OK);

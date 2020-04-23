@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableDiscoveryClient
 @EnableTransactionManagement
 @MapperScan("com.yanwu.spring.cloud.base.data.mapper")
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud.base", "com.yanwu.spring.cloud.common"})
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
 public class YanwuSpringCloudBaseApplication {
 
     public static void main(String[] args) {

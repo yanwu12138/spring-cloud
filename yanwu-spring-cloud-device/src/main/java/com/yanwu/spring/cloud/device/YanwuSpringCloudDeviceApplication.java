@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 @MapperScan("com.yanwu.spring.cloud.device.data.mapper")
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud.device", "com.yanwu.spring.cloud.common"})
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
 public class YanwuSpringCloudDeviceApplication {
 
     public static void main(String[] args) {

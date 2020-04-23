@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.yanwu.spring.cloud.gateway.handler.Constant.*;
@@ -52,10 +54,22 @@ public class GatewayHandlerFilter implements GlobalFilter, Ordered {
      */
     private ServerWebExchange requestHandler(ServerWebExchange exchange, String txId) {
         ServerHttpRequest request = exchange.getRequest();
-        MultiValueMap<String, String> queryParams = request.getQueryParams();
-        log.info("Gateway   : [txId]: {}, {}: {}, {}: {}", txId, LOG_METHOD, request.getPath(), LOG_PARAM, queryParams);
-        request = exchange.getRequest().mutate().header(TX_ID, txId).build();
-        return exchange.mutate().request(request).build();
+        switch (Objects.requireNonNull(HttpMethod.resolve(exchange.getRequest().getMethodValue()))) {
+            case GET:
+            case DELETE:
+                MultiValueMap<String, String> queryParams = request.getQueryParams();
+                log.info("Gateway   : [txId]: {}, {}: {}, {}: {}", txId, LOG_METHOD, request.getPath(), LOG_PARAM, queryParams);
+                break;
+            case PUT:
+            case POST:
+                log.info("Gateway   : [txId]: {}, {}: {}, {}: {}", txId, LOG_METHOD, request.getPath(), LOG_PARAM, "[]");
+                break;
+            default:
+                log.info("Gateway   : [txId]: {}, {}: {}", txId, LOG_METHOD, request.getPath());
+                break;
+        }
+        ServerHttpRequest build = exchange.getRequest().mutate().header(TX_ID, txId).build();
+        return exchange.mutate().request(build).build();
     }
 
     /**

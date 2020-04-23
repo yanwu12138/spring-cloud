@@ -11,8 +11,8 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface LogAndCheckParam {
+public @interface LogParam {
 
-    CheckFiled[] check() default {};
+    String value() default "服务器异常";
 
 }

@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty.server;
 
+import com.yanwu.spring.cloud.netty.constant.Constants;
 import com.yanwu.spring.cloud.netty.handler.UdpChannelHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelOption;
@@ -27,12 +28,12 @@ import java.util.concurrent.Executor;
 @Component
 public class NettyUdpServer {
     /*** 创建bootstrap */
-    private Bootstrap bootstrap = new Bootstrap();
+    private Bootstrap bootstrap;
     /*** BOSS */
-    private EventLoopGroup bossGroup = new NioEventLoopGroup();
+    private EventLoopGroup bossGroup;
 
-    @Value("${udp.port}")
-    private int port;
+    @Value("${netty.udp.port}")
+    private Integer port;
     @Resource
     private Executor nettyExecutor;
     @Resource
@@ -43,6 +44,11 @@ public class NettyUdpServer {
         log.info("netty udp server starting ... port: {}", port);
         nettyExecutor.execute(() -> {
             try {
+                if (port < Constants.MIN_PORT || port > Constants.MAX_PORT) {
+                    throw new RuntimeException("netty udp server start error, port is illegal!");
+                }
+                bootstrap = new Bootstrap();
+                bossGroup = new NioEventLoopGroup();
                 while (!Thread.currentThread().isInterrupted()) {
                     bootstrap.group(bossGroup)
                             .channel(NioDatagramChannel.class)
@@ -51,13 +57,10 @@ public class NettyUdpServer {
                             .option(ChannelOption.SO_BROADCAST, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .handler(channelHandler);
-                    if (port < 1 || port > 65535) {
-                        throw new RuntimeException("netty udp server start error, port is null!");
-                    }
                     bootstrap.bind(port).sync().channel().closeFuture().sync();
                 }
             } catch (Exception e) {
-                log.error("netty udp server start error: " + e);
+                log.error("netty udp server start error: ", e);
             } finally {
                 close();
             }
@@ -65,12 +68,14 @@ public class NettyUdpServer {
     }
 
     /**
-     * 关闭服务器方法
+     * 停止服务
      */
     @PreDestroy
     public void close() {
         log.info("netty udp server is to stop ...");
-        bossGroup.shutdownGracefully();
+        if (bootstrap != null) {
+            bossGroup.shutdownGracefully();
+        }
         log.info("netty udp server stop success!");
     }
 
