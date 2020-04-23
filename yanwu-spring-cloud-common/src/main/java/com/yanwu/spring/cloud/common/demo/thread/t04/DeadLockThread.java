@@ -11,23 +11,23 @@ import java.util.concurrent.TimeUnit;
  * describe: 死锁
  */
 @Slf4j
-public class DieLockThread {
+public class DeadLockThread {
     public static final Object LOCK1 = new Object();
     public static final Object LOCK2 = new Object();
 
     public static void main(String[] args) {
-        new Thread(new DieLock1()).start();
-        new Thread(new DieLock2()).start();
+        new Thread(new DeadLock1()).start();
+        new Thread(new DeadLock2()).start();
         log.info("main done");
     }
 }
 
 @Slf4j
-class DieLock1 implements Runnable {
+class DeadLock1 implements Runnable {
     @Override
     public void run() {
         // ----- 先拿LOCK1
-        synchronized (DieLockThread.LOCK1) {
+        synchronized (DeadLockThread.LOCK1) {
             log.info("DieLock1 start...");
             try {
                 TimeUnit.SECONDS.sleep(3);
@@ -35,7 +35,7 @@ class DieLock1 implements Runnable {
                 log.info("DieLock1 exception: ", e);
             }
             // ----- 再拿LOCK2
-            synchronized (DieLockThread.LOCK2) {
+            synchronized (DeadLockThread.LOCK2) {
                 log.info("DieLock1 Running...");
             }
         }
@@ -44,11 +44,11 @@ class DieLock1 implements Runnable {
 }
 
 @Slf4j
-class DieLock2 implements Runnable {
+class DeadLock2 implements Runnable {
     @Override
     public void run() {
         // ----- 先拿LOCK2
-        synchronized (DieLockThread.LOCK2) {
+        synchronized (DeadLockThread.LOCK2) {
             log.info("DieLock2 start...");
             try {
                 TimeUnit.SECONDS.sleep(3);
@@ -56,7 +56,7 @@ class DieLock2 implements Runnable {
                 log.info("DieLock2 exception: ", e);
             }
             // ----- 再拿LOCK1
-            synchronized (DieLockThread.LOCK1) {
+            synchronized (DeadLockThread.LOCK1) {
                 log.info("DieLock2 Running...");
             }
         }
