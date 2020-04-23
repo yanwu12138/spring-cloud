@@ -20,9 +20,9 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-cloud-alibaba.version>2.2.0.RELEASE</spring-cloud-alibaba.version>
-        <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
         <lombol.version>1.16.18</lombol.version>
+        <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
+        <spring-cloud-alibaba.version>2.2.0.RELEASE</spring-cloud-alibaba.version>
     </properties>
 
     <dependencies>

@@ -20,21 +20,20 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-cloud-alibaba.version>2.2.0.RELEASE</spring-cloud-alibaba.version>
+        <ehcache.version>2.10.2</ehcache.version>
+        <netty.all.version>4.1.42.Final</netty.all.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
+        <spring-cloud-alibaba.version>2.2.0.RELEASE</spring-cloud-alibaba.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <yanwu.spring.cloud.common.version>1.0-SNAPSHOT</yanwu.spring.cloud.common.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.yanwu.spring.cloud.common</groupId>
             <artifactId>yanwu-spring-cloud-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
+            <version>${yanwu.spring.cloud.common.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -71,12 +70,12 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.22.Final</version>
+            <version>${netty.all.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>2.10.2</version>
+            <version>${ehcache.version}</version>
         </dependency>
     </dependencies>
 

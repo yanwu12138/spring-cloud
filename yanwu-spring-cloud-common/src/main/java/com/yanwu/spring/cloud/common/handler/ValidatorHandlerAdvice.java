@@ -27,7 +27,7 @@ public class ValidatorHandlerAdvice<T> {
         }
         envelope.getResult().setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         log.error("Validator Handler Advice Exception: ", exception);
-        return new ResponseEntity<>(envelope, HttpStatus.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+        return new ResponseEntity<>(envelope, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
