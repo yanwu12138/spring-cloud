@@ -20,8 +20,7 @@ public class SynchronizedThread implements Runnable {
         while (size > 0) {
             synchronized (LOCK) {
                 if (size > 0) {
-                    size = size - 1;
-                    log.info("thread: {} is selling size: {}", Thread.currentThread().getName(), size);
+                    log.info("thread: {} is selling size: {}", Thread.currentThread().getName(), size--);
                 }
             }
             try {

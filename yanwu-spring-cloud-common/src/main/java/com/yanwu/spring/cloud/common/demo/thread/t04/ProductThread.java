@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class ProductThread {
+    public static final Integer SIZE = 5;
+
     public static void main(String[] args) throws Exception {
         Storage storage = new Storage();
         new Thread(new Consumer(storage), "消费者1号").start();
@@ -39,10 +41,10 @@ class Producer implements Runnable {
     @Override
     public void run() {
         Random random = new Random();
-        int size = 10;
+        int size = ProductThread.SIZE;
         while (size > 0) {
             size--;
-            storage.push(new Product(size, "product: " + random.nextInt(100)));
+            storage.push(new Product(size, "product: " + random.nextInt(10)));
         }
     }
 }
@@ -60,7 +62,7 @@ class Consumer implements Runnable {
 
     @Override
     public void run() {
-        int size = 10;
+        int size = ProductThread.SIZE;
         while (size > 0) {
             size--;
             storage.pop();
@@ -88,7 +90,7 @@ class Product {
  */
 @Slf4j
 class Storage {
-    private final Product[] products = new Product[10];
+    private final Product[] products = new Product[ProductThread.SIZE];
     private Integer top = 0;
 
     public synchronized void push(Product product) {
@@ -116,7 +118,7 @@ class Storage {
         }
         Product product = products[top - 1];
         products[--top] = null;
-        log.info("consumer: {} pop product: {}, notifyAll", Thread.currentThread().getName(), product);
+        log.info("consumer: {} pop  product: {}, notifyAll", Thread.currentThread().getName(), product);
         notifyAll();
     }
 }
