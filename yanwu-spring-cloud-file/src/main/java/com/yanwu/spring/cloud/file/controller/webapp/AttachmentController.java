@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.Part;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -110,7 +112,7 @@ public class AttachmentController {
         List<List<String>> contents = attachmentService.downloadExcel();
         List<String> head = ExcelUtil.assembleHead("id", "created", "update", "name", "att_name", "att_size", "att_type");
         SXSSFWorkbook workbook = ExcelUtil.assembleExcel(head, contents);
-        String fileName = FileUtil.getFileNameByType("downloadExcel", FileType.EXCEL);
+        String fileName = "downloadExcel" + LocalDate.now().toString() + LocalTime.now().toString() + FileType.EXCEL_07.getSuffix();
         return ExcelUtil.exportExcel(workbook, fileName);
     }
 

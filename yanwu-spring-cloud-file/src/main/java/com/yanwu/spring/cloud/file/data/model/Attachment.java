@@ -36,7 +36,7 @@ public class Attachment extends BaseDo<Long> implements Serializable {
     private String attachmentName;
     /*** 附件类型 */
     @TableField("attachment_type")
-    private FileType attachmentType;
+    private Integer attachmentType;
     /*** 附件大小 */
     @TableField("attachment_size")
     private Long attachmentSize;

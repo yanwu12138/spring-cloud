@@ -13,14 +13,19 @@ public enum FileType {
 
     /*** 文件类型 ***/
     OTHERS(""),
-    WORD(".docx"),
-    EXCEL(".xlsx"),
-    PPT(".pptx"),
+    WORD_03(".doc"),
+    WORD_07(".docx"),
+    EXCEL_03(".xls"),
+    EXCEL_07(".xlsx"),
+    PPT_03(".ppt"),
+    PPT_07(".pptx"),
     PDF(".pdf"),
     SQL(".sql"),
     JSON(".json"),
-    TXT(".txt");
+    TXT(".txt"),
+    ;
 
+    @Getter
     private String suffix;
 
     FileType(String suffix) {
@@ -36,7 +41,12 @@ public enum FileType {
         return null;
     }
 
-    public static String getSuffix(FileType type) {
-        return type.suffix;
+    public static FileType getTypeBySuffix(String suffix) {
+        for (FileType fileType : FileType.values()) {
+            if (fileType.suffix.equals(suffix)) {
+                return fileType;
+            }
+        }
+        return null;
     }
 }

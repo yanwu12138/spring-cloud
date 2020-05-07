@@ -27,7 +27,7 @@ import java.util.zip.ZipOutputStream;
  */
 @Slf4j
 public class FileUtil {
-    private static final String POINT = "\\.";
+    private static final String POINT = ".";
     private static final Integer DEFAULT_SIZE = 1024 * 10;
 
     /**
@@ -106,7 +106,16 @@ public class FileUtil {
      * @return [true: 存在; false: 不存在]
      */
     public static boolean checkTargetPath(String targetPath) {
-        File file = new File(targetPath);
+        return checkTargetPath(new File(targetPath));
+    }
+
+    /**
+     * 检查目标目录是否存在，不存在时新建文件夹
+     *
+     * @param file 目标目录
+     * @return [true: 存在; false: 不存在]
+     */
+    public static boolean checkTargetPath(File file) {
         if (!file.exists()) {
             return file.mkdirs();
         }
@@ -162,49 +171,14 @@ public class FileUtil {
         return delete;
     }
 
-    public static String getFileNameByType(String fileName, FileType fileType) throws Exception {
-        Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
-        return "downloadExcel" + System.currentTimeMillis() + FileType.getSuffix(fileType);
-    }
-
     public static FileType getFileTypeByName(String fileName) {
         Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
         if (fileName.contains(POINT)) {
-            String[] split = fileName.split(POINT);
-            if (ArrayUtil.isNotEmpty(split)) {
-                switch (split[split.length - 1].toLowerCase()) {
-                    case "doc":
-                    case "docx":
-                        return FileType.WORD;
-                    case "xls":
-                    case "xlsx":
-                        return FileType.EXCEL;
-                    case "ppt":
-                    case "pptx":
-                        return FileType.PPT;
-                    case "pdf":
-                        return FileType.PDF;
-                    case "json":
-                        return FileType.JSON;
-                    case "sql":
-                        return FileType.SQL;
-                    case "txt":
-                        return FileType.TXT;
-                    default:
-                        return FileType.OTHERS;
-                }
-            }
+            String suffix = fileName.substring(fileName.lastIndexOf(POINT));
+            FileType fileType = FileType.getTypeBySuffix(suffix);
+            return fileType != null ? fileType : FileType.OTHERS;
         }
         return FileType.OTHERS;
-    }
-
-    public static String getNameByFileName(String fileName) {
-        Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
-        String name = "";
-        if (fileName.contains(POINT)) {
-            name = fileName.split(POINT)[0];
-        }
-        return name;
     }
 
     public static ResponseEntity<Resource> exportFile(String filePath, String fileName) throws Exception {
