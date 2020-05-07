@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -22,7 +23,7 @@ import java.util.Objects;
 @SuppressWarnings("all")
 public class FtpUtil {
 
-    private static final String DEFAULT_PATH = "test";
+    private static final String DEFAULT_PATH = "file";
     private static final String SEPARATOR = "/";
 
     private static final String FTP_HOST = "192.168.1.158";
@@ -61,18 +62,6 @@ public class FtpUtil {
         }
         close(ftpClient);
         return null;
-    }
-
-    /**
-     * ftp上传文件
-     *
-     * @param file       文件
-     * @param userId     用户ID
-     * @param targetPath 文件存放目录
-     * @return 文件存放在ftp服务器地址
-     */
-    public static String upload(File file, Long userId, String targetPath) {
-        return upload(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, file, userId, targetPath);
     }
 
     /**
@@ -115,21 +104,6 @@ public class FtpUtil {
             close(ftpClient);
         }
         return null;
-    }
-
-    /**
-     * 断点续传FTP
-     *
-     * @param inputStream 文件
-     * @param projectId   项目ID
-     * @param targetPath  目标地址
-     * @param fileName    文件名称
-     * @param partNum     块数
-     * @param ftpUrl      路径
-     * @return 文件路径
-     */
-    public static String uploadPart(InputStream inputStream, Long projectId, String targetPath, String fileName, Integer partNum, String ftpUrl) {
-        return uploadPart(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, inputStream, projectId, targetPath, fileName, partNum, ftpUrl);
     }
 
     /**
@@ -196,16 +170,6 @@ public class FtpUtil {
     /**
      * 删除ftp上的文件
      *
-     * @param filePath 资源文件
-     * @return true || false
-     */
-    public static boolean remove(String filePath) {
-        return remove(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
-    }
-
-    /**
-     * 删除ftp上的文件
-     *
      * @param host     ftp服务器地址
      * @param port     ftp端口
      * @param username ftp用户
@@ -222,6 +186,9 @@ public class FtpUtil {
             changeDirectory(ftpClient, splitFtpFilePath(filePath));
             if (ftpClient.deleteFile(filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1))) {
                 log.info(" ----- remove file success, file: {}", filePath);
+                if (ArrayUtils.isEmpty(ftpClient.listFiles())) {
+                    removeEmptyDir(ftpClient, ftpClient.printWorkingDirectory());
+                }
                 return true;
             }
             log.error(" ----- remove file failed, file: {}", filePath);
@@ -231,15 +198,6 @@ public class FtpUtil {
             close(ftpClient);
         }
         return false;
-    }
-
-    /**
-     * @param filePath   资源路径
-     * @param targetPath 目标路径
-     * @return 文件
-     */
-    public static File download(String filePath, String targetPath) {
-        return download(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath, targetPath);
     }
 
     /**
@@ -288,16 +246,6 @@ public class FtpUtil {
     /**
      * 判断文件是否存在
      *
-     * @param filePath 文件地址
-     * @return true || false
-     */
-    public static boolean exists(String filePath) {
-        return exists(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
-    }
-
-    /**
-     * 判断文件是否存在
-     *
      * @param host     ftp服务器地址
      * @param port     ftp端口
      * @param username ftp用户
@@ -338,6 +286,31 @@ public class FtpUtil {
             } catch (IOException e) {
                 log.error(" ----- close ftp server failed, ", e);
             }
+        }
+    }
+
+    /**
+     * 删除文件时清除空的文件夹
+     *
+     * @param ftpClient ftp客户端
+     * @param emptyDir  文件夹地址
+     */
+    private static void removeEmptyDir(FTPClient ftpClient, String emptyDir) {
+        if (Objects.isNull(ftpClient) || StringUtils.isBlank(emptyDir)) {
+            return;
+        }
+        try {
+            ftpClient.changeToParentDirectory();
+            if (ftpClient.removeDirectory(emptyDir.substring(emptyDir.lastIndexOf(SEPARATOR) + 1))) {
+                log.info(" ----- remove empty dir success, file: {}", emptyDir);
+                if (ArrayUtils.isEmpty(ftpClient.listFiles())) {
+                    removeEmptyDir(ftpClient, ftpClient.printWorkingDirectory());
+                }
+                return;
+            }
+            log.error(" ----- remove empty dir failed, file: {}", emptyDir);
+        } catch (Exception e) {
+            log.error(" ----- remove empty dir failed, file: {}", emptyDir, e);
         }
     }
 
@@ -401,13 +374,13 @@ public class FtpUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        String localPath = "F:\\document\\协议文档.zip";
+        String localPath = "F:\\UnxUtils.zip";
         String targetPath = "F:\\file\\111";
-        Long userId = 269L;
-        String filePath = FtpUtil.upload(new File(localPath), userId, DEFAULT_PATH);
-        FtpUtil.exists(filePath);
-        FtpUtil.download(filePath, targetPath);
-        FtpUtil.remove(filePath);
+        Long userId = 11111L;
+        String filePath = FtpUtil.upload(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, new File(localPath), userId, DEFAULT_PATH);
+        FtpUtil.exists(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
+        FtpUtil.download(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath, targetPath);
+        FtpUtil.remove(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
     }
 
 }

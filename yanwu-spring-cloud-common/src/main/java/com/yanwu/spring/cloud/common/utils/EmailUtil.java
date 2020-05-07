@@ -61,7 +61,7 @@ public class EmailUtil {
         String subject = "测试邮件";
         String content = "尊敬的用户：305306733@qq.com，您的车票已经抢票成功！信息如下:乘客:王栋,日期:2019-10-30,车次:K824,地点:杭州06:30-合肥07:23,席别:硬座。请在30分钟内完成付款！更多信息请查询未付款订单。";
         String[] attachments = {"C:\\Users\\Administrator.CEG84QWOZI3JSQW\\Desktop\\壁纸啊\\v1.jpg"};
-        sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, toRecipient, ccRecipient, subject, content);
+        sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, toRecipient, ccRecipient, subject, content, attachments);
     }
 
     /**
@@ -75,7 +75,7 @@ public class EmailUtil {
      * @param subject     主题
      * @param content     内容
      * @param attachments 附件 [为null则表示无附件]
-     * @throws Exception
+     * @throws Exception e
      */
     public static void sendEmail(String sendAddress, String account, String password,
                                  String toRecipient, String[] ccRecipient,
@@ -113,7 +113,7 @@ public class EmailUtil {
      * @param content     内容
      * @param attachments 附件
      * @return 邮件的实例对象
-     * @throws Exception
+     * @throws Exception e
      */
     private static MimeMessage getMimeMessage(Session session, String sendAddress,
                                               String toRecipient, String[] ccRecipient,
@@ -168,18 +168,6 @@ public class EmailUtil {
         // ----- 设置邮件的发送时间,默认立即发送
         msg.setSentDate(new Date());
         return msg;
-    }
-
-    /**
-     * 参数校验
-     *
-     * @param str 参数
-     * @param msg 异常信息
-     */
-    private static void aaa(String str, String msg) {
-        if (StringUtils.isBlank(str)) {
-            throw new RuntimeException(msg);
-        }
     }
 
 }
