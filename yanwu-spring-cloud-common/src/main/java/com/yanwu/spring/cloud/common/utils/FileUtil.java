@@ -100,6 +100,20 @@ public class FileUtil {
     }
 
     /**
+     * 检查目标目录是否存在，不存在时新建文件夹
+     *
+     * @param targetPath 目标目录
+     * @return [true: 存在; false: 不存在]
+     */
+    public static boolean checkTargetPath(String targetPath) {
+        File file = new File(targetPath);
+        if (!file.exists()) {
+            return file.mkdirs();
+        }
+        return true;
+    }
+
+    /**
      * 删除目录及目录下的文件
      *
      * @param dir 要删除的目录的文件路径

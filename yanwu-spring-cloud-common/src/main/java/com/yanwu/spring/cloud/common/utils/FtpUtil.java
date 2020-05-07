@@ -214,7 +214,7 @@ public class FtpUtil {
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return null;
         }
-        if (!checkTargetPath(targetPath)) {
+        if (!FileUtil.checkTargetPath(targetPath)) {
             return null;
         }
         // ----- 获取文件名和文件
@@ -312,20 +312,6 @@ public class FtpUtil {
         } catch (Exception e) {
             log.error(" ----- remove empty dir failed, file: {}", emptyDir, e);
         }
-    }
-
-    /**
-     * 检查目标目录是否存在，不存在时新建文件夹
-     *
-     * @param targetPath 目标目录
-     * @return [true: 存在; false: 不存在]
-     */
-    private static boolean checkTargetPath(String targetPath) {
-        File file = new File(targetPath);
-        if (!file.exists()) {
-            return file.mkdirs();
-        }
-        return true;
     }
 
     /**
