@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.core.common.Encoding;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -46,7 +47,7 @@ public class FtpUtil {
         port = port == null ? FTP_PORT : port;
         FTPClient ftpClient = new FTPClient();
         try {
-            ftpClient.setControlEncoding("UTF-8");
+            ftpClient.setControlEncoding(Encoding.UTF_8);
             // ----- 连接
             ftpClient.connect(host, port);
             ftpClient.login(username, password);

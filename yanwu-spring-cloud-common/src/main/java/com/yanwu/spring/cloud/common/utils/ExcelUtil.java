@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -93,12 +94,12 @@ public class ExcelUtil {
         } finally {
             workbook.dispose();
         }
-        String fileDisposition = "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8");
+        String fileDisposition = "attachment;filename=" + URLEncoder.encode(fileName, Encoding.UTF_8);
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
-                .header(HttpHeaders.CONTENT_ENCODING, "UTF-8")
+                .header(HttpHeaders.CONTENT_ENCODING, Encoding.UTF_8)
                 .header(HttpHeaders.CONTENT_DISPOSITION, fileDisposition)
                 .body(resource);
     }

@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.core.common.Encoding;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -29,7 +30,6 @@ public class EmailUtil {
     /*** 发件人账户密码[注：此密码不是邮箱登陆密码，而是邮箱授权密码] */
     private static final String PASSWORD = "xxxxxxxx";
 
-    private static final String UTF_8 = "UTF-8";
     private static final String CONTENT_TYPE = "text/html;charset=UTF-8";
 
     /*** 连接邮件服务器的参数配置 */
@@ -135,7 +135,7 @@ public class EmailUtil {
             msg.setRecipients(MimeMessage.RecipientType.CC, addresses);
         }
         // ===== 邮件主题
-        msg.setSubject(subject, UTF_8);
+        msg.setSubject(subject, Encoding.UTF_8);
         // ===== 邮件处理附件
         if (ArrayUtil.isEmpty(attachments)) {
             // ----- 邮件正文
@@ -159,7 +159,7 @@ public class EmailUtil {
                 // ----- 将附件数据添加到节点
                 attachment.setDataHandler(dh);
                 // ----- 设置附件的文件名（需要编码）
-                attachment.setFileName(MimeUtility.encodeText(dh.getName(), UTF_8, null));
+                attachment.setFileName(MimeUtility.encodeText(dh.getName(), Encoding.UTF_8, null));
                 mm.addBodyPart(attachment);
             }
             mm.setSubType("mixed");

@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.Constants;
+import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -263,12 +264,12 @@ public class FileUtil {
      */
     public static ResponseEntity<Resource> exportFile(String filePath, String fileName) throws Exception {
         FileSystemResource file = new FileSystemResource(filePath);
-        String fileDisposition = "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8");
+        String fileDisposition = "attachment;filename=" + URLEncoder.encode(fileName, Encoding.UTF_8);
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
-                .header(HttpHeaders.CONTENT_ENCODING, "UTF-8")
+                .header(HttpHeaders.CONTENT_ENCODING, Encoding.UTF_8)
                 .header(HttpHeaders.CONTENT_DISPOSITION, fileDisposition)
                 .body(new InputStreamResource(file.getInputStream()));
     }
