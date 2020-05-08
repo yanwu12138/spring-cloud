@@ -2,6 +2,12 @@ package com.yanwu.spring.cloud.common.utils;
 
 import java.util.*;
 
+/**
+ * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
+ * @date 2020/4/3 17:58.
+ * <p>
+ * description:
+ */
 public class ListUtil {
     /**
      * 求ls对ls2的差集,即ls中有，但ls2中没有的
