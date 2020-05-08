@@ -81,7 +81,6 @@ public class VoDoUtil implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        mapper = ContextUtil.getBean(Mapper.class);
         mapper = new DozerBeanMapper();
     }
 

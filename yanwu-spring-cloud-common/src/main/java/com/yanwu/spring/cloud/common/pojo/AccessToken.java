@@ -17,6 +17,6 @@ public class AccessToken implements Serializable {
 
     private String account;
 
-    private String expire;
+    private Long expire;
 
 }
