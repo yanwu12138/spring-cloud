@@ -17,8 +17,12 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -30,55 +34,94 @@ public class FileUtil {
     private static final String POINT = ".";
     private static final Integer DEFAULT_SIZE = 1024 * 10;
 
-    /**
-     * 将sourceFilePath目录下所有文件打包:
-     * 名称为: fileName到zipFilePath目录下
-     *
-     * @param sourceFilePath
-     * @param zipFilePath
-     * @param fileName
-     * @return
-     * @throws Exception
-     */
-    public static void fileToZip(String sourceFilePath, String zipFilePath, String fileName) throws Exception {
-        File sourceFile = new File(sourceFilePath);
-        Assert.isTrue((!sourceFile.exists()), sourceFilePath + " >>>> is not exists");
-        File file = new File(zipFilePath);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        File zipFile = new File(zipFilePath + "/" + fileName + ".zip");
-        if (zipFile.exists()) {
-            // ===== zip文件存在, 将原有文件删除
-            zipFile.delete();
-        }
-        // ===== zip文件不存在, 打包
-        pushZip(sourceFile, sourceFilePath, zipFile);
+    public static void main(String[] args) throws Exception {
+        String sourceDir = "F:\\document\\工作日志";
+        String targetDir = "F:\\file\\2020\\";
+        String fileName = "工作日志";
+//        toZip(sourceDir, targetDir, fileName);
+        unZip(new File(targetDir + fileName + ".zip"), targetDir + fileName);
     }
 
-    private static void pushZip(File sourceFile, String sourceFilePath, File zipFile) throws Exception {
+    /**
+     * 将source目录下所有文件打包:
+     * 名称为: fileName到target目录下
+     *
+     * @param sourceDir 资源路径
+     * @param targetDir 目标路径
+     * @param fileName  文件名
+     * @throws Exception e
+     */
+    public static void toZip(String sourceDir, String targetDir, String fileName) throws Exception {
+        // ----- 资源检查
+        File sourceFile = new File(sourceDir);
+        Assert.isTrue((sourceFile.exists() && sourceFile.isDirectory()), sourceDir + " >> is not exists");
         File[] sourceFiles = sourceFile.listFiles();
-        if (sourceFiles == null || sourceFiles.length < 1) {
-            log.info("{} >>>> is null", sourceFilePath);
-            return;
-        }
-        try (FileOutputStream fos = new FileOutputStream(zipFile);
-             ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos))) {
-            byte[] bytes = new byte[DEFAULT_SIZE];
-            for (File file : sourceFiles) {
-                // ===== 创建ZIP实体，并添加进压缩包
-                ZipEntry zipEntry = new ZipEntry(file.getName());
-                zos.putNextEntry(zipEntry);
-                // ===== 读取待压缩的文件并写进压缩包里
-                try (FileInputStream fis = new FileInputStream(file);
-                     BufferedInputStream bis = new BufferedInputStream(fis, 10240)) {
-                    int read = 0;
-                    while ((read = bis.read(bytes, 0, DEFAULT_SIZE)) != -1) {
-                        zos.write(bytes, 0, read);
+        Assert.isTrue((sourceFiles != null && sourceFiles.length > 0), sourceDir + " >> directory is empty");
+        checkTargetPath(targetDir);
+        File zipFile = new File(targetDir + "/" + fileName + FileType.ZIP.getSuffix());
+        // ===== zip文件存在, 将原有文件删除
+        if (!zipFile.exists() || zipFile.delete()) {
+            // ===== zip文件不存在, 打包
+            try (FileOutputStream fos = new FileOutputStream(zipFile);
+                 ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos))) {
+                byte[] bytes = new byte[DEFAULT_SIZE];
+                for (File file : sourceFiles) {
+                    // ===== 创建ZIP实体，并添加进压缩包
+                    ZipEntry zipEntry = new ZipEntry(file.getName());
+                    zos.putNextEntry(zipEntry);
+                    // ===== 读取待压缩的文件并写进压缩包里
+                    try (FileInputStream fis = new FileInputStream(file);
+                         BufferedInputStream bis = new BufferedInputStream(fis, DEFAULT_SIZE)) {
+                        int read;
+                        while ((read = bis.read(bytes, 0, DEFAULT_SIZE)) != -1) {
+                            zos.write(bytes, 0, read);
+                        }
                     }
                 }
             }
         }
+    }
+
+    public static void unZip(File zipFile, String targetPath) throws Exception {
+        List<File> files = new ArrayList<>();
+        if (StringUtils.isNotBlank(targetPath)) {
+            log.info("启用ZIP解压工具 >>>>>>>>>> ");
+            byte[] bytes = new byte[DEFAULT_SIZE];
+            if (zipFile.exists() && zipFile.getName().endsWith(".zip")) {
+                OutputStream outputStream = null;
+                InputStream inputStream = null;
+                try (ZipFile zf = new ZipFile(zipFile);) {
+                    Enumeration entries = zf.entries();
+                    while (entries.hasMoreElements()) {
+                        ZipEntry zipEntry = (ZipEntry) entries.nextElement();
+                        String zipEntryName = zipEntry.getName();
+                        log.info("正在解压文件 -> " + zipEntryName);
+                        inputStream = zf.getInputStream(zipEntry);
+                        String descFilePath = targetPath + File.separator + zipEntryName;
+                        File descFile = createFile(descFilePath);
+                        files.add(descFile);
+                        outputStream = new FileOutputStream(descFilePath);
+                        int len;
+                        while ((len = inputStream.read(bytes)) > 0) {
+                            outputStream.write(bytes, 0, len);
+                        }
+                    }
+                    log.info("解压完成 <<<<<<<<<< " + targetPath);
+                }
+            }
+        }
+    }
+
+    private static File createFile(String filePath) throws IOException {
+        File file = new File(filePath);
+        File parentFile = file.getParentFile();
+        if (!parentFile.exists()) {
+            parentFile.mkdirs();
+        }
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        return file;
     }
 
     /**

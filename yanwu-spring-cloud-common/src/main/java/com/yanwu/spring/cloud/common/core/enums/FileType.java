@@ -23,6 +23,7 @@ public enum FileType {
     SQL(".sql"),
     JSON(".json"),
     TXT(".txt"),
+    ZIP(".zip"),
     ;
 
     @Getter
