@@ -2,6 +2,8 @@ package com.yanwu.spring.cloud.common.pojo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
  * @date 2020/4/3 17:59.
@@ -9,7 +11,7 @@ import lombok.Data;
  * description:
  */
 @Data
-public class AccessToken {
+public class AccessToken implements Serializable {
 
     private Long id;
 

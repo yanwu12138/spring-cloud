@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.core.common;
+package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;

@@ -15,7 +15,6 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-@AllArgsConstructor
 @NoArgsConstructor
 public class BaseParam<T> implements Serializable {
     private static final long serialVersionUID = -387045683597800606L;

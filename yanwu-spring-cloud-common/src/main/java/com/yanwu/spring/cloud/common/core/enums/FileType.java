@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.core.enums;
 
-import com.yanwu.spring.cloud.common.core.common.Constants;
+import com.yanwu.spring.cloud.common.core.common.Contents;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -53,8 +53,8 @@ public enum FileType {
      */
     public static FileType getFileTypeByName(String fileName) {
         Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
-        if (fileName.contains(Constants.POINT)) {
-            String suffix = fileName.substring(fileName.lastIndexOf(Constants.POINT));
+        if (fileName.contains(Contents.POINT)) {
+            String suffix = fileName.substring(fileName.lastIndexOf(Contents.POINT));
             FileType fileType = FileType.getTypeBySuffix(suffix);
             return fileType != null ? fileType : FileType.OTHERS;
         }

@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-public class PageParam extends BaseParam implements Serializable {
+public class PageParam<T> extends BaseParam<T> implements Serializable {
     private static final long serialVersionUID = -5028954569050562020L;
 
     private Integer size;

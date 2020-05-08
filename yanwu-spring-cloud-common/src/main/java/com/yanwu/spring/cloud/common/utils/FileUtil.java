@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import com.yanwu.spring.cloud.common.core.common.Constants;
+import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +61,7 @@ public class FileUtil {
             try (OutputStream fos = new FileOutputStream(targetFile);
                  ZipOutputStream zos = new ZipOutputStream(fos)) {
                 // ----- 压缩
-                toZip(zos, sourceFile, Constants.NUL);
+                toZip(zos, sourceFile, Contents.NUL);
             }
         }
     }
@@ -77,12 +77,12 @@ public class FileUtil {
     private static void toZip(ZipOutputStream zos, File sourceFile, String directory) throws Exception {
         if (sourceFile.isFile()) {
             // ===== 文件，添加到压缩文件
-            byte[] bytes = new byte[Constants.DEFAULT_SIZE];
+            byte[] bytes = new byte[Contents.DEFAULT_SIZE];
             zos.putNextEntry(new ZipEntry(directory));
             try (FileInputStream fis = new FileInputStream(sourceFile);
-                 BufferedInputStream bis = new BufferedInputStream(fis, Constants.DEFAULT_SIZE)) {
+                 BufferedInputStream bis = new BufferedInputStream(fis, Contents.DEFAULT_SIZE)) {
                 int read;
-                while ((read = bis.read(bytes, 0, Constants.DEFAULT_SIZE)) != -1) {
+                while ((read = bis.read(bytes, 0, Contents.DEFAULT_SIZE)) != -1) {
                     zos.write(bytes, 0, read);
                 }
             }
@@ -93,7 +93,7 @@ public class FileUtil {
             if (files == null) {
                 return;
             }
-            directory = directory.length() == 0 ? Constants.NUL : directory + File.separator;
+            directory = directory.length() == 0 ? Contents.NUL : directory + File.separator;
             for (File file : files) {
                 toZip(zos, file, directory + file.getName());
             }
@@ -113,7 +113,7 @@ public class FileUtil {
         Assert.isTrue((sourceFile.exists() && sourceFile.isFile()), filePath + " >> is not exists");
         // ----- 检查目标：目标目录是否存在[存在：先删除后创建；不存在：直接创建]
         String sourceName = sourceFile.getName();
-        targetDir = targetDir + sourceName.substring(0, sourceName.lastIndexOf(Constants.POINT));
+        targetDir = targetDir + sourceName.substring(0, sourceName.lastIndexOf(Contents.POINT));
         File targetFile = new File(targetDir);
         if (!targetFile.exists() || deleteFile(targetFile)) {
             checkDirectoryPath(targetFile);
@@ -152,7 +152,7 @@ public class FileUtil {
             try (InputStream is = zipFile.getInputStream(zipEntry);
                  FileOutputStream fos = new FileOutputStream(targetFile)) {
                 int read;
-                byte[] bytes = new byte[Constants.DEFAULT_SIZE];
+                byte[] bytes = new byte[Contents.DEFAULT_SIZE];
                 while ((read = is.read(bytes)) != -1) {
                     fos.write(bytes, 0, read);
                 }
