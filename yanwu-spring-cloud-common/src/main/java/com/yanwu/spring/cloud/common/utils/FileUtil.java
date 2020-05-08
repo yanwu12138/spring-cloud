@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import com.yanwu.spring.cloud.common.core.enums.FileType;
-import lombok.extern.slf4j.Slf4j;
+import com.yanwu.spring.cloud.common.core.common.Constants;
+import com.yanwu.spring.cloud.common.core.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -17,9 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -29,17 +27,15 @@ import java.util.zip.ZipOutputStream;
  * @author XuBaofeng.
  * @date 2018/6/12.
  */
-@Slf4j
+@SuppressWarnings("unused")
 public class FileUtil {
-    private static final String POINT = ".";
-    private static final Integer DEFAULT_SIZE = 1024 * 10;
 
     public static void main(String[] args) throws Exception {
         String sourceDir = "F:\\document\\工作日志";
         String targetDir = "F:\\file\\2020\\";
-        String fileName = "工作日志";
-//        toZip(sourceDir, targetDir, fileName);
-        unZip(new File(targetDir + fileName + ".zip"), targetDir + fileName);
+        String fileName = "111.zip";
+        toZip(sourceDir, targetDir, fileName);
+        unZip(targetDir + fileName, targetDir);
     }
 
     /**
@@ -52,94 +48,186 @@ public class FileUtil {
      * @throws Exception e
      */
     public static void toZip(String sourceDir, String targetDir, String fileName) throws Exception {
-        // ----- 资源检查
+        // ----- 检查资源：资源目录是否存在 && 资源目录是否为空
         File sourceFile = new File(sourceDir);
         Assert.isTrue((sourceFile.exists() && sourceFile.isDirectory()), sourceDir + " >> is not exists");
         File[] sourceFiles = sourceFile.listFiles();
         Assert.isTrue((sourceFiles != null && sourceFiles.length > 0), sourceDir + " >> directory is empty");
-        checkTargetPath(targetDir);
-        File zipFile = new File(targetDir + "/" + fileName + FileType.ZIP.getSuffix());
-        // ===== zip文件存在, 将原有文件删除
-        if (!zipFile.exists() || zipFile.delete()) {
-            // ===== zip文件不存在, 打包
-            try (FileOutputStream fos = new FileOutputStream(zipFile);
-                 ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos))) {
-                byte[] bytes = new byte[DEFAULT_SIZE];
-                for (File file : sourceFiles) {
-                    // ===== 创建ZIP实体，并添加进压缩包
-                    ZipEntry zipEntry = new ZipEntry(file.getName());
-                    zos.putNextEntry(zipEntry);
-                    // ===== 读取待压缩的文件并写进压缩包里
-                    try (FileInputStream fis = new FileInputStream(file);
-                         BufferedInputStream bis = new BufferedInputStream(fis, DEFAULT_SIZE)) {
-                        int read;
-                        while ((read = bis.read(bytes, 0, DEFAULT_SIZE)) != -1) {
-                            zos.write(bytes, 0, read);
-                        }
-                    }
-                }
+        // ----- 检查目标：目标目录是否存在[不存在进行创建] && 目标文件是否存在[存在进行删除]
+        checkDirectoryPath(targetDir);
+        File targetFile = new File(targetDir + fileName);
+        if (!targetFile.exists() || targetFile.delete()) {
+            try (OutputStream fos = new FileOutputStream(targetFile);
+                 ZipOutputStream zos = new ZipOutputStream(fos)) {
+                // ----- 压缩
+                toZip(zos, sourceFile, Constants.NUL);
             }
         }
-    }
-
-    public static void unZip(File zipFile, String targetPath) throws Exception {
-        List<File> files = new ArrayList<>();
-        if (StringUtils.isNotBlank(targetPath)) {
-            log.info("启用ZIP解压工具 >>>>>>>>>> ");
-            byte[] bytes = new byte[DEFAULT_SIZE];
-            if (zipFile.exists() && zipFile.getName().endsWith(".zip")) {
-                OutputStream outputStream = null;
-                InputStream inputStream = null;
-                try (ZipFile zf = new ZipFile(zipFile);) {
-                    Enumeration entries = zf.entries();
-                    while (entries.hasMoreElements()) {
-                        ZipEntry zipEntry = (ZipEntry) entries.nextElement();
-                        String zipEntryName = zipEntry.getName();
-                        log.info("正在解压文件 -> " + zipEntryName);
-                        inputStream = zf.getInputStream(zipEntry);
-                        String descFilePath = targetPath + File.separator + zipEntryName;
-                        File descFile = createFile(descFilePath);
-                        files.add(descFile);
-                        outputStream = new FileOutputStream(descFilePath);
-                        int len;
-                        while ((len = inputStream.read(bytes)) > 0) {
-                            outputStream.write(bytes, 0, len);
-                        }
-                    }
-                    log.info("解压完成 <<<<<<<<<< " + targetPath);
-                }
-            }
-        }
-    }
-
-    private static File createFile(String filePath) throws IOException {
-        File file = new File(filePath);
-        File parentFile = file.getParentFile();
-        if (!parentFile.exists()) {
-            parentFile.mkdirs();
-        }
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        return file;
     }
 
     /**
-     * 删除单个文件
+     * 压缩
      *
-     * @param fileName 要删除的文件的文件名
+     * @param zos        输出流
+     * @param sourceFile 资源文件
+     * @param directory  目录
+     * @throws Exception e
+     */
+    private static void toZip(ZipOutputStream zos, File sourceFile, String directory) throws Exception {
+        if (sourceFile.isFile()) {
+            // ===== 文件，添加到压缩文件
+            byte[] bytes = new byte[Constants.DEFAULT_SIZE];
+            zos.putNextEntry(new ZipEntry(directory));
+            try (FileInputStream fis = new FileInputStream(sourceFile);
+                 BufferedInputStream bis = new BufferedInputStream(fis, Constants.DEFAULT_SIZE)) {
+                int read;
+                while ((read = bis.read(bytes, 0, Constants.DEFAULT_SIZE)) != -1) {
+                    zos.write(bytes, 0, read);
+                }
+            }
+        } else {
+            // ===== 文件夹, 递归压缩
+            File[] files = sourceFile.listFiles();
+            zos.putNextEntry(new ZipEntry(directory + File.separator));
+            if (files == null) {
+                return;
+            }
+            directory = directory.length() == 0 ? Constants.NUL : directory + File.separator;
+            for (File file : files) {
+                toZip(zos, file, directory + file.getName());
+            }
+        }
+    }
+
+    /**
+     * 解压缩
+     *
+     * @param filePath  资源文件
+     * @param targetDir 解压目录
+     * @throws Exception e
+     */
+    public static void unZip(String filePath, String targetDir) throws Exception {
+        // ----- 检查资源：资源目录是否存在
+        File sourceFile = new File(filePath);
+        Assert.isTrue((sourceFile.exists() && sourceFile.isFile()), filePath + " >> is not exists");
+        // ----- 检查目标：目标目录是否存在[存在：先删除后创建；不存在：直接创建]
+        String sourceName = sourceFile.getName();
+        targetDir = targetDir + sourceName.substring(0, sourceName.lastIndexOf(Constants.POINT));
+        File targetFile = new File(targetDir);
+        if (!targetFile.exists() || deleteFile(targetFile)) {
+            checkDirectoryPath(targetFile);
+        }
+        // ----- 解压缩
+        try (ZipFile zipFile = new ZipFile(sourceFile)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                unZip(zipFile, entries.nextElement(), targetDir);
+            }
+        }
+    }
+
+    /**
+     * 解压缩
+     *
+     * @param zipFile   压缩文件
+     * @param zipEntry  entry
+     * @param targetDir 目标路径
+     * @throws Exception e
+     */
+    private static void unZip(ZipFile zipFile, ZipEntry zipEntry, String targetDir) throws Exception {
+        String entryName = zipEntry.getName();
+        if (entryName.equals(File.separator)) {
+            return;
+        }
+        String filePath = targetDir + File.separator + entryName;
+        File targetFile = new File(filePath);
+        if (entryName.endsWith(File.separator)) {
+            // ----- 目录
+            checkDirectoryPath(targetFile);
+            return;
+        }
+        // ----- 文件
+        if (targetFile.createNewFile()) {
+            try (InputStream is = zipFile.getInputStream(zipEntry);
+                 FileOutputStream fos = new FileOutputStream(targetFile)) {
+                int read;
+                byte[] bytes = new byte[Constants.DEFAULT_SIZE];
+                while ((read = is.read(bytes)) != -1) {
+                    fos.write(bytes, 0, read);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 删除文件
+     *
+     * @param fileName 要删除的文件的路径
      * @return 单个文件删除成功返回true，否则返回false
      */
     public static boolean deleteFile(String fileName) {
-        File file = new File(fileName);
-        // ===== 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
-        if (!file.exists() || !file.isFile()) {
-            log.info("delete directory failed: directory >> [ {} ] non-existent!", fileName);
+        return deleteFile(new File(fileName));
+    }
+
+
+    /**
+     * 删除文件
+     *
+     * @param delFile 要删除的文件
+     * @return 单个文件删除成功返回true，否则返回false
+     */
+    public static boolean deleteFile(File delFile) {
+        if (!delFile.exists()) {
             return false;
         }
-        boolean delete = file.delete();
-        log.info("delete directory [ {} ] {}!", fileName, delete);
-        return delete;
+        if (delFile.isFile()) {
+            // ----- 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+            return delFile.delete();
+        } else if (delFile.isDirectory()) {
+            // ----- 删除目录
+            return deleteDirectory(delFile);
+        }
+        return false;
+    }
+
+    /**
+     * 删除目录及目录下的文件
+     *
+     * @param dirFile 要删除的目录的文件路径
+     * @return 目录删除成功返回true，否则返回false
+     */
+    public static boolean deleteDirectory(File dirFile) {
+        // ===== 如果dir对应的文件不存在，或者不是一个目录，则退出
+        if (!dirFile.exists() || !dirFile.isDirectory()) {
+            return false;
+        }
+        boolean flag = true;
+        // ===== 删除文件夹中的所有文件包括子目录
+        File[] files = dirFile.listFiles();
+        if (files == null) {
+            return false;
+        }
+        for (File file : files) {
+            // ===== 删除子文件
+            if (file.isFile()) {
+                flag = file.delete();
+                if (!flag) {
+                    break;
+                }
+            } else if (file.isDirectory()) {
+                // ===== 删除子目录
+                flag = deleteDirectory(file);
+                if (!flag) {
+                    break;
+                }
+            }
+        }
+        if (!flag) {
+            return false;
+        }
+        // ===== 删除当前目录
+        return dirFile.delete();
     }
 
     /**
@@ -148,8 +236,8 @@ public class FileUtil {
      * @param targetPath 目标目录
      * @return [true: 存在; false: 不存在]
      */
-    public static boolean checkTargetPath(String targetPath) {
-        return checkTargetPath(new File(targetPath));
+    public static boolean checkDirectoryPath(String targetPath) {
+        return checkDirectoryPath(new File(targetPath));
     }
 
     /**
@@ -158,7 +246,7 @@ public class FileUtil {
      * @param file 目标目录
      * @return [true: 存在; false: 不存在]
      */
-    public static boolean checkTargetPath(File file) {
+    public static boolean checkDirectoryPath(File file) {
         if (!file.exists()) {
             return file.mkdirs();
         }
@@ -166,64 +254,13 @@ public class FileUtil {
     }
 
     /**
-     * 删除目录及目录下的文件
+     * 导出文件
      *
-     * @param dir 要删除的目录的文件路径
-     * @return 目录删除成功返回true，否则返回false
+     * @param filePath 文件路径
+     * @param fileName 文件名称
+     * @return 输出流
+     * @throws Exception e
      */
-    public static boolean deleteDirectory(String dir) {
-        // ===== 如果dir不以文件分隔符结尾，自动添加文件分隔符
-        if (!dir.endsWith(File.separator)) {
-            dir = dir + File.separator;
-        }
-        File dirFile = new File(dir);
-        // ===== 如果dir对应的文件不存在，或者不是一个目录，则退出
-        if (!dirFile.exists() || !dirFile.isDirectory()) {
-            log.info("delete directory failed: directory >> [ {} ] non-existent!", dir);
-            return false;
-        }
-        boolean flag = true;
-        // ===== 删除文件夹中的所有文件包括子目录
-        File[] files = dirFile.listFiles();
-        if (ArrayUtil.isEmpty(files)) {
-            log.info("delete directory failed: directory >> [ {} ] non-existent!", dir);
-            return false;
-        }
-        for (File file : files) {
-            // ===== 删除子文件
-            if (file.isFile()) {
-                flag = deleteFile(file.getAbsolutePath());
-                if (!flag) {
-                    break;
-                }
-            } else if (file.isDirectory()) {
-                // ===== 删除子目录
-                flag = deleteDirectory(file.getAbsolutePath());
-                if (!flag) {
-                    break;
-                }
-            }
-        }
-        if (!flag) {
-            log.info("delete directory failed！");
-            return false;
-        }
-        // ===== 删除当前目录
-        boolean delete = dirFile.delete();
-        log.info("delete directory [ {} ] {}", dir, delete);
-        return delete;
-    }
-
-    public static FileType getFileTypeByName(String fileName) {
-        Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
-        if (fileName.contains(POINT)) {
-            String suffix = fileName.substring(fileName.lastIndexOf(POINT));
-            FileType fileType = FileType.getTypeBySuffix(suffix);
-            return fileType != null ? fileType : FileType.OTHERS;
-        }
-        return FileType.OTHERS;
-    }
-
     public static ResponseEntity<Resource> exportFile(String filePath, String fileName) throws Exception {
         FileSystemResource file = new FileSystemResource(filePath);
         String fileDisposition = "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8");
@@ -246,7 +283,7 @@ public class FileUtil {
      */
     public static byte[] read(String path, long position, int blockSize) throws Exception {
         // ----- 校验文件，当文件不存在时，抛出文件不存在异常
-        checkFilePath(path);
+        checkFilePath(path, Boolean.FALSE);
         // ----- 读取文件
         ByteBuffer block = ByteBuffer.allocate(blockSize);
         try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(Paths.get(path), StandardOpenOption.READ)) {
@@ -265,11 +302,11 @@ public class FileUtil {
      * @param path     文件目标位置
      * @param block    文件块内容
      * @param position 角标
-     * @throws Exception
+     * @throws Exception e
      */
     public static void write(String path, byte[] block, long position) throws Exception {
         // ----- 校验文件，当文件不存在时，创建新文件
-        checkFilePath(path);
+        checkFilePath(path, Boolean.TRUE);
         // ----- 写文件
         ByteBuffer buffer = ByteBuffer.wrap(block);
         try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(Paths.get(path), StandardOpenOption.WRITE)) {
@@ -285,12 +322,21 @@ public class FileUtil {
      * 校验文件
      *
      * @param path 文件路径
-     * @throws Exception
+     * @param flag 当文件不存在时，是创建文件还是抛出异常[true: 创建; false: 抛出异常]
+     * @throws Exception e
      */
-    private static void checkFilePath(String path) throws Exception {
+    private static void checkFilePath(String path, Boolean flag) throws Exception {
         Assert.isTrue(StringUtils.isNotBlank(path), "The file path cannot be empty.");
         File file = new File(path);
-        Assert.isTrue((file.exists() && file.isFile()), "File does not exist.");
+        if (file.exists()) {
+            return;
+        }
+        // ----- 当文件不存在时，是创建文件还是抛出异常[true: 创建; false: 抛出异常]
+        if (flag) {
+            Assert.isTrue(file.createNewFile(), "File does not exist.");
+        } else {
+            throw new BusinessException("File does not exist.");
+        }
     }
 
 }

@@ -81,9 +81,9 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
         Assert.isTrue(CollectionUtils.isNotEmpty(multipartFileList), "file list is empty.");
         for (MultipartFile file : multipartFileList) {
             String fileName = file.getOriginalFilename();
-            FileType fileType = FileUtil.getFileTypeByName(fileName);
+            FileType fileType = FileType.getFileTypeByName(fileName);
             String filePath = "/src/file/" + fileType + File.separatorChar + LocalDate.now().toString();
-            FileUtil.checkTargetPath(filePath);
+            FileUtil.checkDirectoryPath(filePath);
             String dataPath = filePath + File.separatorChar + fileName;
             FileUtils.copyInputStreamToFile(file.getInputStream(), new File(dataPath));
             log.info("attachment upload attachmentAddress: {}", dataPath);

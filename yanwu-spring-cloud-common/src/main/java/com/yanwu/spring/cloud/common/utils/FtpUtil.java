@@ -214,7 +214,7 @@ public class FtpUtil {
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return null;
         }
-        if (!FileUtil.checkTargetPath(targetPath)) {
+        if (!FileUtil.checkDirectoryPath(targetPath)) {
             return null;
         }
         // ----- 获取文件名和文件
