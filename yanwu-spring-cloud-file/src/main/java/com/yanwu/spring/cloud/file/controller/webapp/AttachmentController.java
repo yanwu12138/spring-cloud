@@ -11,7 +11,6 @@ import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,10 +33,10 @@ import java.util.List;
 @RequestMapping("webapp/attachment/")
 public class AttachmentController {
 
-    @Autowired
+    @javax.annotation.Resource
     private VoDoUtil voDoUtil;
 
-    @Autowired
+    @javax.annotation.Resource
     private AttachmentService attachmentService;
 
     /**

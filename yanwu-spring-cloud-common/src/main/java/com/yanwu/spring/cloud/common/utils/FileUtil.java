@@ -319,6 +319,26 @@ public class FileUtil {
         }
     }
 
+
+    /**
+     * 将文件写入到本地磁盘
+     *
+     * @param is       输入流
+     * @param filePath 文件磁盘地址
+     * @throws Exception e
+     */
+    public static void write(InputStream is, String filePath) throws Exception {
+        checkFilePath(filePath, Boolean.TRUE);
+        File file = new File(filePath);
+        try (OutputStream fos = new FileOutputStream(file)) {
+            int read;
+            byte[] bytes = new byte[Contents.DEFAULT_SIZE];
+            while ((read = is.read(bytes)) != -1) {
+                fos.write(bytes, 0, read);
+            }
+        }
+    }
+
     /**
      * 校验文件
      *
@@ -334,6 +354,7 @@ public class FileUtil {
         }
         // ----- 当文件不存在时，是创建文件还是抛出异常[true: 创建; false: 抛出异常]
         if (flag) {
+            checkDirectoryPath(file.getParentFile());
             Assert.isTrue(file.createNewFile(), "File does not exist.");
         } else {
             throw new BusinessException("File does not exist.");

@@ -22,4 +22,6 @@ public interface Contents {
     String LOG_METHOD = "[Method]";
     String LOG_PARAM = "[Param]";
     String LOG_ERROR = "[Exception]";
+
+    String QR_CODE_EXT = "jpg";
 }

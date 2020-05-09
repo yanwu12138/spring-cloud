@@ -27,6 +27,7 @@ public enum FileType {
     JSON(".json"),
     TXT(".txt"),
     ZIP(".zip"),
+    JPG(".jpg"),
     ;
 
     @Getter
