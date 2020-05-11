@@ -1,7 +1,10 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import lombok.Data;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -9,16 +12,14 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.Assert;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -29,35 +30,54 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class DownLoadUtil {
 
+    /*** 文件下载线程池 ***/
+    private static final ThreadPoolTaskExecutor EXECUTOR;
     /*** 每个线程下载的字节数 */
     private static final Long UNIT_SIZE = 1000 * 1024L;
+    /*** 客户端 */
     private static final CloseableHttpClient HTTP_CLIENT;
-    private static final Executor EXECUTOR;
 
-    private DownLoadUtil() {
+    public static void main(String[] args) throws Exception {
+        String param = "F:\\file\\2020\\new 1.txt";
+        File file = new File(param);
+        Reader reader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String lien;
+        while (StringUtils.isNotBlank((lien = bufferedReader.readLine()))) {
+            String puffix = lien.substring(lien.lastIndexOf("/"));
+            String path = "F:\\file\\2020\\111\\" + puffix;
+            download(lien, path);
+        }
     }
 
     static {
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(100);
-        HTTP_CLIENT = HttpClients.custom().setConnectionManager(connectionManager).build();
-        EXECUTOR = Executors.newFixedThreadPool(8);
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(100);
+        HTTP_CLIENT = HttpClients.custom().setConnectionManager(cm).build();
+        EXECUTOR = new ThreadPoolTaskExecutor();
+        // ----- 设置核心线程数
+        EXECUTOR.setCorePoolSize(50);
+        // ----- 设置最大线程数
+        EXECUTOR.setMaxPoolSize(100);
+        // ----- 设置队列容量
+        EXECUTOR.setQueueCapacity(Integer.MAX_VALUE);
+        // ----- 设置线程活跃时间（秒）
+        EXECUTOR.setKeepAliveSeconds(120);
+        // ----- 设置默认线程名称
+        EXECUTOR.setThreadNamePrefix("down-pool-");
+        // ----- 设置拒绝策略
+        EXECUTOR.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // ----- 执行初始化
+        EXECUTOR.initialize();
     }
 
     /**
      * 下载
      *
      * @param fileUrl   资源路径
-     * @param localPath 文件存放路径
+     * @param localPath 文件路径
      */
-    public static void doDownload(String fileUrl, String localPath) throws Exception {
-        File file = new File(localPath);
-        if (file.exists() && file.isFile()) {
-            Assert.isTrue(file.delete(), "file delete error.");
-        }
-        Assert.isTrue(file.getParentFile().mkdirs(), "file parent create error.");
-        Assert.isTrue(file.createNewFile(), "file create error.");
-
+    public static void download(String fileUrl, String localPath) throws Exception {
         // ----- 获取远程文件的大小，根据文件大小决定线程的个数
         log.info("download file begin, localPath: {}, fileUrl: {}", localPath, fileUrl);
         HttpURLConnection httpConnection = (HttpURLConnection) new URL(fileUrl).openConnection();
@@ -69,40 +89,38 @@ public class DownLoadUtil {
         long threadCount = Math.floorDiv(fileSize, UNIT_SIZE);
         threadCount = fileSize == threadCount * UNIT_SIZE ? threadCount : threadCount + 1;
 
+        // ----- 检查文件[父目录是否存在 && 文件是否存在]
+        File file = new File(localPath);
+        if (file.exists() && file.isFile()) {
+            Assert.isTrue(file.delete(), "file delete error.");
+        }
+        FileUtil.checkDirectoryPath(file.getParentFile());
+        Assert.isTrue(file.createNewFile(), "file create error.");
+
         // ----- 根据threadCount开始下载文件
         CountDownLatch end = new CountDownLatch((int) threadCount);
+        long offset = 0;
         long start = System.currentTimeMillis();
-        long offset = 0, size = 0;
-        for (int i = 0; i < threadCount; i++) {
-            EXECUTOR.execute(DownLoadTask.getInstance(fileUrl, localPath, offset, size, end, HTTP_CLIENT));
-            offset += size;
-        }
-        // 如果远程文件尺寸小于等于unitSize
-        if (fileSize <= UNIT_SIZE) {
-            EXECUTOR.execute(DownLoadTask.getInstance(fileUrl, localPath, offset, fileSize, end, HTTP_CLIENT));
-        } else {
-            // 如果远程文件尺寸大于unitSize
-            for (int i = 1; i < threadCount; i++) {
-                EXECUTOR.execute(DownLoadTask.getInstance(fileUrl, localPath, offset, UNIT_SIZE, end, HTTP_CLIENT));
-                offset += UNIT_SIZE;
-            }
-            // 如果不能整除，则需要再创建一个线程下载剩余字节
-            if (fileSize % UNIT_SIZE != 0) {
-                EXECUTOR.execute(DownLoadTask.getInstance(fileUrl, localPath, offset, fileSize - UNIT_SIZE * (threadCount - 1), end, HTTP_CLIENT));
-            }
+        while (fileSize > 0) {
+            long length = fileSize > UNIT_SIZE ? UNIT_SIZE : fileSize;
+            EXECUTOR.execute(DownLoadTask.getInstance(fileUrl, localPath, offset, length, end));
+            fileSize -= length;
+            offset += UNIT_SIZE;
         }
         try {
             end.await();
         } catch (InterruptedException e) {
-            log.error("downLoadUtil await error.", e);
+            log.error("downLoad await error.", e);
         }
-        log.info("download file done！localPath: {}, time: {}S", localPath, (System.currentTimeMillis() - start) / 1000);
+        log.info("download file done！localPath: {}, time: {} S", localPath, (System.currentTimeMillis() - start) / 1000);
     }
 
     /**
      * 文件下载任务
      */
+    @Data
     @Slf4j
+    @Accessors(chain = true)
     private static class DownLoadTask implements Runnable {
         /*** 待下载的文件 */
         private String url = null;
@@ -114,41 +132,33 @@ public class DownLoadUtil {
         private long length = 0;
 
         private CountDownLatch end;
-        private CloseableHttpClient httpClient;
         private HttpContext context;
 
         @Override
         @SneakyThrows
         public void run() {
-            HttpGet httpGet = new HttpGet(this.url);
-            httpGet.addHeader("Range", "bytes=" + this.offset + "-" + (this.offset + this.length - 1));
-            CloseableHttpResponse response = httpClient.execute(httpGet, context);
-            File newFile = new File(fileName);
-            try (RandomAccessFile raf = new RandomAccessFile(newFile, "rw");
+            HttpGet httpGet = new HttpGet(url);
+            httpGet.addHeader("Range", "bytes=" + offset + "-" + (offset + length - 1));
+            File file = new File(fileName);
+            try (RandomAccessFile raf = new RandomAccessFile(file, "rw");
+                 CloseableHttpResponse response = HTTP_CLIENT.execute(httpGet, context);
                  BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent())) {
                 int read;
                 byte[] bytes = new byte[1024];
                 while ((read = bis.read(bytes, 0, bytes.length)) != -1) {
-                    raf.seek(this.offset);
+                    raf.seek(offset);
                     raf.write(bytes, 0, read);
-                    this.offset = this.offset + read;
+                    offset += read;
                 }
             } finally {
                 end.countDown();
-                log.info(end.getCount() + " is go on!");
+                log.info("task: {} is go on!", end.getCount());
             }
         }
 
-        static DownLoadTask getInstance(String url, String fileName, long offset, long length, CountDownLatch end, CloseableHttpClient httpClient) {
-            DownLoadTask result = new DownLoadTask();
-            result.url = url;
-            result.offset = offset;
-            result.length = length;
-            result.fileName = fileName;
-            result.end = end;
-            result.httpClient = httpClient;
-            result.context = new BasicHttpContext();
-            return result;
+        static DownLoadTask getInstance(String url, String fileName, long offset, long length, CountDownLatch end) {
+            return new DownLoadTask().setUrl(url).setFileName(fileName).setOffset(offset)
+                    .setLength(length).setEnd(end).setContext(new BasicHttpContext());
         }
 
         private DownLoadTask() {
