@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.core.common.Contents;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -19,7 +20,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -37,27 +37,6 @@ public class DownLoadUtil {
     private static final Long UNIT_SIZE = 1000 * 1024L;
     /*** 客户端 */
     private static final CloseableHttpClient HTTP_CLIENT;
-
-    public static void main(String[] args) throws Exception {
-        String param = "F:\\file\\2020\\new 1.txt";
-        File file = new File(param);
-        Reader reader = new FileReader(file);
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
-        String lien;
-        while (StringUtils.isNotBlank((lien = bufferedReader.readLine()))) {
-            String finalLien = lien;
-            executor.execute(() -> {
-                String puffix = finalLien.substring(finalLien.lastIndexOf("/"));
-                String path = "F:\\file\\2020\\111\\" + puffix;
-                try {
-                    download(finalLien, path);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-    }
 
     static {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
@@ -124,21 +103,33 @@ public class DownLoadUtil {
         log.info("download file done！localPath: {}, time: {} S", localPath, (System.currentTimeMillis() - start) / 1000);
     }
 
+    public static void main(String[] args) throws Exception {
+        String param = "F:\\file\\2020\\new 1.txt";
+        File file = new File(param);
+        Reader reader = new FileReader(file);
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String lien;
+        while (StringUtils.isNotBlank((lien = bufferedReader.readLine()))) {
+            String puffix = lien.substring(lien.lastIndexOf("/"));
+            String path = "F:\\file\\2020\\111\\" + puffix;
+            download(lien, path);
+        }
+    }
+
     /**
      * 文件下载任务
      */
     @Data
-    @Slf4j
     @Accessors(chain = true)
     private static class DownLoadTask implements Runnable {
         /*** 待下载的文件 */
-        private String url = null;
+        private String url;
         /*** 本地文件名 */
-        private String fileName = null;
+        private String fileName;
         /*** 偏移量 */
-        private long offset = 0;
+        private Long offset;
         /*** 分配给本线程的下载字节数 */
-        private long length = 0;
+        private Long length;
 
         private CountDownLatch end;
         private HttpContext context;
@@ -153,7 +144,7 @@ public class DownLoadUtil {
                  CloseableHttpResponse response = HTTP_CLIENT.execute(httpGet, context);
                  BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent())) {
                 int read;
-                byte[] bytes = new byte[1024];
+                byte[] bytes = new byte[Contents.DEFAULT_SIZE];
                 while ((read = bis.read(bytes, 0, bytes.length)) != -1) {
                     raf.seek(offset);
                     raf.write(bytes, 0, read);
