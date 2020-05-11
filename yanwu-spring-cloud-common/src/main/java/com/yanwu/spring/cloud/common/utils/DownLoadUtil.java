@@ -19,6 +19,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -42,11 +43,19 @@ public class DownLoadUtil {
         File file = new File(param);
         Reader reader = new FileReader(file);
         BufferedReader bufferedReader = new BufferedReader(reader);
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
         String lien;
         while (StringUtils.isNotBlank((lien = bufferedReader.readLine()))) {
-            String puffix = lien.substring(lien.lastIndexOf("/"));
-            String path = "F:\\file\\2020\\111\\" + puffix;
-            download(lien, path);
+            String finalLien = lien;
+            executor.execute(() -> {
+                String puffix = finalLien.substring(finalLien.lastIndexOf("/"));
+                String path = "F:\\file\\2020\\111\\" + puffix;
+                try {
+                    download(finalLien, path);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
