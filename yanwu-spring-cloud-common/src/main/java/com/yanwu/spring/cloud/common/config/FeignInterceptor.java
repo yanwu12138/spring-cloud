@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.config;
 
+import com.yanwu.spring.cloud.common.core.common.Contents;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;

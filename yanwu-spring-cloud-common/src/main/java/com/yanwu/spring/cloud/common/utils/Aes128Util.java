@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.core.common.Encoding;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -20,8 +21,6 @@ import java.security.SecureRandom;
 public class Aes128Util {
 
     private static final String KEY_ALGORITHM = "AES";
-    /*** 字符编码 ***/
-    private static final String CHARACTER_CODING = "UTF-8";
     /*** 默认的加密算法 ***/
     private static final String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
     /*** 默认的盐 ***/
@@ -53,7 +52,7 @@ public class Aes128Util {
         }
         try {
             Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-            byte[] byteContent = content.getBytes(CHARACTER_CODING);
+            byte[] byteContent = content.getBytes(Encoding.UTF_8);
             cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(key));
             byte[] result = cipher.doFinal(byteContent);
             return Base64.encodeBase64String(result);
@@ -91,7 +90,7 @@ public class Aes128Util {
             Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, getSecretKey(key));
             byte[] result = cipher.doFinal(Base64.decodeBase64(content));
-            return new String(result, CHARACTER_CODING);
+            return new String(result, Encoding.UTF_8);
         } catch (Exception e) {
             log.error("String: [{}] Aes128Util decryption error", content, e);
         }

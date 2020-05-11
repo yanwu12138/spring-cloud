@@ -6,10 +6,7 @@ import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.api.TypeMappingOptions;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -27,23 +24,37 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class VoDoUtil implements ApplicationContextAware, InitializingBean {
-
-    private ApplicationContext ctx;
+public class VoDoUtil implements InitializingBean {
 
     @Resource
-    private Mapper dozer;
+    private Mapper mapper;
 
-    public <VO> VO convertDoToVo(Object doObject, Class<VO> voClass) throws Exception {
+    public <VO> VO convertDoToVo(Object doObject, Class<VO> voClass) {
         return doObject == null ? null : this.map(doObject, voClass);
     }
 
-    public <DO> DO convertVoToDo(Object voObject, Class<DO> doClass) throws Exception {
+    public <DO> DO convertVoToDo(Object voObject, Class<DO> doClass) {
         return voObject == null ? null : this.map(voObject, doClass);
     }
 
     public <T> T map(Object source, Class<T> destinationClass) {
-        return source == null ? null : dozer.map(source, destinationClass);
+        return source == null ? null : mapper.map(source, destinationClass);
+    }
+
+    public <T> List<T> mapList(Collection<?> sourceList, Class<T> destinationClass) {
+        if (CollectionUtils.isEmpty(sourceList)) {
+            return null;
+        }
+        List<T> destinationList = new ArrayList<T>();
+        for (Object sourceObject : sourceList) {
+            T destinationObject = mapper.map(sourceObject, destinationClass);
+            destinationList.add(destinationObject);
+        }
+        return destinationList;
+    }
+
+    public void copy(Object source, Object destinationObject) {
+        mapper.map(source, destinationObject);
     }
 
     /**
@@ -53,7 +64,7 @@ public class VoDoUtil implements ApplicationContextAware, InitializingBean {
      * @param destination
      */
     public void copyProperties(final Object sources, final Object destination) {
-        WeakReference<DozerBeanMapper> weakReference = new WeakReference<DozerBeanMapper>(new DozerBeanMapper());
+        WeakReference<DozerBeanMapper> weakReference = new WeakReference<>(new DozerBeanMapper());
         DozerBeanMapper mapper = weakReference.get();
         mapper.addMapping(new BeanMappingBuilder() {
             @Override
@@ -67,38 +78,11 @@ public class VoDoUtil implements ApplicationContextAware, InitializingBean {
         weakReference.clear();
     }
 
-    public <T> List<T> mapList(Collection<?> sourceList, Class<T> destinationClass) {
-        if (CollectionUtils.isEmpty(sourceList)) {
-            return null;
-        }
-        List<T> destinationList = new ArrayList<T>();
-        for (Object sourceObject : sourceList) {
-            T destinationObject = dozer.map(sourceObject, destinationClass);
-            destinationList.add(destinationObject);
-        }
-        return destinationList;
-    }
-
-    /**
-     * Copy all properties of source Object to target Object
-     *
-     * @param source            source object
-     * @param destinationObject target object
-     */
-    public void copy(Object source, Object destinationObject) {
-        dozer.map(source, destinationObject);
-    }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        dozer = ctx.getBean(Mapper.class);
-        dozer = new DozerBeanMapper();
+    public void afterPropertiesSet() {
+        mapper = new DozerBeanMapper();
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ctx = applicationContext;
-        log.info("setApplicationContext: {}", applicationContext);
-    }
 
 }

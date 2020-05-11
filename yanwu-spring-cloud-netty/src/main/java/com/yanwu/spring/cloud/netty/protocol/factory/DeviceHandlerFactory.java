@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.netty.protocol.factory;
 
-import com.yanwu.spring.cloud.common.core.common.ContextUtil;
+import com.yanwu.spring.cloud.common.utils.ContextUtil;
 import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.netty.protocol.up.AbstractHandler;
 import lombok.extern.slf4j.Slf4j;

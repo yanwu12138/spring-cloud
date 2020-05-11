@@ -1,6 +1,9 @@
 package com.yanwu.spring.cloud.common.core.enums;
 
+import com.yanwu.spring.cloud.common.core.common.Contents;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -13,14 +16,21 @@ public enum FileType {
 
     /*** 文件类型 ***/
     OTHERS(""),
-    WORD(".docx"),
-    EXCEL(".xlsx"),
-    PPT(".pptx"),
+    WORD_03(".doc"),
+    WORD_07(".docx"),
+    EXCEL_03(".xls"),
+    EXCEL_07(".xlsx"),
+    PPT_03(".ppt"),
+    PPT_07(".pptx"),
     PDF(".pdf"),
     SQL(".sql"),
     JSON(".json"),
-    TXT(".txt");
+    TXT(".txt"),
+    ZIP(".zip"),
+    JPG(".jpg"),
+    ;
 
+    @Getter
     private String suffix;
 
     FileType(String suffix) {
@@ -36,7 +46,28 @@ public enum FileType {
         return null;
     }
 
-    public static String getSuffix(FileType type) {
-        return type.suffix;
+    /**
+     * 根据文件名获取文件类型
+     *
+     * @param fileName 文件名
+     * @return 文件类型
+     */
+    public static FileType getFileTypeByName(String fileName) {
+        Assert.isTrue(StringUtils.isNotBlank(fileName), "file name is empty.");
+        if (fileName.contains(Contents.POINT)) {
+            String suffix = fileName.substring(fileName.lastIndexOf(Contents.POINT));
+            FileType fileType = FileType.getTypeBySuffix(suffix);
+            return fileType != null ? fileType : FileType.OTHERS;
+        }
+        return FileType.OTHERS;
+    }
+
+    public static FileType getTypeBySuffix(String suffix) {
+        for (FileType fileType : FileType.values()) {
+            if (fileType.suffix.equals(suffix)) {
+                return fileType;
+            }
+        }
+        return null;
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.server.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.yanwu.spring.cloud.gateway.handler.Constant.*;
+import static com.yanwu.spring.cloud.common.core.common.Contents.*;
 
 
 /**

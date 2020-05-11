@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.core.common.Encoding;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -29,7 +30,6 @@ public class EmailUtil {
     /*** 发件人账户密码[注：此密码不是邮箱登陆密码，而是邮箱授权密码] */
     private static final String PASSWORD = "xxxxxxxx";
 
-    private static final String UTF_8 = "UTF-8";
     private static final String CONTENT_TYPE = "text/html;charset=UTF-8";
 
     /*** 连接邮件服务器的参数配置 */
@@ -61,7 +61,7 @@ public class EmailUtil {
         String subject = "测试邮件";
         String content = "尊敬的用户：305306733@qq.com，您的车票已经抢票成功！信息如下:乘客:王栋,日期:2019-10-30,车次:K824,地点:杭州06:30-合肥07:23,席别:硬座。请在30分钟内完成付款！更多信息请查询未付款订单。";
         String[] attachments = {"C:\\Users\\Administrator.CEG84QWOZI3JSQW\\Desktop\\壁纸啊\\v1.jpg"};
-        sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, toRecipient, ccRecipient, subject, content);
+        sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, toRecipient, ccRecipient, subject, content, attachments);
     }
 
     /**
@@ -75,7 +75,7 @@ public class EmailUtil {
      * @param subject     主题
      * @param content     内容
      * @param attachments 附件 [为null则表示无附件]
-     * @throws Exception
+     * @throws Exception e
      */
     public static void sendEmail(String sendAddress, String account, String password,
                                  String toRecipient, String[] ccRecipient,
@@ -113,7 +113,7 @@ public class EmailUtil {
      * @param content     内容
      * @param attachments 附件
      * @return 邮件的实例对象
-     * @throws Exception
+     * @throws Exception e
      */
     private static MimeMessage getMimeMessage(Session session, String sendAddress,
                                               String toRecipient, String[] ccRecipient,
@@ -135,7 +135,7 @@ public class EmailUtil {
             msg.setRecipients(MimeMessage.RecipientType.CC, addresses);
         }
         // ===== 邮件主题
-        msg.setSubject(subject, UTF_8);
+        msg.setSubject(subject, Encoding.UTF_8);
         // ===== 邮件处理附件
         if (ArrayUtil.isEmpty(attachments)) {
             // ----- 邮件正文
@@ -159,7 +159,7 @@ public class EmailUtil {
                 // ----- 将附件数据添加到节点
                 attachment.setDataHandler(dh);
                 // ----- 设置附件的文件名（需要编码）
-                attachment.setFileName(MimeUtility.encodeText(dh.getName(), UTF_8, null));
+                attachment.setFileName(MimeUtility.encodeText(dh.getName(), Encoding.UTF_8, null));
                 mm.addBodyPart(attachment);
             }
             mm.setSubType("mixed");
@@ -168,18 +168,6 @@ public class EmailUtil {
         // ----- 设置邮件的发送时间,默认立即发送
         msg.setSentDate(new Date());
         return msg;
-    }
-
-    /**
-     * 参数校验
-     *
-     * @param str 参数
-     * @param msg 异常信息
-     */
-    private static void aaa(String str, String msg) {
-        if (StringUtils.isBlank(str)) {
-            throw new RuntimeException(msg);
-        }
     }
 
 }

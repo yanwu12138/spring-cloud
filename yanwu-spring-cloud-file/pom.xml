@@ -20,10 +20,13 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <google.zxing.version>3.4.0</google.zxing.version>
+        <mybatis.spring.version>2.1.2</mybatis.spring.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.0.RELEASE</spring-cloud-alibaba.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <yanwu.spring.cloud.common.version>1.0-SNAPSHOT</yanwu.spring.cloud.common.version>
     </properties>
 
     <dependencies>
@@ -58,7 +61,7 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.2</version>
+            <version>${mybatis.spring.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -66,9 +69,19 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${google.zxing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${google.zxing.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.yanwu.spring.cloud.common</groupId>
             <artifactId>yanwu-spring-cloud-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${yanwu.spring.cloud.common.version}</version>
         </dependency>
     </dependencies>
 

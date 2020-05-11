@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class RandomUtil {
 
-    final static private Random random = new Random();
+    final static private Random RANDOM = new Random();
 
     public static Integer generateRandomInteger(int min, int max) {
         int bound = max - min;
@@ -20,7 +20,7 @@ public class RandomUtil {
         if (bound < Integer.MAX_VALUE) {
             ++bound;
         }
-        return random.nextInt(bound) + min;
+        return RANDOM.nextInt(bound) + min;
     }
 
     public static Short generateRandomShort(short min, short max) {
@@ -30,7 +30,7 @@ public class RandomUtil {
         if (bound < Short.MAX_VALUE) {
             ++bound;
         }
-        return (short) (random.nextInt(bound) + min);
+        return (short) (RANDOM.nextInt(bound) + min);
     }
 
     public static Byte generateRandomByte(byte min, byte max) {
@@ -40,7 +40,7 @@ public class RandomUtil {
         if (bound < Byte.MAX_VALUE) {
             ++bound;
         }
-        return (byte) (random.nextInt(bound) + min);
+        return (byte) (RANDOM.nextInt(bound) + min);
     }
 
     public static Long generateRandomLong(long min, long max) {
@@ -56,7 +56,7 @@ public class RandomUtil {
     }
 
     public static Boolean generateRandomBoolean() {
-        return random.nextBoolean();
+        return RANDOM.nextBoolean();
     }
 
     public static Character generateRandomCharacter() {

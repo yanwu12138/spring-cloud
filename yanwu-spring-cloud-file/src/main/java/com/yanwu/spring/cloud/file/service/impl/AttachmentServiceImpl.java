@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.file.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
+import com.yanwu.spring.cloud.common.utils.ExcelUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.file.consumer.base.YanwuUserConsumer;
 import com.yanwu.spring.cloud.file.data.mapper.AttachmentMapper;
@@ -11,9 +12,6 @@ import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -24,9 +22,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.annotation.Resource;
 import javax.servlet.http.Part;
 import java.io.File;
-import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -45,31 +42,14 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Attachment uploadExcel(Part file, Long id) throws Exception {
-        InputStream inputStream = file.getInputStream();
-        Workbook workbook;
-        try {
-            workbook = new HSSFWorkbook(inputStream);
-        } catch (Exception ex) {
-            inputStream = file.getInputStream();
-            workbook = new XSSFWorkbook(inputStream);
-        }
-        Sheet sheet = workbook.getSheetAt(0);
-        Iterator<Row> rowIterator = sheet.rowIterator();
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-            Iterator<Cell> cellIterator = row.cellIterator();
-            while (cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
-                cell.setCellType(CellType.STRING);
-                String value = cell.getStringCellValue();
-                log.info("===== value: {}", value);
-            }
-        }
+        List<List<String>> result = ExcelUtil.analysisExcel(file, 0);
+        log.info("uploadExcel: {}", result);
         Attachment attachment = new Attachment();
-        attachment.setName(file.getName());
-        attachment.setAttachmentName(file.getName());
+        attachment.setRelationId(id);
         attachment.setAttachmentSize(file.getSize());
-        attachment.setAttachmentType(FileType.EXCEL);
+        attachment.setName(file.getSubmittedFileName());
+        attachment.setAttachmentName(file.getSubmittedFileName());
+        attachment.setAttachmentType(FileType.EXCEL_07.ordinal());
         save(attachment);
         return attachment;
     }
@@ -99,25 +79,21 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
         MultiValueMap<String, MultipartFile> multiValueMap = request.getMultiFileMap();
         List<MultipartFile> multipartFileList = multiValueMap.get("file");
         Assert.isTrue(CollectionUtils.isNotEmpty(multipartFileList), "file list is empty.");
-        for (MultipartFile multipartFile : multipartFileList) {
-            String fileName = multipartFile.getOriginalFilename();
-            FileType fileType = FileUtil.getFileTypeByName(fileName);
-            String name = FileUtil.getNameByFileName(fileName);
-            String basePath = "/src/file/" + fileType + File.separatorChar + System.currentTimeMillis();
-            File myFilePath = new File(basePath);
-            if (!myFilePath.exists()) {
-                myFilePath.mkdirs();
-            }
-            String dataPath = basePath + File.separatorChar + fileName;
-            FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), new File(dataPath));
+        for (MultipartFile file : multipartFileList) {
+            String fileName = file.getOriginalFilename();
+            FileType fileType = FileType.getFileTypeByName(fileName);
+            String filePath = "/src/file/" + fileType + File.separatorChar + LocalDate.now().toString();
+            FileUtil.checkDirectoryPath(filePath);
+            String dataPath = filePath + File.separatorChar + fileName;
+            FileUtils.copyInputStreamToFile(file.getInputStream(), new File(dataPath));
             log.info("attachment upload attachmentAddress: {}", dataPath);
             Attachment attachment = new Attachment();
             attachment.setRelationId(id);
-            attachment.setName(name);
+            attachment.setName(fileName);
             attachment.setAttachmentName(fileName);
-            attachment.setAttachmentType(fileType);
             attachment.setAttachmentAddress(dataPath);
-            attachment.setAttachmentSize(multipartFile.getSize());
+            attachment.setAttachmentSize(file.getSize());
+            attachment.setAttachmentType(fileType.ordinal());
             save(attachment);
             attachments.add(attachment);
         }
