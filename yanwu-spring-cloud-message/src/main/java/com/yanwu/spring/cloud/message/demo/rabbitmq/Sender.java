@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.message.demo;
+package com.yanwu.spring.cloud.message.demo.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.yanwu.spring.cloud.message.demo.Constant.*;
+import static com.yanwu.spring.cloud.message.demo.rabbitmq.Constant.*;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>

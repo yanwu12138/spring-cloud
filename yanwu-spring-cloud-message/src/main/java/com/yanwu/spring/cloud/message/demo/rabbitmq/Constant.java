@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.message.demo;
+package com.yanwu.spring.cloud.message.demo.rabbitmq;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

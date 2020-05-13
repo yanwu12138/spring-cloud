@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.message.demo;
+package com.yanwu.spring.cloud.message.demo.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
