@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: yanwu-message
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
+        group: DEFAULT_GROUP
+        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+      config:
+        group: DEFAULT_GROUP
+        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
+        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+        file-extension: yaml
