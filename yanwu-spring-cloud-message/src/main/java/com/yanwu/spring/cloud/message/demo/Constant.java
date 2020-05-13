@@ -1,8 +1,5 @@
 package com.yanwu.spring.cloud.message.demo;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -19,18 +16,26 @@ import java.util.concurrent.Executors;
  * </dependency>
  */
 public class Constant {
+    public static final String[] USERS;
+    public static final String[] TOPICS;
+    public static final Executor EXECUTOR;
     public static final Boolean TRUE = true;
     public static final Boolean FALSE = false;
-    public static final Executor EXECUTOR;
+    public static final String TOPIC = "topic";
+    public static final String FANOUT = "fanout";
+    public static final String DIRECT = "direct";
     public static final String SIMPLE_QUEUE_NAME = "test_simple_queue";
     public static final String WORK_QUEUE_NAME = "test_work_queue";
+    public static final String FANOUT_EXCHANGE_NAME = "test_fanout_exchange";
+    public static final String FANOUT_QUEUE_NAME = "test_fanout_queue_";
+    public static final String DIRECT_EXCHANGE_NAME = "test_direct_exchange";
+    public static final String DIRECT_QUEUE_NAME = "test_direct_queue_";
+    public static final String TOPIC_EXCHANGE_NAME = "test_topic_exchange";
+    public static final String TOPIC_QUEUE_NAME = "test_topic_queue_";
 
     static {
-        EXECUTOR = Executors.newSingleThreadExecutor();
-    }
-
-    public static void close(Connection connection, Channel channel) throws Exception {
-        channel.close();
-        connection.close();
+        USERS = new String[]{"yanwu", "lotus", "wenxin", "wenfu"};
+        TOPICS = new String[]{"yanwu.*", "lotus.#", "wenxin.*", "wenfu.#", "*.*", "#.#"};
+        EXECUTOR = Executors.newFixedThreadPool(100);
     }
 }

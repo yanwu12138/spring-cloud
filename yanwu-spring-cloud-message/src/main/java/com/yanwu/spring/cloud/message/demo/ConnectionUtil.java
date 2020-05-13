@@ -1,8 +1,10 @@
 package com.yanwu.spring.cloud.message.demo;
 
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -28,4 +30,13 @@ public class ConnectionUtil {
         return factory.newConnection();
     }
 
+    public static void close(Connection connection, Channel channel) throws Exception {
+        channel.close();
+        connection.close();
+    }
+
+    public static String radomeUser() {
+        int index = RandomUtils.nextInt(0, Constant.USERS.length);
+        return Constant.USERS[index];
+    }
 }
