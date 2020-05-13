@@ -39,4 +39,9 @@ public class ConnectionUtil {
         int index = RandomUtils.nextInt(0, Constant.USERS.length);
         return Constant.USERS[index];
     }
+
+    public static String radomeTopic() {
+        int index = RandomUtils.nextInt(0, Constant.SEND_TOPICS.length);
+        return Constant.SEND_TOPICS[index];
+    }
 }

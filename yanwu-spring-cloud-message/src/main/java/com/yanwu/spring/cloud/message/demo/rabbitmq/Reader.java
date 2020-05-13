@@ -151,7 +151,7 @@ public class Reader {
     /*** 主题模式 */
     private static void read05() throws Exception {
         System.out.println("==================== topic reader ====================");
-        for (int i = 0; i < TOPICS.length; i++) {
+        for (int i = 0; i < READ_TOPICS.length; i++) {
             Integer finalI = i;
             String queue = TOPIC_QUEUE_NAME + i;
             EXECUTOR.execute(new Runnable() {
@@ -161,7 +161,7 @@ public class Reader {
                     Connection connection = ConnectionUtil.getConnection();
                     Channel channel = connection.createChannel();
                     channel.queueDeclare(queue, FALSE, FALSE, FALSE, null);
-                    channel.queueBind(queue, TOPIC_EXCHANGE_NAME, TOPICS[finalI]);
+                    channel.queueBind(queue, TOPIC_EXCHANGE_NAME, READ_TOPICS[finalI]);
                     channel.basicQos(1);
                     QueueingConsumer consumer = new QueueingConsumer(channel);
                     channel.basicConsume(queue, false, consumer);

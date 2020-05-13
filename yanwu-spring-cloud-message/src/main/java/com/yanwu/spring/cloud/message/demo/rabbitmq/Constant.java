@@ -17,10 +17,11 @@ import java.util.concurrent.Executors;
  */
 public class Constant {
     public static final String[] USERS;
-    public static final String[] TOPICS;
     public static final Executor EXECUTOR;
     public static final Boolean TRUE = true;
     public static final Boolean FALSE = false;
+    public static final String[] READ_TOPICS;
+    public static final String[] SEND_TOPICS;
     public static final String TOPIC = "topic";
     public static final String FANOUT = "fanout";
     public static final String DIRECT = "direct";
@@ -35,7 +36,8 @@ public class Constant {
 
     static {
         USERS = new String[]{"yanwu", "lotus", "wenxin", "wenfu"};
-        TOPICS = new String[]{"yanwu.*", "lotus.#", "wenxin.*", "wenfu.#", "*.*", "#.#"};
+        READ_TOPICS = new String[]{"yanwu.*", "yanwu.#", "*.*", "#.#"};
+        SEND_TOPICS = new String[]{"yanwu.lotos", "yanwu.lotus.love", "lotus.love", "lotus.wenxin.love"};
         EXECUTOR = Executors.newFixedThreadPool(100);
     }
 }

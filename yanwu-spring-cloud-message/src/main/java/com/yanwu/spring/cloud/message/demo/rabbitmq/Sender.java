@@ -97,7 +97,7 @@ public class Sender {
         Channel channel = connection.createChannel();
         channel.exchangeDeclare(TOPIC_EXCHANGE_NAME, TOPIC);
         String message = "啦啦啦木木哭啦";
-        String topic = "lotus.11";
+        String topic = ConnectionUtil.radomeTopic();
         channel.basicPublish(TOPIC_EXCHANGE_NAME, topic, null, message.getBytes());
         log.info("[sender] topic exchange sender, topic: {}, message: {}", topic, message);
         ConnectionUtil.close(connection, channel);
