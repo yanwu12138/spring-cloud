@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.core.common.Encoding;
-import com.yanwu.spring.cloud.common.core.exception.BusinessException;
+import com.yanwu.spring.cloud.common.core.enums.FileType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Enumeration;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -56,6 +57,7 @@ public class FileUtil {
         Assert.isTrue((sourceFiles != null && sourceFiles.length > 0), sourceDir + " >> directory is empty");
         // ----- 检查目标：目标目录是否存在[不存在进行创建] && 目标文件是否存在[存在进行删除]
         checkDirectoryPath(targetDir);
+        fileName = StringUtils.isNotBlank(fileName) ? fileName : sourceFile.getName() + FileType.ZIP.getSuffix();
         File targetFile = new File(targetDir + fileName);
         if (!targetFile.exists() || targetFile.delete()) {
             try (OutputStream fos = new FileOutputStream(targetFile);
@@ -291,7 +293,7 @@ public class FileUtil {
             Future<Integer> read = channel.read(block, position);
             while (!read.isDone()) {
                 // ----- 睡1毫秒， 不抢占资源
-                Thread.sleep(1L);
+                TimeUnit.MILLISECONDS.sleep(50);
             }
         }
         return block.array();
@@ -314,7 +316,7 @@ public class FileUtil {
             Future<Integer> write = channel.write(buffer, position);
             while (!write.isDone()) {
                 // ----- 睡1毫秒， 不抢占资源
-                Thread.sleep(1L);
+                TimeUnit.MILLISECONDS.sleep(50);
             }
         }
     }
@@ -353,12 +355,9 @@ public class FileUtil {
             return;
         }
         // ----- 当文件不存在时，是创建文件还是抛出异常[true: 创建; false: 抛出异常]
-        if (flag) {
-            checkDirectoryPath(file.getParentFile());
-            Assert.isTrue(file.createNewFile(), "File does not exist.");
-        } else {
-            throw new BusinessException("File does not exist.");
-        }
+        Assert.isTrue(flag, "File does not exist.");
+        checkDirectoryPath(file.getParentFile());
+        Assert.isTrue(file.createNewFile(), "File does not exist.");
     }
 
 }
