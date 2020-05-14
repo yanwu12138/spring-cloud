@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.message.consumer;
 
-import com.yanwu.spring.cloud.message.bo.MessageBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -22,8 +21,8 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.FANOUT_
 public class FanoutLotusConsumer<T extends Serializable> {
 
     @RabbitHandler
-    public void reader(MessageBO<T> message) {
-        log.info("fanout reader, queue: {}, param: {}", FANOUT_LOTUS_QUEUE_NAME, message);
+    public void reader(String message) {
+        log.info("fanout reader, queue: {}, message: {}", FANOUT_LOTUS_QUEUE_NAME, message);
     }
 
 }

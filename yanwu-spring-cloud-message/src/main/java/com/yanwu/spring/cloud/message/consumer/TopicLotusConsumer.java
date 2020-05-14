@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.message.consumer;
 
-import com.yanwu.spring.cloud.message.bo.MessageBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -22,8 +21,8 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.TOPIC_Q
 public class TopicLotusConsumer<T extends Serializable> {
 
     @RabbitHandler
-    public void reader(MessageBO<T> message) {
-        log.info("topic reader, queue: {}, param: {}", TOPIC_QUEUE_LOTUS_QUEUE, message);
+    public void reader(String message) {
+        log.info("topic reader, queue: {}, message: {}", TOPIC_QUEUE_LOTUS_QUEUE, message);
     }
 
 }
