@@ -1,10 +1,6 @@
 package com.yanwu.spring.cloud.message.demo.rabbitmq;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomUtils;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -21,27 +17,28 @@ import org.apache.commons.lang3.RandomUtils;
 @Slf4j
 public class ConnectionUtil {
 
-    public static Connection getConnection() throws Exception {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("39.97.229.71");
-        factory.setPort(5672);
-        factory.setUsername("root");
-        factory.setPassword("xbf12138");
-        return factory.newConnection();
-    }
+//    public static Connection getConnection() throws Exception {
+//        ConnectionFactory factory = new ConnectionFactory();
+//        factory.setHost("39.97.229.71");
+//        factory.setPort(5672);
+//        factory.setUsername("root");
+//        factory.setPassword("xbf12138");
+//        return factory.newConnection();
+//    }
+//
+//    public static void close(Connection connection, Channel channel) throws Exception {
+//        channel.close();
+//        connection.close();
+//    }
+//
+//    public static String radomeUser() {
+//        int index = RandomUtils.nextInt(0, Contents.Message.USERS.length);
+//        return Contents.Message.USERS[index];
+//    }
+//
+//    public static String radomeTopic() {
+//        int index = RandomUtils.nextInt(0, Contents.Message.SEND_TOPICS.length);
+//        return Contents.Message.SEND_TOPICS[index];
+//    }
 
-    public static void close(Connection connection, Channel channel) throws Exception {
-        channel.close();
-        connection.close();
-    }
-
-    public static String radomeUser() {
-        int index = RandomUtils.nextInt(0, Constant.USERS.length);
-        return Constant.USERS[index];
-    }
-
-    public static String radomeTopic() {
-        int index = RandomUtils.nextInt(0, Constant.SEND_TOPICS.length);
-        return Constant.SEND_TOPICS[index];
-    }
 }

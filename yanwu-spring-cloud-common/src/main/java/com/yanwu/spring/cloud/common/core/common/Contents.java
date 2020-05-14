@@ -1,5 +1,8 @@
 package com.yanwu.spring.cloud.common.core.common;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
  * @date 2020/5/8 13:42.
@@ -24,4 +27,39 @@ public interface Contents {
     String LOG_ERROR = "[Exception]";
 
     String QR_CODE_EXT = "jpg";
+
+    public static final class Message {
+        public static final String[] USERS;
+        public static final Executor EXECUTOR;
+        public static final Boolean TRUE = true;
+        public static final Boolean FALSE = false;
+        public static final String[] READ_TOPICS;
+        public static final String[] SEND_TOPICS;
+        public static final String TOPIC = "topic";
+        public static final String FANOUT = "fanout";
+        public static final String DIRECT = "direct";
+        public static final String SIMPLE_QUEUE_NAME = "test_simple_queue";
+        public static final String WORK_QUEUE_NAME = "test_work_queue";
+        public static final String NON_EXISTENT_EXCHANGE = "non-existent-exchange";
+        public static final String FANOUT_EXCHANGE_NAME = "test_fanout_exchange";
+        public static final String FANOUT_YANWU_QUEUE_NAME = "test_fanout_yanwu_queue";
+        public static final String FANOUT_LOTUS_QUEUE_NAME = "test_fanout_lotus_queue";
+        public static final String DIRECT_QUEUE_NAME = "test_direct_queue_";
+        public static final String DIRECT_EXCHANGE_NAME = "test_direct_exchange";
+        public static final String TEST_DIRECT_ROUTING = "testDirectRouting";
+        public static final String TOPIC_EXCHANGE_NAME = "test_topic_exchange";
+        public static final String TOPIC_ROUTE_ALL_KEY = "#.#";
+        public static final String TOPIC_QUEUE_ALL_QUEUE = "test_topic_all_queue";
+        public static final String TOPIC_ROUTE_YANWU_KEY = "yanwu.#";
+        public static final String TOPIC_QUEUE_YANWU_QUEUE = "test_topic_yanwu_queue";
+        public static final String TOPIC_ROUTE_LOTUS_KEY = "lotus.*";
+        public static final String TOPIC_QUEUE_LOTUS_QUEUE = "test_topic_lotus_queue";
+
+        static {
+            USERS = new String[]{"yanwu", "lotus", "wenxin", "wenfu"};
+            READ_TOPICS = new String[]{"yanwu.*", "yanwu.#", "*.*", "#.#"};
+            SEND_TOPICS = new String[]{"yanwu.lotos", "yanwu.lotus.love", "lotus.love", "lotus.wenxin.love"};
+            EXECUTOR = Executors.newFixedThreadPool(100);
+        }
+    }
 }
