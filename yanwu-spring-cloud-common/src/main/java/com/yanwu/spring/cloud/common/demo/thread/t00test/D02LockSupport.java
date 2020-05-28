@@ -23,7 +23,7 @@ public class D02LockSupport {
             System.out.println("size thread start");
             LockSupport.park();
             System.out.println("size thread end");
-            support.unpark(addThread);
+            LockSupport.unpark(addThread);
         }, "size-thread");
 
         addThread = new Thread(() -> {
@@ -32,7 +32,7 @@ public class D02LockSupport {
                 support.add();
                 System.out.println("add thread: " + i);
                 if (support.size() == 5) {
-                    support.unpark(sizeThread);
+                    LockSupport.unpark(sizeThread);
                     LockSupport.park();
                 }
             }
@@ -41,10 +41,6 @@ public class D02LockSupport {
 
         sizeThread.start();
         addThread.start();
-    }
-
-    private void unpark(Thread thread) {
-        LockSupport.unpark(thread);
     }
 
     private void add() {
