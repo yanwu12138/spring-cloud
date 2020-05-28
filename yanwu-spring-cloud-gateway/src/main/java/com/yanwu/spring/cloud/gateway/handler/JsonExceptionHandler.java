@@ -79,7 +79,7 @@ public class JsonExceptionHandler extends DefaultErrorWebExceptionHandler {
             message.append(ex.getMessage());
         }
         String txId = request.exchange().getResponse().getHeaders().getFirst(TX_ID);
-        log.error("Exception : [txId]: {}, {}: {}, {}: {}, {}: {}", txId, LOG_METHOD, request.path(), LOG_PARAM, request.attributes(), LOG_ERROR, message, ex);
+        log.error("Exception : [txId]: {}, {}: {}, {}: {}, {}: {}", txId, METHOD, request.path(), PARAM, request.attributes(), ERROR, message, ex);
         return message.toString();
     }
 

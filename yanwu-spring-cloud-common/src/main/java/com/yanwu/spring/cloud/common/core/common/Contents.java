@@ -22,9 +22,11 @@ public interface Contents {
     /*** 用户登陆缓存：有效期时长（单位：S） ***/
     Integer TOKEN_TIME_OUT = 60 * 60;
     /*** 日志输出 */
-    String LOG_METHOD = "[Method]";
-    String LOG_PARAM = "[Param]";
-    String LOG_ERROR = "[Exception]";
+    String METHOD = "[Method]";
+    String METHOD_TYPE = "[MethodType]";
+    String PARAM = "[Param]";
+    String RESULT = "[Result]";
+    String ERROR = "[Exception]";
 
     String QR_CODE_EXT = "jpg";
 
