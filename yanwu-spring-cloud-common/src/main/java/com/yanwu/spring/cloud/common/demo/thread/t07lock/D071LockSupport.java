@@ -10,7 +10,7 @@ import java.util.concurrent.locks.LockSupport;
  * description:
  */
 @SuppressWarnings("all")
-public class D071LockSuppoer {
+public class D071LockSupport {
     public static void main(String[] args) throws Exception {
         Thread thread = new Thread(() -> {
             for (int i = 0; i < 10; i++) {
