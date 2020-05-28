@@ -10,6 +10,8 @@ import java.util.concurrent.CountDownLatch;
  * @date 2020-05-28 21:55:53.
  * <p>
  * describe:
+ * 实现一个容器，提供两个方法：add(), size()
+ * 写两个线程：其中线程1往容器中添加10个元素、线程2监测当线程1往容器中添加了5个元素的时候推出执行并打印
  */
 public class D03CountDownLatch {
     private static final Random RANDOM = new Random();
