@@ -12,6 +12,7 @@ import java.util.Random;
  * 实现一个容器，提供两个方法：add(), size()
  * 写两个线程：其中线程1往容器中添加10个元素、线程2监测当线程1往容器中添加了5个元素的时候推出执行并打印
  */
+@SuppressWarnings("all")
 public class D01WaitNotify {
     private static final Random RANDOM = new Random();
     private static final List<Integer> VALUES = new ArrayList<>();
