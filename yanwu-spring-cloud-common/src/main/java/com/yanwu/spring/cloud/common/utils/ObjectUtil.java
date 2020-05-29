@@ -24,30 +24,26 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class VoDoUtil implements InitializingBean {
+public class ObjectUtil implements InitializingBean {
 
     @Resource
     private Mapper mapper;
 
-    public <VO> VO convertDoToVo(Object doObject, Class<VO> voClass) {
-        return doObject == null ? null : this.map(doObject, voClass);
+    public <T> T convert(Object doObject, Class<T> clazz) {
+        return doObject == null ? null : this.map(doObject, clazz);
     }
 
-    public <DO> DO convertVoToDo(Object voObject, Class<DO> doClass) {
-        return voObject == null ? null : this.map(voObject, doClass);
+    public <T> T map(Object source, Class<T> clazz) {
+        return source == null ? null : mapper.map(source, clazz);
     }
 
-    public <T> T map(Object source, Class<T> destinationClass) {
-        return source == null ? null : mapper.map(source, destinationClass);
-    }
-
-    public <T> List<T> mapList(Collection<?> sourceList, Class<T> destinationClass) {
+    public <T> List<T> mapList(Collection<?> sourceList, Class<T> clazz) {
         if (CollectionUtils.isEmpty(sourceList)) {
             return null;
         }
-        List<T> destinationList = new ArrayList<T>();
+        List<T> destinationList = new ArrayList<>();
         for (Object sourceObject : sourceList) {
-            T destinationObject = mapper.map(sourceObject, destinationClass);
+            T destinationObject = mapper.map(sourceObject, clazz);
             destinationList.add(destinationObject);
         }
         return destinationList;
