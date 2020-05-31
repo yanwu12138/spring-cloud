@@ -17,11 +17,13 @@
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
         <commons.net.version>3.6</commons.net.version>
+        <disruptor.version>3.4.2</disruptor.version>
         <guava.version>22.0</guava.version>
         <httpcomponents.httpclient.version>4.5</httpcomponents.httpclient.version>
         <java.mail.version>1.4.7</java.mail.version>
         <java.version>1.8</java.version>
         <jdk.version>1.8</jdk.version>
+        <jmh.version>1.21</jmh.version>
         <lombol.version>1.16.18</lombol.version>
         <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
         <mybatis.plus.version>3.1.1</mybatis.plus.version>
@@ -175,6 +177,24 @@
         <!--            <artifactId>seata-all</artifactId>-->
         <!--            <version>1.0.0</version>-->
         <!--        </dependency>-->
+        <!-- JMH 测试包 测试工具 -->
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>${disruptor.version}</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

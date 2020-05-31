@@ -56,7 +56,7 @@ public class YanwuSpringCloudNettyApplication {
         // ----- 设置线程活跃时间（秒）
         executor.setKeepAliveSeconds(120);
         // ----- 设置默认线程名称
-        executor.setThreadNamePrefix("netty-pool-");
+        executor.setThreadNamePrefix("netty-");
         // ----- 设置拒绝策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // ----- 执行初始化

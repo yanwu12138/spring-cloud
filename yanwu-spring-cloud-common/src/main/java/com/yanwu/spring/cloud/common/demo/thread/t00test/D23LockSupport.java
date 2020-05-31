@@ -30,9 +30,9 @@ public class D23LockSupport {
         }, "numb");
         charThread = new Thread(() -> {
             for (Character c : CHARS) {
+                LockSupport.park();
                 System.out.println(Thread.currentThread().getName() + " > " + c);
                 LockSupport.unpark(numbThread);
-                LockSupport.park();
             }
         }, "char");
         numbThread.start();
