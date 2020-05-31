@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.demo.thread.t00test;
 
+import com.yanwu.spring.cloud.common.demo.d03thread.t00test.JMHDemo;
 import org.openjdk.jmh.annotations.*;
 
 /**
