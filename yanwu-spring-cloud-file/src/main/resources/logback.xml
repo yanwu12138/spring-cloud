@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <!--<property name="LOG_HOME" value="F:/logs"/>-->
-    <property name="LOG_HOME" value="/usr/local/src/logs"/>
+    <property name="LOG_HOME" value="/Users/xubaofeng/yanwu/logs"/>
     <property name="CONSOLE_LOG_PATTERN"
               value="%date{yyyy-MM-dd HH:mm:ss:sss} [%thread] [%highlight(%-5level)] %logger{100} >> %msg%n"/>
     <property name="FILE_LOG_PATTERN"
