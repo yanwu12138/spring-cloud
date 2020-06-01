@@ -17,7 +17,7 @@ public class ReadReentrantLock {
         new Thread(() -> {
             lock.lock();
             try {
-                TimeUnit.SECONDS.sleep(Integer.MAX_VALUE);
+                TimeUnit.SECONDS.sleep(2);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -27,7 +27,7 @@ public class ReadReentrantLock {
         new Thread(() -> {
             lock.lock();
             try {
-                TimeUnit.SECONDS.sleep(Integer.MAX_VALUE);
+                TimeUnit.SECONDS.sleep(1);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
