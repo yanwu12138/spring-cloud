@@ -28,7 +28,7 @@ public class D01ZeroCopy {
     private static class IoServer {
         public static void main(String[] args) throws Exception {
             ServerSocket server = new ServerSocket(PORT);
-            while (true) {
+            for (;;) {
                 Socket socket = server.accept();
                 try (InputStream inputStream = new DataInputStream(socket.getInputStream())) {
                     byte[] bytes = new byte[BYTE_SIZE];

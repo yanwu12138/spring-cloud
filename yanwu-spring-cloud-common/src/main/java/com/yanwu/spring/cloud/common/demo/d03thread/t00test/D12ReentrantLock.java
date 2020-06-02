@@ -47,7 +47,7 @@ public class D12ReentrantLock {
     private void put(Integer value) {
         try {
             LOCK.lock();
-            while (true) {
+            for (; ; ) {
                 if (getCount() == DEFAULT_SIZE) {
                     PRODUCER.await();
                 } else {
@@ -66,7 +66,7 @@ public class D12ReentrantLock {
     private Integer get() {
         try {
             LOCK.lock();
-            while (true) {
+            for (; ; ) {
                 if (getCount() == 0) {
                     CONSUMER.await();
                 } else {

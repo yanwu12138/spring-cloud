@@ -5,15 +5,16 @@ package com.yanwu.spring.cloud.common.demo.d04jvm;
  *
  * description:
  */
+@SuppressWarnings("all")
 public class StackOutOfMemoryDemo {
     public static void main(String[] args) {
         stackLeakByThread();
     }
 
     private static void stackLeakByThread() {
-        while (true) {
+        for (; ; ) {
             new Thread(() -> {
-                while (true) {
+                for (; ; ) {
                 }
             }).start();
         }

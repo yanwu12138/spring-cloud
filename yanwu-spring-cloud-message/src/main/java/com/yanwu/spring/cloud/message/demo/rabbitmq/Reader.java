@@ -38,7 +38,7 @@ public class Reader {
 //                channel.queueDeclare(SIMPLE_QUEUE_NAME, FALSE, FALSE, FALSE, null);
 //                QueueingConsumer consumer = new QueueingConsumer(channel);
 //                channel.basicConsume(SIMPLE_QUEUE_NAME, TRUE, consumer);
-//                while (true) {
+//                for (;;) {
 //                    QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 //                    String message = new String(delivery.getBody());
 //                    log.info("[reader] simple queue reader, thread: {}, message: {}", Thread.currentThread().getName(), message);
@@ -64,7 +64,7 @@ public class Reader {
 //                    QueueingConsumer consumer = new QueueingConsumer(channel);
 //                    // ----- FALSE: 表示手动模式确认消息
 //                    channel.basicConsume(WORK_QUEUE_NAME, FALSE, consumer);
-//                    while (true) {
+//                    for (;;) {
 //                        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 //                        String message = new String(delivery.getBody());
 //                        log.info("[reader] wrok queue reader, thread: {}, message: {}", Thread.currentThread().getName(), message);
@@ -95,7 +95,7 @@ public class Reader {
 //                    channel.basicQos(1);
 //                    QueueingConsumer consumer = new QueueingConsumer(channel);
 //                    channel.basicConsume(queue, false, consumer);
-//                    while (true) {
+//                    for (;;) {
 //                        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 //                        String message = new String(delivery.getBody());
 //                        log.info("[reader] fanout reader, thread: {}, message: {}", queue, message);
@@ -127,7 +127,7 @@ public class Reader {
 //                    channel.basicQos(1);
 //                    QueueingConsumer consumer = new QueueingConsumer(channel);
 //                    channel.basicConsume(queue, false, consumer);
-//                    while (true) {
+//                    for (;;) {
 //                        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 //                        String message = new String(delivery.getBody());
 //                        log.info("[reader] direct reader, thread: {}, routing: {}, message: {}", queue, delivery.getEnvelope().getRoutingKey(), message);
@@ -157,7 +157,7 @@ public class Reader {
 //                    channel.basicQos(1);
 //                    QueueingConsumer consumer = new QueueingConsumer(channel);
 //                    channel.basicConsume(queue, false, consumer);
-//                    while (true) {
+//                    for (;;) {
 //                        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 //                        String message = new String(delivery.getBody());
 //                        log.info("[reader] topic reader, thread: {}, routing: {}, message: {}", queue, delivery.getEnvelope().getRoutingKey(), message);
