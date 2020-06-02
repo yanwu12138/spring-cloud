@@ -11,7 +11,7 @@ import java.util.List;
 public class HeapOutOfMemoryDemo {
     public static void main(String[] args) throws Exception {
         List<OutOfMemoryObject> temp = new ArrayList<>();
-        while (true) {
+        for (; ; ) {
             temp.add(new OutOfMemoryObject());
         }
     }

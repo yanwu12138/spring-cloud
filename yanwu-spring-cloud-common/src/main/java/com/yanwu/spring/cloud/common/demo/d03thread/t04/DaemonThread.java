@@ -23,7 +23,7 @@ public class DaemonThread extends Thread {
 
     @Override
     public void run() {
-        while (true) {
+        for (; ; ) {
             try {
                 log.info("run running.");
                 TimeUnit.MILLISECONDS.sleep(500);

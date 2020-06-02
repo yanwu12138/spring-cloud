@@ -28,7 +28,7 @@ public class D009Synchronized {
     public void test1() {
         synchronized (lock) {
             System.out.printf("%s start %n", Thread.currentThread().getName());
-            while (true) {
+            for (; ; ) {
             }
         }
     }

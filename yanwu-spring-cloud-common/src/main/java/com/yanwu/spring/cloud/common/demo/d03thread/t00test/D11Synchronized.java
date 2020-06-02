@@ -8,6 +8,7 @@ package com.yanwu.spring.cloud.common.demo.d03thread.t00test;
  * 写一个固定容量的同步容器，拥有put()、get()、getCount()函数
  * 能够支持2个生产者和10个消费者的阻塞调用
  */
+@SuppressWarnings("all")
 public class D11Synchronized {
     private static final Integer DEFAULT_SIZE = 20;
     private static final Object[] VALUES = new Object[DEFAULT_SIZE];
@@ -24,7 +25,7 @@ public class D11Synchronized {
     }
 
     private synchronized void put() {
-        while (true) {
+        for (; ; ) {
             if (getCount() == DEFAULT_SIZE) {
                 try {
                     this.wait();
@@ -40,7 +41,7 @@ public class D11Synchronized {
     }
 
     private synchronized void get() {
-        while (true) {
+        for (; ; ) {
             if (getCount() == 0) {
                 try {
                     this.wait();
