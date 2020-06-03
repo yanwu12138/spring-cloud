@@ -24,14 +24,14 @@ public class D04Disorder {
                 a = 1;
                 x = b;
             });
-            Thread other = new Thread(() -> {
+            Thread two = new Thread(() -> {
                 b = 1;
                 y = a;
             });
             one.start();
-            other.start();
+            two.start();
             one.join();
-            other.join();
+            two.join();
             if (x == 0 && y == 0) {
                 // ----- 当x和y都为0时说明进行了指令重排
                 String result = "第" + i + "次 (" + x + "," + y + "）";
