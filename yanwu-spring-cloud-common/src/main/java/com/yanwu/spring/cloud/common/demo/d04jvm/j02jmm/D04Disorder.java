@@ -33,6 +33,7 @@ public class D04Disorder {
             one.join();
             other.join();
             if (x == 0 && y == 0) {
+                // ----- 当x和y都为0时说明进行了指令重排
                 String result = "第" + i + "次 (" + x + "," + y + "）";
                 System.err.println(result);
                 break;
