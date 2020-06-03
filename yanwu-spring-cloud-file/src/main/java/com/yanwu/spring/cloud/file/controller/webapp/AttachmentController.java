@@ -5,7 +5,7 @@ import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.ExcelUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
-import com.yanwu.spring.cloud.common.utils.VoDoUtil;
+import com.yanwu.spring.cloud.common.utils.ObjectUtil;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
@@ -34,7 +34,7 @@ import java.util.List;
 public class AttachmentController {
 
     @javax.annotation.Resource
-    private VoDoUtil voDoUtil;
+    private ObjectUtil objectUtil;
 
     @javax.annotation.Resource
     private AttachmentService attachmentService;
@@ -51,7 +51,7 @@ public class AttachmentController {
     @PostMapping(value = "upPortrait")
     public ResponseEntity<ResponseEnvelope<Attachment>> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);
-        Attachment result = voDoUtil.convertDoToVo(attachment, Attachment.class);
+        Attachment result = objectUtil.convert(attachment, Attachment.class);
         return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
     }
 
