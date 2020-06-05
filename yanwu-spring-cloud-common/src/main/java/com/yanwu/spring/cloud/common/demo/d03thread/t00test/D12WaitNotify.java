@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 能够支持2个生产者和10个消费者的阻塞调用
  */
 @SuppressWarnings("all")
-public class D11WaitNotify {
+public class D12WaitNotify {
     private static Integer INDEX = 0;
     private static final Integer DEFAULT_SIZE = 20;
     private static final Random RANDOM = new Random();
@@ -24,7 +24,7 @@ public class D11WaitNotify {
     private static final Condition PRODUCER = LOCK.newCondition();
 
     public static void main(String[] args) {
-        D11WaitNotify sync = new D11WaitNotify();
+        D12WaitNotify sync = new D12WaitNotify();
         for (int n = 0; n < 2; n++) {
             new Thread(() -> {
                 for (int m = 0; m < 50; m++) {

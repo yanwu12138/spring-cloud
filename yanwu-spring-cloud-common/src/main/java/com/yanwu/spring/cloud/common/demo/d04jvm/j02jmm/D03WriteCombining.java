@@ -4,7 +4,7 @@ package com.yanwu.spring.cloud.common.demo.d04jvm.j02jmm;
  * @author <a href="mailto:yanwu0527@163.com">baofeng Xu</a>
  * @date 2020-06-03 23:26:24.
  * <p>
- * describe:
+ * describe: 合并写证明
  */
 public class D03WriteCombining {
     private static final int ITERATIONS = Integer.MAX_VALUE;

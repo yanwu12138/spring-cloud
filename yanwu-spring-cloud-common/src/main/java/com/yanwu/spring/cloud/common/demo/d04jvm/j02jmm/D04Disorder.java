@@ -4,8 +4,9 @@ package com.yanwu.spring.cloud.common.demo.d04jvm.j02jmm;
  * @author <a href="mailto:yanwu0527@163.com">baofeng Xu</a>
  * @date 2020-06-03 23:28:28.
  * <p>
- * describe:
+ * describe: 指令重排证明
  */
+@SuppressWarnings("all")
 public class D04Disorder {
     private static int x = 0, y = 0;
     private static int a = 0, b = 0;
