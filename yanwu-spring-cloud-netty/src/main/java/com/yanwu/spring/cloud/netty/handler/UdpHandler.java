@@ -41,7 +41,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
     private Executor nettyExecutor;
 
     private static UdpHandler handler;
-    private static ChannelHandlerContext context;
+    private static volatile ChannelHandlerContext context;
 
     @PostConstruct
     public void init() {
