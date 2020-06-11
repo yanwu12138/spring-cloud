@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.common.utils;
 import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -29,11 +30,12 @@ import java.util.zip.ZipOutputStream;
  * @author XuBaofeng.
  * @date 2018/6/12.
  */
+@Slf4j
 @SuppressWarnings("unused")
 public class FileUtil {
 
     public static void main(String[] args) throws Exception {
-        String sourceDir = "F:\\document\\工作日志";
+        String sourceDir = "F:\\document\\TOOLS";
         String targetDir = "F:\\file\\2020\\";
         String fileName = "111.zip";
         toZip(sourceDir, targetDir, fileName);
@@ -66,6 +68,7 @@ public class FileUtil {
                 toZip(zos, sourceFile, Contents.NUL);
             }
         }
+        log.info("file to zip, source: {}, file: {}, target: {}", sourceDir, fileName, targetDir);
     }
 
     /**
@@ -127,6 +130,7 @@ public class FileUtil {
                 unZip(zipFile, entries.nextElement(), targetDir);
             }
         }
+        log.info("file un zip, filePath: {}, target: {}", filePath, targetDir);
     }
 
     /**
