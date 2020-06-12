@@ -6,7 +6,7 @@ package com.yanwu.spring.cloud.common.demo.d04jvm.j01class;
  * <p>
  * describe:
  */
-public class D02ClassLoader {
+public class D02ClassLoaderLevel {
 
     public static void main(String[] args) {
         // ----- null > Bootstrap
@@ -14,9 +14,9 @@ public class D02ClassLoader {
         // ----- sun.misc.Launcher$ExtClassLoader > Extension
         System.out.println(sun.net.spi.nameservice.dns.DNSNameService.class.getClassLoader());
         // ----- sun.misc.Launcher$AppClassLoader > Application
-        System.out.println(com.yanwu.spring.cloud.common.demo.d04jvm.j01class.D02ClassLoader.class.getClassLoader());
+        System.out.println(D02ClassLoaderLevel.class.getClassLoader());
         // ----- null > Bootstrap
-        System.out.println(com.yanwu.spring.cloud.common.demo.d04jvm.j01class.D02ClassLoader.class.getClassLoader().getClass().getClassLoader());
+        System.out.println(D02ClassLoaderLevel.class.getClassLoader().getClass().getClassLoader());
     }
 
 }

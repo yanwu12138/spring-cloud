@@ -96,8 +96,17 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        if (ctx == null) {
+            return;
+        }
+        String ctxId = NettyUtils.getChannelId(ctx);
+        if (ClientSessionMap.getContext(ctxId) == null) {
+            return;
+        }
+        ClientSessionMap.remove(ctxId);
+        ctx.channel().close();
         ctx.close();
-        log.error("netty tcp error：" + cause);
+        log.error("netty tcp error：", cause);
     }
 
     /**

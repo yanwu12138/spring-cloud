@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Z26
  */
 @SuppressWarnings("all")
-public class D12ReentrantLock {
+public class D13ReentrantLock {
     private static volatile int TOP = 0;
     private static final Integer DEFAULT_SIZE = 20;
     private static final Random RANDOM = new Random();
@@ -33,7 +33,7 @@ public class D12ReentrantLock {
     private static final Condition PRODUCER = LOCK.newCondition();
 
     public static void main(String[] args) {
-        D12ReentrantLock sync = new D12ReentrantLock();
+        D13ReentrantLock sync = new D13ReentrantLock();
         for (int i = 0; i < 2; i++) {
             new Thread(sync::get, "consumer-" + i).start();
         }

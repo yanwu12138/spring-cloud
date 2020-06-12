@@ -41,7 +41,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
     private Executor nettyExecutor;
 
     private static UdpHandler handler;
-    private static ChannelHandlerContext context;
+    private static volatile ChannelHandlerContext context;
 
     @PostConstruct
     public void init() {
@@ -72,7 +72,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.close();
-        log.error("netty udp error：" + cause);
+        log.error("netty udp error：", cause);
     }
 
     private void initContext(ChannelHandlerContext channelContext) {
