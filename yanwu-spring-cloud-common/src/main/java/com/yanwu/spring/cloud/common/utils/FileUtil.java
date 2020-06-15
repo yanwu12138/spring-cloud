@@ -62,8 +62,7 @@ public class FileUtil {
         fileName = StringUtils.isNotBlank(fileName) ? fileName : sourceFile.getName() + FileType.ZIP.getSuffix();
         File targetFile = new File(targetDir + fileName);
         if (!targetFile.exists() || targetFile.delete()) {
-            try (OutputStream fos = new FileOutputStream(targetFile);
-                 ZipOutputStream zos = new ZipOutputStream(fos)) {
+            try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(targetFile))) {
                 // ----- 压缩
                 toZip(zos, sourceFile, Contents.NUL);
             }
@@ -84,8 +83,7 @@ public class FileUtil {
             // ===== 文件，添加到压缩文件
             byte[] bytes = new byte[Contents.DEFAULT_SIZE];
             zos.putNextEntry(new ZipEntry(directory));
-            try (FileInputStream fis = new FileInputStream(sourceFile);
-                 BufferedInputStream bis = new BufferedInputStream(fis, Contents.DEFAULT_SIZE)) {
+            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(sourceFile), Contents.DEFAULT_SIZE)) {
                 int read;
                 while ((read = bis.read(bytes, 0, Contents.DEFAULT_SIZE)) != -1) {
                     zos.write(bytes, 0, read);
@@ -155,12 +153,12 @@ public class FileUtil {
         }
         // ----- 文件
         if (targetFile.createNewFile()) {
-            try (InputStream is = zipFile.getInputStream(zipEntry);
-                 FileOutputStream fos = new FileOutputStream(targetFile)) {
+            try (InputStream is = new BufferedInputStream(zipFile.getInputStream(zipEntry));
+                 OutputStream os = new BufferedOutputStream(new FileOutputStream(targetFile))) {
                 int read;
                 byte[] bytes = new byte[Contents.DEFAULT_SIZE];
                 while ((read = is.read(bytes)) != -1) {
-                    fos.write(bytes, 0, read);
+                    os.write(bytes, 0, read);
                 }
             }
         }
@@ -336,7 +334,7 @@ public class FileUtil {
     public static void write(InputStream is, String filePath) throws Exception {
         checkFilePath(filePath, Boolean.TRUE);
         File file = new File(filePath);
-        try (OutputStream fos = new FileOutputStream(file)) {
+        try (OutputStream fos = new BufferedOutputStream(new FileOutputStream(file))) {
             int read;
             byte[] bytes = new byte[Contents.DEFAULT_SIZE];
             while ((read = is.read(bytes)) != -1) {
