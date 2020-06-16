@@ -4,8 +4,6 @@ import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -22,9 +20,8 @@ public class Crc16Util {
     private static final Integer HEX = 16;
     private static final String NUL = "";
     private static final String SPACE = " ";
-    private static final String RETURN = "\r";
-    private static final String NEW_LINE = "\n";
     private static final String ASCII = "US-ASCII";
+    private static final String[] SPLITS = {SPACE, "\t", "\n", "\n"};
 
     private Crc16Util() {
     }
@@ -224,14 +221,13 @@ public class Crc16Util {
         if (StringUtils.isBlank(str)) {
             return null;
         }
-        if (str.contains(SPACE)) {
-            str = str.replaceAll(SPACE, NUL);
-        }
-        if (str.contains(RETURN)) {
-            str = str.replaceAll(RETURN, NUL);
-        }
-        if (str.contains(NEW_LINE)) {
-            str = str.replaceAll(NEW_LINE, NUL);
+        for (String split : SPLITS) {
+            if (StringUtils.isBlank(str)) {
+                break;
+            }
+            if (str.contains(split)) {
+                str = str.replaceAll(split, NUL);
+            }
         }
         return str;
     }
@@ -255,6 +251,7 @@ public class Crc16Util {
         buffer.append("};");
         System.out.println(buffer.toString());
         System.out.println("    int len = " + split.length + ";");
+        System.out.println("    int len = " + convertHighLow(crc16ToHexStr(split.length)) + ";");
     }
 
     /**
@@ -286,6 +283,7 @@ public class Crc16Util {
         buffer.append("};");
         System.out.println(buffer.toString());
         System.out.println("    int len = " + chars.length + ";");
+        System.out.println("    int len = " + convertHighLow(crc16ToHexStr(chars.length)) + ";");
     }
 
     /**
@@ -294,37 +292,17 @@ public class Crc16Util {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        // ===== 测试1：hex方式获取CRC-16
-        String str = "48 4C 01 00 01 00 00 05 00 00";
-        // ----- 输出16进制数组给 C++ 测试使用
-        Crc16Util.printHexStr(str);
-        // ----- 获取CRC-16的值
-        System.out.println("hex to crc16 int is: " + Crc16Util.getCrc16ByHex(str));
-        System.out.println("hex to crc16 hex is: " + Crc16Util.getCrc16HexStrByHex(str));
-        System.out.println();
-
-        // ===== 测试2：json方式获取CRC-16
-        Map param = new HashMap<>();
-        param.put("version", "010001");
-        param.put("type", "light");
-        param.put("sn", "light001");
-        param.put("seq", 1);
-        param.put("code", "login");
-        Crc16Util.printJsonStr(JsonUtil.toJsonString(param));
-        System.out.println("json to crc16 int is: " + Crc16Util.getCrc16ByJson(param));
-        System.out.println("json to crc16 hex is: " + Crc16Util.getCrc16HexStrByJson(param));
-        System.out.println();
-
-        // ===== 测试3：将16进制字符串进行高低位转换
-        String temp = "722E696D";
-        String lowBits = Crc16Util.convertHighLow(temp);
-        System.out.println(temp + " -> " + lowBits);
-        System.out.println();
-
-        // ===== 测试4：获取FTP地址的十六进制数组
-        String ftp = "ftp://127.0.0.1/xxx-dt1.1-v1.1.2.2r.img";
-        byte[] asc = ftp.getBytes(ASCII);
-        System.out.println(ByteUtil.bytesToHexStrPrint(asc));
-        System.out.println(Integer.toHexString(asc.length));
+        String param = "{\n" +
+                "    \"ver\": \"010001\",\n" +
+                "    \"mcode\": \"set\",\n" +
+                "    \"ccode\": \"setAlarmConfig\",\n" +
+                "    \"data\": {\n" +
+                "        \"status\": 0\n" +
+                "    },\n" +
+                "    \"errorCode\": \"00\",\n" +
+                "    \"seq\": \"9EAB5159FDB4431DAE323A0EFA538C1D\"\n" +
+                "}\n";
+        printJsonStr(param);
+        System.out.println(getCrc16HexStrByJson(param));
     }
 }
