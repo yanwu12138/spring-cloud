@@ -10,7 +10,6 @@ import java.util.Vector;
  * <p>
  * description:
  */
-@Slf4j
 public class D02Vector {
 
     public static void main(String[] args) {

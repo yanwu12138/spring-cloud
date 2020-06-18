@@ -12,7 +12,7 @@ import java.util.List;
  * description:
  */
 @Slf4j
-public class D00ListUtil {
+class D00ListUtil {
     private static final Integer DEFAULT_SIZE = 10;
     private static final Integer DEFAULT_ITEM = 10;
 
