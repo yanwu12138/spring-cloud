@@ -6,5 +6,5 @@ package com.yanwu.spring.cloud.common.demo.d02container.c01collection.c02set;
  * <p>
  * description:
  */
-public class D06CopyonWriteArraySet {
+public class D06CopyOnWriteArraySet {
 }

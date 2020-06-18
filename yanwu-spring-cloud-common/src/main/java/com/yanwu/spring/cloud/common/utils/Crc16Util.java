@@ -293,14 +293,14 @@ public class Crc16Util {
      */
     public static void main(String[] args) throws Exception {
         String param = "{\n" +
-                "    \"ver\": \"010001\",\n" +
+                "    \"ver\": \"010005\",\n" +
                 "    \"mcode\": \"set\",\n" +
-                "    \"ccode\": \"setAlarmConfig\",\n" +
+                "    \"ccode\": \"setAdaptiveLevel\",\n" +
                 "    \"data\": {\n" +
                 "        \"status\": 0\n" +
                 "    },\n" +
                 "    \"errorCode\": \"00\",\n" +
-                "    \"seq\": \"9EAB5159FDB4431DAE323A0EFA538C1D\"\n" +
+                "    \"seq\": \"6520C4A215CD471AA1654535CDF723D5\"\n" +
                 "}\n";
         printJsonStr(param);
         System.out.println(getCrc16HexStrByJson(param));
