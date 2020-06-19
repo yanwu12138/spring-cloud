@@ -71,7 +71,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ctx.close();
+        NettyUtils.close(ctx);
         log.error("netty udp error：", cause);
     }
 
@@ -99,7 +99,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
             java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, radioPort);
             socket.send(packet);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("udp radio error.", e);
         }
     }
 

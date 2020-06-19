@@ -1,6 +1,9 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
+
+import java.util.Objects;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">yanwu</a>
@@ -17,6 +20,7 @@ public class Crc16Util {
     private static final String NUL = "";
     private static final String SPACE = " ";
     private static final String ASCII = "US-ASCII";
+    private static final String[] SPLITS = {SPACE, "\t", "\n", "\n"};
 
     /**
      * 根据报文byte数组，获取CRC-16 16进制字符串<p>
@@ -128,7 +132,28 @@ public class Crc16Util {
             builder.append("0");
             size--;
         }
-        return builder.append(crcStr).toString();
+        return buffer.append(crcStr).toString();
+    }
+
+    /**
+     * 去除字符串中的 【空格、\r、\n】 等字符
+     *
+     * @param str
+     * @return
+     */
+    private static String processingString(String str) {
+        if (StringUtils.isBlank(str)) {
+            return null;
+        }
+        for (String split : SPLITS) {
+            if (StringUtils.isBlank(str)) {
+                break;
+            }
+            if (str.contains(split)) {
+                str = str.replaceAll(split, NUL);
+            }
+        }
+        return str;
     }
 
     /**
@@ -149,6 +174,39 @@ public class Crc16Util {
         builder.append("};");
         System.out.println(builder.toString());
         System.out.println("    int len = " + split.length + ";");
+        System.out.println("    int len = " + convertHighLow(crc16ToHexStr(split.length)) + ";");
+    }
+
+    /**
+     * 输出json字符串与长度, 提供给 C++ CRC校验方法 测试 代码使用
+     *
+     * @param str json字符串
+     */
+    private static void printJsonStr(String str) {
+        str = Crc16Util.processingString(str);
+        System.out.println("    str: " + str.length() + " -> " + str);
+        Character[] escapes = {'\"', '\'', '\\', '\b', '\n', '\r', '\t'};
+        char[] chars = str.toCharArray();
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("    unsigned char arr[] = {");
+        for (int i = 0; i < chars.length; i++) {
+            char item = chars[i];
+            buffer.append("\'");
+            for (char c : escapes) {
+                if (item == c) {
+                    buffer.append("\\");
+                    break;
+                }
+            }
+            buffer.append(item).append("\'");
+            if (i < chars.length - 1) {
+                buffer.append(", ");
+            }
+        }
+        buffer.append("};");
+        System.out.println(buffer.toString());
+        System.out.println("    int len = " + chars.length + ";");
+        System.out.println("    int len = " + convertHighLow(crc16ToHexStr(chars.length)) + ";");
     }
 
     /**
@@ -157,12 +215,18 @@ public class Crc16Util {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        String str = "48 4C 01 00 01 00 00 05 00 00";
-        // ----- 输出16进制数组给 C++ 测试使用
-        Crc16Util.printHexStr(str);
-        // ----- 获取CRC-16的值
-        System.out.println("crc16 int is: " + Crc16Util.getCrc16(str));
-        System.out.println("crc16 hex is: " + Crc16Util.getCrc16HexStr(str));
+        String param = "{\n" +
+                "    \"ver\": \"010005\",\n" +
+                "    \"mcode\": \"set\",\n" +
+                "    \"ccode\": \"setAdaptiveLevel\",\n" +
+                "    \"data\": {\n" +
+                "        \"status\": 0\n" +
+                "    },\n" +
+                "    \"errorCode\": \"00\",\n" +
+                "    \"seq\": \"6520C4A215CD471AA1654535CDF723D5\"\n" +
+                "}\n";
+        printJsonStr(param);
+        System.out.println(getCrc16HexStrByJson(param));
     }
 
 }

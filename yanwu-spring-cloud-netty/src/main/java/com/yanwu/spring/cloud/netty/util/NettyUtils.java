@@ -29,4 +29,8 @@ public final class NettyUtils {
         return sender.getAddress().getHostAddress() + SPLIT_PORT + sender.getPort();
     }
 
+    public static void close(ChannelHandlerContext ctx) {
+        ctx.channel().close();
+        ctx.close();
+    }
 }

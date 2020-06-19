@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.demo.io;
+package com.yanwu.spring.cloud.common.demo.d05io.d01socket;
 
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 
@@ -15,7 +15,7 @@ import java.nio.channels.SocketChannel;
  * <p>
  * description: 零拷贝原理理解
  */
-public class D01ZeroCopy {
+public class D00ZeroCopy {
     private static final Integer PORT = 8888;
     private static final String HOST = "127.0.0.1";
     private static final Integer BYTE_SIZE = 1024 * 10;
