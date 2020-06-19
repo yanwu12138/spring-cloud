@@ -27,9 +27,9 @@ class D00SetUtil {
         log.info("---------- {} ----------", set.getClass());
         add(set);
         set.add(DEFAULT_ITEM);
-        log.info("list: {}", set);
+        log.info("set: {}", set);
         set.remove(5);
-        log.info("list: {}", set);
+        log.info("set: {}", set);
 
         Iterator<Integer> iterator = set.iterator();
         while (iterator.hasNext()) {
