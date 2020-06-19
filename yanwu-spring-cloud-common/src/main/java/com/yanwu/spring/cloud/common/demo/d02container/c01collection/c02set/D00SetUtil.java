@@ -18,11 +18,7 @@ class D00SetUtil {
     private static final Integer DEFAULT_ITEM = 10;
 
     private static void add(Set<Integer> set) {
-        add(set, DEFAULT_SIZE);
-    }
-
-    private static void add(Set<Integer> set, Integer size) {
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < DEFAULT_SIZE; i++) {
             set.add(i);
         }
     }

@@ -99,7 +99,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
             java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, radioPort);
             socket.send(packet);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("udp radio error.", e);
         }
     }
 

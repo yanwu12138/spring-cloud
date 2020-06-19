@@ -25,7 +25,7 @@ public class MyAckConsumer implements ChannelAwareMessageListener {
             log.info("my ack consumer, message: {}, consumer: {}, tag: {}", msg, queueName, deliveryTag);
             channel.basicAck(deliveryTag, true);
         } catch (Exception e) {
-            log.info("my ack consumer error, message: {}, consumer: {}, tag: {}", msg, queueName, deliveryTag, e);
+            log.error("my ack consumer error, message: {}, consumer: {}, tag: {}", msg, queueName, deliveryTag, e);
             // ----- 为true会重新放回队列
             channel.basicReject(deliveryTag, true);
         }
