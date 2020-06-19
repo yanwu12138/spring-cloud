@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.netty.server;
 import com.yanwu.spring.cloud.netty.constant.Constants;
 import com.yanwu.spring.cloud.netty.handler.TcpChannelHandler;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -54,12 +55,13 @@ public class NettyTcpServer {
                 workGroup = new NioEventLoopGroup();
                 while (!Thread.currentThread().isInterrupted()) {
                     bootstrap.group(bossGroup, workGroup)
-                            .handler(new LoggingHandler(LogLevel.INFO))
+                            .channel(NioServerSocketChannel.class)
                             .option(ChannelOption.SO_BACKLOG, 1024)
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
-                            .channel(NioServerSocketChannel.class)
+                            .handler(new LoggingHandler(LogLevel.INFO))
                             .childHandler(channelHandler);
-                    bootstrap.bind(port).sync().channel().closeFuture().sync();
+                    ChannelFuture future = bootstrap.bind(port).sync();
+                    future.channel().closeFuture().sync();
                 }
             } catch (Exception e) {
                 log.error("netty tcp server start error: ", e);

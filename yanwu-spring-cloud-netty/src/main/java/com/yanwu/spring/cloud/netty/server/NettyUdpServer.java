@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.netty.server;
 import com.yanwu.spring.cloud.netty.constant.Constants;
 import com.yanwu.spring.cloud.netty.handler.UdpChannelHandler;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -57,7 +58,8 @@ public class NettyUdpServer {
                             .option(ChannelOption.SO_BROADCAST, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .handler(channelHandler);
-                    bootstrap.bind(port).sync().channel().closeFuture().sync();
+                    ChannelFuture future = bootstrap.bind(port).sync();
+                    future.channel().closeFuture().sync();
                 }
             } catch (Exception e) {
                 log.error("netty udp server start error: ", e);
