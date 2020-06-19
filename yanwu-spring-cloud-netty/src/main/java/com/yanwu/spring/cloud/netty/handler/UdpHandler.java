@@ -71,7 +71,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ctx.close();
+        NettyUtils.close(ctx);
         log.error("netty udp error：", cause);
     }
 

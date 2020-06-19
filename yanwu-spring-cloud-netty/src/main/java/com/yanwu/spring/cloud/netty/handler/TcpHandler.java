@@ -89,8 +89,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
             log.error("channel close error: ", e);
         } finally {
             // ===== 处理断线业务
-            ctx.channel().close();
-            ctx.close();
+            NettyUtils.close(ctx);
         }
     }
 
@@ -104,8 +103,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         ClientSessionMap.remove(ctxId);
-        ctx.channel().close();
-        ctx.close();
+        NettyUtils.close(ctx);
         log.error("netty tcp error：", cause);
     }
 
