@@ -31,7 +31,6 @@ public class RedisLockUtil {
     @Resource(name = "redisTemplate")
     private ValueOperations<String, String> lockOperations;
 
-
     /**
      * 加锁
      *
