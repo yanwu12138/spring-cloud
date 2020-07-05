@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.demo.algorithm;
+package com.yanwu.spring.cloud.common.demo.d06algorithm;
 
 import lombok.extern.slf4j.Slf4j;
 
