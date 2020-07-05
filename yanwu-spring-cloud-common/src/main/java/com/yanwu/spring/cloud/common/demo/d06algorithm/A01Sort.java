@@ -10,10 +10,10 @@ import lombok.extern.slf4j.Slf4j;
  * describe:
  */
 @Slf4j
-public class S01Sort {
+public class A01Sort {
 
     public static void main(String[] args) {
-        int[] array = S00Utils.array();
+        int[] array = A00Utils.array();
         log.info("初始数据: {}", array);
 
         int[] selection = ArrayUtil.copyArray(array);
@@ -50,7 +50,7 @@ public class S01Sort {
                 min = arr[j] < arr[min] ? j : min;
             }
             // ----- 将最小的值放到i的位置上
-            S00Utils.swap(arr, i, min);
+            A00Utils.swap(arr, i, min);
         }
     }
 
@@ -68,7 +68,7 @@ public class S01Sort {
             for (int j = i + 1; j < arr.length; j++) {
                 // ----- 当 i > j 时进行位置交换
                 if (arr[i] > arr[j]) {
-                    S00Utils.swap(arr, i, j);
+                    A00Utils.swap(arr, i, j);
                 }
             }
         }
@@ -86,7 +86,7 @@ public class S01Sort {
         for (int i = 1; i < arr.length; i++) {
             // ----- 从第 i 的位置往后依次和 i 进行比较，当比 i 小时，将元素往前移动，然后继续该步骤
             for (int j = i - 1; j >= 0 && arr[j] > arr[j + 1]; j--) {
-                S00Utils.swap(arr, j, j + 1);
+                A00Utils.swap(arr, j, j + 1);
             }
         }
     }

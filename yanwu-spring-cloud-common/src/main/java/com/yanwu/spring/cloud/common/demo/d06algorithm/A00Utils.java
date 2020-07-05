@@ -8,7 +8,7 @@ import java.util.Random;
  * <p>
  * describe:
  */
-public class S00Utils {
+public class A00Utils {
     private static final Integer MAX_VALUE = 1_0000;
     private static final Integer MAX_SIZE = 1_000;
     private static final Random RANDOM = new Random();

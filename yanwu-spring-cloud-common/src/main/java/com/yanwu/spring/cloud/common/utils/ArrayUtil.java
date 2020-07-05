@@ -1,5 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import java.util.Arrays;
+
 /**
  * @author XuBaofeng.
  * @date 2018-09-28 17:07.
@@ -64,5 +66,30 @@ public class ArrayUtil {
         int[] result = new int[source.length];
         System.arraycopy(source, 0, result, 0, source.length);
         return result;
+    }
+
+    /**
+     * 二分查找：
+     * 找到 value 在 arr 中的位置，当 value 在 arr 中不存在时返回 -1
+     *
+     * @return 角标
+     */
+    public static int binarySearch(int[] arr, int value) {
+        int index = -1;
+        if (arr == null || arr.length == 0) {
+            return index;
+        }
+        // ----- 对数组进行排序
+        Arrays.sort(arr);
+        if (value < arr[0] || value > arr[arr.length - 1]) {
+            // ----- 说明 value 不在 arr 中
+            return index;
+        }
+        int left = 0, right = arr.length - 1, mid = right >> 1;
+        while (left < right) {
+
+        }
+        // ----- 找到对应角标
+        return index;
     }
 }
