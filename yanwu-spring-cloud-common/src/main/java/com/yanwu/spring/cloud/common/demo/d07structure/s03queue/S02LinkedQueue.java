@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.demo.d07structure;
+package com.yanwu.spring.cloud.common.demo.d07structure.s03queue;
 
 /**
  * @author <a href="mailto:yanwu0527@163.com">baofeng Xu</a>
@@ -6,5 +6,5 @@ package com.yanwu.spring.cloud.common.demo.d07structure;
  * <p>
  * describe:
  */
-public class S05LinkedQueue {
+public class S02LinkedQueue {
 }

@@ -11,7 +11,9 @@ import java.io.Serializable;
  * describe: 单向节点
  */
 @Data
-public class Node<E extends Serializable> {
+public class Node<E extends Serializable> implements Serializable {
+    private static final long serialVersionUID = -7916391747385636915L;
+
     private E value;
     private Node<E> next;
 

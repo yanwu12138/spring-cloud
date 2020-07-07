@@ -11,7 +11,9 @@ import java.io.Serializable;
  * describe: 双向节点
  */
 @Data
-public class DoubleNode<E extends Serializable> {
+public class DoubleNode<E extends Serializable> implements Serializable {
+    private static final long serialVersionUID = 275042274537083774L;
+
     private E value;
     private DoubleNode<E> last;
     private DoubleNode<E> next;
