@@ -11,23 +11,24 @@ import java.io.Serializable;
  * describe: 数组实现栈
  */
 @Slf4j
-public class S01ArrayS00Stack<E extends Serializable> implements S00Stack<E> {
+public class S01ArrayStack<E extends Serializable> implements S00Stack<E> {
     private int top;
     private final int size;
     private final E[] stack;
 
-    public S01ArrayS00Stack(int size) {
+    public S01ArrayStack(int size) {
         this.top = -1;
         this.size = size;
         this.stack = (E[]) new Serializable[size];
     }
 
     @Override
-    public void push(E value) {
+    public boolean push(E value) {
         if (value == null || top == (size - 1)) {
-            return;
+            return false;
         }
         stack[++top] = value;
+        return true;
     }
 
     @Override
@@ -51,25 +52,25 @@ public class S01ArrayS00Stack<E extends Serializable> implements S00Stack<E> {
     }
 
     public static void main(String[] args) {
-        S01ArrayS00Stack<Integer> myStack = new S01ArrayS00Stack<>(10);
-        myStack.push(0);
-        myStack.push(1);
-        myStack.push(2);
-        myStack.push(3);
-        myStack.push(4);
+        S01ArrayStack<Integer> myStack = new S01ArrayStack<>(10);
+        log.info("push: {}", myStack.push(0));
+        log.info("push: {}", myStack.push(1));
+        log.info("push: {}", myStack.push(2));
+        log.info("push: {}", myStack.push(3));
+        log.info("push: {}", myStack.push(4));
 
         log.info("pop: {}", myStack.pop());
         log.info("top: {}", myStack.top());
 
-        myStack.push(5);
-        myStack.push(6);
-        myStack.push(7);
-        myStack.push(8);
-        myStack.push(9);
+        log.info("push: {}", myStack.push(5));
+        log.info("push: {}", myStack.push(6));
+        log.info("push: {}", myStack.push(7));
+        log.info("push: {}", myStack.push(8));
+        log.info("push: {}", myStack.push(9));
+        log.info("push: {}", myStack.push(10));
+        log.info("push: {}", myStack.push(11));
 
-        myStack.push(10);
-
-        log.info("stack size: {}", myStack.size());
+        log.info("size: {}", myStack.size());
 
         log.info("pop: {}", myStack.pop());
         log.info("pop: {}", myStack.pop());
@@ -83,10 +84,11 @@ public class S01ArrayS00Stack<E extends Serializable> implements S00Stack<E> {
         log.info("pop: {}", myStack.pop());
         log.info("pop: {}", myStack.pop());
 
-
-        myStack.push(5);
-        myStack.push(6);
+        log.info("push: {}", myStack.push(5));
+        log.info("push: {}", myStack.push(6));
         log.info("pop: {}", myStack.pop());
         log.info("top: {}", myStack.top());
+
+        log.info("size: {}", myStack.size());
     }
 }

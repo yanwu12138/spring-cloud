@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public interface S00Stack<E extends Serializable> {
 
-    void push(E value);
+    boolean push(E value);
 
     E pop();
 
