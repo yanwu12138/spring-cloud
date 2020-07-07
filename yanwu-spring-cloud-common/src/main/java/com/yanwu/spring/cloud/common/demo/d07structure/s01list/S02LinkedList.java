@@ -1,52 +1,50 @@
 package com.yanwu.spring.cloud.common.demo.d07structure.s01list;
 
-import com.yanwu.spring.cloud.common.demo.d07structure.s00model.DoubleNode;
+import com.yanwu.spring.cloud.common.demo.d07structure.s00model.Node;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 
 /**
  * @author <a href="mailto:yanwu0527@163.com">baofeng Xu</a>
- * @date 2020-07-06 21:27:24.
+ * @date 2020-07-05 22:30:08.
  * <p>
- * describe: 双链表
+ * describe: 单链表
  */
 @Slf4j
-public class S02DoubleList<E extends Serializable> {
+public class S02LinkedList<E extends Serializable> implements S00List<Node<Integer>> {
     /*** 链表的元素个数 ***/
     private Integer size;
     /*** 链表的头节点 ***/
-    private DoubleNode<E> head;
+    private Node<Integer> head;
     /*** 链表的尾节点 ***/
-    private DoubleNode<E> tail;
+    private Node<Integer> tail;
 
-    public S02DoubleList() {
+    public S02LinkedList() {
         this.size = 0;
     }
 
     /**
      * 插入节点
      *
-     * @param value 值
+     * @param node 值
      * @return 链表
      */
-    public DoubleNode<E> insert(E value) {
-        if (value == null) {
+    @Override
+    public Node<Integer> insert(Node<Integer> node) {
+        if (node == null) {
             // ----- 值为null时不插入，直接返回当前链表
             return head;
         }
-        // ----- 创建一个新节点
-        DoubleNode<E> newNode = new DoubleNode<>(value);
         if (head == null) {
             // ----- 当链表为空的时候，直接将新节点设置为头节点
-            head = newNode;
+            head = node;
         } else {
-            // ----- 当链表不为空的时候，将新节点作为尾节点的后继节点；再将尾节点作为新节点的前继节点
-            tail.setNext(newNode);
-            newNode.setLast(tail);
+            // ----- 当链表不为空的时候，将新节点作为尾节点的后继节点
+            tail.setNext(node);
         }
         // ----- 将新节点设置为尾节点，并且把长度+1，然后返回
-        tail = newNode;
+        tail = node;
         size++;
         return head;
     }
@@ -54,21 +52,22 @@ public class S02DoubleList<E extends Serializable> {
     /**
      * 查找节点
      *
-     * @param value 值
+     * @param node 值
      * @return 链表
      */
-    public DoubleNode<E> select(E value) {
-        if (head == null || value == null) {
+    @Override
+    public Node<Integer> select(Node<Integer> node) {
+        if (head == null || node == null) {
             // ----- 当前链表或值为null时直接返回null
             return null;
         }
-        DoubleNode<E> node = head;
-        while (node != null) {
-            if (value.equals(node.getValue())) {
+        Node<Integer> temp = head;
+        while (temp != null) {
+            if (node.getValue().equals(temp.getValue())) {
                 // ----- 找到链表中第一个节点的值和value相同的节点，返回
-                return node;
+                return temp;
             }
-            node = node.getNext();
+            temp = temp.getNext();
         }
         // ----- 没找到
         return null;
@@ -81,12 +80,13 @@ public class S02DoubleList<E extends Serializable> {
      * @param newVal 新值
      * @return 链表
      */
-    public DoubleNode<E> update(E oldVal, E newVal) {
+    @Override
+    public Node<Integer> update(Node<Integer> oldVal, Node<Integer> newVal) {
         // ----- 根据旧值找到对应的节点
-        DoubleNode<E> node = select(oldVal);
+        Node<Integer> node = select(oldVal);
         if (node != null) {
             // ----- 修改
-            node.setValue(newVal);
+            node.setValue(newVal.getValue());
         }
         // ----- 返回当前链表
         return head;
@@ -98,24 +98,23 @@ public class S02DoubleList<E extends Serializable> {
      * @param value 值
      * @return 链表
      */
-    public DoubleNode<E> delete(E value) {
+    @Override
+    public Node<Integer> delete(Node<Integer> value) {
         if (head == null || value == null) {
             // ----- 当前链表或值为null时，不做删除，直接返回
             return head;
         }
         // ----- 记录两个位置：node & temp
-        DoubleNode<E> node = head, temp = head;
+        Node<Integer> node = head, temp = head;
         while (node != null) {
-            if (value.equals(node.getValue())) {
+            if (value.getValue().equals(node.getValue())) {
                 // ----- 找到和值相等的节点
                 if (node.equals(head)) {
-                    // ----- 如果该节点为头节点：1：将头节点的后继节点的前驱节点设置为null；2：则将头节点设置为其后继节点
-                    head.getNext().setLast(null);
+                    // ----- 如果该节点为头节点，则将头节点设置为其后继节点
                     head = head.getNext();
                 } else {
                     // ----- 如果该节点不是头节点，则将该节点记录下来，作为下一个连接点使用
                     temp.setNext(node.getNext());
-                    node.getNext().setLast(temp);
                 }
                 // ----- 删除成功
                 size--;
@@ -129,23 +128,24 @@ public class S02DoubleList<E extends Serializable> {
         return head;
     }
 
-    public int size() {
+    private int size() {
         return this.size;
     }
 
     public static void main(String[] args) {
-        S02DoubleList<Integer> list = new S02DoubleList<>();
-        list.insert(1);
-        list.insert(1);
-        list.insert(3);
-        list.insert(4);
-        list.insert(5);
+        S02LinkedList<Node<Integer>> list = new S02LinkedList<>();
+        log.info("list: [insert] {}", list.insert(new Node<>(1)));
+        log.info("list: [insert] {}", list.insert(new Node<>(1)));
+        log.info("list: [insert] {}", list.insert(new Node<>(1)));
+        log.info("list: [insert] {}", list.insert(new Node<>(4)));
+        log.info("list: [insert] {}", list.insert(new Node<>(1)));
+        log.info("list: [insert] {}", list.insert(new Node<>(5)));
 
-        list.delete(1);
+        log.info("list: [delete] {}", list.delete(new Node<>(1)));
 
-        list.update(4, 9);
+        log.info("list: [update] {}", list.update(new Node<>(4), new Node<>(9)));
 
-        list.select(5);
+        log.info("list: [select] {}", list.select(new Node<>(5)));
 
         log.info("list: [size] {}", list.size());
     }
