@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author XuBaofeng.
@@ -8,7 +9,12 @@ import java.util.Arrays;
  * <p>
  * description: 数组工具类
  */
+@SuppressWarnings("unused")
 public class ArrayUtil {
+
+    private ArrayUtil() {
+    }
+
     /**
      * 当数组为null或者数组中是否所有的元素全都为null时返回true, 否则返回false
      *
@@ -38,7 +44,7 @@ public class ArrayUtil {
      * @param arrB 数组
      * @return [true: 相等; false: 不相等]
      */
-    public static boolean isEquals(int[] arrA, int[] arrB) {
+    public static boolean isEquals(Object[] arrA, Object[] arrB) {
         if (arrA == null || arrB == null || arrA.length != arrB.length) {
             return false;
         }
@@ -46,7 +52,7 @@ public class ArrayUtil {
             return true;
         }
         for (int i = 0; i < arrA.length; i++) {
-            if (arrA[i] != arrB[i]) {
+            if (!(Objects.equals(arrA[i], arrB[i]))) {
                 return false;
             }
         }
@@ -69,7 +75,7 @@ public class ArrayUtil {
     }
 
     /**
-     * 数组扩容
+     * 数组追加
      *
      * @param arr    数组
      * @param values 添加的参数
@@ -122,7 +128,7 @@ public class ArrayUtil {
             // ----- 说明 value 不在 arr 中
             return -1;
         }
-        int left = 0, right = arr.length - 1, mid = 0;
+        int left = 0, right = arr.length - 1, mid;
         while (left < right) {
             // --- 等价于：mid = (left + right) / 2;
             // --- 等价于：mid = left + (right - left) / 2;
@@ -202,7 +208,7 @@ public class ArrayUtil {
      * 找到数组中最大的数
      *
      * @param arr 数组
-     * @return max
+     * @return maxValue
      */
     public static int maxValue(int... arr) {
         int max = arr[0];
@@ -210,5 +216,19 @@ public class ArrayUtil {
             max = Math.max(temp, max);
         }
         return max;
+    }
+
+    /**
+     * 找到数组中最小的数
+     *
+     * @param arr 数组
+     * @return minValue
+     */
+    public static int minValue(int... arr) {
+        int min = arr[0];
+        for (int temp : arr) {
+            min = Math.min(temp, min);
+        }
+        return min;
     }
 }

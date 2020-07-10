@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @SuppressWarnings("unused")
-public class RedisLockUtil {
+public class RedisLock {
     /*** 分布式锁固定前缀 ***/
     private static final String REDIS_LOCK = "redis_lock_";
     /*** 分布式锁过期时间 ***/
