@@ -26,20 +26,4 @@ public class A00Utils {
         return array;
     }
 
-    /**
-     * 将数组中的两个位置的数据进行交换
-     *
-     * @param arr 数组
-     * @param i   角标i
-     * @param j   角标j
-     */
-    public static void swap(int[] arr, int i, int j) {
-        if (i < 0 || i > arr.length - 1 || j < 0 || j > arr.length - 1 || i == j || arr[i] == arr[j]) {
-            return;
-        }
-        arr[i] = arr[i] ^ arr[j];
-        arr[j] = arr[i] ^ arr[j];
-        arr[i] = arr[i] ^ arr[j];
-    }
-
 }

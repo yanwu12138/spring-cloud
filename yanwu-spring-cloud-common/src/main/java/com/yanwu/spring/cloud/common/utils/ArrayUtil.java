@@ -69,6 +69,42 @@ public class ArrayUtil {
     }
 
     /**
+     * 数组扩容
+     *
+     * @param arr    数组
+     * @param values 添加的参数
+     * @return 扩容后的数组
+     */
+    public static int[] arrayAppend(int[] arr, int... values) {
+        arr = arr != null ? arr : new int[0];
+        int arrLen = arr.length, valLen;
+        if (values == null || (valLen = values.length) == 0) {
+            return arr;
+        }
+        arr = Arrays.copyOf(arr, (arrLen + valLen));
+        for (int value : values) {
+            arr[arrLen++] = value;
+        }
+        return arr;
+    }
+
+    /**
+     * 将数组中的两个位置的数据进行交换
+     *
+     * @param arr 数组
+     * @param i   角标i
+     * @param j   角标j
+     */
+    public static void swap(int[] arr, int i, int j) {
+        if (i < 0 || i > arr.length - 1 || j < 0 || j > arr.length - 1 || i == j || arr[i] == arr[j]) {
+            return;
+        }
+        arr[i] = arr[i] ^ arr[j];
+        arr[j] = arr[i] ^ arr[j];
+        arr[i] = arr[i] ^ arr[j];
+    }
+
+    /**
      * 二分查找：
      * 找到 value 在 arr 中的位置，当 value 在 arr 中不存在时返回 -1
      *
@@ -160,5 +196,19 @@ public class ArrayUtil {
             }
         }
         return index;
+    }
+
+    /**
+     * 找到数组中最大的数
+     *
+     * @param arr 数组
+     * @return max
+     */
+    public static int maxValue(int... arr) {
+        int max = arr[0];
+        for (int temp : arr) {
+            max = Math.max(temp, max);
+        }
+        return max;
     }
 }
