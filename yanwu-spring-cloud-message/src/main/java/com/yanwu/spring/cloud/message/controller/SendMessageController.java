@@ -1,10 +1,12 @@
 package com.yanwu.spring.cloud.message.controller;
 
+import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.message.bo.MessageBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -57,6 +59,13 @@ public class SendMessageController<T extends Serializable> {
         param.setCreate(new Timestamp(System.currentTimeMillis()));
         log.info("sender, exchange: {}, routing: {}, param: {}", exchange, routing, param);
         template.convertAndSend(exchange, routing, JsonUtil.toJsonString(param));
+    }
+
+
+    @LogParam
+    @GetMapping(value = "test302")
+    public String test302() {
+        return "redirect:http://172.18.2.124:5210";
     }
 
 }

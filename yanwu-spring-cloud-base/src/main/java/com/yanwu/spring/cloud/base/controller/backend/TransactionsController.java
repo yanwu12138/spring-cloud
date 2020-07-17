@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.base.controller.backend;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.TransactionsService;
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @RestController
-@RequestMapping("base/transactions/")
+@RequestMapping("base/")
 public class TransactionsController {
     @Resource
     private TransactionsService transactionsService;
