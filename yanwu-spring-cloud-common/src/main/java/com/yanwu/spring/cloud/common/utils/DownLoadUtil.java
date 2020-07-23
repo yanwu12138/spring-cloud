@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -16,7 +15,9 @@ import org.apache.http.protocol.HttpContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.Assert;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
@@ -87,8 +88,7 @@ public class DownLoadUtil {
 
         // ----- 根据threadCount开始下载文件
         CountDownLatch end = new CountDownLatch((int) threadCount);
-        long offset = 0;
-        long start = System.currentTimeMillis();
+        long offset = 0, start = System.currentTimeMillis();
         while (fileSize > 0) {
             long length = fileSize > UNIT_SIZE ? UNIT_SIZE : fileSize;
             EXECUTOR.execute(DownLoadTask.getInstance(fileUrl, localPath, offset, length, end));
@@ -101,19 +101,6 @@ public class DownLoadUtil {
             log.error("downLoad await error.", e);
         }
         log.info("download file done！localPath: {}, time: {} S", localPath, (System.currentTimeMillis() - start) / 1000);
-    }
-
-    public static void main(String[] args) throws Exception {
-        String param = "F:\\file\\2020\\new 1.txt";
-        File file = new File(param);
-        Reader reader = new FileReader(file);
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        String lien;
-        while (StringUtils.isNotBlank((lien = bufferedReader.readLine()))) {
-            String puffix = lien.substring(lien.lastIndexOf("/"));
-            String path = "F:\\file\\2020\\111\\" + puffix;
-            download(lien, path);
-        }
     }
 
     /**

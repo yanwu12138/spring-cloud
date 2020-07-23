@@ -55,15 +55,6 @@ public class EmailUtil {
     private EmailUtil() {
     }
 
-    public static void main(String[] args) throws Exception {
-        String toRecipient = "499496273@qq.com";
-        String[] ccRecipient = {"1634204159@qq.com"};
-        String subject = "测试邮件";
-        String content = "尊敬的用户：305306733@qq.com，您的车票已经抢票成功！信息如下:乘客:王栋,日期:2019-10-30,车次:K824,地点:杭州06:30-合肥07:23,席别:硬座。请在30分钟内完成付款！更多信息请查询未付款订单。";
-        String[] attachments = {"C:\\Users\\Administrator.CEG84QWOZI3JSQW\\Desktop\\壁纸啊\\v1.jpg"};
-        sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, toRecipient, ccRecipient, subject, content, attachments);
-    }
-
     /**
      * 发送邮件[使用指定的发件人信息]
      *

@@ -360,14 +360,4 @@ public class FtpUtil {
                 .append(now.getDayOfMonth()).toString();
     }
 
-    public static void main(String[] args) throws Exception {
-        String localPath = "F:\\UnxUtils.zip";
-        String targetPath = "F:\\file\\111";
-        Long userId = 11111L;
-        String filePath = FtpUtil.upload(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, new File(localPath), userId, DEFAULT_PATH);
-        FtpUtil.exists(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
-        FtpUtil.download(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath, targetPath);
-        FtpUtil.remove(FTP_HOST, FTP_PORT, USERNAME, PASSWORD, filePath);
-    }
-
 }

@@ -34,14 +34,6 @@ import java.util.zip.ZipOutputStream;
 @SuppressWarnings("unused")
 public class FileUtil {
 
-    public static void main(String[] args) throws Exception {
-        String sourceDir = "F:\\document\\TOOLS";
-        String targetDir = "F:\\file\\2020\\";
-        String fileName = "111.zip";
-        toZip(sourceDir, targetDir, fileName);
-        unZip(targetDir + fileName, targetDir);
-    }
-
     /**
      * 将source目录下所有文件打包:
      * 名称为: fileName到target目录下
