@@ -1,15 +1,44 @@
 #################### NACOS CONFIG ####################
+#spring:
+#  application:
+#    name: yanwu-message
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
+#        group: DEFAULT_GROUP
+#        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+#      config:
+#        group: DEFAULT_GROUP
+#        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
+#        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+#        file-extension: yaml
+#################### SPRING CONFIG ####################
+server:
+  port: 8885
 spring:
   application:
     name: yanwu-message
   cloud:
     nacos:
       discovery:
-        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
-        group: DEFAULT_GROUP
-        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
-      config:
-        group: DEFAULT_GROUP
-        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
-        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
-        file-extension: yaml
+        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
+  rabbitmq:
+    host: 39.97.229.71
+    port: 5672
+    username: root
+    password: xbf12138
+    ### 消息确认: 消息已发送至交换机
+    publisher-confirm-type: correlated
+    ### 消息确认: 消息已发送至队列
+    publisher-returns: true
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000
