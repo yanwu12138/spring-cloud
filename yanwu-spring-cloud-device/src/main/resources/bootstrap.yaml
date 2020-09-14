@@ -22,7 +22,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
+        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
   ### 解决数据库查询结果返回数据时的时区问题
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -65,9 +65,3 @@ feign:
       default:
         connectTimeout: 50000
         readTimeout: 50000
-# seata:
-#  service:
-#    disable-global-transaction: false
-#    vgroup-mapping:
-#      yanwu-seata-group-device: default
-#    grouplist: 39.97.229.71:8091
