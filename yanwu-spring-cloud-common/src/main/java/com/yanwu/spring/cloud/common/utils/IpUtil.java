@@ -82,7 +82,7 @@ public class IpUtil {
         long ip2 = (ip >>> 16) ^ (ip1 << 8);
         long ip3 = (ip >>> 8) ^ (ip2 << 8) ^ (ip1 << 16);
         long ip4 = ip ^ (ip3 << 8) ^ (ip2 << 16) ^ (ip1 << 24);
-        return ip1 + Contents.POINT + ip2 + Contents.POINT + ip3 + Contents.POINT + ip4;
+        return String.join(Contents.POINT, String.valueOf(ip1), String.valueOf(ip2), String.valueOf(ip3), String.valueOf(ip4));
     }
 
     /**
