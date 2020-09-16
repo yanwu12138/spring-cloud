@@ -62,8 +62,8 @@ public class AlarmLampUtil {
      * @throws Exception
      */
     public static void checkMsg(byte[] head, String data, byte[] end) throws Exception {
-        String len = ByteUtil.convertHighLow(Crc16Util.crc16ToHexStr(data.length()));
-        String crc = ByteUtil.convertHighLow(Crc16Util.getCrc16HexStrByJson(data));
+        String len = ByteUtil.reverseHex(Crc16Util.crc16ToHexStr(data.length()));
+        String crc = ByteUtil.reverseHex(Crc16Util.getCrc16HexStrByJson(data));
         String lstStr = ByteUtil.bytesToHexStr(new byte[]{head[head.length - 2], head[head.length - 1]}).toUpperCase();
         String crxStr = ByteUtil.bytesToHexStr(new byte[]{end[0], end[1]}).toUpperCase();
         if (!lstStr.equals(len) || !crxStr.equals(crc)) {
@@ -116,11 +116,11 @@ public class AlarmLampUtil {
         // ----- 请求\响应与是否分包标识
         byte[] hasMore = getHasMore(upOrDown, param.length() > 0xFFFF);
         // ----- 数据域长度
-        byte[] len = ByteUtil.hexStrToBytes(ByteUtil.convertHighLow(Crc16Util.crc16ToHexStr(param.length())));
+        byte[] len = ByteUtil.hexStrToBytes(ByteUtil.reverseHex(Crc16Util.crc16ToHexStr(param.length())));
         // ----- 数据域
         byte[] data = param.getBytes();
         // ----- crc
-        byte[] crc = ByteUtil.hexStrToBytes(ByteUtil.convertHighLow(Crc16Util.getCrc16HexStrByJson(param)));
+        byte[] crc = ByteUtil.hexStrToBytes(ByteUtil.reverseHex(Crc16Util.getCrc16HexStrByJson(param)));
         return getMessage(new byte[][]{HEADS, hasMore, RESERVED, len, data, crc, ENDS}, param.length() + 13);
     }
 

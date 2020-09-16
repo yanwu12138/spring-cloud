@@ -17,6 +17,16 @@ public class NumberUtil {
     }
 
     /**
+     * 判断一个数是的奇偶性
+     *
+     * @param decimal 数
+     * @return [true: 奇数; false: 偶数]
+     */
+    public static boolean odevity(long decimal) {
+        return (decimal & 1) == 1;
+    }
+
+    /**
      * 二进制转八进制
      *
      * @param binStr 二进制

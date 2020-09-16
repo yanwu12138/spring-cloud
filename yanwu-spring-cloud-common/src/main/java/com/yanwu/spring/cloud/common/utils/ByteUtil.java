@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -193,21 +192,27 @@ public class ByteUtil {
     }
 
     /**
-     * 将字符串每两位进行取反
+     * 将字符串每两位进行取反  <p/>
+     * * 0xE647 >> 0x47E6         <p/>
+     * * 0x484C01 >> 0x014C48     <p/>
+     * * 0x722E696D >> 0x6D692E72
      *
-     * @param source 源字符串
+     * @param hexStr 源字符串
      * @return 取反后的字符串
      */
-    public static String reverseHex(String source) {
-        StringBuilder sb = new StringBuilder(source);
-        int j = 0;
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < sb.length() / 2; i++) {
-            String b = sb.substring(sb.length() - j - 2, sb.length() - j);
-            j = j + 2;
-            result.append(b);
+    public static String reverseHex(String hexStr) {
+        if (StringUtils.isBlank(hexStr)) {
+            return hexStr;
         }
-        return result.toString();
+        if (NumberUtil.odevity(hexStr.length())) {
+            // ----- 报文字符串必须是以一个字节为单位（两个字符为一个字节），当长度为奇数时, 前面补0
+            hexStr = headFill0(hexStr, hexStr.length() + 1);
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = hexStr.length(); i > 0; i -= 2) {
+            builder.append(hexStr, i - 2, i);
+        }
+        return builder.toString();
     }
 
     /**
@@ -261,27 +266,6 @@ public class ByteUtil {
             builder.insert(0, "0");
         }
         return builder.toString();
-    }
-
-
-    /**
-     * 将16进制字符串进行高低位转换  <p/>
-     * 0xE647 >> 0x47E6         <p/>
-     * 0x484C01 >> 0x014C48     <p/>
-     * 0x722E696D >> 0x6D692E72
-     *
-     * @return 转换后的内容
-     */
-    public static String convertHighLow(String hexStr) {
-        Assert.isTrue(StringUtils.isNotBlank(hexStr), "The string cannot be empty!");
-        int strLen = hexStr.length();
-        // ----- 报文字符串必须是以一个字节为单位（两个字符为一个字节），所以当去除所有空格后的字符串为单数时说明字符串错误
-        Assert.isTrue(((strLen & 1) != 1), "Incorrect String format!");
-        StringBuilder builder = new StringBuilder();
-        for (int i = strLen; i > 0; i -= 2) {
-            builder.append(hexStr, i - 2, i);
-        }
-        return builder.toString().toUpperCase();
     }
 
 }
