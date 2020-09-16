@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.common.config;
 
-import com.yanwu.spring.cloud.common.utils.ObjectUtil;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +20,4 @@ public class BeanConfig {
         return new DozerBeanMapper();
     }
 
-    @Bean
-    public ObjectUtil getObjectUtil() {
-        return new ObjectUtil();
-    }
 }

@@ -58,7 +58,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
         byte[] bytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(bytes);
         handler.nettyExecutor.execute(() -> {
-            log.info("read message, channel: {}, bytes: {}", host, ByteUtil.bytesToHexStrPrint(bytes));
+            log.info("read message, channel: {}, bytes: {}", host, ByteUtil.printHexStrByBytes(bytes));
             // ----- 根据协议获取设备类型
             DeviceTypeEnum deviceType = DeviceUtil.getDeviceType(bytes);
             // ----- 根据设备类型获取对应的解析实现类
@@ -93,7 +93,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
      * @param message 报文
      */
     public void radio(String message) {
-        byte[] bytes = ByteUtil.strToHexBytes(message);
+        byte[] bytes = ByteUtil.hexStrToHexBytes(message);
         try (DatagramSocket socket = new DatagramSocket(radioPort)) {
             java.net.InetAddress address = java.net.InetAddress.getByName("255.255.255.255");
             java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, radioPort);
@@ -114,8 +114,8 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
         if (socket == null || StringUtils.isBlank(message)) {
             return;
         }
-        byte[] bytes = ByteUtil.strToHexBytes(message);
-        log.info("send message, channel: {}, message: {}", host, ByteUtil.bytesToHexStrPrint(bytes));
+        byte[] bytes = ByteUtil.hexStrToHexBytes(message);
+        log.info("send message, channel: {}, message: {}", host, ByteUtil.printHexStrByBytes(bytes));
         context.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(bytes), socket));
     }
 

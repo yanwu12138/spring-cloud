@@ -52,7 +52,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
         byte[] bytes = (byte[]) msg;
         // ===== 处理上行业务
         handler.nettyExecutor.execute(() -> {
-            log.info("read message, channel: {}, message: {}", ctxId, ByteUtil.bytesToHexStrPrint(bytes));
+            log.info("read message, channel: {}, message: {}", ctxId, ByteUtil.printHexStrByBytes(bytes));
             // ----- 根据协议获取设备类型
             DeviceTypeEnum deviceType = DeviceUtil.getDeviceType(bytes);
             // ----- 根据设备类型获取对应的解析实现类
@@ -119,8 +119,8 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
         if (channel == null || StringUtils.isBlank(message)) {
             return;
         }
-        byte[] bytes = ByteUtil.strToHexBytes(message);
-        log.info("send message, channel: {}, message: {}", ctxId, ByteUtil.bytesToHexStrPrint(bytes));
+        byte[] bytes = ByteUtil.hexStrToHexBytes(message);
+        log.info("send message, channel: {}, message: {}", ctxId, ByteUtil.printHexStrByBytes(bytes));
         channel.writeAndFlush(bytes);
     }
 

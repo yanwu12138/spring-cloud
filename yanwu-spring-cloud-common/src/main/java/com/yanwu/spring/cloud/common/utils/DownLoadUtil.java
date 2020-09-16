@@ -30,6 +30,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * description: 文件分片下载
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class DownLoadUtil {
 
     /*** 文件下载线程池 ***/
@@ -58,6 +59,9 @@ public class DownLoadUtil {
         EXECUTOR.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // ----- 执行初始化
         EXECUTOR.initialize();
+    }
+
+    private DownLoadUtil() {
     }
 
     /**

@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
  * <p>
  * description:
  */
+@SuppressWarnings("unused")
 public class TokenUtil {
 
     /**

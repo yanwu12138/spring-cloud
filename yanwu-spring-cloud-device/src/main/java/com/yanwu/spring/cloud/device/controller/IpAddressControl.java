@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.device.controller;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
-import com.yanwu.spring.cloud.common.utils.IpUtil;
 import com.yanwu.spring.cloud.device.data.model.IpAddress;
 import com.yanwu.spring.cloud.device.service.IpAddressService;
 import lombok.extern.slf4j.Slf4j;

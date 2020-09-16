@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -30,8 +29,11 @@ import java.util.List;
  * <p>
  * description: Excel工具类，提供Excel07导出功能和Excel导入功能
  */
-@Slf4j
+@SuppressWarnings("unused")
 public class ExcelUtil {
+
+    private ExcelUtil() {
+    }
 
     /**
      * 组装Excel的方法, 通过该方法传入标题栏和数据体得到一个Excel07文件

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
+@SuppressWarnings("unused")
 public class ContextUtil implements ApplicationContextAware {
 
     private ContextUtil() {
@@ -37,6 +38,10 @@ public class ContextUtil implements ApplicationContextAware {
 
     public static <T> T getBean(Class<T> clazz) {
         return context.getBean(clazz);
+    }
+
+    public static <T> T getBean(String beanName, Class<T> clazz) {
+        return context.getBean(beanName, clazz);
     }
 
 }

@@ -7,10 +7,13 @@ import com.fasterxml.jackson.core.io.CharacterEscapes;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,9 +25,7 @@ import java.util.List;
 @Slf4j
 @SuppressWarnings("unused")
 public final class JsonUtil {
-
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private static final ObjectMapper XSS_SERIALIZER_OBJECT_MAPPER = makeBaseXssSerializerObjectMapper();
     private static final ObjectMapper SERVLET_XSS_SERIALIZER_OBJECT_MAPPER = makeBaseXssSerializerObjectMapper();
 
@@ -42,63 +43,17 @@ public final class JsonUtil {
         SERVLET_XSS_SERIALIZER_OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public static ObjectMapper makeBaseXssSerializerObjectMapper() {
-        CharacterEscapes characterEscapes = new CharacterEscapes() {
-            private static final long serialVersionUID = -7677406402762106256L;
-            private final int[] escapeCodes = CharacterEscapes.standardAsciiEscapesForJSON();
-
-            {
-                // To help protect against XSS attacks, escape characters
-                // significant to HTML
-                escapeCodes['<'] = CharacterEscapes.ESCAPE_STANDARD;
-                escapeCodes['>'] = CharacterEscapes.ESCAPE_STANDARD;
-                escapeCodes['&'] = CharacterEscapes.ESCAPE_STANDARD;
-                escapeCodes['"'] = CharacterEscapes.ESCAPE_STANDARD;
-                escapeCodes['\''] = CharacterEscapes.ESCAPE_STANDARD;
-            }
-
-            @Override
-            public int[] getEscapeCodesForAscii() {
-                return escapeCodes;
-            }
-
-            @Override
-            public SerializableString getEscapeSequence(final int ch) {
-                return null;
-            }
-        };
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.getFactory().setCharacterEscapes(characterEscapes);
-        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        return mapper;
+    private JsonUtil() {
+        throw new AssertionError("JsonUtil should never be instantiated");
     }
 
-    public static ObjectMapper getServletXssSerializerObjectMapper() {
-        return SERVLET_XSS_SERIALIZER_OBJECT_MAPPER;
-    }
 
-    private static ObjectMapper getObjectMapper(final boolean decodeForXss) {
-        return decodeForXss ? XSS_SERIALIZER_OBJECT_MAPPER : MAPPER;
-    }
-
-    public static String toJsonStringRaw(final Object obj) throws IOException {
-        return toJsonStringRaw(obj, false);
-    }
-
-    public static String toJsonStringRaw(final Object obj, final boolean encodeForXss) throws IOException {
-        Writer sw = new StringWriter();
-        getObjectMapper(encodeForXss).writerWithDefaultPrettyPrinter().writeValue(sw, obj);
-        return sw.toString();
-    }
-
-    public static <T> T toObjectRaw(final String json, final Class<T> valueType) throws IOException {
-        return MAPPER.readValue(json, valueType);
-    }
-
-    public static <T> T toObjectRaw(final String json, final Class<T> valueType, final boolean decodeForXss) throws IOException {
-        return getObjectMapper(decodeForXss).readValue(json, valueType);
-    }
-
+    /**
+     * 将对象转换成json字符串
+     *
+     * @param obj object
+     * @return json字符串
+     */
     public static String toJsonString(final Object obj) {
         try {
             return toJsonStringRaw(obj);
@@ -108,63 +63,139 @@ public final class JsonUtil {
         return null;
     }
 
+    /**
+     * 将对象转换成紧凑的json字符串
+     *
+     * @param obj object
+     * @return json字符串
+     */
     public static String toCompactJsonString(final Object obj) {
         return toCompactJsonString(obj, false);
     }
 
+    /**
+     * 将对象转换成紧凑的json字符串
+     *
+     * @param obj object
+     * @return json字符串
+     */
     public static String toCompactJsonString(final Object obj, final boolean decodeForXss) {
         StringWriter sw = new StringWriter();
         try {
             getObjectMapper(decodeForXss).writer().writeValue(sw, obj);
-            return sw.toString();
         } catch (Exception e) {
             log.error("Failed convert {} to JSON", obj, e);
         }
-        return null;
+        return sw.toString();
     }
 
-    public static <T> T toObject(final String json, final Class<T> valueType) {
-        return toObject(json, valueType, true);
+    /**
+     * 将json字符串转换成对象
+     *
+     * @param json  json字符串
+     * @param clazz 对象类型
+     * @param <T>   泛型
+     * @return object
+     */
+    public static <T> T toObject(final String json, final Class<T> clazz) {
+        return toObject(json, clazz, true);
     }
 
-    public static <T> T toObject(final String json, final Class<T> valueType, final boolean decodeForXss) {
+    /**
+     * 将json字符串转换成对象
+     *
+     * @param json  json字符串
+     * @param clazz 对象类型
+     * @param <T>   泛型
+     * @return object
+     */
+    public static <T> T toObject(final String json, final Class<T> clazz, final boolean decodeForXss) {
         try {
-            return toObjectRaw(json, valueType, decodeForXss);
+            return toObjectRaw(json, clazz, decodeForXss);
         } catch (Exception e) {
-            log.error("Failed convert JSON: {} to: {}", json, valueType, e);
+            log.error("Failed convert JSON: {} to: {}", json, clazz, e);
         }
         return null;
     }
 
-    public static <T> T toObject(final String json, final Class<T> valueType, final Class<?>... parameterTypes) {
+    /**
+     * 将json字符串转换成对象
+     *
+     * @param json  json字符串
+     * @param clazz 对象类型
+     * @param <T>   泛型
+     * @return object
+     */
+    public static <T> T toObject(final String json, final Class<T> clazz, final Class<?>... parameterTypes) {
         try {
-            return MAPPER.readValue(json, MAPPER.getTypeFactory().constructParametricType(valueType, parameterTypes));
+            return MAPPER.readValue(json, MAPPER.getTypeFactory().constructParametricType(clazz, parameterTypes));
         } catch (Exception e) {
-            log.error("Failed convert JSON: {} to: {}", json, valueType, e);
+            log.error("Failed convert JSON: {} to: {}", json, clazz, e);
         }
         return null;
     }
 
-    public static <T> List<T> toObjectList(final String json, final Class<T> valueType) {
-        return toObjectList(json, valueType, true);
+    /**
+     * 将source转换到clazz对象中
+     *
+     * @param source 源数据
+     * @param clazz  目标对象类型
+     * @param <T>    泛型
+     * @return object
+     */
+    public static <T> T convertObject(Object source, final Class<T> clazz) {
+        if (source == null) {
+            return null;
+        }
+        return toObject(toJsonString(source), clazz);
     }
 
-    public static <T> List<T> toObjectList(final String json, final Class<T> valueType, final boolean decodeForXss) {
+    /**
+     * 将json字符串转换成对象List
+     *
+     * @param json  json字符串
+     * @param clazz 对象类型
+     * @param <T>   泛型
+     * @return object
+     */
+    public static <T> List<T> toObjectList(final String json, final Class<T> clazz) {
+        return toObjectList(json, clazz, true);
+    }
+
+    /**
+     * 将json字符串转换成对象List
+     *
+     * @param json  json字符串
+     * @param clazz 对象类型
+     * @param <T>   泛型
+     * @return object
+     */
+    public static <T> List<T> toObjectList(final String json, final Class<T> clazz, final boolean decodeForXss) {
         try {
-            return toObjectListRaw(json, valueType, decodeForXss);
+            return toObjectListRaw(json, clazz, decodeForXss);
         } catch (Exception e) {
-            log.error("Failed convert JSON: {} to: List<{}>", json, valueType, e);
+            log.error("Failed convert JSON: {} to: List<{}>", json, clazz, e);
         }
         return null;
     }
 
-    public static <T> List<T> toObjectListRaw(final String json, final Class<T> valueType, final boolean decodeForXss) throws IOException {
-        ObjectMapper mapper = getObjectMapper(decodeForXss);
-        return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, valueType));
-    }
-
-    private JsonUtil() {
-        throw new AssertionError("JsonUtil should never be instantiated");
+    /**
+     * 将source转换到clazz List中
+     *
+     * @param sourceList 源数据
+     * @param clazz      目标对象类型
+     * @param <T>        泛型
+     * @return object
+     */
+    public static <T> List<T> convertObjectList(Collection<?> sourceList, Class<T> clazz) {
+        if (CollectionUtils.isEmpty(sourceList)) {
+            return null;
+        }
+        List<T> result = new ArrayList<>();
+        for (Object source : sourceList) {
+            result.add(convertObject(source, clazz));
+        }
+        return result;
     }
 
     /**
@@ -226,6 +257,63 @@ public final class JsonUtil {
             result.append(key);
         }
         return result.toString();
+    }
+
+    private static ObjectMapper makeBaseXssSerializerObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.getFactory().setCharacterEscapes(new CharacterEscapes() {
+            private static final long serialVersionUID = -7677406402762106256L;
+            private final int[] escapeCodes = CharacterEscapes.standardAsciiEscapesForJSON();
+
+            {
+                // To help protect against XSS attacks, escape characters
+                // significant to HTML
+                escapeCodes['<'] = CharacterEscapes.ESCAPE_STANDARD;
+                escapeCodes['>'] = CharacterEscapes.ESCAPE_STANDARD;
+                escapeCodes['&'] = CharacterEscapes.ESCAPE_STANDARD;
+                escapeCodes['"'] = CharacterEscapes.ESCAPE_STANDARD;
+                escapeCodes['\''] = CharacterEscapes.ESCAPE_STANDARD;
+            }
+
+            @Override
+            public int[] getEscapeCodesForAscii() {
+                return escapeCodes;
+            }
+
+            @Override
+            public SerializableString getEscapeSequence(final int ch) {
+                return null;
+            }
+        });
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        return mapper;
+    }
+
+    private static ObjectMapper getObjectMapper(final boolean decodeForXss) {
+        return decodeForXss ? XSS_SERIALIZER_OBJECT_MAPPER : MAPPER;
+    }
+
+    private static String toJsonStringRaw(final Object obj) throws IOException {
+        return toJsonStringRaw(obj, false);
+    }
+
+    private static String toJsonStringRaw(final Object obj, final boolean encodeForXss) throws IOException {
+        Writer sw = new StringWriter();
+        getObjectMapper(encodeForXss).writerWithDefaultPrettyPrinter().writeValue(sw, obj);
+        return sw.toString();
+    }
+
+    private static <T> T toObjectRaw(final String json, final Class<T> valueType) throws IOException {
+        return toObjectRaw(json, valueType, false);
+    }
+
+    private static <T> T toObjectRaw(final String json, final Class<T> valueType, final boolean decodeForXss) throws IOException {
+        return getObjectMapper(decodeForXss).readValue(json, valueType);
+    }
+
+    private static <T> List<T> toObjectListRaw(final String json, final Class<T> valueType, final boolean decodeForXss) throws IOException {
+        ObjectMapper mapper = getObjectMapper(decodeForXss);
+        return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, valueType));
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import com.yanwu.spring.cloud.common.core.common.Encoding;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +8,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 /**
@@ -18,6 +18,7 @@ import java.security.SecureRandom;
  * description: 字符串AES128加密 <加盐>
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class Aes128Util {
 
     private static final String KEY_ALGORITHM = "AES";
@@ -25,6 +26,9 @@ public class Aes128Util {
     private static final String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
     /*** 默认的盐 ***/
     private static final String DEFAULT_SECRET_KEY = "yanwu0527@123.com";
+
+    private Aes128Util() {
+    }
 
     /**
      * AES 加密操作, 使用默认盐
@@ -39,9 +43,9 @@ public class Aes128Util {
     /**
      * AES 加密操作, 自定义盐
      *
-     * @param content
-     * @param key
-     * @return
+     * @param content 待加密内容
+     * @param key     盐
+     * @return 返回Base64转码后的加密数据
      */
     public static String encrypt(String content, String key) {
         if (StringUtils.isBlank(content)) {
@@ -52,7 +56,7 @@ public class Aes128Util {
         }
         try {
             Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-            byte[] byteContent = content.getBytes(Encoding.UTF_8);
+            byte[] byteContent = content.getBytes(StandardCharsets.UTF_8);
             cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(key));
             byte[] result = cipher.doFinal(byteContent);
             return Base64.encodeBase64String(result);
@@ -65,8 +69,8 @@ public class Aes128Util {
     /**
      * AES 解密操作, 使用默认盐
      *
-     * @param content
-     * @return
+     * @param content 待解密内容
+     * @return 解密后的内容
      */
     public static String decrypt(String content) {
         return decrypt(content, DEFAULT_SECRET_KEY);
@@ -75,9 +79,9 @@ public class Aes128Util {
     /**
      * AES 解密操作, 自定义盐
      *
-     * @param content
-     * @param key
-     * @return
+     * @param content 待解密内容
+     * @param key     盐
+     * @return 解密后的内容
      */
     public static String decrypt(String content, String key) {
         if (StringUtils.isBlank(content)) {
@@ -90,7 +94,7 @@ public class Aes128Util {
             Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, getSecretKey(key));
             byte[] result = cipher.doFinal(Base64.decodeBase64(content));
-            return new String(result, Encoding.UTF_8);
+            return new String(result, StandardCharsets.UTF_8);
         } catch (Exception e) {
             log.error("String: [{}] Aes128Util decryption error", content, e);
         }
@@ -100,7 +104,7 @@ public class Aes128Util {
     /**
      * 生成加密秘钥
      *
-     * @return
+     * @return 密钥
      */
     private static SecretKeySpec getSecretKey(final String key) throws Exception {
         KeyGenerator kg = KeyGenerator.getInstance(KEY_ALGORITHM);

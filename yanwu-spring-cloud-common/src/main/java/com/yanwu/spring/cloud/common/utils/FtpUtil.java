@@ -21,7 +21,7 @@ import java.util.Objects;
  * description: 简单操作FTP工具类
  */
 @Slf4j
-@SuppressWarnings("all")
+@SuppressWarnings("unused")
 public class FtpUtil {
 
     private static final String DEFAULT_PATH = "file";

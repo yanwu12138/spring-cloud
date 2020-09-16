@@ -22,6 +22,7 @@ import java.util.Properties;
  * description: 邮件工具类
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class EmailUtil {
     /*** 发件人地址 */
     private static final String SEND_ADDRESS = "499496273@qq.com";

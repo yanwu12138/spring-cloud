@@ -12,11 +12,13 @@ import java.util.Date;
  */
 @SuppressWarnings("unused")
 public class DateUtil {
-
     /*** 分隔符 ***/
     private static final String DASHES = "-", COLON = ":", SPACE = " ";
     /*** 中国时区 ***/
     private static final ZoneOffset UTC_8 = ZoneOffset.ofHours(8);
+
+    private DateUtil() {
+    }
 
     /**
      * 时间日期的前一年
@@ -302,8 +304,5 @@ public class DateUtil {
      */
     private static String filling(int data) {
         return data >= 10 ? String.valueOf(data) : "0" + data;
-    }
-
-    private DateUtil() {
     }
 }

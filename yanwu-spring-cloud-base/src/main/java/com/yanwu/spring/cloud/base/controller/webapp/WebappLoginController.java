@@ -8,8 +8,8 @@ import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.common.utils.TokenUtil;
-import com.yanwu.spring.cloud.common.utils.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +35,6 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("webapp/login/")
 public class WebappLoginController {
 
-    @Autowired
-    private ObjectUtil objectUtil;
-
     @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
     private ValueOperations<String, YanwuUserVO> loginTokenOperations;
@@ -59,7 +56,7 @@ public class WebappLoginController {
         Assert.isTrue(user.getStatus(), "用户被禁用");
         // ----- 得到token, 保存缓存
         String token = TokenUtil.loginSuccess(user.getId());
-        YanwuUserVO result = objectUtil.convert(user, YanwuUserVO.class);
+        YanwuUserVO result = JsonUtil.convertObject(user, YanwuUserVO.class);
         result.setToken(token);
         loginTokenOperations.set(Contents.LOGIN_TOKEN + user.getId(), result, Contents.TOKEN_TIME_OUT, TimeUnit.SECONDS);
         return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
