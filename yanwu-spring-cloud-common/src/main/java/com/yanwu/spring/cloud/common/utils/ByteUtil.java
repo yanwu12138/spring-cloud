@@ -42,10 +42,7 @@ public class ByteUtil {
         StringBuilder result = new StringBuilder();
         for (byte b : bytes) {
             String hex = Integer.toHexString((b & 0xFF));
-            if (hex.length() == 1) {
-                result.append('0');
-            }
-            result.append(hex);
+            result.append(headFill0(hex, 2));
         }
         return result.toString().toUpperCase();
     }
@@ -92,7 +89,7 @@ public class ByteUtil {
         String[] cs = new String[bytes.length];
         for (int i = 0; i < bytes.length; i++) {
             String hex = Integer.toHexString(bytes[i] & 0xFF);
-            cs[i] = hex.length() == 1 ? "0" + hex : hex;
+            cs[i] = headFill0(hex, 2);
         }
         return Arrays.toString(cs).toUpperCase();
     }
@@ -257,15 +254,17 @@ public class ByteUtil {
      * @return 补0后的字符串
      */
     public static String headFill0(String source, int length) {
-        int strLen = source.length();
-        if (strLen >= length) {
+        if (StringUtils.isBlank(source)) {
+            source = "";
+        }
+        if (source.length() >= length) {
             return source;
         }
-        StringBuilder builder = new StringBuilder(source);
-        while (builder.length() < length) {
-            builder.insert(0, "0");
+        StringBuilder result = new StringBuilder(source);
+        while (result.length() < length) {
+            result.insert(0, "0");
         }
-        return builder.toString();
+        return result.toString();
     }
 
 }
