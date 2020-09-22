@@ -6,7 +6,6 @@ import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.message.bo.MessageBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -24,8 +23,8 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.*;
  */
 @Slf4j
 @RestController
-@RequestMapping("/send/message/")
-public class SendMessageController<T extends Serializable> {
+@RequestMapping("/send/rabbit/message/")
+public class RabbitMqSendMessageController<T extends Serializable> {
 
     @Resource
     private RabbitTemplate template;

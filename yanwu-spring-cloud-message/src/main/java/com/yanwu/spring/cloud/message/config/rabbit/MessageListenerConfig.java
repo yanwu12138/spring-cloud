@@ -1,7 +1,7 @@
-package com.yanwu.spring.cloud.message.config;
+package com.yanwu.spring.cloud.message.config.rabbit;
 
 import com.yanwu.spring.cloud.common.utils.ContextUtil;
-import com.yanwu.spring.cloud.message.consumer.MyAckConsumer;
+import com.yanwu.spring.cloud.message.consumer.rabbit.MyAckConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;

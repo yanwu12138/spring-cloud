@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.message.consumer;
+package com.yanwu.spring.cloud.message.consumer.rabbit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-import static com.yanwu.spring.cloud.common.core.common.Contents.Message.FANOUT_YANWU_QUEUE_NAME;
+import static com.yanwu.spring.cloud.common.core.common.Contents.Message.FANOUT_LOTUS_QUEUE_NAME;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -17,12 +17,12 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.FANOUT_
  */
 @Slf4j
 @Component
-@RabbitListener(queues = FANOUT_YANWU_QUEUE_NAME)
-public class FanoutYanwuConsumer<T extends Serializable> {
+@RabbitListener(queues = FANOUT_LOTUS_QUEUE_NAME)
+public class FanoutLotusConsumer<T extends Serializable> {
 
     @RabbitHandler
     public void reader(String message) {
-        log.info("fanout reader, queue: {}, message: {}", FANOUT_YANWU_QUEUE_NAME, message);
+        log.info("fanout reader, queue: {}, message: {}", FANOUT_LOTUS_QUEUE_NAME, message);
     }
 
 }

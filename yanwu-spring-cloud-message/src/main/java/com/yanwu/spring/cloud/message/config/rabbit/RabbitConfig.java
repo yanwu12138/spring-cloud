@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.message.config;
+package com.yanwu.spring.cloud.message.config.rabbit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

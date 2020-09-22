@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.message.consumer;
+package com.yanwu.spring.cloud.message.consumer.rabbit;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;

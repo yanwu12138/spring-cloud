@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.message.config;
+package com.yanwu.spring.cloud.message.config.rabbit;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

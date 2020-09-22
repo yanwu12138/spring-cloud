@@ -67,6 +67,18 @@
         <!--            <artifactId>amqp-client</artifactId>-->
         <!--            <version>3.4.1</version>-->
         <!--        </dependency>-->
+        <!-- apache rocketMQ client -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.rocketmq</groupId>-->
+        <!--            <artifactId>rocketmq-client</artifactId>-->
+        <!--            <version>4.2.0</version>-->
+        <!--        </dependency>-->
+        <!-- alibaba rocketMQ client -->
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>3.2.6</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

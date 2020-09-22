@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.message.consumer;
+package com.yanwu.spring.cloud.message.consumer.rabbit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -7,22 +7,22 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-import static com.yanwu.spring.cloud.common.core.common.Contents.Message.TOPIC_QUEUE_ALL_QUEUE;
+import static com.yanwu.spring.cloud.common.core.common.Contents.Message.DIRECT_QUEUE_NAME;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
- * @date 2020/5/14 10:49.
+ * @date 2020/5/14 10:26.
  * <p>
  * description:
  */
 @Slf4j
 @Component
-@RabbitListener(queues = TOPIC_QUEUE_ALL_QUEUE)
-public class TopicAllConsumer<T extends Serializable> {
+@RabbitListener(queues = DIRECT_QUEUE_NAME)
+public class DirectConsumer<T extends Serializable> {
 
     @RabbitHandler
     public void reader(String message) {
-        log.info("topic reader, queue: {}, message: {}", TOPIC_QUEUE_ALL_QUEUE, message);
+        log.info("direct reader, queue: {}, message: {}", DIRECT_QUEUE_NAME, message);
     }
 
 }
