@@ -183,7 +183,7 @@ public class IpMacUtil {
      * @param request 请求
      * @return IP地址
      */
-    public static String getIpAddr(HttpServletRequest request) throws Exception {
+    public static String getIpByRequest(HttpServletRequest request) throws Exception {
         String ipAddress;
         ipAddress = request.getHeader("client-origin-ip");
         if (StringUtils.isBlank(ipAddress) || UNKNOWN.equalsIgnoreCase(ipAddress)) {
@@ -215,7 +215,7 @@ public class IpMacUtil {
      * @return IP
      * @throws Exception 未找到IP
      */
-    public static String getIpAddress() throws Exception {
+    public static String getLocalIp() throws Exception {
         return getLocalHostAddress().getHostAddress();
     }
 
@@ -225,7 +225,7 @@ public class IpMacUtil {
      * @return MAC
      * @throws Exception Exception.class
      */
-    public static String getMacAddress() throws Exception {
+    public static String getLocalMac() throws Exception {
         // ----- 获得网络接口对象（即网卡），并得到mac地址，mac地址存在于一个byte数组中。
         InetAddress ia = getLocalHostAddress();
         byte[] mac = NetworkInterface.getByInetAddress(ia).getHardwareAddress();

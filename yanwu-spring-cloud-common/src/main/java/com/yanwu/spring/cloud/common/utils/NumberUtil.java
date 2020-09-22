@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import java.math.BigInteger;
-import java.util.Random;
 
 /**
  * @author Baofeng Xu
@@ -11,7 +10,6 @@ import java.util.Random;
  */
 @SuppressWarnings("unused")
 public class NumberUtil {
-    public static final Random RANDOM = new Random();
 
     private NumberUtil() {
     }
