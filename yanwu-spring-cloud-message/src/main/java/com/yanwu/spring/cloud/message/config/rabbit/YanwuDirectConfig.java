@@ -16,7 +16,7 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.*;
  * description: 路由模式生产者
  */
 @Configuration
-public class DirectConfig {
+public class YanwuDirectConfig {
 
     /**
      * 队列：test_direct_queue_

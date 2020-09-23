@@ -16,7 +16,7 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.*;
  * description: 订阅模式生产者
  */
 @Configuration
-public class FanoutConfig {
+public class YanwuFanoutConfig {
 
     @Bean
     public Queue fanoutYanwuQueue() {

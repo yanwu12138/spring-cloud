@@ -36,12 +36,12 @@ public class MessageListenerConfig {
         container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         // ----- 绑定队列
         container.setQueues(
-                (Queue) ContextUtil.getBean("directQueue")
-//                (Queue) ContextUtil.getBean("fanoutYanwuQueue"),
-//                (Queue) ContextUtil.getBean("fanoutLotusQueue"),
-//                (Queue) ContextUtil.getBean("topicAllQueue"),
-//                (Queue) ContextUtil.getBean("topicYanwuQueue"),
-//                (Queue) ContextUtil.getBean("topicLotusQueue")
+                ContextUtil.getBean("directQueue", Queue.class)
+//              ContextUtil.getBean("fanoutYanwuQueue", Queue.class),
+//              ContextUtil.getBean("fanoutLotusQueue", Queue.class),
+//              ContextUtil.getBean("topicAllQueue", Queue.class),
+//              ContextUtil.getBean("topicYanwuQueue", Queue.class),
+//              ContextUtil.getBean("topicLotusQueue", Queue.class)
         );
         container.setMessageListener(ackConsumer);
         return container;

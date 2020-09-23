@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>
  * description:
  */
-@SuppressWarnings("all")
 public interface YanwuUserMapper extends BaseMapper<YanwuUser> {
 
     @Select("select y.* from yanwu_user as y where y.account=#{account} or y.phone=#{account} or y.email=#{account}")

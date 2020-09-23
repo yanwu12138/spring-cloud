@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.device.controller;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.utils.IpMacUtil;
 import com.yanwu.spring.cloud.device.data.model.IpAddress;
 import com.yanwu.spring.cloud.device.service.IpAddressService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +41,8 @@ public class IpAddressControl {
                         String ip = i1 + "." + i2 + "." + i3 + "." + i4;
                         IpAddress ipAddress = new IpAddress();
                         ipAddress.setIpStr(ip);
-                        ipAddress.setIpInt(IpUtil.ipv4ToInt(ip));
-                        ipAddress.setIpLong(IpUtil.ipv4ToLong(ip));
+                        ipAddress.setIpInt(IpMacUtil.ipv4ToInt(ip));
+                        ipAddress.setIpLong(IpMacUtil.ipv4ToLong(ip));
                         ipAddressService.save(ipAddress);
                     }
                 }

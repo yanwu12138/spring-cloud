@@ -16,7 +16,7 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.*;
  * description: 主题模式生产者
  */
 @Configuration
-public class TopicConfig {
+public class YanwuTopicConfig {
 
     @Bean
     public Queue topicAllQueue() {
