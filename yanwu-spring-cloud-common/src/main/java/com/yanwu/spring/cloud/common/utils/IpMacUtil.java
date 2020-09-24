@@ -238,6 +238,32 @@ public class IpMacUtil {
     }
 
     /**
+     * 获取网卡名称
+     *
+     * @return 网卡
+     * @throws Exception Exception.class
+     */
+    public static String getInterfaceName() throws Exception {
+        NetworkInterface candidateInterface = null;
+        Enumeration<NetworkInterface> enumerationArr = NetworkInterface.getNetworkInterfaces();
+        while (enumerationArr.hasMoreElements()) {
+            NetworkInterface networkInterface = enumerationArr.nextElement();
+            Enumeration<InetAddress> addressArr = networkInterface.getInetAddresses();
+            while (addressArr.hasMoreElements()) {
+                InetAddress inetAddress = addressArr.nextElement();
+                if (!inetAddress.isLoopbackAddress()) {
+                    if (inetAddress.isSiteLocalAddress()) {
+                        return networkInterface.getName();
+                    } else {
+                        candidateInterface = networkInterface;
+                    }
+                }
+            }
+        }
+        return candidateInterface != null ? candidateInterface.getName() : "";
+    }
+
+    /**
      * 获取本机网卡配置
      *
      * @return 网卡配置
@@ -249,18 +275,18 @@ public class IpMacUtil {
             // ----- 遍历所有的网络接口
             Enumeration<NetworkInterface> enumerations = NetworkInterface.getNetworkInterfaces();
             while (enumerations.hasMoreElements()) {
-                Enumeration<InetAddress> inetAdds = enumerations.nextElement().getInetAddresses();
+                Enumeration<InetAddress> addressArr = enumerations.nextElement().getInetAddresses();
                 // ----- 在所有的接口下再遍历IP
-                while (inetAdds.hasMoreElements()) {
-                    InetAddress inetAddr = inetAdds.nextElement();
+                while (addressArr.hasMoreElements()) {
+                    InetAddress address = addressArr.nextElement();
                     // ----- 排除loopback类型地址
-                    if (!inetAddr.isLoopbackAddress()) {
-                        if (inetAddr.isSiteLocalAddress()) {
+                    if (!address.isLoopbackAddress()) {
+                        if (address.isSiteLocalAddress()) {
                             // ----- 如果是site-local地址，就是它了
-                            return inetAddr;
+                            return address;
                         } else if (candidateAddress == null) {
                             // ----- site-local类型的地址未被发现，先记录候选地址
-                            candidateAddress = inetAddr;
+                            candidateAddress = address;
                         }
                     }
                 }
