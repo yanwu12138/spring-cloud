@@ -1,8 +1,8 @@
 package com.yanwu.spring.cloud.common.pojo;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -12,9 +12,9 @@ import java.io.Serializable;
  * <p>
  * description: 阿里云OSS相关对象
  */
-@Data
-@NoArgsConstructor
-@Accessors(chain = true)
+@Getter
+@ToString
+@EqualsAndHashCode
 public class OssProperties implements Serializable {
     private static final long serialVersionUID = 1432090277591945572L;
 
@@ -27,8 +27,16 @@ public class OssProperties implements Serializable {
     /*** OSS bucket ***/
     private String bucket;
 
-    public static OssProperties getInstance(String accessKeyId, String accessKeySecret, String endpoint, String bucket) {
-        return new OssProperties().setAccessKeyId(accessKeyId).setEndpoint(endpoint)
-                .setAccessKeySecret(accessKeySecret).setBucket(bucket);
+    private OssProperties() {
     }
+
+    public static OssProperties getInstance(String keyId, String keySecret, String endpoint, String bucket) {
+        OssProperties properties = new OssProperties();
+        properties.bucket = bucket;
+        properties.endpoint = endpoint;
+        properties.accessKeyId = keyId;
+        properties.accessKeySecret = keySecret;
+        return properties;
+    }
+
 }
