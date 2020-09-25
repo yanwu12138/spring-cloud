@@ -10,7 +10,6 @@ import com.yanwu.spring.cloud.common.pojo.OssResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -89,6 +88,9 @@ public class AliOssUtil {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
+            if (ossClient == null) {
+                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+            }
             return upload(ossClient, properties.getBucket(), is, type, fileName);
         } finally {
             closeClient(ossClient);
@@ -164,6 +166,9 @@ public class AliOssUtil {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
+            if (ossClient == null) {
+                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+            }
             return delete(ossClient, properties.getBucket(), fileUrl);
         } finally {
             closeClient(ossClient);
@@ -202,6 +207,9 @@ public class AliOssUtil {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
+            if (ossClient == null) {
+                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+            }
             return deletes(ossClient, properties.getBucket(), fileUrls);
         } finally {
             closeClient(ossClient);
@@ -247,6 +255,9 @@ public class AliOssUtil {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
+            if (ossClient == null) {
+                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+            }
             return exist(ossClient, properties.getBucket(), fileUrl);
         } finally {
             closeClient(ossClient);
@@ -296,6 +307,9 @@ public class AliOssUtil {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
+            if (ossClient == null) {
+                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+            }
             return download(ossClient, properties.getBucket(), fileUrl, file);
         } finally {
             closeClient(ossClient);
@@ -354,10 +368,8 @@ public class AliOssUtil {
      * @return OssClient.class
      */
     private static OSS buildClient(OssProperties properties) {
-        Assert.isTrue(checkOssProperties(properties),
-                "OSS properties configuration error. properties: " + properties.toString());
-        return new OSSClientBuilder().build(properties.getEndpoint(),
-                properties.getAccessKeyId(), properties.getAccessKeySecret());
+        return checkOssProperties(properties) ? new OSSClientBuilder().build(properties.getEndpoint(),
+                properties.getAccessKeyId(), properties.getAccessKeySecret()) : null;
     }
 
     /**
