@@ -33,15 +33,15 @@ public class OssResult<T> implements Serializable {
     }
 
     public static <T> OssResult<T> failed() {
-        return failed(null);
+        return failed(null, null);
     }
 
     public static <T> OssResult<T> failed(String message) {
-        return getInstance(Boolean.FALSE, null, message);
+        return failed(null, message);
     }
 
     public static <T> OssResult<T> failed(T data) {
-        return getInstance(Boolean.FALSE, data, null);
+        return failed(data, null);
     }
 
     public static <T> OssResult<T> failed(T data, String message) {

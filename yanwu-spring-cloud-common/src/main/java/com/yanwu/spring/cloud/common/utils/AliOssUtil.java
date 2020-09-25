@@ -29,14 +29,7 @@ import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 @Slf4j
 @SuppressWarnings("unused")
 public class AliOssUtil {
-    private static final String SEPARATOR = "/";
-    private static final String HTTPS_HEAD = "https://";
-
-
-    private static final String ID = "LTAI4G4GVvrYEWacCJmMAHQP";
-    private static final String SECRET = "mVJ183D109drRFH64X767F3DDAttwp";
-    private static final String ENDPOINT = "oss-cn-hangzhou.aliyuncs.com";
-    private static final String BUCKET = "yanwu-spring-cloud";
+    public static final String SEPARATOR = "/";
 
     private AliOssUtil() {
     }
@@ -76,7 +69,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 上传本地文件到OSS
+     * 上传本地文件到OSS, 该方法不会释放 is 资源
      *
      * @param properties OSS 相关配置
      * @param is         输入流
@@ -98,7 +91,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 上传本地文件到OSS
+     * 上传本地文件到OSS, 该方法不会释放 ossClient 资源
      *
      * @param ossClient OSS 客户端
      * @param bucket    OSS 桶
@@ -115,7 +108,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 上传本地文件到OSS
+     * 上传本地文件到OSS, 该方法不会释放 ossClient 资源
      *
      * @param ossClient OSS 客户端
      * @param bucket    OSS 桶
@@ -134,7 +127,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 上传本地文件到OSS
+     * 上传本地文件到OSS, 该方法不会释放 ossClient && is 资源
      *
      * @param ossClient OSS 客户端
      * @param bucket    OSS 桶
@@ -176,7 +169,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 删除OSS文件
+     * 删除OSS文件, 该方法不会释放 ossClient 资源
      *
      * @param ossClient OSS 客户端
      * @param bucket    OSS 桶
@@ -217,7 +210,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 批量删除OSS文件
+     * 批量删除OSS文件, 该方法不会释放 ossClient 资源
      *
      * @param ossClient OSS 客户端
      * @param bucket    OSS 桶
@@ -265,7 +258,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 根据OSS fileUrls判断文件是否存在
+     * 根据OSS fileUrls判断文件是否存在, 该方法不会释放 ossClient 资源
      *
      * @param ossClient OSS 客户端
      * @param bucket    OSS 桶
@@ -317,7 +310,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件], 该方法不会释放 ossClient 资源
      *
      * @param ossClient  OSS 客户端
      * @param bucket     OSS 桶
@@ -331,7 +324,7 @@ public class AliOssUtil {
     }
 
     /**
-     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件], 该方法不会释放 ossClient 资源
      *
      * @param ossClient OSS 客户端
      * @param bucket    OSS 桶
@@ -345,8 +338,8 @@ public class AliOssUtil {
         if (StringUtils.isBlank(fileUrl)) {
             return OssResult.failed("OSS download failed: targetPath is blank.");
         }
-        if (file.exists()) {
-            FileUtil.deleteFile(file);
+        if (file.exists() && !FileUtil.deleteFile(file)) {
+            return OssResult.failed("OSS download failed: delete file error.");
         }
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
             return OssResult.failed("OSS download failed: parent mkdir error.");
