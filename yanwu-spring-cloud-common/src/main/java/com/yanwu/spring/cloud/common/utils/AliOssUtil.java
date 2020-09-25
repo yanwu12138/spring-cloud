@@ -284,7 +284,6 @@ public class AliOssUtil {
      * @throws Exception Exception.class
      */
     public static OssResult<Void> download(OssProperties properties, String fileUrl, String targetPath) throws Exception {
-        targetPath = targetPath + SEPARATOR + fileUrl.substring(fileUrl.lastIndexOf(SEPARATOR));
         return download(properties, fileUrl, new File(targetPath));
     }
 
@@ -319,7 +318,6 @@ public class AliOssUtil {
      * @throws Exception Exception.class
      */
     public static OssResult<Void> download(OSS ossClient, String bucket, String fileUrl, String targetPath) throws Exception {
-        targetPath = targetPath + SEPARATOR + fileUrl.substring(fileUrl.lastIndexOf(SEPARATOR));
         return download(ossClient, bucket, fileUrl, new File(targetPath));
     }
 
@@ -338,7 +336,10 @@ public class AliOssUtil {
         if (StringUtils.isBlank(fileUrl)) {
             return OssResult.failed("OSS download failed: targetPath is blank.");
         }
-        if (file.exists() && !FileUtil.deleteFile(file)) {
+        if (file.exists() && file.isDirectory()) {
+            file = new File((file.getPath() + SEPARATOR + fileUrl.substring(fileUrl.lastIndexOf(SEPARATOR))));
+        }
+        if (file.exists() && file.isFile() && !FileUtil.deleteFile(file)) {
             return OssResult.failed("OSS download failed: delete file error.");
         }
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
