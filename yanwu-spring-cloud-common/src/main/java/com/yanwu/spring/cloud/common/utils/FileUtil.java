@@ -342,9 +342,19 @@ public class FileUtil {
      * @param flag 当文件不存在时，是创建文件还是抛出异常[true: 创建; false: 抛出异常]
      * @throws Exception e
      */
-    private static void checkFilePath(String path, Boolean flag) throws Exception {
+    public static void checkFilePath(String path, Boolean flag) throws Exception {
         Assert.isTrue(StringUtils.isNotBlank(path), "The file path cannot be empty.");
-        File file = new File(path);
+        checkFilePath(new File(path), flag);
+    }
+
+    /**
+     * 校验文件
+     *
+     * @param file 文件
+     * @param flag 当文件不存在时，是创建文件还是抛出异常[true: 创建; false: 抛出异常]
+     * @throws Exception e
+     */
+    public static void checkFilePath(File file, Boolean flag) throws Exception {
         if (file.exists()) {
             return;
         }

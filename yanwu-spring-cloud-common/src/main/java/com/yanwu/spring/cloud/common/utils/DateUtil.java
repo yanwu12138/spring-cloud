@@ -274,7 +274,16 @@ public class DateUtil {
      * @return 日期
      */
     public static String dateStr(LocalDate date) {
-        return date.getYear() + DASHES + filling(date.getMonthValue()) + COLON + filling(date.getDayOfMonth());
+        return dateStr(date, DASHES);
+    }
+
+    /**
+     * 获取指定时间的字符串格式日期
+     *
+     * @return 日期
+     */
+    public static String dateStr(LocalDate date, String delimiter) {
+        return date.getYear() + delimiter + filling(date.getMonthValue()) + delimiter + filling(date.getDayOfMonth());
     }
 
 
@@ -284,7 +293,16 @@ public class DateUtil {
      * @return 时间
      */
     public static String timeStr(LocalTime time) {
-        return filling(time.getHour()) + COLON + filling(time.getMinute()) + COLON + filling(time.getSecond());
+        return timeStr(time, COLON);
+    }
+
+    /**
+     * 获取指定时间的字符串格式时间
+     *
+     * @return 时间
+     */
+    public static String timeStr(LocalTime time, String delimiter) {
+        return filling(time.getHour()) + delimiter + filling(time.getMinute()) + delimiter + filling(time.getSecond());
     }
 
     /**
@@ -302,7 +320,7 @@ public class DateUtil {
      * @param data .
      * @return .
      */
-    private static String filling(int data) {
+    public static String filling(int data) {
         return data >= 10 ? String.valueOf(data) : "0" + data;
     }
 }

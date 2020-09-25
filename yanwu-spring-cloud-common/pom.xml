@@ -12,6 +12,7 @@
 
     <properties>
         <aspectjrt.version>1.8.13</aspectjrt.version>
+        <aliyun.sdk.oss.version>3.8.0</aliyun.sdk.oss.version>
         <cglib.version>3.2.5</cglib.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <commons.io.version>2.4</commons.io.version>
@@ -193,7 +194,12 @@
             <artifactId>disruptor</artifactId>
             <version>${disruptor.version}</version>
         </dependency>
-
+        <!-- 阿里云OSS -->
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>${aliyun.sdk.oss.version}</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
