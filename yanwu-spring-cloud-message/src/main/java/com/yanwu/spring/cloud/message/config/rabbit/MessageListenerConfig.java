@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.message.config.rabbit;
 
 import com.yanwu.spring.cloud.common.utils.ContextUtil;
-import com.yanwu.spring.cloud.message.consumer.rabbit.MyAckConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
@@ -24,8 +23,6 @@ public class MessageListenerConfig {
 
     @Resource
     private CachingConnectionFactory connectionFactory;
-    @Resource
-    private MyAckConsumer ackConsumer;
 
     @Bean
     public SimpleMessageListenerContainer simpleMessageListenerContainer() {
@@ -36,14 +33,13 @@ public class MessageListenerConfig {
         container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         // ----- 绑定队列
         container.setQueues(
-                ContextUtil.getBean("directQueue", Queue.class)
-//              ContextUtil.getBean("fanoutYanwuQueue", Queue.class),
-//              ContextUtil.getBean("fanoutLotusQueue", Queue.class),
-//              ContextUtil.getBean("topicAllQueue", Queue.class),
-//              ContextUtil.getBean("topicYanwuQueue", Queue.class),
-//              ContextUtil.getBean("topicLotusQueue", Queue.class)
+                ContextUtil.getBean("directQueue", Queue.class),
+                ContextUtil.getBean("fanoutYanwuQueue", Queue.class),
+                ContextUtil.getBean("fanoutLotusQueue", Queue.class),
+                ContextUtil.getBean("topicAllQueue", Queue.class),
+                ContextUtil.getBean("topicYanwuQueue", Queue.class),
+                ContextUtil.getBean("topicLotusQueue", Queue.class)
         );
-        container.setMessageListener(ackConsumer);
         return container;
     }
 }

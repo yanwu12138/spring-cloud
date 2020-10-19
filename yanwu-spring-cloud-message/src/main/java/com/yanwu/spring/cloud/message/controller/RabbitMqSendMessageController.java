@@ -57,14 +57,7 @@ public class RabbitMqSendMessageController<T extends Serializable> {
     private void sender(String exchange, String routing, MessageBO<T> param) {
         param.setCreate(new Timestamp(System.currentTimeMillis()));
         log.info("sender, exchange: {}, routing: {}, param: {}", exchange, routing, param);
-        template.convertAndSend(exchange, routing, JsonUtil.toJsonString(param));
-    }
-
-
-    @LogParam
-    @GetMapping(value = "test302")
-    public String test302() {
-        return "redirect:http://172.18.2.124:5210";
+        template.convertAndSend(exchange, routing, JsonUtil.toCompactJsonString(param));
     }
 
 }

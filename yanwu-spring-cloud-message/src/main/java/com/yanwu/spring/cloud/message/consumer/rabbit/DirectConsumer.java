@@ -1,11 +1,13 @@
 package com.yanwu.spring.cloud.message.consumer.rabbit;
 
+import com.rabbitmq.client.Channel;
+import com.yanwu.spring.cloud.message.bo.MessageBO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
+import javax.annotation.Resource;
 
 import static com.yanwu.spring.cloud.common.core.common.Contents.Message.DIRECT_QUEUE_NAME;
 
@@ -17,12 +19,16 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.DIRECT_
  */
 @Slf4j
 @Component
-@RabbitListener(queues = DIRECT_QUEUE_NAME)
-public class DirectConsumer<T extends Serializable> {
+public class DirectConsumer {
 
-    @RabbitHandler
-    public void reader(String message) {
-        log.info("direct reader, queue: {}, message: {}", DIRECT_QUEUE_NAME, message);
+    @Resource
+    private MyAckConsumer myAckConsumer;
+
+    @RabbitListener(queues = DIRECT_QUEUE_NAME)
+    public void reader(Message message, Channel channel) throws Exception {
+        MessageBO messageBO = MessageBO.getInstance(message.getBody());
+        log.info("direct reader, queue: {}, message: {}", DIRECT_QUEUE_NAME, messageBO);
+        myAckConsumer.basicAck(message, channel);
     }
 
 }

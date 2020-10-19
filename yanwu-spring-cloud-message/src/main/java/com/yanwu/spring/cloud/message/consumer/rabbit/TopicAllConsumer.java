@@ -1,11 +1,13 @@
 package com.yanwu.spring.cloud.message.consumer.rabbit;
 
+import com.rabbitmq.client.Channel;
+import com.yanwu.spring.cloud.message.bo.MessageBO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
+import javax.annotation.Resource;
 
 import static com.yanwu.spring.cloud.common.core.common.Contents.Message.TOPIC_QUEUE_ALL_QUEUE;
 
@@ -17,12 +19,16 @@ import static com.yanwu.spring.cloud.common.core.common.Contents.Message.TOPIC_Q
  */
 @Slf4j
 @Component
-@RabbitListener(queues = TOPIC_QUEUE_ALL_QUEUE)
-public class TopicAllConsumer<T extends Serializable> {
+public class TopicAllConsumer {
 
-    @RabbitHandler
-    public void reader(String message) {
-        log.info("topic reader, queue: {}, message: {}", TOPIC_QUEUE_ALL_QUEUE, message);
+    @Resource
+    private MyAckConsumer myAckConsumer;
+
+    @RabbitListener(queues = TOPIC_QUEUE_ALL_QUEUE)
+    public void reader(Message message, Channel channel) throws Exception {
+        MessageBO messageBO = MessageBO.getInstance(message.getBody());
+        log.info("topic reader, queue: {}, message: {}", TOPIC_QUEUE_ALL_QUEUE, messageBO);
+        myAckConsumer.basicAck(message, channel);
     }
 
 }
