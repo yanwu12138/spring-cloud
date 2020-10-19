@@ -1,33 +1,15 @@
-server:
-  port: 8883
+#################### NACOS CONFIG ####################
 spring:
   application:
     name: yanwu-netty
   cloud:
     nacos:
       discovery:
-        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
-        namespace: fb71c5bc-d1e3-4994-83be-6fd0f264e05e
-  redis:
-    host: 39.97.229.71
-    port: 6379
-    password: xbf12138
-    timeout: 10000
-    database: 3
-  main:
-    allow-bean-definition-overriding: true
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
-netty:
-  tcp:
-    port: 6000
-  udp:
-    port: 7000
-  radio:
-    port: 9999
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 30000
-        readTimeout: 30000
+        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
+        group: DEFAULT_GROUP
+        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+      config:
+        group: DEFAULT_GROUP
+        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
+        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+        file-extension: yaml
