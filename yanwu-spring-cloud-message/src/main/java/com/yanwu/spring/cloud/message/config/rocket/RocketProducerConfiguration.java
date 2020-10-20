@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,6 +38,7 @@ public class RocketProducerConfiguration {
      * @throws MQClientException MQClientException.class
      */
     @Bean
+    @ConditionalOnProperty(prefix = "rocketmq.producer", value = {"default"}, havingValue = "true")
     public DefaultMQProducer defaultProducer() throws MQClientException {
         DefaultMQProducer producer = new DefaultMQProducer(groupName);
         producer.setNamesrvAddr(nameSrvAddr);
