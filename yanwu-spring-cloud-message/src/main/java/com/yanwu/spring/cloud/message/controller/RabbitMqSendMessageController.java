@@ -1,6 +1,5 @@
 package com.yanwu.spring.cloud.message.controller;
 
-import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.message.bo.MessageBO;

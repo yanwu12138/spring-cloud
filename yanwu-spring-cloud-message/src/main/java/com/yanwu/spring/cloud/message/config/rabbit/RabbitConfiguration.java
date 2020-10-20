@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
-public class YanwuRabbitConfig {
+public class RabbitConfiguration {
 
     @Bean
     public MessageConverter messageConverter() {
@@ -36,10 +36,9 @@ public class YanwuRabbitConfig {
             }
         });
         // ===== 消息返回, yml需要配置 publisher-returns: true
-        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            log.info("returnCallback: message: {}, replyCode: {}, replyText: {}, exchange: {}, routingKey: {}",
-                    message, replyCode, replyText, exchange, routingKey);
-        });
+        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) ->
+                log.info("returnCallback: message: {}, replyCode: {}, replyText: {}, exchange: {}, routingKey: {}",
+                        message, replyCode, replyText, exchange, routingKey));
         return rabbitTemplate;
     }
 }
