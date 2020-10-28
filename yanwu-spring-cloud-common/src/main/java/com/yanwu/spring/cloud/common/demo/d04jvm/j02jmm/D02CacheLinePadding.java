@@ -4,7 +4,7 @@ package com.yanwu.spring.cloud.common.demo.d04jvm.j02jmm;
  * @author <a href="mailto:yanwu0527@163.com">baofeng Xu</a>
  * @date 2020-06-03 23:18:26.
  * <p>
- * describe:
+ * describe: 缓存行对齐解决伪共享问题证明
  */
 @SuppressWarnings("all")
 public class D02CacheLinePadding {
