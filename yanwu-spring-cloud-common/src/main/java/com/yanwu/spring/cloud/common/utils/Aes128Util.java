@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
@@ -22,12 +21,20 @@ import java.security.SecureRandom;
 public class Aes128Util {
 
     private static final String KEY_ALGORITHM = "AES";
+    private static final String SHA1_PRNG = "SHA1PRNG";
     /*** 默认的加密算法 ***/
     private static final String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
     /*** 默认的盐 ***/
     private static final String DEFAULT_SECRET_KEY = "yanwu0527@123.com";
 
     private Aes128Util() {
+    }
+
+
+    public static void main(String[] args) {
+        String encrypt = encrypt("JsonUtil.toCompactJsonString(new AccessToken().setId(3253L))", DEFAULT_SECRET_KEY);
+        System.out.println(encrypt);
+        System.out.println(decrypt(encrypt, DEFAULT_SECRET_KEY));
     }
 
     /**
@@ -106,11 +113,12 @@ public class Aes128Util {
      *
      * @return 密钥
      */
-    private static SecretKeySpec getSecretKey(final String key) throws Exception {
+    private static SecretKey getSecretKey(final String key) throws Exception {
         KeyGenerator kg = KeyGenerator.getInstance(KEY_ALGORITHM);
-        kg.init(128, new SecureRandom(key.getBytes()));
-        SecretKey secretKey = kg.generateKey();
-        return new SecretKeySpec(secretKey.getEncoded(), KEY_ALGORITHM);
+        SecureRandom secureRandom = SecureRandom.getInstance(SHA1_PRNG);
+        secureRandom.setSeed(key.getBytes());
+        kg.init(secureRandom);
+        return kg.generateKey();
     }
 
 }
