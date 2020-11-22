@@ -34,4 +34,3 @@ local.properties
 .idea/
 .mvn/
 atlassian-ide-plugin.xml
-*.md
