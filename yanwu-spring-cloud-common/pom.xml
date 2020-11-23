@@ -18,6 +18,7 @@
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
         <commons.net.version>3.6</commons.net.version>
+        <commons.httpclient.version>3.1</commons.httpclient.version>
         <disruptor.version>3.4.2</disruptor.version>
         <guava.version>22.0</guava.version>
         <httpcomponents.httpclient.version>4.5</httpcomponents.httpclient.version>
@@ -80,6 +81,11 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
             <version>${aspectjrt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons.httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-net</groupId>
