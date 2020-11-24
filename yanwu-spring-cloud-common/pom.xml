@@ -18,10 +18,10 @@
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
         <commons.net.version>3.6</commons.net.version>
-        <commons.httpclient.version>3.1</commons.httpclient.version>
+        <commons.httpcore.version>4.4.4</commons.httpcore.version>
+        <commons.httpclient.version>4.5.2</commons.httpclient.version>
         <disruptor.version>3.4.2</disruptor.version>
         <guava.version>22.0</guava.version>
-        <httpcomponents.httpclient.version>4.5</httpcomponents.httpclient.version>
         <java.mail.version>1.4.7</java.mail.version>
         <java.version>1.8</java.version>
         <jdk.version>1.8</jdk.version>
@@ -83,11 +83,6 @@
             <version>${aspectjrt.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>${commons.httpclient.version}</version>
-        </dependency>
-        <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
             <version>${commons.net.version}</version>
@@ -109,6 +104,22 @@
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>${commons.collections.version}</version>
+        </dependency>
+        <!-- http client -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>${commons.httpcore.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${commons.httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-cache</artifactId>
+            <version>${commons.httpclient.version}</version>
         </dependency>
         <!-- Excel工具 -->
         <dependency>
@@ -148,17 +159,6 @@
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer-spring</artifactId>
             <version>${net.sf.dozer.version}</version>
-        </dependency>
-        <!-- http client -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpcomponents.httpclient.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient-cache</artifactId>
-            <version>${httpcomponents.httpclient.version}</version>
         </dependency>
         <!-- 邮件处理 -->
         <dependency>

@@ -31,26 +31,26 @@ public class RabbitMqSendMessageController<T extends Serializable> {
     @PostMapping("direct/sender")
     public ResponseEnvelope<Boolean> direct(@RequestBody @Valid MessageBO<T> param) {
         sender(DIRECT_EXCHANGE_NAME, TEST_DIRECT_ROUTING, param);
-        return new ResponseEnvelope<>(Boolean.TRUE);
+        return ResponseEnvelope.success(Boolean.TRUE);
     }
 
     @PostMapping("topic/sender/{route}")
     public ResponseEnvelope<Boolean> topic(@PathVariable("route") String route,
                                            @RequestBody @Valid MessageBO<T> param) {
         sender(TOPIC_EXCHANGE_NAME, route, param);
-        return new ResponseEnvelope<>(Boolean.TRUE);
+        return ResponseEnvelope.success(Boolean.TRUE);
     }
 
     @PostMapping("fanout/sender")
     public ResponseEnvelope<Boolean> fanout(@RequestBody @Valid MessageBO<T> param) {
         sender(FANOUT_EXCHANGE_NAME, null, param);
-        return new ResponseEnvelope<>(Boolean.TRUE);
+        return ResponseEnvelope.success(Boolean.TRUE);
     }
 
     @PostMapping("error/sender")
     public ResponseEnvelope<Boolean> error(@RequestBody @Valid MessageBO<T> param) {
         sender(NON_EXISTENT_EXCHANGE, null, param);
-        return new ResponseEnvelope<>(Boolean.TRUE);
+        return ResponseEnvelope.success(Boolean.TRUE);
     }
 
     private void sender(String exchange, String routing, MessageBO<T> param) {

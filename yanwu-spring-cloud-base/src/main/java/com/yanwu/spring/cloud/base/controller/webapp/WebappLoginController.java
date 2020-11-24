@@ -14,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +42,7 @@ public class WebappLoginController {
 
     @LogParam
     @PostMapping(value = "login")
-    public ResponseEntity<ResponseEnvelope<YanwuUserVO>> login(@RequestBody @Valid LoginVO vo) throws Exception {
+    public ResponseEnvelope<YanwuUserVO> login(@RequestBody @Valid LoginVO vo) throws Exception {
         // ----- 根据 用户名 邮箱 手机号 检索用户
         YanwuUser user = yanwuUserService.findByAccount(vo.getAccount());
         // ----- 校验: 当结果为null时, 说明该用户不存在
@@ -59,12 +57,12 @@ public class WebappLoginController {
         YanwuUserVO result = JsonUtil.convertObject(user, YanwuUserVO.class);
         result.setToken(token);
         loginTokenOperations.set(Contents.LOGIN_TOKEN + user.getId(), result, Contents.TOKEN_TIME_OUT, TimeUnit.SECONDS);
-        return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
+        return ResponseEnvelope.success(result);
     }
 
     @LogParam
     @PostMapping(value = "logout/{id}")
-    public ResponseEntity<ResponseEnvelope<Boolean>> logout(@PathVariable("id") Long id) throws Exception {
+    public ResponseEnvelope<Boolean> logout(@PathVariable("id") Long id) throws Exception {
         Boolean result;
         YanwuUserVO user = loginTokenOperations.get(Contents.LOGIN_TOKEN + id);
         if (user == null) {
@@ -72,7 +70,7 @@ public class WebappLoginController {
         } else {
             result = loginTokenOperations.getOperations().delete(Contents.LOGIN_TOKEN + id);
         }
-        return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
+        return ResponseEnvelope.success(result);
     }
 
 }

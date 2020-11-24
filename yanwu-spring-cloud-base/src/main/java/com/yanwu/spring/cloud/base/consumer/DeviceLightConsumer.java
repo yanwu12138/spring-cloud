@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface DeviceLightConsumer {
 
     @PostMapping("/device/light/create")
-    ResponseEntity<ResponseEnvelope<Long>> create();
+    ResponseEnvelope<Long> create();
 
     @GetMapping("/device/transactions/test1")
     void test1();

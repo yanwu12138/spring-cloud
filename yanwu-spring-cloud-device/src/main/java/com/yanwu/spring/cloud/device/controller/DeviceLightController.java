@@ -29,12 +29,12 @@ public class DeviceLightController {
 
     @LogParam
     @PostMapping("create")
-    public ResponseEntity<ResponseEnvelope<Long>> create() {
+    public ResponseEnvelope<Long> create() {
         DeviceLight light = new DeviceLight();
         long millis = System.currentTimeMillis();
         light.setPoleId(millis).setCreator(millis);
         lightService.save(light);
-        return new ResponseEntity<>(new ResponseEnvelope<>(light.getId()), HttpStatus.OK);
+        return ResponseEnvelope.success(light.getId());
     }
 
 }

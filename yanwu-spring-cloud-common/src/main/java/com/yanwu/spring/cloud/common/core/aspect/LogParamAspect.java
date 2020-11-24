@@ -55,10 +55,7 @@ public class LogParamAspect {
                 LogParam annotation = method.getAnnotation(LogParam.class);
                 message = annotation.value();
             }
-            ResponseEnvelope<Object> envelope = new ResponseEnvelope<>();
-            envelope.getResult().setMessage(message);
-            envelope.getResult().setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return new ResponseEntity<>(envelope, HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, message);
         }
     }
 

@@ -30,13 +30,13 @@ public class QrCodeController {
     @PostMapping("/create")
     @LogParam("生成二维码失败")
     public ResponseEnvelope<Attachment> create(@RequestBody @Valid QrCodeReq param) throws Exception {
-        return new ResponseEnvelope<>(codeService.create(param));
+        return ResponseEnvelope.success(codeService.create(param));
     }
 
     @GetMapping("/check")
     @LogParam("识别二维码失败")
     public ResponseEnvelope<Void> check(@RequestParam("key") @NotBlank(message = "key不能为空") String key, HttpServletResponse response) {
         codeService.check(key, response);
-        return new ResponseEnvelope<>();
+        return ResponseEnvelope.success();
     }
 }

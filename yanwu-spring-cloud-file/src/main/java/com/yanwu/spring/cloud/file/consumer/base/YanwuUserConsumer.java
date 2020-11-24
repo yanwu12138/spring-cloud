@@ -26,7 +26,7 @@ public interface YanwuUserConsumer {
      * @return
      */
     @PostMapping(value = "backend/yanwuUser/updatePortrait")
-    ResponseEntity<ResponseEnvelope<Void>> updatePortrait(@RequestBody YanwuUser yanwuUser);
+    ResponseEnvelope<Void> updatePortrait(@RequestBody YanwuUser yanwuUser);
 
     @PostMapping(value = "backend/yanwuUser/updateAccountById")
     YanwuUser updateAccountById(@RequestBody YanwuUser user);

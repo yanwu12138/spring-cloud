@@ -36,7 +36,7 @@ public class RocketMqSendMessageController<T extends Serializable> {
         log.info("rocket sender message: {}", message);
         SendResult result = rocketProducer.send(message);
         log.info("rocket result message: {}", result);
-        return new ResponseEnvelope<>(Boolean.TRUE);
+        return ResponseEnvelope.success(Boolean.TRUE);
     }
 
 }

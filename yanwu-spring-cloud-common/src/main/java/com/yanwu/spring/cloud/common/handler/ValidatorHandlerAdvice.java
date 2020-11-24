@@ -2,8 +2,6 @@ package com.yanwu.spring.cloud.common.handler;
 
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,14 +18,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ValidatorHandlerAdvice<T> {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ResponseEnvelope<T>> handleBindException(MethodArgumentNotValidException exception) {
-        ResponseEnvelope<T> envelope = new ResponseEnvelope<>();
+    protected ResponseEnvelope<T> handleBindException(MethodArgumentNotValidException exception) {
+        ResponseEnvelope<T> envelope = ResponseEnvelope.failed();
         for (ObjectError error : exception.getBindingResult().getAllErrors()) {
-            envelope.getResult().setMessage(error.getDefaultMessage());
+            envelope.setMessage(error.getDefaultMessage());
         }
-        envelope.getResult().setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         log.error("Validator Handler Advice Exception: ", exception);
-        return new ResponseEntity<>(envelope, HttpStatus.INTERNAL_SERVER_ERROR);
+        return envelope;
     }
 
 }

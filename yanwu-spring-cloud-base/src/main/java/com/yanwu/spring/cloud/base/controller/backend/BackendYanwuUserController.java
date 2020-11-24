@@ -5,8 +5,6 @@ import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -27,23 +25,23 @@ public class BackendYanwuUserController {
 
     @LogParam
     @GetMapping(value = "findByUserName")
-    public ResponseEntity<ResponseEnvelope<YanwuUser>> findByUserName(@RequestParam("name") String name) throws Exception {
+    public ResponseEnvelope<YanwuUser> findByUserName(@RequestParam("name") String name) throws Exception {
         YanwuUser yanwuUser = userService.findByUserName(name);
-        return new ResponseEntity<>(new ResponseEnvelope<>(yanwuUser), HttpStatus.OK);
+        return ResponseEnvelope.success(yanwuUser);
     }
 
     @LogParam
     @PostMapping(value = "updatePortrait")
-    public ResponseEntity<ResponseEnvelope<Void>> updatePortrait(@RequestBody YanwuUser yanwuUser) throws Exception {
+    public ResponseEnvelope<Void> updatePortrait(@RequestBody YanwuUser yanwuUser) throws Exception {
         userService.updatePortrait(yanwuUser);
-        return new ResponseEntity<>(new ResponseEnvelope<>(), HttpStatus.OK);
+        return ResponseEnvelope.success();
     }
 
     @LogParam
     @PostMapping("updateAccountById")
-    public ResponseEntity<ResponseEnvelope<YanwuUser>> updateAccountById(@RequestBody YanwuUser user) {
+    public ResponseEnvelope<YanwuUser> updateAccountById(@RequestBody YanwuUser user) {
         user = userService.updateAccountById(user);
-        return new ResponseEntity<>(new ResponseEnvelope<>(user), HttpStatus.OK);
+        return ResponseEnvelope.success(user);
     }
 
 }

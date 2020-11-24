@@ -8,8 +8,6 @@ import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.Aes128Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +29,7 @@ public class WebappYanwuUserController {
 
     @LogParam
     @PostMapping(value = "create")
-    public ResponseEntity<ResponseEnvelope<Long>> create(@RequestBody YanwuUser user) {
+    public ResponseEnvelope<Long> create(@RequestBody YanwuUser user) {
         // ===== 校验账号、邮箱、手机号是否存在
         Assert.isNull(userService.checkAccount(user.getAccount()), "账号已存在");
         // ===== 校验邮箱是否存在
@@ -44,19 +42,19 @@ public class WebappYanwuUserController {
             user.setPassword(Aes128Util.encrypt(user.getPassword()));
         }
         userService.save(user);
-        return new ResponseEntity<>(new ResponseEnvelope<>(user.getId()), HttpStatus.OK);
+        return ResponseEnvelope.success(user.getId());
     }
 
     @LogParam
     @PutMapping(value = "update")
-    public ResponseEntity<ResponseEnvelope<Boolean>> update(@RequestBody YanwuUser user) {
-        return new ResponseEntity<>(new ResponseEnvelope<>(Boolean.TRUE), HttpStatus.OK);
+    public ResponseEnvelope<Boolean> update(@RequestBody YanwuUser user) {
+        return ResponseEnvelope.success(Boolean.TRUE);
     }
 
     @LogParam
     @GetMapping("getById")
-    public ResponseEntity<ResponseEnvelope<YanwuUser>> getById(@RequestParam("id") Long id) {
-        return new ResponseEntity<>(new ResponseEnvelope<>(userService.getById(id)), HttpStatus.OK);
+    public ResponseEnvelope<YanwuUser> getById(@RequestParam("id") Long id) {
+        return ResponseEnvelope.success(userService.getById(id));
     }
 
 }

@@ -12,7 +12,6 @@ import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -46,10 +45,10 @@ public class AttachmentController {
      */
     @LogParam
     @PostMapping(value = "upPortrait")
-    public ResponseEntity<ResponseEnvelope<Attachment>> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
+    public ResponseEnvelope<Attachment> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);
         Attachment result = JsonUtil.convertObject(attachment, Attachment.class);
-        return new ResponseEntity<>(new ResponseEnvelope<>(result), HttpStatus.OK);
+        return ResponseEnvelope.success(result);
     }
 
     /**
@@ -62,9 +61,9 @@ public class AttachmentController {
      */
     @LogParam
     @PostMapping(value = "uploadFile")
-    public ResponseEntity<ResponseEnvelope<List<Attachment>>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
+    public ResponseEnvelope<List<Attachment>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
         List<Attachment> attachments = attachmentService.uploadFile(request, id);
-        return new ResponseEntity<>(new ResponseEnvelope<>(attachments), HttpStatus.OK);
+        return ResponseEnvelope.success(attachments);
     }
 
     /**
@@ -91,9 +90,9 @@ public class AttachmentController {
      */
     @LogParam
     @PostMapping(value = "uploadExcel")
-    public ResponseEntity<ResponseEnvelope<Attachment>> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
+    public ResponseEnvelope<Attachment> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
         Attachment attachment = attachmentService.uploadExcel(file, id);
-        return new ResponseEntity<>(new ResponseEnvelope<>(attachment), HttpStatus.OK);
+        return ResponseEnvelope.success(attachment);
     }
 
     /**
@@ -114,9 +113,9 @@ public class AttachmentController {
 
     @LogParam
     @PostMapping("updateUser")
-    public ResponseEntity<ResponseEnvelope<YanwuUser>> updateUser(@RequestBody YanwuUser user) {
+    public ResponseEnvelope<YanwuUser> updateUser(@RequestBody YanwuUser user) {
         user = attachmentService.updateAccountById(user);
-        return new ResponseEntity<>(new ResponseEnvelope<>(user), HttpStatus.OK);
+        return ResponseEnvelope.success(user);
     }
 
 }
