@@ -18,11 +18,12 @@ import java.util.Map;
  */
 public class Response {
     private final Socket socket;
-    private Integer status;
+    private final Integer status;
     private static Map<Integer, String> codeMap;
 
     public Response(Socket socket) {
         this.socket = socket;
+        this.status = 200;
         if (MapUtils.isEmpty(codeMap)) {
             codeMap = new HashMap<>();
             codeMap.put(200, "OK");
@@ -36,11 +37,12 @@ public class Response {
     }
 
     public void sendRaw(String message) throws Exception {
-        try (OutputStream outputStream = socket.getOutputStream();
-             OutputStreamWriter streamWriter = new OutputStreamWriter(outputStream);
-             BufferedWriter writer = new BufferedWriter(streamWriter)) {
-            writer.write(message);
-            writer.flush();
-        }
+        OutputStream outputStream = socket.getOutputStream();
+        OutputStreamWriter streamWriter = new OutputStreamWriter(outputStream);
+        BufferedWriter writer = new BufferedWriter(streamWriter);
+
+        writer.write(message);
+        writer.flush();
+        IOUtil.close(writer, streamWriter, outputStream, socket);
     }
 }
