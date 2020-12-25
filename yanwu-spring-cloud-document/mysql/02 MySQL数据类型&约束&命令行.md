@@ -47,7 +47,7 @@
 | 约束                   | 说明                                                         |
 | ---------------------- | ------------------------------------------------------------ |
 | 非空约束：NOT  NULL    | 控制字段的内容一定不能为空（NULL）                           |
-| 唯一约束：UNIQUE  KEY  | 控制字段内容必须唯一，一个表允许有多个Unique约束             |
+| 唯一约束：UNIQUE       | 控制字段内容必须唯一，一个表允许有多个Unique约束             |
 | 主键约束：PRIMARY  KEY | 主键约束，控制字段不能重复，但它在一个表只允许出现一个       |
 | 外键约束：FOREIGN  KEY | 外键约束，预防破坏表之间连接的动作，也能防止非法数据插入外键列，因为它必须是它指向的那个表中的值之一 |
 | 范围约束：CHECK        | 用于控制字段的值范围                                         |
@@ -138,6 +138,10 @@ ALTER TABLE TABLE_NAME_OLD RENAME TO TABLE_NAME_NEW;
 ALTER TABLE `user` RENAME TO `yanwu_user`;
 ```
 
+
+
+#### 表字段
+
 ##### 添加表字段
 
 ```SQL
@@ -186,12 +190,18 @@ ALTER TABLE yanwu_user MODIFY role_id bigint(20) NOT NULL COMMENT '角色ID';
 ##### 创建索引
 
 ```SQL
+-- UNIQUE		索引类型
 -- INDEX_NAME	索引名称
 -- TABLE_NAME	表名
 -- CLOUMN		字段名
 -- LENGTH		字段长度
+-- BTREE		索引方法
+-- COMMENT		索引描述信息
 -- 注意：如果是CHAR，VARCHAR类型，length可以小于字段实际长度；如果是BLOB和TEXT类型，必须指定length
-CREATE INDEX INDEX_NAME ON TABLE_NAME(CLOUMN(LENGTH));
+CREATE UNIQUE INDEX INDEX_NAME ON TABLE_NAME(CLOUMN(LENGTH)) BTREE COMMENT;
+
+-- 示例
+CREATE UNIQUE INDEX uk_user_account ON yanwu_user(user_id, account) COMMENT '用户与账号';
 ```
 
 ##### 建表时直接指定索引
@@ -203,6 +213,8 @@ CREATE TABLE TABLE_NAME(CLOUMN... INDEX [TABLE_NAME] (CLOUMN(LENGTH)));
 ##### 修改索引
 
 ```SQL
+-- INDEX_NAME	索引名称
+-- TABLE_NAME	表名
 ALTER TABLE TABLE_NAME ADD INDEX INDEX_NAME(CLOUMN);
 ```
 
