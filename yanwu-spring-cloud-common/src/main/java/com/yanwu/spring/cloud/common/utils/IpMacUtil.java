@@ -1,6 +1,8 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.github.veqryn.net.Cidr4;
 import com.yanwu.spring.cloud.common.core.common.Contents;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -9,6 +11,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -329,6 +333,51 @@ public class IpMacUtil {
             result.insert(0, "0");
         }
         return result.toString();
+    }
+
+    public static void main(String[] args) {
+        Set<String> ips = new HashSet<>();
+        ips.add("127.0.0.1");
+        ips.add("156.164.356.101");
+        ips.add("172.16.0.56/24");
+        ips.add("121.111.146.12/11");
+        String param = "172.16.0.56";
+        System.out.println(check(ips, param));
+    }
+
+    private static boolean check(Set<String> ips, String param) {
+        if (CollectionUtils.isEmpty(ips)) {
+            return false;
+        }
+        if (ips.contains(param)) {
+            return true;
+        }
+        for (String ip : ips) {
+            if (param.equals(ip) || checkIpByMask(ip, param)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkIpByMask(String ip1, String ip2) {
+        if (StringUtils.isBlank(ip1) || StringUtils.isBlank(ip2)) {
+            return false;
+        }
+        if (ip1.contains("/")) {
+            Cidr4 cidr1 = new Cidr4(ip1);
+            if (ip2.contains("/")) {
+                Cidr4 cidr2 = new Cidr4(ip2);
+            } else {
+                return cidr1.isInRange(ip2, Boolean.TRUE);
+            }
+        } else {
+            if (ip2.contains("/")) {
+                Cidr4 cidr2 = new Cidr4(ip2);
+                return cidr2.isInRange(ip1, Boolean.TRUE);
+            }
+        }
+        return false;
     }
 
 }

@@ -206,6 +206,12 @@
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>${aliyun.sdk.oss.version}</version>
         </dependency>
+        <!-- IP地址CIDR表示法工具 -->
+        <dependency>
+            <groupId>com.github.veqryn</groupId>
+            <artifactId>cidr-ip-trie</artifactId>
+            <version>1.0.1</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
