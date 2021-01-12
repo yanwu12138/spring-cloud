@@ -22,7 +22,7 @@ docker image ls
 # 3306:3306                   # 容器端口映射
 # restart=always              # 自动重启mysql容器
 #######################################################
-docker run -d --name mysql -v ~/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=yanwu12138 -p 3306:3306 mysql:5.7 --restart=always
+docker run -d --restart=always --name mysql -v ~/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=yanwu12138 -p 3306:3306 mysql:5.7
 ```
 
 ##### 进入MySQL容器
