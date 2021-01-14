@@ -5,11 +5,11 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
+        server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
         group: DEFAULT_GROUP
-        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+        namespace: 3737b0be-e299-4e4f-92f7-a3a1db22a078
       config:
         group: DEFAULT_GROUP
-        server-addr: ${CONFIG_SERVER_URL:39.97.229.71:8848}
-        namespace: 2819d955-c5d8-4620-99be-7a9c168ad23e
+        server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
+        namespace: 3737b0be-e299-4e4f-92f7-a3a1db22a078
         file-extension: yaml

@@ -101,6 +101,6 @@ docker run -d --restart=always -e "JAVA_OPTS=-Drocketmq.config.namesrvAddr=192.1
 
 ##### 查看控制台
 
-[http://{docker宿主机ip}:8080/](http://10.1.7.105:8080/) 看到如下界面，表示安装成功
+http://{docker宿主机ip}:8080/	>>	看到如下界面，表示安装成功
 
 ![image-20210105142301923](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/202101051423022.png)
