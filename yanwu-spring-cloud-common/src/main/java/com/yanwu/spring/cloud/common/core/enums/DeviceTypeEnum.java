@@ -14,13 +14,13 @@ public enum DeviceTypeEnum {
     ;
 
     @Getter
-    private Integer code;
+    private final Integer code;
     @Getter
-    private String type;
+    private final String type;
     @Getter
-    private byte[] head;
+    private final byte[] head;
     @Getter
-    private byte[] end;
+    private final byte[] end;
 
     DeviceTypeEnum(Integer code, String type, byte[] head, byte[] end) {
         this.code = code;

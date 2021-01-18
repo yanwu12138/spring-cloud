@@ -31,7 +31,7 @@ public enum FileType {
     ;
 
     @Getter
-    private String suffix;
+    private final String suffix;
 
     FileType(String suffix) {
         this.suffix = suffix;
