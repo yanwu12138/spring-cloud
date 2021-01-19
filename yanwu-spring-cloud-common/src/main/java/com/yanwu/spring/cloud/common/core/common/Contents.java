@@ -17,6 +17,10 @@ public interface Contents {
     String LOGIN_TOKEN = "login_token_";
     /*** token ***/
     String TOKEN = "X-Token";
+    /*** 默认的版本 ***/
+    String DEFAULT_VERSION = "1.0.0";
+    /*** 请求头中的接口版本号 ***/
+    String VERSION = "X-Version";
     /*** 每次请求的唯一标识 */
     String TX_ID = "txId";
     /*** 用户登陆缓存：有效期时长（单位：S） ***/
