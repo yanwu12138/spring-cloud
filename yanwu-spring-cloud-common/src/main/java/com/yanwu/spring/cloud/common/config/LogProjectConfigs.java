@@ -28,10 +28,11 @@ public class LogProjectConfigs implements CommandLineRunner {
         log.info("======================================== log project configs begin ========================================");
         try {
             for (PropertySource<?> sources : ((AbstractEnvironment) environment).getPropertySources()) {
-                if (sources.getSource() instanceof Map) {
-                    for (Map.Entry<?, ?> entry : ((Map<?, ?>) sources.getSource()).entrySet()) {
-                        log.info("config property key: {} value: {}", logKey(entry.getKey()), entry.getValue());
-                    }
+                if (!(sources.getSource() instanceof Map)) {
+                    continue;
+                }
+                for (Map.Entry<?, ?> entry : ((Map<?, ?>) sources.getSource()).entrySet()) {
+                    log.info("config property key: {} value: {}", logKey(entry.getKey()), entry.getValue());
                 }
             }
         } catch (Exception e) {

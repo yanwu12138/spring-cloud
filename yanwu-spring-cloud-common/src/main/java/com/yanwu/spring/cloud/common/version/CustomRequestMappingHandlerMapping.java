@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.common.version;
 
 import com.yanwu.spring.cloud.common.core.annotation.ApiVersion;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -15,12 +16,12 @@ import java.lang.reflect.Method;
  */
 public class CustomRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
     @Override
-    protected RequestCondition<?> getCustomTypeCondition(Class<?> handlerType) {
+    protected RequestCondition<?> getCustomTypeCondition(@NonNull Class<?> handlerType) {
         return createCondition(AnnotationUtils.findAnnotation(handlerType, ApiVersion.class));
     }
 
     @Override
-    protected RequestCondition<?> getCustomMethodCondition(Method method) {
+    protected RequestCondition<?> getCustomMethodCondition(@NonNull Method method) {
         return createCondition(AnnotationUtils.findAnnotation(method, ApiVersion.class));
     }
 

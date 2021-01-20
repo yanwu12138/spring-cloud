@@ -4,6 +4,7 @@ import com.yanwu.spring.cloud.common.core.common.Contents;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ public class ApiVersionCondition implements RequestCondition<ApiVersionCondition
         this.apiVersion = apiVersion;
     }
 
+    @NonNull
     @Override
     public ApiVersionCondition combine(ApiVersionCondition other) {
         return new ApiVersionCondition(other.getApiVersion());
@@ -40,7 +42,7 @@ public class ApiVersionCondition implements RequestCondition<ApiVersionCondition
     }
 
     @Override
-    public int compareTo(ApiVersionCondition other, HttpServletRequest request) {
+    public int compareTo(ApiVersionCondition other, @NonNull HttpServletRequest request) {
         return StringUtils.compareIgnoreCase(other.getApiVersion(), this.getApiVersion());
     }
 
