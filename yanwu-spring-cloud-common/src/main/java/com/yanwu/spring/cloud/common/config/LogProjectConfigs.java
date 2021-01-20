@@ -19,13 +19,13 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class ProjectConfigs implements CommandLineRunner {
+public class LogProjectConfigs implements CommandLineRunner {
     @Resource
     private Environment environment;
 
     @Override
     public void run(String... args) {
-        log.info("-------------------- log project configs begin --------------------");
+        log.info("======================================== log project configs begin ========================================");
         try {
             for (PropertySource<?> sources : ((AbstractEnvironment) environment).getPropertySources()) {
                 if (sources.getSource() instanceof Map) {
@@ -37,7 +37,7 @@ public class ProjectConfigs implements CommandLineRunner {
         } catch (Exception e) {
             log.error("log project configs error.", e);
         }
-        log.info("-------------------- log project configs end --------------------");
+        log.info("======================================== log project configs end ========================================");
     }
 
     /**

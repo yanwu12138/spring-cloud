@@ -42,6 +42,26 @@ docker run -d --restart=always --name mysql -v ~/mysql/data:/var/lib/mysql -e MY
 6 EXIT;
 ```
 
+##### 解决MySQL中文乱码问题
+
+-   给容器[安装vim命令](./docker安装vim.md)
+
+-   修改`/etc/mysql/my.cnf`文件，加入以下配置
+
+    ```shell
+    [mysql] 
+    default-character-set=utf8
+    [mysql.server] 
+    default-character-set=utf8
+    [mysqld_safe] 
+    default-character-set=utf8
+    [client] 
+    default-character-set=utf8
+    [mysqld] 
+    character_set_server=utf8 
+    init_connect='SET NAMES utf8'
+    ```
+
 ##### 重启MySQL容器
 
 ```shell
