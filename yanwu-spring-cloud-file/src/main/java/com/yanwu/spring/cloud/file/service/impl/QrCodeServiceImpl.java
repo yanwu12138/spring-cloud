@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.file.service.impl;
 import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
+import com.yanwu.spring.cloud.file.config.FileConfig;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.pojo.QrCodeReq;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
@@ -10,7 +11,6 @@ import com.yanwu.spring.cloud.file.service.QrCodeService;
 import com.yanwu.spring.cloud.file.utils.QrCodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +35,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class QrCodeServiceImpl implements QrCodeService {
     private static final String QR_CODE_KEY = "qr_code_key_";
-    @Value("${qrcode.check.url}")
-    private String checkQrCodeUrl;
-    @Value("${qrcode.file.path}")
-    private String codeFilePath;
+
+    @Resource
+    private FileConfig fileConfig;
 
     @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
@@ -50,14 +49,14 @@ public class QrCodeServiceImpl implements QrCodeService {
     @Override
     public Attachment create(QrCodeReq param) throws Exception {
         // ----- 生成二维码
-        String checkUrl = checkQrCodeUrl + "?key=" + param.getContent();
+        String checkUrl = fileConfig.getCheckQrCodeUrl() + "?key=" + param.getContent();
         BufferedImage image = QrCodeUtil.createImage(param.getLogoUrl(), checkUrl, param.getLengthOfSide(), param.getLogoLengthOfSide(), Objects.isNull(param.getNeedCompress()) ? true : param.getNeedCompress());
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(image, Contents.QR_CODE_EXT, baos);
             try (InputStream inputStream = new ByteArrayInputStream(baos.toByteArray())) {
                 // ----- 将二维码以文件的形式写到本地
                 String fileName = RandomStringUtils.randomAlphanumeric(5).toUpperCase() + FileType.JPG.getSuffix();
-                String filePath = codeFilePath + File.separator + fileName;
+                String filePath = fileConfig.getCodeFilePath() + File.separator + fileName;
                 FileUtil.write(inputStream, filePath);
                 // ----- 入库
                 Attachment attachment = new Attachment()

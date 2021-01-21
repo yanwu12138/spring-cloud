@@ -20,6 +20,8 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <lucene.version>8.0.0</lucene.version>
+        <ikAnalyzer.version>2012_u6</ikAnalyzer.version>
         <google.zxing.version>3.4.0</google.zxing.version>
         <mybatis.spring.version>2.1.2</mybatis.spring.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
@@ -82,6 +84,41 @@
             <groupId>com.yanwu.spring.cloud.common</groupId>
             <artifactId>yanwu-spring-cloud-common</artifactId>
             <version>${yanwu.spring.cloud.common.version}</version>
+        </dependency>
+        <!-- lucene核心库 -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <!-- Lucene的查询解析器 -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <!-- lucene的默认分词器库 -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <!-- lucene的高亮显示 -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <!-- IK分词器 -->
+        <dependency>
+            <groupId>com.janeluo</groupId>
+            <artifactId>ikanalyzer</artifactId>
+            <version>${ikAnalyzer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-smartcn</artifactId>
+            <version>7.4.0</version>
         </dependency>
     </dependencies>
 
