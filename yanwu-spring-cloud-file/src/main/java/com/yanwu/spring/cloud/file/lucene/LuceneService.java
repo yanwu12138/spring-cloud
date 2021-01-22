@@ -39,22 +39,23 @@ public class LuceneService {
     @Resource
     private LuceneCacheManager cacheManager;
 
+    /**
+     * 创建索引
+     */
     public Long create(LuceneDocument param) throws Exception {
-        // ----- 创建文档对象
         Long index = cacheManager.getIdIndex();
         Document document = createDocument(index, param);
-        // ----- 创建索引目录对象
         Directory directory = cacheManager.getDirectory(fileConfig.getLuceneIndex());
-        // ----- 创建索引写出工具
         try (IndexWriter writer = cacheManager.getWriter(directory)) {
-            // ----- 添加文档到索引写出工具
             writer.addDocument(document);
-            // ----- 提交
             writer.commit();
         }
         return index;
     }
 
+    /**
+     * 删除索引
+     */
     public Long delete(String field, String value) throws Exception {
         long result;
         Directory directory = cacheManager.getDirectory(fileConfig.getLuceneIndex());
@@ -66,6 +67,9 @@ public class LuceneService {
         return result;
     }
 
+    /**
+     * 更新索引
+     */
     public void update(Long id, String field, String value) throws Exception {
         Directory directory = cacheManager.getDirectory(fileConfig.getLuceneIndex());
         try (IndexWriter writer = cacheManager.getWriter(directory)) {
@@ -76,15 +80,22 @@ public class LuceneService {
         }
     }
 
+    /**
+     * 查询所有
+     */
     public List<LuceneDocument> searchAll(LuceneSearch param) throws Exception {
         Query query = new MultiFieldQueryParser(param.getFields(), new SmartChineseAnalyzer()).parse(param.getValue());
         Directory directory = cacheManager.getDirectory(fileConfig.getLuceneIndex());
         try (IndexReader reader = cacheManager.getReader(directory)) {
+            // ----- TopDocs：搜索结果的信息集合
             TopDocs topDocs = getTopDocs(new IndexSearcher(reader), query, param, Integer.MAX_VALUE);
             return assemblyResult(reader, topDocs.scoreDocs, null, null);
         }
     }
 
+    /**
+     * 分页查询，
+     */
     public List<LuceneDocument> pageSearch(PageParam<LuceneSearch> param) throws Exception {
         param.setPage(param.getPage() > 0 ? param.getPage() : 1);
         Query query = new MultiFieldQueryParser(param.getData().getFields(), new SmartChineseAnalyzer()).parse(param.getData().getValue());
@@ -99,6 +110,9 @@ public class LuceneService {
         }
     }
 
+    /**
+     * 创建文档
+     */
     private Document createDocument(Long id, LuceneDocument param) {
         Document document = new Document();
         // ----- 添加字段,这里字段的参数：字段的名称、字段的值、是否存储。Store.YES存储，Store.NO是不存储
@@ -135,6 +149,7 @@ public class LuceneService {
             if (i >= scoreDocs.length) {
                 break;
             }
+            // ----- ScoreDoc：搜索到的某个文档信息
             ScoreDoc scoreDoc = scoreDocs[i];
             Document document = reader.document(scoreDoc.doc);
             result.add(LuceneDocument.getInstance(document.get("id"), document.get("title"), document.get("content")));
