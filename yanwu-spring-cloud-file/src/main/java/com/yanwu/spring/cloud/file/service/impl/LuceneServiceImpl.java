@@ -1,10 +1,11 @@
-package com.yanwu.spring.cloud.file.lucene;
+package com.yanwu.spring.cloud.file.service.impl;
 
 import com.yanwu.spring.cloud.common.pojo.PageParam;
 import com.yanwu.spring.cloud.file.cache.LuceneCacheManager;
 import com.yanwu.spring.cloud.file.config.FileConfig;
 import com.yanwu.spring.cloud.file.pojo.LuceneDocument;
 import com.yanwu.spring.cloud.file.pojo.LuceneSearch;
+import com.yanwu.spring.cloud.file.service.LuceneService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
@@ -33,7 +34,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class LuceneService {
+public class LuceneServiceImpl implements LuceneService {
     @Resource
     private FileConfig fileConfig;
     @Resource
@@ -42,6 +43,7 @@ public class LuceneService {
     /**
      * 创建索引
      */
+    @Override
     public Long create(LuceneDocument param) throws Exception {
         Long index = cacheManager.getIdIndex();
         Document document = createDocument(index, param);
@@ -56,6 +58,7 @@ public class LuceneService {
     /**
      * 删除索引
      */
+    @Override
     public Long delete(String field, String value) throws Exception {
         long result;
         Directory directory = cacheManager.getDirectory(fileConfig.getLuceneIndex());
@@ -70,6 +73,7 @@ public class LuceneService {
     /**
      * 更新索引
      */
+    @Override
     public void update(Long id, String field, String value) throws Exception {
         Directory directory = cacheManager.getDirectory(fileConfig.getLuceneIndex());
         try (IndexWriter writer = cacheManager.getWriter(directory)) {
@@ -83,6 +87,7 @@ public class LuceneService {
     /**
      * 查询所有
      */
+    @Override
     public List<LuceneDocument> searchAll(LuceneSearch param) throws Exception {
         Query query = new MultiFieldQueryParser(param.getFields(), new SmartChineseAnalyzer()).parse(param.getValue());
         Directory directory = cacheManager.getDirectory(fileConfig.getLuceneIndex());
@@ -96,6 +101,7 @@ public class LuceneService {
     /**
      * 分页查询，
      */
+    @Override
     public List<LuceneDocument> pageSearch(PageParam<LuceneSearch> param) throws Exception {
         param.setPage(param.getPage() > 0 ? param.getPage() : 1);
         Query query = new MultiFieldQueryParser(param.getData().getFields(), new SmartChineseAnalyzer()).parse(param.getData().getValue());

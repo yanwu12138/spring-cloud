@@ -50,7 +50,7 @@ public class QrCodeServiceImpl implements QrCodeService {
     public Attachment create(QrCodeReq param) throws Exception {
         // ----- 生成二维码
         String checkUrl = fileConfig.getCheckQrCodeUrl() + "?key=" + param.getContent();
-        BufferedImage image = QrCodeUtil.createImage(param.getLogoUrl(), checkUrl, param.getLengthOfSide(), param.getLogoLengthOfSide(), Objects.isNull(param.getNeedCompress()) ? true : param.getNeedCompress());
+        BufferedImage image = QrCodeUtil.createImage(param.getLogoUrl(), checkUrl, param.getLengthOfSide(), param.getLogoLengthOfSide(), Objects.isNull(param.getNeedCompress()) || param.getNeedCompress());
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(image, Contents.QR_CODE_EXT, baos);
             try (InputStream inputStream = new ByteArrayInputStream(baos.toByteArray())) {

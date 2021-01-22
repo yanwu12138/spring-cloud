@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.file.pojo;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,8 +14,9 @@ import java.io.Serializable;
  * description:
  */
 @Data
+@Accessors(chain = true)
 public class QrCodeReq implements Serializable {
-
+    private static final long serialVersionUID = -2978048032889629258L;
 
     private String logoUrl;
 

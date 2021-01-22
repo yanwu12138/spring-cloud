@@ -3,9 +3,9 @@ package com.yanwu.spring.cloud.file.controller.file;
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.PageParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
-import com.yanwu.spring.cloud.file.lucene.LuceneService;
 import com.yanwu.spring.cloud.file.pojo.LuceneDocument;
 import com.yanwu.spring.cloud.file.pojo.LuceneSearch;
+import com.yanwu.spring.cloud.file.service.LuceneService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
