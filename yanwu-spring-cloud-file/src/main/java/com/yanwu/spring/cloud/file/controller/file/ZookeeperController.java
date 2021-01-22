@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author Baofeng Xu
@@ -48,6 +49,12 @@ public class ZookeeperController {
     @GetMapping("search")
     public ResponseEnvelope<ZookeeperNode> search(@RequestBody ZookeeperNode param) throws Exception {
         return ResponseEnvelope.success(zookeeperService.search(param));
+    }
+
+    @LogParam
+    @GetMapping("children")
+    public ResponseEnvelope<List<String>> children(@RequestBody ZookeeperNode param) throws Exception {
+        return ResponseEnvelope.success(zookeeperService.children(param));
     }
 
 }

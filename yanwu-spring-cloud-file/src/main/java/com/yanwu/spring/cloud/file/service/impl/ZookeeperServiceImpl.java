@@ -9,6 +9,7 @@ import org.apache.zookeeper.data.Stat;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author Baofeng Xu
@@ -46,6 +47,12 @@ public class ZookeeperServiceImpl implements ZookeeperService {
         CuratorFramework client = zookeeperClient.getClient();
         byte[] bytes = client.getData().storingStatIn(new Stat()).forPath(param.getPath());
         return ZookeeperNode.getInstance(param.getPath(), new String(bytes));
+    }
+
+    @Override
+    public List<String> children(ZookeeperNode param) throws Exception {
+        CuratorFramework client = zookeeperClient.getClient();
+        return client.getChildren().storingStatIn(new Stat()).forPath(param.getPath());
     }
 
 }

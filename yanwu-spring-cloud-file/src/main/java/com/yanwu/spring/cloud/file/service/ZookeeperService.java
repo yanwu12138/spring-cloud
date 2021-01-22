@@ -2,6 +2,8 @@ package com.yanwu.spring.cloud.file.service;
 
 import com.yanwu.spring.cloud.file.pojo.ZookeeperNode;
 
+import java.util.List;
+
 /**
  * @author Baofeng Xu
  * @date 2021/1/22 17:58.
@@ -42,4 +44,13 @@ public interface ZookeeperService {
      * @throws Exception e
      */
     ZookeeperNode search(ZookeeperNode param) throws Exception;
+
+    /**
+     * 查找目录下所有的节点
+     *
+     * @param param 节点信息
+     * @return 节点下的子节点
+     * @throws Exception e
+     */
+    List<String> children(ZookeeperNode param) throws Exception;
 }
