@@ -19,8 +19,20 @@ public class FileConfig {
     private String checkQrCodeUrl;
     @Value("${qrcode.file.path}")
     private String codeFilePath;
-    /*** ----------- 二维码相关配置 ----------- ***/
+
+
+    /*** ----------- lucene相关配置 ----------- ***/
     @Value("${lucene.index}")
     private String luceneIndex;
+
+    /*** ----------- zookeeper相关配置 ----------- ***/
+    @Value("${zookeeper.path}")
+    private String zookeeperPath;
+    @Value("${zookeeper.timeout}")
+    private Integer zookeeperTimeout;
+    @Value("${zookeeper.backoff.baseSleepTime}")
+    private Integer zookeeperBaseSleepTime;
+    @Value("${zookeeper.backoff.maxRetries}")
+    private Integer zookeeperMaxRetries;
 
 }
