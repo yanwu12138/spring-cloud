@@ -1,10 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.locks.InterProcessMultiLock;
-import org.apache.curator.framework.recipes.locks.InterProcessMutex;
-import org.apache.curator.framework.recipes.locks.InterProcessReadWriteLock;
-import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
+import org.apache.curator.framework.recipes.locks.*;
 
 import java.util.List;
 
@@ -24,7 +21,7 @@ public class ZookeeperLock {
      * @param path   锁路径
      * @return 锁
      */
-    public static InterProcessMutex getInterProcessMutex(CuratorFramework client, String path) {
+    public static InterProcessLock getInterProcessMutex(CuratorFramework client, String path) {
         return new InterProcessMutex(client, path);
     }
 
@@ -35,7 +32,7 @@ public class ZookeeperLock {
      * @param path   锁路径
      * @return 锁
      */
-    public static InterProcessSemaphoreMutex getInterProcessSemaphoreMutex(CuratorFramework client, String path) {
+    public static InterProcessLock getInterProcessSemaphoreMutex(CuratorFramework client, String path) {
         return new InterProcessSemaphoreMutex(client, path);
     }
 
@@ -57,7 +54,7 @@ public class ZookeeperLock {
      * @param paths  锁路径
      * @return 锁
      */
-    public static InterProcessMultiLock getInterProcessMultiLock(CuratorFramework client, List<String> paths) {
+    public static InterProcessLock getInterProcessMultiLock(CuratorFramework client, List<String> paths) {
         return new InterProcessMultiLock(client, paths);
     }
 

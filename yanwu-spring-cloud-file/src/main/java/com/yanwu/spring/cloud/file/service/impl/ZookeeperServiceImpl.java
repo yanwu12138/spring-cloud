@@ -6,7 +6,7 @@ import com.yanwu.spring.cloud.file.pojo.ZookeeperNode;
 import com.yanwu.spring.cloud.file.service.ZookeeperService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
+import org.apache.curator.framework.recipes.locks.InterProcessLock;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +67,7 @@ public class ZookeeperServiceImpl implements ZookeeperService {
         int size = 50;
         while (size > 0) {
             executors.execute(() -> {
-                InterProcessSemaphoreMutex lock = ZookeeperLock.getInterProcessSemaphoreMutex(client, path);
+                InterProcessLock lock = ZookeeperLock.getInterProcessSemaphoreMutex(client, path);
                 try {
                     lock.acquire();
                     log.info("thread: {} lock", Thread.currentThread().getName());
