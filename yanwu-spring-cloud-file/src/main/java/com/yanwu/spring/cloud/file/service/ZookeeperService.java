@@ -53,4 +53,11 @@ public interface ZookeeperService {
      * @throws Exception e
      */
     List<String> children(ZookeeperNode param) throws Exception;
+
+    /**
+     * 测试zookeeper分布式锁
+     *
+     * @param path 加锁路径
+     */
+    void lock(String path);
 }

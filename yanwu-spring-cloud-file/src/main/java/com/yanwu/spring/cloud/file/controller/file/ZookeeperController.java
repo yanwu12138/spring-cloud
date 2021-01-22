@@ -57,4 +57,13 @@ public class ZookeeperController {
         return ResponseEnvelope.success(zookeeperService.children(param));
     }
 
+    @LogParam
+    @GetMapping("lock")
+    public ResponseEnvelope<Void> lock(@RequestBody ZookeeperNode param) throws Exception {
+        zookeeperService.lock(param.getPath());
+        return ResponseEnvelope.success();
+    }
+
+
+
 }

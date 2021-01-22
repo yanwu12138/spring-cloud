@@ -1,15 +1,19 @@
 package com.yanwu.spring.cloud.file.service.impl;
 
+import com.yanwu.spring.cloud.common.utils.ZookeeperLock;
 import com.yanwu.spring.cloud.file.cache.ZookeeperClient;
 import com.yanwu.spring.cloud.file.pojo.ZookeeperNode;
 import com.yanwu.spring.cloud.file.service.ZookeeperService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Baofeng Xu
@@ -21,6 +25,8 @@ import java.util.List;
 @Service
 public class ZookeeperServiceImpl implements ZookeeperService {
 
+    @Resource
+    private Executor executors;
     @Resource
     private ZookeeperClient zookeeperClient;
 
@@ -53,6 +59,26 @@ public class ZookeeperServiceImpl implements ZookeeperService {
     public List<String> children(ZookeeperNode param) throws Exception {
         CuratorFramework client = zookeeperClient.getClient();
         return client.getChildren().storingStatIn(new Stat()).forPath(param.getPath());
+    }
+
+    @Override
+    public void lock(String path) {
+        CuratorFramework client = zookeeperClient.getClient();
+        int size = 50;
+        while (size > 0) {
+            executors.execute(() -> {
+                InterProcessSemaphoreMutex lock = ZookeeperLock.getInterProcessSemaphoreMutex(client, path);
+                try {
+                    lock.acquire();
+                    log.info("thread: {} lock", Thread.currentThread().getName());
+                    TimeUnit.SECONDS.sleep(2);
+                    lock.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            size--;
+        }
     }
 
 }
