@@ -73,6 +73,7 @@ public class ZookeeperServiceImpl implements ZookeeperService {
                     log.info("thread: {} lock", Thread.currentThread().getName());
                     TimeUnit.SECONDS.sleep(2);
                     lock.release();
+                    log.info("thread: {} unlock", Thread.currentThread().getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
