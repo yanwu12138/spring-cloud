@@ -9,11 +9,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author XuBaofeng.
@@ -41,28 +37,6 @@ public class YanwuSpringCloudFileApplication {
     @LoadBalanced
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
-    }
-
-
-
-    @Bean
-    public Executor executors() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        // ----- 设置核心线程数
-        executor.setCorePoolSize(50);
-        // ----- 设置最大线程数
-        executor.setMaxPoolSize(100);
-        // ----- 设置队列容量
-        executor.setQueueCapacity(Integer.MAX_VALUE);
-        // ----- 设置线程活跃时间（秒）
-        executor.setKeepAliveSeconds(120);
-        // ----- 设置默认线程名称
-        executor.setThreadNamePrefix("executor-");
-        // ----- 设置拒绝策略
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        // ----- 执行初始化
-        executor.initialize();
-        return executor;
     }
 
 }

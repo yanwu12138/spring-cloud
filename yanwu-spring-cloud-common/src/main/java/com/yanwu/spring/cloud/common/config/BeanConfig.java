@@ -4,6 +4,10 @@ import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -20,4 +24,28 @@ public class BeanConfig {
         return new DozerBeanMapper();
     }
 
+    /**
+     * 通用线程池
+     *
+     * @return 线程池
+     */
+    @Bean
+    public Executor executors() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        // ----- 设置核心线程数
+        executor.setCorePoolSize(50);
+        // ----- 设置最大线程数
+        executor.setMaxPoolSize(100);
+        // ----- 设置队列容量
+        executor.setQueueCapacity(Integer.MAX_VALUE);
+        // ----- 设置线程活跃时间（秒）
+        executor.setKeepAliveSeconds(120);
+        // ----- 设置默认线程名称
+        executor.setThreadNamePrefix("executor-");
+        // ----- 设置拒绝策略
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // ----- 执行初始化
+        executor.initialize();
+        return executor;
+    }
 }
