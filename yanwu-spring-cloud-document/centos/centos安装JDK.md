@@ -3,9 +3,9 @@
 ##### 检查是否已有JDK
 
 ```shell
-rpm -qa |grep java
-rpm -qa |grep jdk
-rpm -qa |grep gcj
+rpm -qa | grep java
+rpm -qa | grep jdk
+rpm -qa | grep gcj
 ```
 
 -   如果没有输入信息表示没有安装。

@@ -1,0 +1,121 @@
+### 本文档使用docker容器运行elasticsearch的7.3.0版本
+
+#### 安装ElasticSearch
+
+##### 查找镜像
+
+```shell
+docker search elasticsearch
+```
+
+##### 下载镜像
+
+```shell
+docker pull docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+```
+
+##### 查看镜像是否拉取成功
+
+```shell
+docker images
+```
+
+![image-20210129154116981](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/2021012915411717.png)
+
+##### 相关配置
+
+```shell
+##### 创建es的config文件夹，将docker中es的配置挂载在外部，当我们在linux虚拟机中修改es的配置文件时，就会同时修改docker中的es的配置
+mkdir -p /root/elasticsearch/config
+
+##### 创建es的data文件夹
+mkdir -p /root/elasticsearch/data
+
+##### [http.host:0.0.0.0]允许任何远程机器访问es，并将其写入es的配置文件中
+echo "http.host:0.0.0.0" >> /root/elasticsearch/config/elasticsearch.yml
+
+##### 保证权限问题
+chmod -R 777 /root/elasticsearch/
+```
+
+![image-20210129155620663](C:\Users\许保锋\AppData\Roaming\Typora\typora-user-images\image-20210129155620663.png)
+
+
+
+##### ElasticSearch启动脚本
+
+```shell
+#####################################################################################################
+# 9200:9200 && 9300:9300        	# 容器端口映射
+# discovery.type=single-node 		# 当前es以单节点模式运行
+# ES_JAVA_OPTS="-Xms64m -Xmx128m" 	# 指定开发时es运行时的最小和最大内存占用为64M和128M，否则就会占用全部可用内存
+# restart=always   					# 自动重启容器
+#####################################################################################################
+docker run --name elasticsearch -d -p 9200:9200 -p 9300:9300 --restart=always -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms64m -Xmx128m" docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+```
+
+##### 访问ElasticSearch查看是否启动成功
+
+```reStructuredText
+主页：http://{docker宿主机ip}:9200/
+```
+
+![image-20210129154341205](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/2021012915434141.png)
+
+#### 安装kibana
+
+##### 查找镜像
+
+```shell
+docker search kibana
+```
+
+##### 下载镜像
+
+>   __注意：elasticSearch && kibana 的版本必须一致__
+
+```shell
+docker pull kibana:7.3.0
+```
+
+##### 查看镜像是否拉取成功
+
+```shell
+docker images
+```
+
+![image-20210129155121899](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/2021012915512121.png)
+
+##### 配置文件
+
+>   kibana.xml
+>
+>   ```xml
+>   #################################################
+>   # Default Kibana configuration for docker target
+>   # 172.17.0.10 #  elasticSearch容器IP
+>   #################################################
+>   server.name: kibana
+>   server.host: "0"
+>   elasticsearch.hosts: [ "http://172.17.0.10:9200" ]
+>   xpack.monitoring.ui.container.elasticsearch.enabled: true
+>   ```
+
+##### kibana启动脚本
+
+```shell
+#####################################################################################################
+# 5601:5601				        	# 容器端口映射
+# /root/kibana/kibana.yml	 		# kibana的配置文件
+# restart=always   					# 自动重启容器
+#####################################################################################################
+docker run -d --restart=always --log-driver json-file --log-opt max-size=100m --log-opt max-file=2 --name kibana -p 5601:5601 -v /root/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml kibana:7.3.0
+```
+
+##### 访问kibana查看是否启动成功
+
+```text
+主页：http://{docker宿主机ip}:5601/
+```
+
+![image-20210129181310087](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/2021012918131010.png)
