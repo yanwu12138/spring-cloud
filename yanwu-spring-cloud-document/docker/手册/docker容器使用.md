@@ -93,6 +93,18 @@ docker import http://example.com/exampleimage.tgz example/imagerepo
 
 
 
+#### 容器IP
+
+>   docker容器都是动态分配IP，每次启动容器可能IP都不一致，可以通过以下命令查看容器的内部IP
+
+```
+docker inspect {CONTAINER ID}
+```
+
+![image-20210201093838894](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/02/2021020109383939.png)
+
+
+
 #### 容器端口
 
 >   通过 **docker ps** 命令可以查看到容器的端口映射，**docker** 还提供了另一个快捷方式 **docker port**，使用 **docker port** 可以查看指定 （ID 或者名字）容器的某个确定端口映射到宿主机的端口号

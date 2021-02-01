@@ -86,6 +86,28 @@ docker images
 
 ![image-20210129155121899](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/2021012915512121.png)
 
+##### 配置宿主机
+
+>   这是一个已知的 Bug，宿主机不允许来自本机的 Docker 容器访问。必须通过设置 firewalld 规则允许本机的 Docker 容器访问。
+
+```shell
+vim /etc/firewalld/zones/public.xml
+
+##### 添加如下内容，注意这里的 172.17.0.0/16 可以匹配 172.17.xx.xx IP 段的所有 IP
+<rule family="ipv4">
+  <source address="172.17.0.0/16" />
+  <accept />
+</rule>
+```
+
+![image-20210201101850363](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/02/2021020110185050.png)
+
+##### 重启防火墙
+
+```shell
+systemctl restart firewalld
+```
+
 ##### 配置文件
 
 >   kibana.xml
@@ -97,7 +119,7 @@ docker images
 >   #################################################
 >   server.name: kibana
 >   server.host: "0"
->   elasticsearch.hosts: [ "http://172.17.0.10:9200" ]
+>   elasticsearch.hosts: [ "http://{宿主机IP}:9200" ]
 >   xpack.monitoring.ui.container.elasticsearch.enabled: true
 >   ```
 
