@@ -22,26 +22,6 @@ docker images
 
 ![image-20210129154116981](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/2021012915411717.png)
 
-##### 相关配置
-
-```shell
-##### 创建es的config文件夹，将docker中es的配置挂载在外部，当我们在linux虚拟机中修改es的配置文件时，就会同时修改docker中的es的配置
-mkdir -p /root/elasticsearch/config
-
-##### 创建es的data文件夹
-mkdir -p /root/elasticsearch/data
-
-##### [http.host:0.0.0.0]允许任何远程机器访问es，并将其写入es的配置文件中
-echo "http.host:0.0.0.0" >> /root/elasticsearch/config/elasticsearch.yml
-
-##### 保证权限问题
-chmod -R 777 /root/elasticsearch/
-```
-
-![image-20210129155620663](C:\Users\许保锋\AppData\Roaming\Typora\typora-user-images\image-20210129155620663.png)
-
-
-
 ##### ElasticSearch启动脚本
 
 ```shell
@@ -61,6 +41,8 @@ docker run --name elasticsearch -d -p 9200:9200 -p 9300:9300 --restart=always -e
 ```
 
 ![image-20210129154341205](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/2021012915434141.png)
+
+
 
 #### 安装kibana
 
@@ -126,11 +108,11 @@ systemctl restart firewalld
 ##### kibana启动脚本
 
 ```shell
-#####################################################################################################
+######################################################
 # 5601:5601				        	# 容器端口映射
 # /root/kibana/kibana.yml	 		# kibana的配置文件
 # restart=always   					# 自动重启容器
-#####################################################################################################
+######################################################
 docker run -d --restart=always --log-driver json-file --log-opt max-size=100m --log-opt max-file=2 --name kibana -p 5601:5601 -v /root/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml kibana:7.3.0
 ```
 
