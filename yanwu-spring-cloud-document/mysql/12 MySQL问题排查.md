@@ -199,14 +199,14 @@ WHERE THREAD_ID IN (SELECT THREAD_ID FROM performance_schema.threads WHERE PROCE
 
 #### 慢查询参数
 
-| 参数                          | 说明                                                         |
-| ----------------------------- | ------------------------------------------------------------ |
-| slow_query_log                | 是否开启慢查询日志，【1：开启；0：关闭】                     |
-| log-slow-queries              | 旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件`host_name-slow.log` |
-| slow-query-log-file           | 新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件`host_name-slow.log` |
-| long_query_time               | 慢查询**阈值**，当查询时间多于设定的阈值时，记录日志         |
-| log_queries_not_using_indexes | 未使用索引的查询也被记录到慢查询日志中（可选项）             |
-| log_output                    | 日志存储方式。`log_output='FILE'`表示将日志存入文件，默认值是`'FILE'`。`log_output='TABLE'`表示将日志存入数据库 |
+| 参数                            | 说明                                                         |
+| ------------------------------- | ------------------------------------------------------------ |
+| `slow_query_log`                | 是否开启慢查询日志，【1：开启；0：关闭】                     |
+| `log-slow-queries`              | 旧版（5.6以下版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件`host_name-slow.log` |
+| `slow-query-log-file`           | 新版（5.6及以上版本）MySQL数据库慢查询日志存储路径。可以不设置该参数，系统则会默认给一个缺省的文件`host_name-slow.log` |
+| `long_query_time`               | 慢查询**阈值**，当查询时间多于设定的阈值时，记录日志         |
+| `log_queries_not_using_indexes` | 未使用索引的查询也被记录到慢查询日志中（可选项）             |
+| `log_output`                    | 日志存储方式。`log_output='FILE'`表示将日志存入文件，默认值是`'FILE'`。`log_output='TABLE'`表示将日志存入数据库 |
 
 
 
@@ -220,21 +220,18 @@ WHERE THREAD_ID IN (SELECT THREAD_ID FROM performance_schema.threads WHERE PROCE
 
 ```sql
 mysql> show variables like '%slow_query_log%';
- +---------------------+-----------------------------------------------+
- | Variable_name       | Value                                         |
- +---------------------+-----------------------------------------------+
- | slow_query_log      | OFF                                           |
- | slow_query_log_file | /home/WDPM/MysqlData/mysql/DB-Server-slow.log |
- +---------------------+-----------------------------------------------+
- 2 rows in set (0.00 sec)
 ```
+
+| Variable_name         | Value                                           |
+| --------------------- | ----------------------------------------------- |
+| `slow_query_log`      | `OFF`                                           |
+| `slow_query_log_file` | `/home/WDPM/MysqlData/mysql/DB-Server-slow.log` |
 
 -   开启/关闭慢查询日志
 
 ```sql
 -- 临时开启关闭慢查询日志【0：关闭；1：开启】
 mysql> set global slow_query_log=1;
-Query OK, 0 rows affected (0.09 sec)
 ```
 
 **注：**使用`set global slow_query_log=1`开启了慢查询日志只对当前数据库生效，MySQL重启后则会失效。如果需要永久生效，就必须修改配置文件`my.cnf`，`my.cnf`要增加或修改参数`slow_query_log` 和`slow_query_log_file`，如下所示：
@@ -253,28 +250,19 @@ slow_query_log_file = /tmp/mysql_slow.log
 ```sql
 -- 查看方式一：
 mysql> show variables like 'long_query_time%';
- +-----------------+-----------+
- | Variable_name   | Value     |
- +-----------------+-----------+
- | long_query_time | 10.000000 |
- +-----------------+-----------+
- 1 row in set (0.00 sec)
- 
+
 -- 查看方式二：
 mysql> show global variables like 'long_query_time'
- +-----------------+-----------+
- | Variable_name   | Value     |
- +-----------------+-----------+
- | long_query_time | 10.000000 |
- +-----------------+-----------+
- 1 row in set (0.00 sec)
 ```
+
+| Variable_name     | Value       |
+| ----------------- | ----------- |
+| `long_query_time` | `10.000000` |
 
 -   设置慢查询阈值
 
 ```sql
 mysql> set global long_query_time=4;
-Query OK, 0 rows affected (0.00 sec)
 ```
 
 **注：**使用命令 `set global long_query_time=4`修改后，需要重新连接或新开一个会话才能看到修改值，用`show variables like 'long_query_time'`查看是当前会话的变量值。也可以不用重新连接会话，而是用`show global variables like 'long_query_time';`
@@ -294,26 +282,23 @@ Query OK, 0 rows affected (0.00 sec)
 
 ```sql
 mysql> show variables like '%log_output%';
- +---------------+-------+
- | Variable_name | Value |
- +---------------+-------+
- | log_output    | FILE  |
- +---------------+-------+
- 1 row in set (0.00 sec)
 ```
+
+| Variable_name | Value  |
+| ------------- | ------ |
+| `log_output`  | `FILE` |
 
 -   设置慢查询日志存储方式
 
 ```
 mysql> set global log_output='TABLE';
-Query OK, 0 rows affected (0.00 sec)
 ```
 
 -   测试慢查询日志
 
 ```sql
 mysql> select sleep(11);
- 
+
 mysql> select * from mysql.slow_log;
 ```
 
@@ -325,19 +310,16 @@ mysql> select * from mysql.slow_log;
 
 ```
 mysql> show variables like 'log_queries_not_using_indexes';
- +-------------------------------+-------+
- | Variable_name                 | Value |
- +-------------------------------+-------+
- | log_queries_not_using_indexes | OFF   |
- +-------------------------------+-------+
- 1 row in set (0.00 sec)
 ```
+
+| Variable_name                   | Value |
+| ------------------------------- | ----- |
+| `log_queries_not_using_indexes` | `OFF` |
 
 -   开启/关闭未使用索引查询输出
 
 ```sql
 mysql> set global log_queries_not_using_indexes=1;
-Query OK, 0 rows affected (0.00 sec)
 ```
 
 ##### 慢管理语句
@@ -348,13 +330,11 @@ Query OK, 0 rows affected (0.00 sec)
 
 ```sql
 mysql> show variables like 'log_slow_admin_statements';
- +---------------------------+-------+
- | Variable_name             | Value |
- +---------------------------+-------+
- | log_slow_admin_statements | OFF   |
- +---------------------------+-------+
- 1 row in set (0.00 sec)
 ```
+
+| Variable_name               | Value |
+| --------------------------- | ----- |
+| `log_slow_admin_statements` | `OFF` |
 
 -   开启/关闭慢管理语句输出
 
@@ -368,17 +348,52 @@ set global log_slow_admin_statements=1;
 
 ```
 mysql> show global status like '%Slow_queries%';
- +---------------+-------+
- | Variable_name | Value |
- +---------------+-------+
- | Slow_queries  | 11    |
- +---------------+-------+
- 1 row in set (0.00 sec)
 ```
+
+| Variable_name  | Value |
+| -------------- | ----- |
+| `Slow_queries` | 11    |
+
+
+
+#### 慢查询日志表解析
+
+>   当 `log_output=TABLE` 时，慢查询日志会记录到 `mysql.slow_log` 表中
+
+##### 查看慢查询日志表
+
+```sql
+mysql> select * from mysql.slow_log;
+```
+
+| start_time                 | user_host                    | query_time      | lock_time       | rows_sent | rows_examined | db                 | last_insert_id | insert_id | server_id | sql_text         | thread_id |
+| -------------------------- | ---------------------------- | --------------- | --------------- | --------- | ------------- | ------------------ | -------------- | --------- | --------- | ---------------- | --------- |
+| 2021-03-04 06:36:08.098375 | root[root] @  [192.168.56.1] | 00:00:10.000451 | 00:00:00.000000 | 1         | 0             | xbf_server_control | 0              | 0         | 0         | (BLOB) 128 bytes | 6         |
+| 2021-03-04 06:39:39.448648 | root[root] @  [192.168.56.1] | 00:00:00.000836 | 00:00:00.000138 | 15        | 312           | xbf_server_control | 0              | 0         | 0         | (BLOB) 98 bytes  | 6         |
+| 2021-03-04 06:39:39.449829 | root[root] @  [192.168.56.1] | 00:00:00.000784 | 00:00:00.000140 | 22        | 329           | xbf_server_control | 0              | 0         | 0         | (BLOB) 213 bytes | 6         |
+
+##### 慢查询日志表字段意义解析
+
+| 字段             | 说明                                              |
+| ---------------- | ------------------------------------------------- |
+| `start_time`     | 执行SQL的开始时间                                 |
+| `user_host`      | 执行SQL的连接信息：用户、IP                       |
+| `query_time`     | SQL执行的时长，时间越长表示SQL执行越慢            |
+| `lock_time`      | 在MySQL服务器阶段等待锁时间（不是在存储引擎阶段） |
+| `rows_sent`      | 查询返回的参数                                    |
+| `rows_examined`  | SQL扫描的行数，时间越长就越浪费时间               |
+| `db`             | 查询的数据库                                      |
+| `last_insert_id` | 最后插入的ID                                      |
+| `insert_id`      | 插入的ID                                          |
+| `server_id`      | 服务器ID                                          |
+| `sql_text`       | 执行的SQL语句，可能会很长                         |
+| `thread_id`      | 线程ID                                            |
 
 
 
 #### 慢查询日志文件解析
+
+>   当 `log_output=FILE` 时，慢查询日志会记录到 `slow_query_log_file` 指定的文件中
 
 ##### 查看慢查询日志文件
 
@@ -401,11 +416,11 @@ select sleep(11);
 ##### 慢查询日志文件字段意义解析
 
 
-| 选项                | 说明                                                         |
+| 字段                | 说明                                                         |
 | ------------------- | ------------------------------------------------------------ |
 | `Time`              | 执行SQL的时间                                                |
-| `User`              | 执行SQL的连接信息、用户、IP                                  |
-| `Id`                |                                                              |
+| `User`              | 执行SQL的连接信息：用户、IP                                  |
+| `Id`                | 线程ID                                                       |
 | `Query_time`        | SQL执行的时长，时间越长表示SQL执行越慢                       |
 | `Lock_time`         | 在MySQL服务器阶段等待锁时间（不是在存储引擎阶段）            |
 | `Rows_sent`         | 查询返回的参数                                               |
@@ -482,3 +497,4 @@ Count: 3  Time=11.00s (33s)  Lock=0.00s (0s)  Rows=1.0 (3), root[root]@[192.168.
 | `Rows`                      | SQL平均返回行数（SQL总的返回行数） |
 | `root[root]@[192.168.56.1]` | 执行SQL的用户、IP                  |
 | `select sleep(N)`           | 执行的SQL语句                      |
+
