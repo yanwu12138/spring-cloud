@@ -3,7 +3,6 @@ package com.yanwu.spring.cloud.common.demo.d03thread.t07lock;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -16,8 +15,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 @SuppressWarnings("all")
 public class D041ReadWriteLock {
-    /*** 互斥锁 ***/
-    private static final Lock LOCK = new ReentrantLock();
     /*** 读写锁 ***/
     private static final ReadWriteLock READ_WRITE_LOCK = new ReentrantReadWriteLock();
     /*** 读锁 ***/
@@ -29,6 +26,7 @@ public class D041ReadWriteLock {
         lock.lock();
         try {
             TimeUnit.SECONDS.sleep(1);
+            read();
             System.out.println("read end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,10 +35,15 @@ public class D041ReadWriteLock {
         }
     }
 
+    private void read() {
+        System.out.println("read");
+    }
+
     private void write(Lock lock) {
         lock.lock();
         try {
             TimeUnit.SECONDS.sleep(2);
+            write();
             System.out.println("write end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,15 +52,20 @@ public class D041ReadWriteLock {
         }
     }
 
+    private void write() {
+        System.out.println("write");
+    }
+
     public static void main(String[] args) {
         D041ReadWriteLock temp = new D041ReadWriteLock();
         Runnable read = () -> temp.read(READ_LOCK);
         Runnable write = () -> temp.write(WRITE_LOCK);
-        for (int i = 0; i < 18; i++) {
-            new Thread(read).start();
-        }
         for (int i = 0; i < 2; i++) {
             new Thread(write).start();
         }
+        for (int i = 0; i < 8; i++) {
+            new Thread(read).start();
+        }
     }
+
 }

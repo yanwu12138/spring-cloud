@@ -60,6 +60,8 @@ docker run -d --restart=always --name mysql -v ~/mysql/data:/var/lib/mysql -e MY
     [mysqld] 
     character_set_server=utf8 
     init_connect='SET NAMES utf8'
+    default-time-zone = '+8:00'
+    lower_case_table_names=1
     ```
 
 ##### 重启MySQL容器

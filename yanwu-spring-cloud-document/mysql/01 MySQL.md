@@ -1,5 +1,3 @@
-
-
 ## MySQL基本架构图
 
 ![clipboard](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/20200628130918.png)

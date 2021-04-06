@@ -148,3 +148,9 @@ docker inspect {CONTAINER ID}
 
 
 
+#### 设置容器时区
+
+```shell
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
+
