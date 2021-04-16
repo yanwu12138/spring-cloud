@@ -63,9 +63,8 @@ public class Aes128Util {
         }
         try {
             Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-            byte[] byteContent = content.getBytes(StandardCharsets.UTF_8);
             cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(key));
-            byte[] result = cipher.doFinal(byteContent);
+            byte[] result = cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
             return Base64.encodeBase64String(result);
         } catch (Exception e) {
             log.error("String: [{}] Aes128Util encryption error", content, e);
