@@ -42,7 +42,7 @@ ulimit -n 4096
 
 #### 方法2：查看java程序打开后没有释放的文件
 
-##### 查看JAVA进程打开的文件
+##### 通过 `lsof命令` 查看JAVA进程打开的文件
 
 ```shell
 ##### 查看进程
@@ -54,6 +54,21 @@ lsof -p 22690 | grep "/home/admin"
 ```
 
 ![image-20210414102429410](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/04/2021041410242929.png)
+
+
+
+##### 通过 `proc目录` 查看JAVA进程打开的文件
+
+```shell
+##### 查看进程
+ps -ef | grep java
+##### 根据条件过滤
+ls -al /proc/29267/fd  | grep "/home/admin/tmp/file/"
+```
+
+![image-20210416160035873](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/04/2021041616003535.png)
+
+
 
 ##### 根据查询结果定位问题
 
