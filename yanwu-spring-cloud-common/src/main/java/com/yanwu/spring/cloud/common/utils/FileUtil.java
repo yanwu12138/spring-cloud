@@ -308,7 +308,7 @@ public class FileUtil {
     }
 
     /**
-     * 下载小文件 [ size < 5M ]
+     * 下载小文件 [ size < 5M ]，不限速下载
      *
      * @param file 文件
      * @return 响应
