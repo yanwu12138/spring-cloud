@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -75,9 +76,21 @@ public class AttachmentController {
      */
     @LogParam
     @GetMapping(value = "downloadFile/{id}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable("id") Long id) throws Exception {
+    public ResponseEntity<Resource> downloadFile(@PathVariable("id") Long id, HttpServletResponse response) throws Exception {
         Attachment attachment = attachmentService.findById(id);
-        return FileUtil.exportFile(attachment.getAttachmentAddress(), attachment.getAttachmentName());
+        return FileUtil.exportFile(attachment.getAttachmentAddress(), response);
+    }
+
+    /**
+     * 下载文件
+     *
+     * @return
+     * @throws Exception
+     */
+    @LogParam
+    @GetMapping(value = "downloadFile")
+    public ResponseEntity<Resource> downloadFile(@RequestParam("path") String path, HttpServletResponse response) throws Exception {
+        return FileUtil.exportFile(path, response);
     }
 
     /**

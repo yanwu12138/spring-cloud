@@ -5,20 +5,23 @@ import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +37,13 @@ import java.util.zip.ZipOutputStream;
 @SuppressWarnings("unused")
 public class FileUtil {
 
+    /*** 当文件大于5M时，进行限速下载 ***/
+    private static final Long LIMIT_SIZE = 5 * 1024 * 1024L;
+    /*** 限速下载时的速度：1M/S ***/
+    private static final Long SPEED = 1024 * 1024L;
+    /*** 限速下载时每次写出的大小：1M ***/
+    private static final Integer SIZE = 1024 * 1024;
+
     /**
      * 将source目录下所有文件打包:
      * 名称为: fileName到target目录下
@@ -44,6 +54,7 @@ public class FileUtil {
      * @throws Exception e
      */
     public static void toZip(String sourceDir, String targetDir, String fileName) throws Exception {
+        targetDir = targetDir.endsWith(File.separator) ? targetDir : targetDir + File.separator;
         // ----- 检查资源：资源目录是否存在 && 资源目录是否为空
         File sourceFile = new File(sourceDir);
         Assert.isTrue((sourceFile.exists() && sourceFile.isDirectory()), sourceDir + " >> is not exists");
@@ -228,6 +239,19 @@ public class FileUtil {
     }
 
     /**
+     * 获取文件的后缀名
+     *
+     * @param fileName 文件名
+     * @return 后缀名
+     */
+    public static String getSuffix(String fileName) {
+        if (StringUtils.isBlank(fileName)) {
+            return null;
+        }
+        return fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
+    }
+
+    /**
      * 检查目标目录是否存在，不存在时新建文件夹
      *
      * @param targetPath 目标目录
@@ -254,20 +278,122 @@ public class FileUtil {
      * 导出文件
      *
      * @param filePath 文件路径
-     * @param fileName 文件名称
-     * @return 输出流
+     * @param response 输出流
+     * @return 响应
      * @throws Exception e
      */
-    public static ResponseEntity<Resource> exportFile(String filePath, String fileName) throws Exception {
-        FileSystemResource file = new FileSystemResource(filePath);
-        String fileDisposition = "attachment;filename=" + URLEncoder.encode(fileName, Encoding.UTF_8);
+    public static ResponseEntity<Resource> exportFile(String filePath, HttpServletResponse response) throws Exception {
+        if (StringUtils.isBlank(filePath)) {
+            log.error("export error, filePath is blank");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        File file = new File(filePath);
+        if (!file.exists()) {
+            log.error("export error, file is not exists, file: {}", file.getPath());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        if (file.isFile()) {
+            // ----- 下载文件
+            log.info("export file, file: {}", file.getPath());
+            return file.length() < LIMIT_SIZE ? exportSmallFile(file) : exportBigFile(file, response);
+        } else if (file.isDirectory()) {
+            // ----- 下载文件夹
+            log.info("export directory, file: {}", file.getPath());
+            return exportDirectory(file, response);
+        } else {
+            // ----- 下载错误，既不是目录也不是文件
+            log.error("export error, {} it is neither a file nor a directory", file.getPath());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * 下载小文件 [ size < 5M ]
+     *
+     * @param file 文件
+     * @return 响应
+     * @throws Exception e
+     */
+    private static ResponseEntity<Resource> exportSmallFile(File file) throws Exception {
+        String fileDisposition = "attachment;filename=" + URLEncoder.encode(file.getName(), Encoding.UTF_8);
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
-                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
                 .header(HttpHeaders.CONTENT_ENCODING, Encoding.UTF_8)
                 .header(HttpHeaders.CONTENT_DISPOSITION, fileDisposition)
-                .body(new InputStreamResource(file.getInputStream()));
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()))
+                .body(new ByteArrayResource(Files.readAllBytes(file.toPath())));
+    }
+
+    /**
+     * 下载大文件 [ size >= 5M ]，限速下载
+     *
+     * @param file     文件
+     * @param response 输出流
+     * @return 响应
+     * @throws Exception e
+     */
+    private static ResponseEntity<Resource> exportBigFile(File file, HttpServletResponse response) throws Exception {
+        // ----- 响应状态
+        String fileDisposition = "attachment;filename=" + URLEncoder.encode(file.getName(), Encoding.UTF_8);
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
+        response.setHeader(HttpHeaders.CONTENT_ENCODING, Encoding.UTF_8);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, fileDisposition);
+        response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+        // ----- 使用输出流往客户端写出文件
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        int offset = 0;
+        try (OutputStream outputStream = response.getOutputStream()) {
+            while (offset < bytes.length) {
+                int offsetSize = Math.min(bytes.length - offset, SIZE);
+                byte[] packet = Arrays.copyOfRange(bytes, offset, offset += offsetSize);
+                outputStream.write(packet);
+                outputStream.flush();
+                if (SPEED < 1000L * packet.length) {
+                    speedLimits(Math.floorDiv(1000L * packet.length, SPEED));
+                }
+            }
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 下载文件夹
+     *
+     * @param file     文件夹
+     * @param response 输出流
+     * @return 响应
+     * @throws Exception e
+     */
+    private static ResponseEntity<Resource> exportDirectory(File file, HttpServletResponse response) throws Exception {
+        // ----- 压缩文件夹
+        toZip(file.getPath(), file.getParent(), file.getName() + FileType.ZIP.getSuffix());
+        File zipFile = new File(file.getPath() + FileType.ZIP.getSuffix());
+        try {
+            // ----- 下载压缩后的文件
+            return exportBigFile(zipFile, response);
+        } finally {
+            // ----- 下载完成后删除压缩
+            deleteFile(zipFile);
+        }
+    }
+
+    /**
+     * 通过sleep达到限速的目的
+     *
+     * @param speed 速度
+     */
+    private static void speedLimits(long speed) {
+        if (speed <= 1) {
+            return;
+        }
+        try {
+            Thread.sleep(speed);
+        } catch (Exception e) {
+            log.error("download file speed limits error.", e);
+        }
     }
 
     /**
