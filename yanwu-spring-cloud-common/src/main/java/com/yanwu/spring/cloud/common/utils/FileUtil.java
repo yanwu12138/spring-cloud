@@ -294,11 +294,11 @@ public class FileUtil {
         }
         if (file.isFile()) {
             // ----- 下载文件
-            log.info("export file, file: {}", file.getPath());
+            log.info("export file: {}", file.getPath());
             return file.length() < LIMIT_SIZE ? exportSmallFile(file) : exportBigFile(file, response);
         } else if (file.isDirectory()) {
             // ----- 下载文件夹
-            log.info("export directory, file: {}", file.getPath());
+            log.info("export directory: {}", file.getPath());
             return exportDirectory(file, response);
         } else {
             // ----- 下载错误，既不是目录也不是文件
@@ -315,6 +315,10 @@ public class FileUtil {
      * @throws Exception e
      */
     private static ResponseEntity<Resource> exportSmallFile(File file) throws Exception {
+        if (file.length() >= LIMIT_SIZE) {
+            log.info("export file error, file size exceed 5M, file: {}, size: {}", file.getPath(), file.length());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
         String fileDisposition = "attachment;filename=" + URLEncoder.encode(file.getName(), Encoding.UTF_8);
         return ResponseEntity
                 .ok()
