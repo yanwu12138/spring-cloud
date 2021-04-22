@@ -93,6 +93,34 @@ docker import http://example.com/exampleimage.tgz example/imagerepo
 
 
 
+#### 容器网络
+
+>   
+
+##### 创建网络
+
+```shell
+docker network create --driver bridge --subnet=172.18.0.0/16 --gateway=172.18.0.1 zoonet
+```
+
+##### 查看网络
+
+```shell
+docker network ls
+```
+
+![image-20210422185212586](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/04/2021042218521212.png)
+
+##### 查看网络详情
+
+```shell
+docker network inspect {NETWORK ID}
+```
+
+![image-20210422185325567](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/04/2021042218532525.png)
+
+
+
 #### 容器IP
 
 >   docker容器都是动态分配IP，每次启动容器可能IP都不一致，可以通过以下命令查看容器的内部IP

@@ -117,8 +117,8 @@ public class RedisLock {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public <T> CallableResult<T> run(String key, Long value, Callable<CallableResult<T>> callable) {
-        return run(key, value, EXPIRE_TIME, callable);
+    public <T> CallableResult<T> executor(String key, Long value, Callable<CallableResult<T>> callable) {
+        return executor(key, value, EXPIRE_TIME, callable);
     }
 
     /**
@@ -130,7 +130,7 @@ public class RedisLock {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public <T> CallableResult<T> run(String key, Long value, Integer timeout, Callable<CallableResult<T>> callable) {
+    public <T> CallableResult<T> executor(String key, Long value, Integer timeout, Callable<CallableResult<T>> callable) {
         if (!lock(key, value, timeout)) {
             log.error("redis run failed because lock failed. key: {}, value: {}", key, value);
             return CallableResult.failed();
