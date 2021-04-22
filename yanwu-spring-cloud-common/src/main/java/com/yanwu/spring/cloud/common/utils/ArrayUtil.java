@@ -1,6 +1,8 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -16,7 +18,7 @@ public class ArrayUtil {
     }
 
     /**
-     * 当数组为null或者数组中是否所有的元素全都为null时返回true, 否则返回false
+     * 当数组为null或者数组中所有的元素全都为null时返回true, 否则返回false
      *
      * @param source 数组
      * @return [true: 空; false: 不为空]
@@ -33,6 +35,12 @@ public class ArrayUtil {
         return true;
     }
 
+    /**
+     * 数组不为空
+     *
+     * @param source 数组
+     * @return [true: 不为空; false: 空]
+     */
     public static boolean isNotEmpty(Object[] source) {
         return !isEmpty(source);
     }
@@ -72,6 +80,28 @@ public class ArrayUtil {
         int[] result = new int[source.length];
         System.arraycopy(source, 0, result, 0, source.length);
         return result;
+    }
+
+    /**
+     * 删除数组中的null
+     *
+     * @param source 元数据
+     * @return 去除null后的数组
+     */
+    public static Object[] removeNull(Object[] source) {
+        if (source == null) {
+            return new Object[0];
+        }
+        if (source.length <= 1) {
+            return source;
+        }
+        List<Object> result = new ArrayList<>();
+        for (Object item : source) {
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        return result.toArray();
     }
 
     /**
@@ -231,4 +261,5 @@ public class ArrayUtil {
         }
         return min;
     }
+
 }

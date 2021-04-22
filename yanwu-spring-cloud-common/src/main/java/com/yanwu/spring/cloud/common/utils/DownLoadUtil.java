@@ -12,6 +12,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.Assert;
 
@@ -35,20 +36,20 @@ public class DownLoadUtil {
 
     /*** 文件下载线程池 ***/
     private static final ThreadPoolTaskExecutor EXECUTOR;
-    /*** 每个线程下载的字节数 */
-    private static final Long UNIT_SIZE = 1000 * 1024L;
+    /*** 每个线程下载的字节数: 10M */
+    private static final Long UNIT_SIZE = 10 * 1024 * 1024L;
     /*** 客户端 */
     private static final CloseableHttpClient HTTP_CLIENT;
 
     static {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(100);
+        cm.setMaxTotal(20);
         HTTP_CLIENT = HttpClients.custom().setConnectionManager(cm).build();
         EXECUTOR = new ThreadPoolTaskExecutor();
         // ----- 设置核心线程数
-        EXECUTOR.setCorePoolSize(50);
+        EXECUTOR.setCorePoolSize(10);
         // ----- 设置最大线程数
-        EXECUTOR.setMaxPoolSize(100);
+        EXECUTOR.setMaxPoolSize(20);
         // ----- 设置队列容量
         EXECUTOR.setQueueCapacity(Integer.MAX_VALUE);
         // ----- 设置线程活跃时间（秒）
@@ -77,7 +78,7 @@ public class DownLoadUtil {
         httpConnection.setRequestMethod("HEAD");
         int responseCode = httpConnection.getResponseCode();
         Assert.isTrue((responseCode <= 400), "get remote file size error. code: " + responseCode);
-        long fileSize = Long.parseLong(httpConnection.getHeaderField("Content-Length"));
+        long fileSize = Long.parseLong(httpConnection.getHeaderField(HttpHeaders.CONTENT_LENGTH));
         Assert.isTrue((fileSize > 0), "get remote file size error. size is zero");
         long threadCount = Math.floorDiv(fileSize, UNIT_SIZE);
         threadCount = fileSize == threadCount * UNIT_SIZE ? threadCount : threadCount + 1;
