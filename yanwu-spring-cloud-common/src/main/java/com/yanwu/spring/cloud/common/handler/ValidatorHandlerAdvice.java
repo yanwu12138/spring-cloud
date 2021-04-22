@@ -21,7 +21,7 @@ public class ValidatorHandlerAdvice<T> {
     protected ResponseEnvelope<T> handleBindException(MethodArgumentNotValidException exception) {
         ResponseEnvelope<T> envelope = ResponseEnvelope.failed();
         for (ObjectError error : exception.getBindingResult().getAllErrors()) {
-            envelope.setMessage(error.getDefaultMessage());
+            envelope = ResponseEnvelope.failed(error.getDefaultMessage());
         }
         log.error("Validator Handler Advice Exception: ", exception);
         return envelope;

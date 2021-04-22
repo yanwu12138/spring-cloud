@@ -2,8 +2,9 @@ package com.yanwu.spring.cloud.common.pojo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 
@@ -12,19 +13,23 @@ import java.io.Serializable;
 /**
  * @author Administrator
  */
-@Data
-@Accessors(chain = true)
+@ToString
+@EqualsAndHashCode
 @JsonInclude(Include.NON_NULL)
 public class ResponseEnvelope<T> implements Serializable {
     private static final long serialVersionUID = 5713406382349859603L;
 
     /*** 数据 ***/
+    @Getter
     private T data;
     /*** 接口返回状态 ***/
+    @Getter
     private Boolean status;
     /*** 接口错误码 ***/
+    @Getter
     private Integer code;
     /*** 接口错误提示语 ***/
+    @Getter
     private String message;
 
     public static <T> ResponseEnvelope<T> success() {
@@ -58,6 +63,26 @@ public class ResponseEnvelope<T> implements Serializable {
     }
 
     private ResponseEnvelope() {
+    }
+
+    private ResponseEnvelope<T> setData(T data) {
+        this.data = data;
+        return this;
+    }
+
+    private ResponseEnvelope<T> setStatus(Boolean status) {
+        this.status = status;
+        return this;
+    }
+
+    private ResponseEnvelope<T> setCode(Integer code) {
+        this.code = code;
+        return this;
+    }
+
+    private ResponseEnvelope<T> setMessage(String message) {
+        this.message = message;
+        return this;
     }
 
 }

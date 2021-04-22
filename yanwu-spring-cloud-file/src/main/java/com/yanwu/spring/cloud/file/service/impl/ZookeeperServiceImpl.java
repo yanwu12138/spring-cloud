@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class ZookeeperServiceImpl implements ZookeeperService {
 
     @Resource
-    private Executor executors;
+    private Executor commonsExecutors;
     @Resource
     private ZookeeperClient zookeeperClient;
 
@@ -66,7 +66,7 @@ public class ZookeeperServiceImpl implements ZookeeperService {
         CuratorFramework client = zookeeperClient.getClient();
         int size = 50;
         while (size > 0) {
-            executors.execute(() -> {
+            commonsExecutors.execute(() -> {
                 InterProcessLock lock = ZookeeperLock.getInterProcessSemaphoreMutex(client, path);
                 try {
                     lock.acquire();

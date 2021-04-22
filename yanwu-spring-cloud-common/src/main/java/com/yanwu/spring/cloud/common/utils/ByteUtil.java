@@ -26,7 +26,7 @@ public class ByteUtil {
      * @return hexStr
      */
     public static String byteToHexStr(byte source) {
-        String result = Integer.toHexString(source & 0xff);
+        String result = Integer.toHexString(source & 0xFF);
         result = headFill0(result, 2);
         result = "0x" + result;
         return result.toUpperCase();
@@ -67,13 +67,13 @@ public class ByteUtil {
     /**
      * 16进制字符串转16进制字节数组
      *
-     * @param source 源数据
+     * @param hexStr 源数据
      * @return 转换结果
      */
-    public static byte[] hexStrToHexBytes(String source) {
-        byte[] result = new byte[source.length() / 2];
-        for (int i = 0; i < source.length(); i = i + 2) {
-            String strTmp = source.substring(i, i + 2);
+    public static byte[] hexStrToHexBytes(String hexStr) {
+        byte[] result = new byte[hexStr.length() / 2];
+        for (int i = 0; i < hexStr.length(); i = i + 2) {
+            String strTmp = hexStr.substring(i, i + 2);
             result[i / 2] = (byte) Integer.parseInt(strTmp, 16);
         }
         return result;

@@ -30,7 +30,7 @@ public class BeanConfig {
      * @return 线程池
      */
     @Bean
-    public Executor executors() {
+    public Executor commonsExecutors() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // ----- 设置核心线程数
         executor.setCorePoolSize(50);
@@ -41,7 +41,7 @@ public class BeanConfig {
         // ----- 设置线程活跃时间（秒）
         executor.setKeepAliveSeconds(120);
         // ----- 设置默认线程名称
-        executor.setThreadNamePrefix("executor-");
+        executor.setThreadNamePrefix("commons-executor-");
         // ----- 设置拒绝策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         // ----- 执行初始化

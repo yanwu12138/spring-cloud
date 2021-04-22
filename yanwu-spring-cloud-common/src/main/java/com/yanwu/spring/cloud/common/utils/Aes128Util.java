@@ -30,13 +30,6 @@ public class Aes128Util {
     private Aes128Util() {
     }
 
-
-    public static void main(String[] args) {
-        String encrypt = encrypt("JsonUtil.toCompactJsonString(new AccessToken().setId(3253L))", DEFAULT_SECRET_KEY);
-        System.out.println(encrypt);
-        System.out.println(decrypt(encrypt, DEFAULT_SECRET_KEY));
-    }
-
     /**
      * AES 加密操作, 使用默认盐
      *

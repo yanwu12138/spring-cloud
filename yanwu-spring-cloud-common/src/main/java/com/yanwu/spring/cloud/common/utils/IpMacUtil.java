@@ -113,7 +113,7 @@ public class IpMacUtil {
             String ip2 = intToHexStr(Integer.parseInt(ipSlices[++i]));
             result.append(ip1).append(ip2).append(":");
         }
-        return result.toString().substring(0, result.length() - 1).toUpperCase();
+        return result.substring(0, result.length() - 1).toUpperCase();
     }
 
     /**
