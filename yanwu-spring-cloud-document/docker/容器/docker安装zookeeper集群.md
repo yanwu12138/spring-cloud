@@ -81,6 +81,15 @@ zkServer.sh status
 
 ![image-20210422200510242](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/04/2021042220051010.png)
 
+##### 进入终端
+
+```shell
+##### 进入控制台
+zkCli.sh -server 192.168.56.150:2181,192.168.56.150:2182,192.168.56.150:2183
+```
+
+![image-20210423095631065](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/04/2021042309563131.png)
+
 ##### 放行端口
 
 ```shell
