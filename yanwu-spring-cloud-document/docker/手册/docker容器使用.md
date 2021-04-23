@@ -95,7 +95,7 @@ docker import http://example.com/exampleimage.tgz example/imagerepo
 
 #### 容器网络
 
->   
+>   在使用docker时，我们常常需要进行容器间的通讯，但是由于docker的容器在启动时是动态IP，所以我们有时候也需要对IP做固定限制。在将容器设置固定IP之前，我们需要先创建虚拟网络。创建网络后，如果想要固定容器的IP，可以在[启动时设置IP](../容器/docker安装Zookeeper集群.md)。
 
 ##### 创建网络
 

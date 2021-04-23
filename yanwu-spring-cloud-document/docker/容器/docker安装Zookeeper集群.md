@@ -19,10 +19,6 @@ docker pull zookeeper
 ##### 创建对应的目录
 
 ```shell
-##### 配置文件目录
-mkdir -p /root/zookeeper/conf/server_1
-mkdir -p /root/zookeeper/conf/server_2
-mkdir -p /root/zookeeper/conf/server_3
 ##### 数据目录
 mkdir -p /root/zookeeper/data/server_1
 mkdir -p /root/zookeeper/data/server_2
@@ -84,7 +80,7 @@ zkServer.sh status
 ##### 进入终端
 
 ```shell
-##### 进入控制台
+##### 进入终端
 zkCli.sh -server 192.168.56.150:2181,192.168.56.150:2182,192.168.56.150:2183
 ```
 
