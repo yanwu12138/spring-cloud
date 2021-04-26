@@ -17,7 +17,7 @@
         <aliyun.sdk.oss.version>3.8.0</aliyun.sdk.oss.version>
         <cglib.version>3.2.5</cglib.version>
         <commons.collections.version>3.2.2</commons.collections.version>
-        <commons.io.version>2.4</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
         <commons.net.version>3.6</commons.net.version>
         <commons.httpcore.version>4.4.4</commons.httpcore.version>
