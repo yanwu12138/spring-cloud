@@ -1,9 +1,12 @@
 package com.yanwu.spring.cloud.netty.controller;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.pojo.CallableResult;
 import com.yanwu.spring.cloud.common.pojo.CommandBO;
+import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.netty.handler.TcpHandler;
 import com.yanwu.spring.cloud.netty.handler.UdpHandler;
+import com.yanwu.spring.cloud.netty.handler.UpgradeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +30,8 @@ public class NettyController {
     private TcpHandler tcpHandler;
     @Resource
     private UdpHandler udpHandler;
+    @Resource
+    private UpgradeHandler upgradeHandler;
 
     @LogParam
     @PostMapping("/tcp/send")
@@ -44,5 +49,11 @@ public class NettyController {
     @PostMapping("/udp/radio")
     public void udpRadio(@RequestBody CommandBO<String> command) {
         udpHandler.radio(String.valueOf(command.getData()));
+    }
+
+    @LogParam
+    @PostMapping("/udp/upgrade")
+    public ResponseEnvelope<CallableResult<String>> udpUpgrade(@RequestBody CommandBO<String> command) {
+        return ResponseEnvelope.success(upgradeHandler.broadcastFile(command.getData(), System.currentTimeMillis()));
     }
 }

@@ -370,7 +370,7 @@ public class FileUtil {
                 outputStream.write(bytes);
                 outputStream.flush();
                 if (SPEED < 1000L * bytes.length) {
-                    speedLimits(Math.floorDiv(1000L * bytes.length, SPEED));
+                    ThreadUtil.sleep(Math.floorDiv(1000L * bytes.length, SPEED));
                 }
                 position += blockSize;
             }
@@ -396,22 +396,6 @@ public class FileUtil {
         } finally {
             // ----- 下载完成后删除压缩
             deleteFile(zipFile);
-        }
-    }
-
-    /**
-     * 通过sleep达到限速的目的
-     *
-     * @param speed 速度
-     */
-    private static void speedLimits(long speed) {
-        if (speed <= 1) {
-            return;
-        }
-        try {
-            Thread.sleep(speed);
-        } catch (Exception e) {
-            log.error("download file speed limits error.", e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty.server;
 
+import com.yanwu.spring.cloud.netty.config.NettyConfig;
 import com.yanwu.spring.cloud.netty.constant.Constants;
 import com.yanwu.spring.cloud.netty.handler.UdpChannelHandler;
 import io.netty.bootstrap.Bootstrap;
@@ -11,7 +12,6 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -33,8 +33,8 @@ public class NettyUdpServer {
     /*** BOSS */
     private EventLoopGroup bossGroup;
 
-    @Value("${netty.udp.port}")
-    private Integer port;
+    @Resource
+    private NettyConfig nettyConfig;
     @Resource
     private Executor nettyExecutor;
     @Resource
@@ -42,10 +42,10 @@ public class NettyUdpServer {
 
     @PostConstruct
     public void start() {
-        log.info("netty udp server starting ... port: {}", port);
+        log.info("netty udp server starting ... port: {}", nettyConfig.getUdpPort());
         nettyExecutor.execute(() -> {
             try {
-                if (port < Constants.MIN_PORT || port > Constants.MAX_PORT) {
+                if (nettyConfig.getUdpPort() < Constants.MIN_PORT || nettyConfig.getUdpPort() > Constants.MAX_PORT) {
                     throw new RuntimeException("netty udp server start error, port is illegal!");
                 }
                 bootstrap = new Bootstrap();
@@ -58,7 +58,7 @@ public class NettyUdpServer {
                             .option(ChannelOption.SO_BROADCAST, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .handler(channelHandler);
-                    ChannelFuture future = bootstrap.bind(port).sync();
+                    ChannelFuture future = bootstrap.bind(nettyConfig.getUdpPort()).sync();
                     future.channel().closeFuture().sync();
                 }
             } catch (Exception e) {
@@ -75,7 +75,7 @@ public class NettyUdpServer {
     @PreDestroy
     public void close() {
         log.info("netty udp server is to stop ...");
-        if (bootstrap != null) {
+        if (bossGroup != null) {
             bossGroup.shutdownGracefully();
         }
         log.info("netty udp server stop success!");

@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.netty.handler;
 import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
+import com.yanwu.spring.cloud.netty.config.NettyConfig;
 import com.yanwu.spring.cloud.netty.protocol.factory.DeviceHandlerFactory;
 import com.yanwu.spring.cloud.netty.protocol.up.AbstractHandler;
 import com.yanwu.spring.cloud.netty.util.DeviceUtil;
@@ -14,7 +15,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.DatagramPacket;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -35,8 +35,8 @@ import java.util.concurrent.Executor;
 public class UdpHandler extends ChannelInboundHandlerAdapter {
     private static final Object LOCK = new Object();
 
-    @Value("${netty.radio.port}")
-    private Integer radioPort;
+    @Resource
+    private NettyConfig nettyConfig;
     @Resource
     private Executor nettyExecutor;
 
@@ -94,9 +94,9 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
      */
     public void radio(String message) {
         byte[] bytes = ByteUtil.hexStrToHexBytes(message);
-        try (DatagramSocket socket = new DatagramSocket(radioPort)) {
+        try (DatagramSocket socket = new DatagramSocket(nettyConfig.getRadioPort())) {
             java.net.InetAddress address = java.net.InetAddress.getByName("255.255.255.255");
-            java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, radioPort);
+            java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, nettyConfig.getRadioPort());
             socket.send(packet);
         } catch (Exception e) {
             log.error("udp radio error.", e);

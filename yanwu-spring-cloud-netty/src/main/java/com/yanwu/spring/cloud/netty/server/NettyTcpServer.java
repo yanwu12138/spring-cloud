@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty.server;
 
+import com.yanwu.spring.cloud.netty.config.NettyConfig;
 import com.yanwu.spring.cloud.netty.constant.Constants;
 import com.yanwu.spring.cloud.netty.handler.TcpChannelHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -11,7 +12,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -35,8 +35,9 @@ public class NettyTcpServer {
     /*** Worker */
     private EventLoopGroup workGroup;
 
-    @Value("${netty.tcp.port}")
-    private Integer port;
+
+    @Resource
+    private NettyConfig nettyConfig;
     @Resource
     private Executor nettyExecutor;
     @Resource
@@ -44,10 +45,10 @@ public class NettyTcpServer {
 
     @PostConstruct
     public void start() {
-        log.info("netty tcp server starting ... port: {}", port);
+        log.info("netty tcp server starting ... port: {}", nettyConfig.getTcpPort());
         nettyExecutor.execute(() -> {
             try {
-                if (port < Constants.MIN_PORT || port > Constants.MAX_PORT) {
+                if (nettyConfig.getTcpPort() < Constants.MIN_PORT || nettyConfig.getTcpPort() > Constants.MAX_PORT) {
                     throw new RuntimeException("netty udp server start error, port is illegal!");
                 }
                 bootstrap = new ServerBootstrap();
@@ -60,7 +61,7 @@ public class NettyTcpServer {
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .childHandler(channelHandler);
-                    ChannelFuture future = bootstrap.bind(port).sync();
+                    ChannelFuture future = bootstrap.bind(nettyConfig.getTcpPort()).sync();
                     future.channel().closeFuture().sync();
                 }
             } catch (Exception e) {
