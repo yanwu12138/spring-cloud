@@ -18,10 +18,10 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -167,7 +167,6 @@ public class FileUtil {
         }
     }
 
-
     /**
      * 删除文件
      *
@@ -177,7 +176,6 @@ public class FileUtil {
     public static boolean deleteFile(String fileName) {
         return deleteFile(new File(fileName));
     }
-
 
     /**
      * 删除文件
@@ -239,16 +237,33 @@ public class FileUtil {
     }
 
     /**
-     * 获取文件的后缀名
+     * 获取文件的后缀名，如：
+     * * aaa.zip        >> zip
+     * * aaa.tar.gz     >> gz
      *
-     * @param fileName 文件名
+     * @param filename 文件名
      * @return 后缀名
      */
-    public static String getSuffix(String fileName) {
-        if (StringUtils.isBlank(fileName)) {
+    public static String getSuffix(String filename) {
+        if (StringUtils.isBlank(filename)) {
             return null;
         }
-        return fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
+        return filename.contains(".") ? filename.substring(filename.lastIndexOf(".") + 1) : "";
+    }
+
+    /**
+     * 获取文件的前缀名，如：
+     * * aaa.txt        >> aaa
+     * * aaa.123.txt    >> aaa
+     *
+     * @param filename 文件名
+     * @return 前缀名
+     */
+    public static String getPrefix(String filename) {
+        if (StringUtils.isBlank(filename)) {
+            return null;
+        }
+        return filename.contains(".") ? filename.substring(0, filename.indexOf(".")) : filename;
     }
 
     /**
@@ -347,17 +362,17 @@ public class FileUtil {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, fileDisposition);
         response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
         // ----- 使用输出流往客户端写出文件
-        byte[] bytes = Files.readAllBytes(file.toPath());
-        int offset = 0;
+        long position = 0, length = file.length();
         try (OutputStream outputStream = response.getOutputStream()) {
-            while (offset < bytes.length) {
-                int offsetSize = Math.min(bytes.length - offset, SIZE);
-                byte[] packet = Arrays.copyOfRange(bytes, offset, offset += offsetSize);
-                outputStream.write(packet);
+            while (position < length) {
+                int blockSize = (int) Math.min(SIZE, length - position);
+                byte[] bytes = read(file.getPath(), position, blockSize);
+                outputStream.write(bytes);
                 outputStream.flush();
-                if (SPEED < 1000L * packet.length) {
-                    speedLimits(Math.floorDiv(1000L * packet.length, SPEED));
+                if (SPEED < 1000L * bytes.length) {
+                    speedLimits(Math.floorDiv(1000L * bytes.length, SPEED));
                 }
+                position += blockSize;
             }
         }
         return ResponseEntity.ok().build();
@@ -401,7 +416,7 @@ public class FileUtil {
     }
 
     /**
-     * 分片读取文件块
+     * 切片读取文件块
      *
      * @param path      文件路径
      * @param position  角标
@@ -445,7 +460,6 @@ public class FileUtil {
         }
     }
 
-
     /**
      * 将文件写入到本地磁盘
      *
@@ -455,14 +469,97 @@ public class FileUtil {
      */
     public static void write(InputStream is, String filePath) throws Exception {
         checkFilePath(filePath, Boolean.TRUE);
-        File file = new File(filePath);
-        try (OutputStream fos = new BufferedOutputStream(new FileOutputStream(file))) {
-            int read;
-            byte[] bytes = new byte[Contents.DEFAULT_SIZE];
-            while ((read = is.read(bytes)) != -1) {
-                fos.write(bytes, 0, read);
-            }
+        int position = 0, available = is.available();
+        while (available > 0) {
+            byte[] bytes = new byte[Math.min(SIZE, available)];
+            int read = is.read(bytes);
+            write(filePath, bytes, position);
+            position += bytes.length;
+            available = is.available();
         }
+    }
+
+    /**
+     * 对文件按照指定的大小进行切片
+     *
+     * @param file        文件
+     * @param magic       切片的文件名
+     * @param sliceLength 每片的大小：例如文件有100M,每个切片(sliceLength)为1M,就有100个切片
+     * @return 切片数
+     */
+    public static long slice(File file, Long magic, int sliceLength) throws Exception {
+        if (!file.exists() || file.isDirectory()) {
+            return 0;
+        }
+        deleteFile((file.getParent() + File.separator + getPrefix(file.getName())));
+        // ===== 开始切片
+        try (FileInputStream fis = new FileInputStream(file);
+             FileChannel channel = fis.getChannel()) {
+            long totalSize = channel.size(), offset = 0, fragment = 0;
+            while (offset < totalSize) {
+                int length = (int) Math.min(totalSize - offset, sliceLength);
+                byte[] slice = read(file.getPath(), offset, length);
+                write(getTargetFile(file, magic, fragment), slice, 0);
+                offset += sliceLength;
+                fragment++;
+            }
+            return (int) (totalSize % sliceLength == 0 ? totalSize / sliceLength : totalSize / sliceLength + 1);
+        }
+    }
+
+    /**
+     * 根据相关条件获取切片的路径
+     *
+     * @param file   文件
+     * @param magic  切片前缀
+     * @param seqNum 切片编号
+     * @return 切片路径
+     */
+    private static String getTargetFile(File file, long magic, long seqNum) {
+        return file.getParent() + File.separator + getPrefix(file.getName()) + File.separator + magic + "_" + seqNum + ".slice";
+    }
+
+    /**
+     * 将切片后的文件合并成一个完整的文件
+     *
+     * @param sliceDir 切片目录
+     * @return 合并后的文件路径
+     */
+    public static String merge(File sliceDir) throws Exception {
+        if (!sliceDir.exists() || sliceDir.isFile()) {
+            return sliceDir.getPath();
+        }
+        File[] files = sliceDir.listFiles();
+        if (ArrayUtil.isEmpty(files)) {
+            return null;
+        }
+        String target = sliceDir.getParent() + File.separator + System.currentTimeMillis();
+        deleteFile(target);
+        // ===== 开始合并
+        long position = 0, index = 0, totalSize = files.length;
+        while (index < totalSize) {
+            File item = getSliceFile(files[0], index);
+            if (item == null) {
+                continue;
+            }
+            int length = (int) item.length();
+            byte[] read = read(item.getPath(), 0, length);
+            write(target, read, position);
+            position += length;
+            index++;
+        }
+        return target;
+    }
+
+    /**
+     * 获取切片文件
+     */
+    private static File getSliceFile(File file, long index) {
+        if (!file.exists() || index < 0) {
+            return null;
+        }
+        String filename = file.getName();
+        return new File(file.getParent() + File.separator + filename.substring(0, filename.indexOf("_")) + "_" + index + ".slice");
     }
 
     /**
