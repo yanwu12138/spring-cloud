@@ -24,7 +24,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Enumeration;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -415,8 +414,8 @@ public class FileUtil {
         try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(Paths.get(path), StandardOpenOption.READ)) {
             Future<Integer> read = channel.read(block, position);
             while (!read.isDone()) {
-                // ----- 睡1毫秒， 不抢占资源
-                TimeUnit.MILLISECONDS.sleep(50);
+                // ----- 睡50毫秒， 不抢占资源
+                ThreadUtil.sleep(50);
             }
         }
         return block.array();
@@ -438,8 +437,8 @@ public class FileUtil {
         try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(Paths.get(path), StandardOpenOption.WRITE)) {
             Future<Integer> write = channel.write(buffer, position);
             while (!write.isDone()) {
-                // ----- 睡1毫秒， 不抢占资源
-                TimeUnit.MILLISECONDS.sleep(50);
+                // ----- 睡50毫秒， 不抢占资源
+                ThreadUtil.sleep(50);
             }
         }
     }

@@ -63,11 +63,7 @@ public class RedisLock {
                 log.error("redis lock failed. key: {}, value: {}", key, value);
                 return false;
             }
-            try {
-                TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
-            } catch (Exception e) {
-                log.error("redis lock sleep error.", e);
-            }
+            ThreadUtil.sleep(SLEEP_TIME);
         }
         log.info("redis lock success. key: {}, value: {}", key, value);
         return true;

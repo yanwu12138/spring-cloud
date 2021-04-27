@@ -2,6 +2,8 @@ package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Baofeng Xu
  * @date 2021/4/26 14:39.
@@ -16,9 +18,9 @@ public class ThreadUtil {
             return;
         }
         try {
-            Thread.sleep(sleep);
+            TimeUnit.MILLISECONDS.sleep(sleep);
         } catch (Exception e) {
-            log.error("download file speed limits error.", e);
+            log.error("thread: {} sleep error.", Thread.currentThread().getName(), e);
         }
     }
 
