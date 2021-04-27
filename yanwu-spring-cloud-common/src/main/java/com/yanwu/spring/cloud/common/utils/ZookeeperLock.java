@@ -134,7 +134,7 @@ public class ZookeeperLock {
             lock.release();
             log.info("zookeeper unLock success. lock: {}", lock);
         } catch (Exception e) {
-            log.error("zookeeper unLock failed. lock: {}", lock);
+            log.error("zookeeper unLock failed. lock: {}", lock, e);
         }
     }
 

@@ -79,18 +79,24 @@ public class ZookeeperController {
     public ResponseEnvelope<Void> test(@RequestBody ZookeeperNode param) {
         CuratorFramework client = zookeeperClient.getClient();
         for (int i = 0; i < 2; i++) {
-            commonsExecutors.execute(() -> ZookeeperLock.writeExecutor(client, param.getPath(), () -> {
-                log.info("write 11111111 {}", Thread.currentThread().getName());
-                TimeUnit.SECONDS.sleep(2);
-                return CallableResult.success("success");
-            }));
+            commonsExecutors.execute(() -> {
+                CallableResult<String> writeResult = ZookeeperLock.writeExecutor(client, param.getPath(), () -> {
+                    log.info("write 11111111 {}", Thread.currentThread().getName());
+                    TimeUnit.SECONDS.sleep(2);
+                    return CallableResult.success("success");
+                });
+                log.info("write result: {}", writeResult);
+            });
         }
         for (int i = 0; i < 8; i++) {
-            commonsExecutors.execute(() -> ZookeeperLock.readExecutor(client, param.getPath(), () -> {
-                log.info("read 222222222 {}", Thread.currentThread().getName());
-                TimeUnit.SECONDS.sleep(1);
-                return CallableResult.success("success");
-            }));
+            commonsExecutors.execute(() -> {
+                CallableResult<String> readResult = ZookeeperLock.readExecutor(client, param.getPath(), () -> {
+                    log.info("read 222222222 {}", Thread.currentThread().getName());
+                    TimeUnit.SECONDS.sleep(1);
+                    return CallableResult.success("success");
+                });
+                log.info("read result: {}", readResult);
+            });
         }
         return ResponseEnvelope.success();
     }
