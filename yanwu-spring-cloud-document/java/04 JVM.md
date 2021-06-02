@@ -6,7 +6,7 @@
 ## class文件格式
 通过javap命令或idea插件jclasslib bytecode viewer查看
 
-### [class文件组成](https://www.processon.com/view/link/5ed511b57d9c08162f2a7930)
+### [class文件组成](../xmind/CLASS文件结构.xmind)
 
 ## 类加载 & 初始化
 
@@ -316,7 +316,7 @@ __乱序问题__：CPU为了提高效率，会在一条指令执行过程中（�
 | 新生代 | 拷贝算法           | 新生代大量死去，少量存活，回收较多 |
 | 老年代 | 标记清除或标记压缩 | 老年代存活率较高，回收较少         |
 
-### [常见垃圾回收器](https://www.processon.com/view/link/5edceec7e0b34d41390484cb)
+### [常见垃圾回收器](../xmind/垃圾回收.xmind)
 #### 垃圾回收器的发展历程
 > - JDK诞生Serial追随，由于Serial是单线程的，所以效率比较低
 > - 为了提高效率，诞生了PS，PS是多线程，但也会有STW问题
