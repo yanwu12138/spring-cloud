@@ -88,5 +88,13 @@
 
 ![image-20210519174846797](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/05/2021051917484646.png)
 
+#### netty设置DSCP
+
+```java
+option(ChannelOption.IP_TOS, 0xE0)
+```
+
+![image-20210604105507910](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/06/202106041055088.png)
+
 #### [ENC](https://blog.csdn.net/xxx_500/article/details/8584323)
 
