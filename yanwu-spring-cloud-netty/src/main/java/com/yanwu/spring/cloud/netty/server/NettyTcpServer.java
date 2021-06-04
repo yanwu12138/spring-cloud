@@ -58,6 +58,7 @@ public class NettyTcpServer {
                     bootstrap.group(bossGroup, workGroup)
                             .channel(NioServerSocketChannel.class)
                             .option(ChannelOption.SO_BACKLOG, 1024)
+                            .option(ChannelOption.IP_TOS, 0xE0)
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
                             .childHandler(channelHandler);
