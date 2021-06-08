@@ -44,7 +44,7 @@ public final class JsonUtil {
     }
 
     private JsonUtil() {
-        throw new AssertionError("JsonUtil should never be instantiated");
+        throw new UnsupportedOperationException("JsonUtil should never be instantiated");
     }
 
 

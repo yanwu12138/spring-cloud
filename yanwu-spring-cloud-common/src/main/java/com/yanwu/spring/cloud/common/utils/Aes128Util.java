@@ -28,6 +28,7 @@ public class Aes128Util {
     private static final String DEFAULT_SECRET_KEY = "yanwu0527@123.com";
 
     private Aes128Util() {
+        throw new UnsupportedOperationException("Aes128Util should never be instantiated");
     }
 
     /**

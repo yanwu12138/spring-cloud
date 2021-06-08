@@ -12,6 +12,7 @@ import java.math.BigInteger;
 public class NumberUtil {
 
     private NumberUtil() {
+        throw new UnsupportedOperationException("NumberUtil should never be instantiated");
     }
 
     /**

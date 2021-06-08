@@ -17,6 +17,7 @@ import java.util.Arrays;
 public class ByteUtil {
 
     private ByteUtil() {
+        throw new UnsupportedOperationException("ByteUtil should never be instantiated");
     }
 
     /**

@@ -19,6 +19,7 @@ public final class NettyUtils {
     private static final String SPLIT_PORT = ":";
 
     private NettyUtils() {
+        throw new UnsupportedOperationException("NettyUtils should never be instantiated");
     }
 
     public static String getChannelId(ChannelHandlerContext ctx) {

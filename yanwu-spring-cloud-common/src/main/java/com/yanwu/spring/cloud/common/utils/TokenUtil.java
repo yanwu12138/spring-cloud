@@ -14,6 +14,10 @@ import org.springframework.util.Assert;
 @SuppressWarnings("unused")
 public class TokenUtil {
 
+    private TokenUtil() {
+        throw new UnsupportedOperationException("TokenUtil should never be instantiated");
+    }
+
     /**
      * 登陆成功时, 根据用户ID生成token
      *

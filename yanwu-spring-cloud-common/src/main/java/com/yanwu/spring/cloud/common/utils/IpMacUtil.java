@@ -30,6 +30,9 @@ public class IpMacUtil {
     private static final Pattern IPV4_PATTERN = Pattern.compile("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
     private static final Pattern IPV6_PATTERN = Pattern.compile("^([\\da-fA-F]{1,4}:){7}[\\da-fA-F]{1,4}$");
 
+    private IpMacUtil() {
+        throw new UnsupportedOperationException("IpMacUtil should never be instantiated");
+    }
 
     /**
      * 将IPV4地址转换成一个int值

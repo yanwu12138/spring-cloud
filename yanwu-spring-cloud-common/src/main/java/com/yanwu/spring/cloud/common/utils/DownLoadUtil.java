@@ -63,6 +63,7 @@ public class DownLoadUtil {
     }
 
     private DownLoadUtil() {
+        throw new UnsupportedOperationException("DownLoadUtil should never be instantiated");
     }
 
     /**

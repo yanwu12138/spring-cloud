@@ -22,6 +22,7 @@ public class Crc16Util {
     private static final String[] SPLITS = {SPACE, "\t", "\r", "\n"};
 
     private Crc16Util() {
+        throw new UnsupportedOperationException("Crc16Util should never be instantiated");
     }
 
     /**

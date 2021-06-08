@@ -17,6 +17,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class ResolverUtil {
 
+    private ResolverUtil() {
+        throw new UnsupportedOperationException("ResolverUtil should never be instantiated");
+    }
+
     /**
      * 正则解析方法
      *

@@ -16,7 +16,9 @@ import java.util.Set;
  */
 @Slf4j
 public class AlarmLampUtil {
+
     private AlarmLampUtil() {
+        throw new UnsupportedOperationException("AlarmLampUtil should never be instantiated");
     }
 
     public static final String ALARM_LAMP_REDIS = "alarm_lamp";

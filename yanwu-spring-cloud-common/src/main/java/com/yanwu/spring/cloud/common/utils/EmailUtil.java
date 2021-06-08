@@ -54,6 +54,7 @@ public class EmailUtil {
     }
 
     private EmailUtil() {
+        throw new UnsupportedOperationException("EmailUtil should never be instantiated");
     }
 
     /**

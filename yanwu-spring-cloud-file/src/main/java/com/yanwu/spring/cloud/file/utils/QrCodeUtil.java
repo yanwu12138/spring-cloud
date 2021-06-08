@@ -25,6 +25,10 @@ import java.util.Objects;
 @Slf4j
 public class QrCodeUtil {
 
+    private QrCodeUtil() {
+        throw new UnsupportedOperationException("QrCodeUtil should never be instantiated");
+    }
+
     /**
      * 编码格式,采用utf-8
      */

@@ -43,6 +43,10 @@ public class FileUtil {
     /*** 限速下载时每次写出的大小：1M ***/
     private static final Integer SIZE = 1024 * 1024;
 
+    private FileUtil() {
+        throw new UnsupportedOperationException("FileUtil should never be instantiated");
+    }
+
     /**
      * 将source目录下所有文件打包:
      * 名称为: fileName到target目录下

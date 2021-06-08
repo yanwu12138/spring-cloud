@@ -36,6 +36,10 @@ import static com.yanwu.spring.cloud.common.core.common.HttpConstants.*;
 @SuppressWarnings("unused")
 public class HttpUtil {
 
+    private HttpUtil() {
+        throw new UnsupportedOperationException("HttpUtil should never be instantiated");
+    }
+
     /**
      * 发送GET无参请求
      *

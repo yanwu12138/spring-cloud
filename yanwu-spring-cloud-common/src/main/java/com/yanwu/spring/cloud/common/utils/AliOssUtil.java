@@ -32,6 +32,7 @@ public class AliOssUtil {
     public static final String SEPARATOR = "/";
 
     private AliOssUtil() {
+        throw new UnsupportedOperationException("AliOssUtil should never be instantiated");
     }
 
     /**

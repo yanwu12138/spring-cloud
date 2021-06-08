@@ -18,6 +18,7 @@ public class DateUtil {
     private static final ZoneOffset UTC_8 = ZoneOffset.ofHours(8);
 
     private DateUtil() {
+        throw new UnsupportedOperationException("DateUtil should never be instantiated");
     }
 
     /**

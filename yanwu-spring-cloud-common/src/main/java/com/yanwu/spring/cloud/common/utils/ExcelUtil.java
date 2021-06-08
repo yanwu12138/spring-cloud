@@ -33,6 +33,7 @@ import java.util.List;
 public class ExcelUtil {
 
     private ExcelUtil() {
+        throw new UnsupportedOperationException("ExcelUtil should never be instantiated");
     }
 
     /**

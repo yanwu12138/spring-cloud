@@ -12,6 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DeviceUtil {
 
+    private DeviceUtil() {
+        throw new UnsupportedOperationException("DeviceUtil should never be instantiated");
+    }
+
     /**
      * 根据报文获取设备类型枚举
      *

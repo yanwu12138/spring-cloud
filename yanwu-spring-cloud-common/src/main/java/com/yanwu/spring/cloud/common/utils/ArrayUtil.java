@@ -15,6 +15,7 @@ import java.util.Objects;
 public class ArrayUtil {
 
     private ArrayUtil() {
+        throw new UnsupportedOperationException("ArrayUtil should never be instantiated");
     }
 
     /**

@@ -32,6 +32,10 @@ public class FtpUtil {
     private static final String USERNAME = "hoolink";
     private static final String PASSWORD = "hoolink123";
 
+    private FtpUtil() {
+        throw new UnsupportedOperationException("FtpUtil should never be instantiated");
+    }
+
     /**
      * 初始化FTP
      *

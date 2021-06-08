@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class ContextUtil implements ApplicationContextAware {
 
     private ContextUtil() {
+        throw new UnsupportedOperationException("ContextUtil should never be instantiated");
     }
 
     private static ApplicationContext context = null;
