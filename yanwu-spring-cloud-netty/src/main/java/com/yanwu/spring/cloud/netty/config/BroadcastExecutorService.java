@@ -39,10 +39,6 @@ public class BroadcastExecutorService {
         }
     }
 
-    public String getKey(BroadcastEnum type, String magic) {
-        return type.getType() + "-" + magic;
-    }
-
     /**
      * 判断是否有线程正在运行
      */
@@ -51,4 +47,7 @@ public class BroadcastExecutorService {
         return executor != null && executor.getActiveCount() > 0;
     }
 
+    private String getKey(BroadcastEnum type, String magic) {
+        return type.getType() + "-" + magic;
+    }
 }
