@@ -268,4 +268,30 @@ public class ByteUtil {
         return result.toString();
     }
 
+    /**
+     * 将多个字节数组合并
+     *
+     * @param sources 字节数组
+     * @return 合并后的字节数组
+     */
+    public static byte[] merge(byte[]... sources) {
+        if (sources == null || sources.length == 0) {
+            return new byte[]{};
+        }
+        if (sources.length == 1) {
+            return sources[0];
+        }
+        byte[] result = new byte[0];
+        for (byte[] bytes : sources) {
+            if (bytes == null || bytes.length == 0) {
+                continue;
+            }
+            byte[] temp = new byte[result.length + bytes.length];
+            System.arraycopy(result, 0, temp, 0, result.length);
+            System.arraycopy(bytes, 0, temp, result.length, bytes.length);
+            result = temp;
+        }
+        return result;
+    }
+
 }
