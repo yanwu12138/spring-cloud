@@ -21,7 +21,7 @@ public class ByteUtil {
     }
 
     /**
-     * 将字节转换为十六进制字符串0xFF,0x0A
+     * 将字节转换为十六进制字符串: 0xFF,0x0A
      *
      * @param source byte
      * @return hexStr
@@ -49,29 +49,12 @@ public class ByteUtil {
     }
 
     /**
-     * 16进制字符串转byte数组
-     *
-     * @param hexStr 16进制字符串
-     * @return byte数组
-     */
-    public static byte[] hexStrToBytes(String hexStr) {
-        int len = hexStr.length();
-        byte[] result = new byte[len / 2];
-        for (int i = 0; i < result.length; i = i + 2) {
-            int temp = Integer.parseInt(hexStr.substring(i, i + 2), 16);
-            byte b = (byte) (temp & 0xFF);
-            result[i / 2] = b;
-        }
-        return result;
-    }
-
-    /**
      * 16进制字符串转16进制字节数组
      *
      * @param hexStr 源数据
      * @return 转换结果
      */
-    public static byte[] hexStrToHexBytes(String hexStr) {
+    public static byte[] hexStrToBytes(String hexStr) {
         byte[] result = new byte[hexStr.length() / 2];
         for (int i = 0; i < hexStr.length(); i = i + 2) {
             String strTmp = hexStr.substring(i, i + 2);
@@ -136,7 +119,7 @@ public class ByteUtil {
     }
 
     /**
-     * gbk字符串转16进制字符串
+     * GBK字符串转16进制字符串
      *
      * @param source gbk字符串
      * @return 16进制字符串

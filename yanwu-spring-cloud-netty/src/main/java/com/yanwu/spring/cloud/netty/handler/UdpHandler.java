@@ -93,7 +93,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
      * @param message 报文
      */
     public void radio(String message) {
-        byte[] bytes = ByteUtil.hexStrToHexBytes(message);
+        byte[] bytes = ByteUtil.hexStrToBytes(message);
         try (DatagramSocket socket = new DatagramSocket(nettyConfig.getRadioPort())) {
             java.net.InetAddress address = java.net.InetAddress.getByName("255.255.255.255");
             java.net.DatagramPacket packet = new java.net.DatagramPacket(bytes, bytes.length, address, nettyConfig.getRadioPort());
@@ -114,7 +114,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
         if (socket == null || StringUtils.isBlank(message)) {
             return;
         }
-        byte[] bytes = ByteUtil.hexStrToHexBytes(message);
+        byte[] bytes = ByteUtil.hexStrToBytes(message);
         log.info("send message, channel: {}, message: {}", host, ByteUtil.printHexStrByBytes(bytes));
         context.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(bytes), socket));
     }
