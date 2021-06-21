@@ -157,7 +157,7 @@ public class RedisUtil {
     /**
      * 在一个事务内运行多个redis操作
      *
-     * @param callable redis操作
+     * @param callable 一组redis操作
      * @return 执行结果返回值
      */
     public <T> CallableResult<T> multiExec(Callable<CallableResult<T>> callable) {
