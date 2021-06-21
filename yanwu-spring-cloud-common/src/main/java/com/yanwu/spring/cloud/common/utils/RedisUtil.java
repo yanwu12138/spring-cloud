@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.lang.NonNull;
@@ -41,7 +40,7 @@ public class RedisUtil {
     /*** 事务处理器 ***/
     @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
-    private RedisTemplate<?, ?> redisTemplate;
+    private RedisOperations<?, ?> redisOperations;
 
     private RedisUtil() {
     }
@@ -161,7 +160,7 @@ public class RedisUtil {
      * @return 执行结果返回值
      */
     public <T> CallableResult<T> multiExec(Callable<CallableResult<T>> callable) {
-        return redisTemplate.execute(new SessionCallback<CallableResult<T>>() {
+        return redisOperations.execute(new SessionCallback<CallableResult<T>>() {
             @Override
             public <K, V> CallableResult<T> execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
                 try {
