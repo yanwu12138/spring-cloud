@@ -3,7 +3,12 @@ package com.yanwu.spring.cloud.common.utils;
 import com.yanwu.spring.cloud.common.pojo.CallableResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -20,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @SuppressWarnings("unused")
-public class RedisLock {
+public class RedisUtil {
     /*** 分布式锁固定前缀 ***/
     private static final String REDIS_LOCK = "redis_lock_";
     /*** 分布式锁过期时间 ***/
@@ -29,9 +34,17 @@ public class RedisLock {
     private static final Integer SLEEP_TIME = 100;
     /*** 分布式锁自旋次数 ***/
     private static final Integer CYCLES = 30;
+    /*** 分布式锁处理器 ***/
     @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
     private ValueOperations<String, String> lockOperations;
+    /*** 事务处理器 ***/
+    @SuppressWarnings("all")
+    @Resource(name = "redisTemplate")
+    private RedisTemplate<?, ?> redisTemplate;
+
+    private RedisUtil() {
+    }
 
     /**
      * 加锁，超时时间为默认的30S
@@ -139,6 +152,32 @@ public class RedisLock {
         } finally {
             unLock(key, value);
         }
+    }
+
+    /**
+     * 在一个事务内运行多个redis操作
+     *
+     * @param callable redis操作
+     * @return 执行结果返回值
+     */
+    public <T> CallableResult<T> multiExec(Callable<CallableResult<T>> callable) {
+        return redisTemplate.execute(new SessionCallback<CallableResult<T>>() {
+            @Override
+            public <K, V> CallableResult<T> execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
+                try {
+                    // ----- 开启事务
+                    operations.multi();
+                    // ----- 执行
+                    CallableResult<T> result = callable.call();
+                    // ----- 提交事务
+                    operations.exec();
+                    return result;
+                } catch (Exception e) {
+                    log.error("redis multiExec callable error.", e);
+                    return CallableResult.failed();
+                }
+            }
+        });
     }
 
 }
