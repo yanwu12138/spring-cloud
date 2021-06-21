@@ -1,0 +1,78 @@
+package com.yanwu.spring.cloud.common.demo.d10design_mode.d02strategy;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+/**
+ * @author <a href="mailto:yanwu0527@163.com">baofeng Xu</a>
+ * @date 2021-06-21 21:12:17.
+ * <p>
+ * describe: 策略模式
+ * * 策略模式封装的是不同对象做同一件事的时候的不同执行方式
+ * * 如实例：
+ * * * 下方的sort()函数可以对任意对象进行排序，只要在调用该方法时传入该对象的Comparator比较器即可
+ */
+public class Strategy01 {
+
+    public static <T> void sort(T[] arr, Comparator<T> comparator) {
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+                if (comparator.compare(arr[i], arr[j]) > 0) {
+                    swap(arr, i, j);
+                }
+            }
+        }
+    }
+
+    private static <T> void swap(T[] arr, int i, int j) {
+        T temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    public static void main(String[] args) {
+        Cat[] cats = {new Cat(1.2, 3.5), new Cat(5, 0.2),
+                new Cat(0.6, 2.4), new Cat(3.4, 5)};
+        sort(cats, (cat1, cat2) -> {
+            if (cat1.getWeight() < cat2.getWeight()) return -1;
+            else if (cat1.getWeight() > cat2.getWeight()) return 1;
+            return 0;
+        });
+        System.out.println("cat weight: " + Arrays.toString(cats));
+
+        sort(cats, (cat1, cat2) -> {
+            if (cat1.getHeight() < cat2.getHeight()) return -1;
+            else if (cat1.getHeight() > cat2.getHeight()) return 1;
+            return 0;
+        });
+        System.out.println("cat height: " + Arrays.toString(cats));
+
+        Dog[] dogs = {new Dog(5), new Dog(1), new Dog(3), new Dog(3), new Dog(2)};
+        sort(dogs, (dog1, dog2) -> {
+            if (dog1.getAge() < dog2.getAge()) return -1;
+            else if (dog1.getAge() > dog2.getAge()) return 1;
+            return 0;
+        });
+        System.out.println("dog age: " + Arrays.toString(dogs));
+    }
+}
+
+@Data
+@AllArgsConstructor
+class Cat {
+
+    private double weight;
+
+    private double height;
+}
+
+@Data
+@AllArgsConstructor
+class Dog {
+
+    private int age;
+
+}
