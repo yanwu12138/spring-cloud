@@ -99,7 +99,7 @@ public class FtpUtil {
             // ----- 上传
             if (ftpClient.storeFile(fileName, is)) {
                 sb.append(filePath).append(SEPARATOR).append(fileName);
-                log.info(" ----- upload file success, filePath: {}", sb.toString());
+                log.info(" ----- upload file success, filePath: {}", sb);
                 return sb.toString();
             }
             log.error(" ----- upload file failed, userId: {}, file: {}", userId, fileName);

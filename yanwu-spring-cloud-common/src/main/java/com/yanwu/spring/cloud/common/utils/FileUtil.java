@@ -397,7 +397,7 @@ public class FileUtil {
             // ----- 下载压缩后的文件
             return exportBigFile(zipFile, response);
         } finally {
-            // ----- 下载完成后删除压缩
+            // ----- 下载完成后删除压缩包
             deleteFile(zipFile);
         }
     }
