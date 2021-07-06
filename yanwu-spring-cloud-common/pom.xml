@@ -245,6 +245,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- AIS 相关工具 -->
+        <dependency>
+            <groupId>dk.tbsalling</groupId>
+            <artifactId>aismessages</artifactId>
+            <version>2.2.3</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

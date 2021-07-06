@@ -18,7 +18,7 @@ import java.util.Objects;
 @Configuration
 public class NettyConfig {
 
-    /*** tcp端口 ***/
+    /*** 网卡名称 ***/
     @Getter
     @Value("${netty.interface.name}")
     private String interfaceName;
@@ -55,7 +55,7 @@ public class NettyConfig {
     public NetworkInterface getInter() {
         NetworkInterface anInterface = NettyUtils.getInterface(interfaceName);
         if (Objects.isNull(anInterface)) {
-            throw new RuntimeException("interface" + interfaceName + " 不存在");
+            throw new RuntimeException("interface: " + interfaceName + " 不存在");
         }
         return anInterface;
     }

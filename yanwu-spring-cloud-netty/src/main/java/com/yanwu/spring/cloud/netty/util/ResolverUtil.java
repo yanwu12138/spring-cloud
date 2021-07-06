@@ -38,6 +38,9 @@ public class ResolverUtil {
             for (Field field : fields) {
                 try {
                     field.setAccessible(true);
+                    if ("serialVersionUID".equals(field.getName())) {
+                        continue;
+                    }
                     field.set(obj, matcher.group(field.getName()));
                 } catch (Exception e) {
                     log.error("device regex parse error: ", e);

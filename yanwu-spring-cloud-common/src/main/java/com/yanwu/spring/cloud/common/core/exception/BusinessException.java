@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.core.exception;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * This is the exception that used for business exception, this exception class
@@ -11,6 +12,7 @@ import lombok.Data;
  * messageArgs used for i18n as arguments
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class BusinessException extends RuntimeException {
     private static final long serialVersionUID = -5480634685747058777L;
 
