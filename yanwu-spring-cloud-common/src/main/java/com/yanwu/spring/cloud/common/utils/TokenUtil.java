@@ -28,7 +28,7 @@ public class TokenUtil {
         AccessToken accessToken = new AccessToken();
         accessToken.setId(id);
         accessToken.setExpire(System.currentTimeMillis() + Contents.TOKEN_TIME_OUT);
-        return Aes128Util.encrypt(JsonUtil.toJsonString(accessToken), Contents.TOKEN);
+        return Aes128Util.encryptToStr(JsonUtil.toJsonString(accessToken), Contents.TOKEN);
     }
 
     /**
@@ -39,7 +39,7 @@ public class TokenUtil {
      */
     public static AccessToken verifyToken(String tokenStr) {
         Assert.isTrue(!StringUtils.isBlank(tokenStr), "no token!");
-        String tokenJson = Aes128Util.decrypt(tokenStr, Contents.TOKEN);
+        String tokenJson = Aes128Util.decryptByStr(tokenStr, Contents.TOKEN);
         AccessToken tokenObj = JsonUtil.toObject(tokenJson, AccessToken.class);
         Assert.notNull(tokenObj, "no token!");
         Long expire = tokenObj.getExpire();

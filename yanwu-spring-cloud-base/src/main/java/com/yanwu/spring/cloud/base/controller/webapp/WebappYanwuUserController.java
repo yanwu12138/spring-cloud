@@ -37,9 +37,9 @@ public class WebappYanwuUserController {
         // ===== 校验手机号是否存在
         Assert.isNull(userService.checkPhone(user.getPhone()), "手机号有已存在");
         if (StringUtils.isBlank(user.getPassword())) {
-            user.setPassword(Aes128Util.encrypt(YanwuConstants.DEFAULT_PASSWORD));
+            user.setPassword(Aes128Util.encryptToStr(YanwuConstants.DEFAULT_PASSWORD));
         } else {
-            user.setPassword(Aes128Util.encrypt(user.getPassword()));
+            user.setPassword(Aes128Util.encryptToStr(user.getPassword()));
         }
         userService.save(user);
         return ResponseEnvelope.success(user.getId());

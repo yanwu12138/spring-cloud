@@ -48,7 +48,7 @@ public class WebappLoginController {
         // ----- 校验: 当结果为null时, 说明该用户不存在
         Assert.isTrue(Objects.nonNull(user), "用户名或密码错误");
         // ----- 校验用户合法性: 查看密码是否匹配、用户是否被禁用
-        String password = Aes128Util.encrypt(vo.getPassword());
+        String password = Aes128Util.encryptToStr(vo.getPassword());
         Assert.isTrue(StringUtils.equals(password, user.getPassword()), "用户名或密码错误");
         Assert.isTrue(user.getEnabled(), "用户名或密码错误");
         Assert.isTrue(user.getStatus(), "用户被禁用");
