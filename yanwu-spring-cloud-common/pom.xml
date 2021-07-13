@@ -21,7 +21,7 @@
         <commons.lang3.version>3.7</commons.lang3.version>
         <commons.net.version>3.6</commons.net.version>
         <commons.httpcore.version>4.4.4</commons.httpcore.version>
-        <commons.httpclient.version>4.5.2</commons.httpclient.version>
+        <commons.httpclient.version>4.5.13</commons.httpclient.version>
         <disruptor.version>3.4.2</disruptor.version>
         <guava.version>22.0</guava.version>
         <java.mail.version>1.4.7</java.mail.version>
