@@ -28,7 +28,7 @@
         <java.version>1.8</java.version>
         <jdk.version>1.8</jdk.version>
         <jmh.version>1.21</jmh.version>
-        <lombol.version>1.16.18</lombol.version>
+        <lombok.version>1.16.18</lombok.version>
         <mybatis.plus.version>3.1.1</mybatis.plus.version>
         <net.sf.dozer.version>5.5.1</net.sf.dozer.version>
         <poi.version>3.17</poi.version>
@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombol.version}</version>
+            <version>${lombok.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjrt -->
         <dependency>
