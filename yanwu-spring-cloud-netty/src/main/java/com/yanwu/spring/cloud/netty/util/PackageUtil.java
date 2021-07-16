@@ -37,8 +37,8 @@ public class PackageUtil {
         if (data == null || data.length == 0) {
             return new byte[]{};
         }
-        // ----- 不以帧头开始，说明要么是个半包，要么丢包了
         if (!isHead(data, head)) {
+            // ----- 不以帧头开始，说明要么是个半包，要么丢包了
             byte[] cache = CACHE.get(channelId);
             if (cache == null || cache.length == 0) {
                 // ----- 如果之前没有半包的缓存，说明前面丢包了，不处理该报文
@@ -47,13 +47,15 @@ public class PackageUtil {
             // ----- 有缓存，和缓存拼起来，尝试解包
             return reader(channelId, ByteUtil.merge(CACHE.get(channelId), data), head, tail);
         }
-        if (isTail(data, tail)) {
-            // ----- 以帧头开始且以帧尾结束，是个完整的报文，做解包操作，并把之前缓存的半包清掉
-            CACHE.remove(channelId);
-            return data;
+        // ----- 以帧头开始
+        int tailBegin = findTail(data, head, tail);
+        if (tailBegin == -1) {
+            // ----- 不以帧尾结束，缓存起来等下个报文
+            CACHE.put(channelId, data);
+            return new byte[]{};
         }
-        // ----- 不以帧尾结束，缓存起来等下个报文，
-        CACHE.put(channelId, data);
+        // ----- 找到了帧尾，拿到完整的报文
+
         return new byte[]{};
     }
 
@@ -113,12 +115,12 @@ public class PackageUtil {
         byte[] tail = new byte[]{(byte) 0xFF};
         // ----- test
         byte[] data1 = {(byte) 0xAA, 0x01, 0x02};
-        System.out.println("第一包结果: " + ByteUtil.printHexStrByBytes(reader(channelId, data1, head, tail)));
+        System.out.println("第一包结果: " + ByteUtil.printBytes(reader(channelId, data1, head, tail)));
         byte[] data2 = {0x03, 0x04, 0x05};
-        System.out.println("第二包结果: " + ByteUtil.printHexStrByBytes(reader(channelId, data2, head, tail)));
+        System.out.println("第二包结果: " + ByteUtil.printBytes(reader(channelId, data2, head, tail)));
         byte[] data3 = {0x06, 0x07, 0x08};
-        System.out.println("第三包结果: " + ByteUtil.printHexStrByBytes(reader(channelId, data3, head, tail)));
+        System.out.println("第三包结果: " + ByteUtil.printBytes(reader(channelId, data3, head, tail)));
         byte[] data4 = {0x09, 0x010, (byte) 0xFF};
-        System.out.println("第四包结果: " + ByteUtil.printHexStrByBytes(reader(channelId, data4, head, tail)));
+        System.out.println("第四包结果: " + ByteUtil.printBytes(reader(channelId, data4, head, tail)));
     }
 }

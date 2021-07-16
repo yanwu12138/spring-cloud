@@ -69,7 +69,7 @@ public class ByteUtil {
      * @param bytes 字节数组
      * @return 输出格式
      */
-    public static String printHexStrByBytes(byte[] bytes) {
+    public static String printBytes(byte[] bytes) {
         String[] cs = new String[bytes.length];
         for (int i = 0; i < bytes.length; i++) {
             String hex = Integer.toHexString(bytes[i] & 0xFF);

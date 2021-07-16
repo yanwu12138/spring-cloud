@@ -34,7 +34,7 @@ public class D00ZeroCopy {
                     byte[] bytes = new byte[BYTE_SIZE];
                     int read;
                     while ((read = inputStream.read(bytes, 0, BYTE_SIZE)) != -1) {
-                        System.out.println(ByteUtil.printHexStrByBytes(bytes));
+                        System.out.println(ByteUtil.printBytes(bytes));
                     }
                 }
             }

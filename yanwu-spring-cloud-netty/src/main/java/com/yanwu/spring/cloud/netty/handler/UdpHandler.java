@@ -58,7 +58,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
         byte[] bytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(bytes);
         handler.nettyExecutor.execute(() -> {
-            log.info("read message, channel: {}, bytes: {}", host, ByteUtil.printHexStrByBytes(bytes));
+            log.info("read message, channel: {}, bytes: {}", host, ByteUtil.printBytes(bytes));
             // ----- 根据协议获取设备类型
             DeviceTypeEnum deviceType = DeviceUtil.getDeviceType(bytes);
             // ----- 根据设备类型获取对应的解析实现类
@@ -115,7 +115,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         byte[] bytes = ByteUtil.hexStrToBytes(message);
-        log.info("send message, channel: {}, message: {}", host, ByteUtil.printHexStrByBytes(bytes));
+        log.info("send message, channel: {}, message: {}", host, ByteUtil.printBytes(bytes));
         context.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(bytes), socket));
     }
 

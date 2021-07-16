@@ -43,7 +43,7 @@ public class AisUtil {
         try (InputStream inputStream = new ByteArrayInputStream(bytes)) {
             new AISInputStreamReader(inputStream, result::add).run();
         } catch (Exception e) {
-            log.error("ais getMessage error. bytes: {}", ByteUtil.printHexStrByBytes(bytes), e);
+            log.error("ais getMessage error. bytes: {}", ByteUtil.printBytes(bytes), e);
         }
         return result;
     }
