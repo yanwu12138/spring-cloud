@@ -398,3 +398,4 @@ public abstract class AISMessage implements Serializable, CachedDecodedValues {
 -   https://blog.csdn.net/happyparrot/article/details/1585185
 -   https://blog.csdn.net/happyparrot/article/details/1584079
 -   https://www.doc88.com/p-2117087607521.html?r=1
+-   http://www.doc88.com/p-3069100671048.html
