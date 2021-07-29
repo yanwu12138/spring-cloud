@@ -467,6 +467,17 @@ public class FileUtil {
     }
 
     /**
+     * 将内容追加到指定的文件
+     *
+     * @param filePath 文件路径
+     * @param block    内容
+     * @throws Exception e
+     */
+    public static void appendWrite(String filePath, byte[] block) throws Exception {
+        write(filePath, block, new File(filePath).length());
+    }
+
+    /**
      * 对文件按照指定的大小进行切片
      *
      * @param file        文件

@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.util.Assert;
@@ -19,6 +20,7 @@ import java.security.Security;
 @Slf4j
 @SuppressWarnings("unused")
 public class Sm4Util {
+    private static final String[] BASE_CIPHER = {"1", "3", "2", "5", "4", "6", "8", "7", "C", "D", "9", "0", "E", "F", "A", "B"};
     /*** 使用SM4加密算法 ***/
     private static final String ALGORITHM_NAME = "SM4";
     /*** 分组加密模式 ***/
@@ -28,6 +30,22 @@ public class Sm4Util {
 
     private Sm4Util() {
         throw new UnsupportedOperationException("Sm4Util should never be instantiated");
+    }
+
+
+    /**
+     * 根据小站SN获取密钥
+     *
+     * @param sn 小站SN
+     * @return 密钥
+     */
+    public static String getSecretKey(String sn) {
+        StringBuilder pwd = new StringBuilder();
+        byte[] bytes = DigestUtils.md5Hex(sn.getBytes()).getBytes(StandardCharsets.UTF_8);
+        for (byte temp : bytes) {
+            pwd.append(BASE_CIPHER[(int) temp % BASE_CIPHER.length]);
+        }
+        return pwd.toString();
     }
 
     static {

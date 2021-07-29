@@ -51,6 +51,31 @@ public class NettyConfig {
     @Value("${netty.broadcast.port}")
     private Integer broadcastPort;
 
+    /*** 串口号 ***/
+    @Getter
+    @Value("${serialport.serialNumber:COM3}")
+    private String serialNumber;
+
+    /*** 波特率 ***/
+    @Getter
+    @Value("${serialport.baudRate:11255}")
+    private Integer baudRate;
+
+    /*** 校验位 ***/
+    @Getter
+    @Value("${serialport.checkoutBit:0}")
+    private Integer checkoutBit;
+
+    /*** 数据位 ***/
+    @Getter
+    @Value("${serialport.dataBit:8}")
+    private Integer dataBit;
+
+    /*** 停止位 ***/
+    @Getter
+    @Value("${serialport.stopBit:1}")
+    private Integer stopBit;
+
     @JsonIgnore
     public NetworkInterface getInter() {
         NetworkInterface anInterface = NettyUtils.getInterface(interfaceName);
