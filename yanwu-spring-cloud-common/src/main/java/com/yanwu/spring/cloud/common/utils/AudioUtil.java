@@ -23,13 +23,23 @@ public class AudioUtil {
      * 播放音频文件
      *
      * @param path 文件绝对全路径
+     * @return 播放结果[true: 成功; false: 失败]
      */
-    public static void play(String path) {
-        play(new File(path));
+    public static boolean play(String path) {
+        return play(new File(path));
     }
 
-    public static void play(File file) {
-        log.info("play audio file: {}", file.getPath());
+    /**
+     * 播放音频文件
+     *
+     * @param file 音频文件
+     * @return 播放结果[true: 成功; false: 失败]
+     */
+    public static boolean play(File file) {
+        if (!file.isFile() || !file.exists()) {
+            log.error("play audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
+            return false;
+        }
         SourceDataLine source = null;
         try (AudioInputStream ais = AudioSystem.getAudioInputStream(file)) {
             AudioFormat audioFormat = ais.getFormat();
@@ -42,8 +52,11 @@ public class AudioUtil {
             while ((length = ais.read(bytes)) > 0) {
                 source.write(bytes, 0, length);
             }
+            log.info("play audio success, file: {}", file.getPath());
+            return true;
         } catch (Exception e) {
-            log.error("play audio error, file: {}.", file.getPath(), e);
+            log.error("play audio failed, file: {}.", file.getPath(), e);
+            return false;
         } finally {
             if (source != null) {
                 source.drain();
