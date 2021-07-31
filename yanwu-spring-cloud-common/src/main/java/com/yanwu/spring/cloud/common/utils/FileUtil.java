@@ -419,7 +419,7 @@ public class FileUtil {
             Future<Integer> read = channel.read(block, position);
             while (!read.isDone()) {
                 // ----- 睡50毫秒， 不抢占资源
-                ThreadUtil.sleep(50);
+                ThreadUtil.sleep(5);
             }
         }
         return block.array();
@@ -442,7 +442,7 @@ public class FileUtil {
             Future<Integer> write = channel.write(buffer, position);
             while (!write.isDone()) {
                 // ----- 睡50毫秒， 不抢占资源
-                ThreadUtil.sleep(50);
+                ThreadUtil.sleep(5);
             }
         }
     }
