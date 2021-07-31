@@ -67,7 +67,7 @@ public class SerialPortHandler implements SerialPortEventListener {
      * 发送信息到串口
      */
     public void sendMessage(String data) {
-        byte[] writerBuffer = ByteUtil.hexStrToBytes(data);
+        byte[] writerBuffer = ByteUtil.strToAsciiBytes(data);
         try (OutputStream outputStream = serialPortServer.getSerialPort().getOutputStream()) {
             outputStream.write(writerBuffer);
             outputStream.flush();
