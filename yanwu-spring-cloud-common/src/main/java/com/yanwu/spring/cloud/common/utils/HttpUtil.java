@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -15,14 +13,12 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.yanwu.spring.cloud.common.core.common.HttpConstants.*;
@@ -66,7 +62,7 @@ public class HttpUtil {
         if (MapUtils.isNotEmpty(params)) {
             List<String> urlParams = new ArrayList<>();
             params.forEach((key, value) -> urlParams.add(key + KEY_VALUE_SP + value));
-            url = StringUtils.join(new String[]{url, StringUtils.join(urlParams, PARAMS_SP)}, QUERY_SP);
+            url += QUERY_SP + StringUtils.join(urlParams, PARAMS_SP);
         }
         return execute(new HttpGet(url), clazz);
     }
@@ -177,30 +173,16 @@ public class HttpUtil {
      * 组装参数
      *
      * @param request request
-     * @param params  参数
+     * @param param   参数
      */
-    private static void assemblyParam(HttpEntityEnclosingRequestBase request, Map<String, String> params) {
-        if (MapUtils.isNotEmpty(params)) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            params.forEach((key, value) -> nameValuePairs.add(new BasicNameValuePair(key, value)));
-            request.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
+    private static <P> void assemblyParam(HttpEntityEnclosingRequestBase request, P param) {
+        if (Objects.isNull(param)) {
+            return;
         }
-    }
-
-    /**
-     * 组装参数
-     *
-     * @param request request
-     * @param params  参数
-     */
-    private static <P> void assemblyParam(HttpEntityEnclosingRequestBase request, P params) {
-        if (params != null) {
-            String paramStr = JsonUtil.toJsonString(params);
-            if (paramStr != null) {
-                StringEntity entity = new StringEntity(paramStr, UTF8);
-                request.setEntity(entity);
-            }
-        }
+        String paramStr = JsonUtil.toCompactJsonString(param);
+        StringEntity entity = new StringEntity(paramStr, UTF8);
+        entity.setContentType(APPLICATION_JSON);
+        request.setEntity(entity);
     }
 
 }
