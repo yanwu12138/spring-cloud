@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -47,7 +48,6 @@ public class HttpUtil {
      * @param clazz 返回值类型
      * @param <T>   返回值泛型
      * @return 响应结果
-     * @throws IOException IOException.Class
      */
     public static <T> T get(String url, Class<T> clazz) throws IOException {
         return get(url, null, clazz);
@@ -61,7 +61,6 @@ public class HttpUtil {
      * @param clazz  返回值类型
      * @param <T>    返回值泛型
      * @return 响应结果
-     * @throws IOException IOException.Class
      */
     public static <T> T get(String url, Map<String, String> params, Class<T> clazz) throws IOException {
         if (MapUtils.isNotEmpty(params)) {
@@ -79,7 +78,6 @@ public class HttpUtil {
      * @param clazz 返回值类型
      * @param <T>   返回值泛型
      * @return 响应结果
-     * @throws IOException IOException.Class
      */
     public static <T> T post(String url, Class<T> clazz) throws IOException {
         return post(url, null, clazz);
@@ -91,11 +89,9 @@ public class HttpUtil {
      * @param url    请求地址
      * @param params 参数
      * @param clazz  返回值类型
-     * @param <T>    返回值泛型
      * @return 响应结果
-     * @throws IOException IOException.Class
      */
-    public static <T> T post(String url, Map<String, String> params, Class<T> clazz) throws IOException {
+    public static <P, T> T post(String url, P params, Class<T> clazz) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         assemblyHeader(httpPost);
         assemblyParam(httpPost, params);
@@ -109,7 +105,6 @@ public class HttpUtil {
      * @param clazz 返回值类型
      * @param <T>   返回值泛型
      * @return 响应结果
-     * @throws IOException IOException.Class
      */
     public static <T> T delete(String url, Class<T> clazz) throws IOException {
         return delete(url, null, clazz);
@@ -121,11 +116,9 @@ public class HttpUtil {
      * @param url    请求地址
      * @param params 参数
      * @param clazz  返回值类型
-     * @param <T>    返回值泛型
      * @return 响应结果
-     * @throws IOException IOException.Class
      */
-    public static <T> T delete(String url, Map<String, String> params, Class<T> clazz) throws IOException {
+    public static <P, T> T delete(String url, P params, Class<T> clazz) throws IOException {
         HttpDelete httpDelete = new HttpDelete(url);
         assemblyHeader(httpDelete);
         assemblyParam(httpDelete, params);
@@ -154,8 +147,11 @@ public class HttpUtil {
      * @return CloseableHttpClient.class
      */
     private static CloseableHttpClient getHttpClient() {
-        return HttpClientBuilder.create().setDefaultRequestConfig(
-                RequestConfig.custom().setSocketTimeout(5000).setConnectTimeout(1000).build()).build();
+        return HttpClientBuilder.create().setDefaultRequestConfig(RequestConfig
+                .custom()
+                .setSocketTimeout(5000)
+                .setConnectTimeout(1000)
+                .build()).build();
     }
 
     /**
@@ -188,6 +184,22 @@ public class HttpUtil {
             List<NameValuePair> nameValuePairs = new ArrayList<>();
             params.forEach((key, value) -> nameValuePairs.add(new BasicNameValuePair(key, value)));
             request.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
+        }
+    }
+
+    /**
+     * 组装参数
+     *
+     * @param request request
+     * @param params  参数
+     */
+    private static <P> void assemblyParam(HttpEntityEnclosingRequestBase request, P params) {
+        if (params != null) {
+            String paramStr = JsonUtil.toJsonString(params);
+            if (paramStr != null) {
+                StringEntity entity = new StringEntity(paramStr, UTF8);
+                request.setEntity(entity);
+            }
         }
     }
 
