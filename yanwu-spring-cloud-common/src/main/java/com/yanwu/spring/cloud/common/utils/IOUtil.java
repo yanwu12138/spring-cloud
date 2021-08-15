@@ -13,6 +13,7 @@ import java.util.Objects;
  * description:
  */
 @Slf4j
+@SuppressWarnings("all")
 public class IOUtil {
 
     public static void close(Closeable closeable) {
