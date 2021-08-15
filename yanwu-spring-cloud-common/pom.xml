@@ -11,11 +11,13 @@
     <description>yanwu Spring Cloud Base project for Spring Boot</description>
 
     <properties>
+        <aismessages.version>2.2.3</aismessages.version>
         <aspectjrt.version>1.8.13</aspectjrt.version>
         <apache.zookeeper.version>3.4.8</apache.zookeeper.version>
         <zookeeper.curator.version>4.0.0</zookeeper.curator.version>
         <aliyun.sdk.oss.version>3.8.0</aliyun.sdk.oss.version>
         <cglib.version>3.2.5</cglib.version>
+        <cidr.ip.trie.version>1.0.1</cidr.ip.trie.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <commons.io.version>2.4</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
@@ -27,8 +29,10 @@
         <java.mail.version>1.4.7</java.mail.version>
         <java.version>1.8</java.version>
         <jdk.version>1.8</jdk.version>
+        <jflac.codec.version>1.5.2</jflac.codec.version>
         <jmh.version>1.21</jmh.version>
         <lombok.version>1.16.18</lombok.version>
+        <mp3spi.version>1.9.5.4</mp3spi.version>
         <mybatis.plus.version>3.1.1</mybatis.plus.version>
         <net.sf.dozer.version>5.5.1</net.sf.dozer.version>
         <poi.version>3.17</poi.version>
@@ -209,7 +213,7 @@
         <dependency>
             <groupId>com.github.veqryn</groupId>
             <artifactId>cidr-ip-trie</artifactId>
-            <version>1.0.1</version>
+            <version>${cidr.ip.trie.version}</version>
         </dependency>
         <!-- zookeeper -->
         <dependency>
@@ -249,7 +253,19 @@
         <dependency>
             <groupId>dk.tbsalling</groupId>
             <artifactId>aismessages</artifactId>
-            <version>2.2.3</version>
+            <version>${aismessages.version}</version>
+        </dependency>
+        <!-- 音频播放支持 -->
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>mp3spi</artifactId>
+            <version>${mp3spi.version}</version>
+        </dependency>
+        <!-- 如果需要解码播放flac文件则引入这个jar包 -->
+        <dependency>
+            <groupId>org.jflac</groupId>
+            <artifactId>jflac-codec</artifactId>
+            <version>${jflac.codec.version}</version>
         </dependency>
     </dependencies>
 
