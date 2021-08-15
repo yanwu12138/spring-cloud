@@ -29,7 +29,7 @@ public class AudioUtil {
      * @param filepath 文件绝对路径
      * @return 播放结果[true: 成功; false: 失败]
      */
-    public static boolean playFlac(String filepath) {
+    public synchronized static boolean playFlac(String filepath) {
         return playFlac(new File(filepath));
     }
 
@@ -39,7 +39,7 @@ public class AudioUtil {
      * @param file 音频文件
      * @return 播放结果[true: 成功; false: 失败]
      */
-    public static boolean playFlac(File file) {
+    public synchronized static boolean playFlac(File file) {
         if (!file.isFile() || !file.exists() || !file.getName().toLowerCase().endsWith(AudioEnum.FLAC.getSuffix())) {
             log.error("play flac audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
             return false;
@@ -71,7 +71,7 @@ public class AudioUtil {
      * @param filepath 文件绝对路径
      * @return 播放结果[true: 成功; false: 失败]
      */
-    public static boolean playWav(String filepath) {
+    public synchronized static boolean playWav(String filepath) {
         return playWav(new File(filepath));
     }
 
@@ -81,7 +81,7 @@ public class AudioUtil {
      * @param file 音频文件
      * @return 播放结果[true: 成功; false: 失败]
      */
-    public static boolean playWav(File file) {
+    public synchronized static boolean playWav(File file) {
         if (!file.isFile() || !file.exists() || !file.getName().toLowerCase().endsWith(AudioEnum.WAV.getSuffix())) {
             log.error("play wav audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
             return false;
@@ -109,7 +109,7 @@ public class AudioUtil {
      * @param filepath 文件绝对路径
      * @return 播放结果[true: 成功; false: 失败]
      */
-    public static boolean playPcm(String filepath) {
+    public synchronized static boolean playPcm(String filepath) {
         return playPcm(new File(filepath));
     }
 
@@ -119,7 +119,7 @@ public class AudioUtil {
      * @param file 音频文件
      * @return 播放结果[true: 成功; false: 失败]
      */
-    public static boolean playPcm(File file) {
+    public synchronized static boolean playPcm(File file) {
         if (!file.isFile() || !file.exists() || !file.getName().toLowerCase().endsWith(AudioEnum.PCM.getSuffix())) {
             log.error("play pcm audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
             return false;
@@ -147,7 +147,7 @@ public class AudioUtil {
      * @param filepath 文件绝对路径
      * @return 播放结果[true: 成功; false: 失败]
      */
-    public static boolean playMp3(String filepath) {
+    public synchronized static boolean playMp3(String filepath) {
         return playMp3(new File(filepath));
     }
 
@@ -157,7 +157,7 @@ public class AudioUtil {
      * @param file 音频文件
      * @return 播放结果[true: 成功; false: 失败]
      */
-    public static boolean playMp3(File file) {
+    public synchronized static boolean playMp3(File file) {
         if (!file.isFile() || !file.exists() || !file.getName().toLowerCase().endsWith(AudioEnum.MP3.getSuffix())) {
             log.error("play mp3 audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
             return false;
@@ -226,7 +226,6 @@ public class AudioUtil {
         PCM(".pcm"),
         MP3(".mp3"),
         ;
-
         private final String suffix;
 
         AudioEnum(String suffix) {
