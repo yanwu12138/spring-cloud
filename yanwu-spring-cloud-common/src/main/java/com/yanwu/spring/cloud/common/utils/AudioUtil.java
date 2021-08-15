@@ -196,15 +196,7 @@ public class AudioUtil {
 
     /*** 释放资源 ***/
     private static void close(InputStream stream, SourceDataLine source) {
-        if (Objects.nonNull(stream)) {
-            try {
-                stream.close();
-            } catch (Exception e) {
-                log.error("close InputStream error.", e);
-            } finally {
-                stream = null;
-            }
-        }
+        IOUtil.close(stream);
         if (Objects.nonNull(source)) {
             try {
                 source.drain();
@@ -212,8 +204,6 @@ public class AudioUtil {
                 source.close();
             } catch (Exception e) {
                 log.error("close SourceDataLine error.", e);
-            } finally {
-                source = null;
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.demo.d09socket.day004;
+package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -26,11 +26,11 @@ public class IOUtil {
         }
     }
 
-    public static void close(Closeable... closeables) {
-        if (ArrayUtils.isEmpty(closeables)) {
+    public static void close(Closeable... closes) {
+        if (ArrayUtils.isEmpty(closes)) {
             return;
         }
-        for (Closeable closeable : closeables) {
+        for (Closeable closeable : closes) {
             close(closeable);
         }
     }
