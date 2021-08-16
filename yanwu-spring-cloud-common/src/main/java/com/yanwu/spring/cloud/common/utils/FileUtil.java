@@ -403,6 +403,16 @@ public class FileUtil {
     }
 
     /**
+     * 读取文件
+     *
+     * @param path 文件路径
+     * @return 文件内容
+     */
+    public static byte[] read(String path) throws Exception {
+        return read(path, 0, (int) (new File(path)).length());
+    }
+
+    /**
      * 切片读取文件块
      *
      * @param path      文件路径
