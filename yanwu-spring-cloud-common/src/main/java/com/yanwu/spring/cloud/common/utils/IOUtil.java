@@ -16,6 +16,10 @@ import java.util.Objects;
 @SuppressWarnings("all")
 public class IOUtil {
 
+    private IOUtil() {
+        throw new UnsupportedOperationException("IOUtil should never be instantiated");
+    }
+
     public static void close(Closeable closeable) {
         if (Objects.isNull(closeable)) {
             return;
