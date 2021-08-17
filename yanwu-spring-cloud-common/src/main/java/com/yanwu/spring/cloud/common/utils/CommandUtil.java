@@ -2,6 +2,8 @@ package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
 /**
@@ -32,6 +34,31 @@ public class CommandUtil {
         Object result = method.invoke(ContextUtil.getBean(clazz), args);
         log.info("invoke. class: {}, method: {}, params: [{}], result: [{}]", clazz.getName(), method.getName(), args, result);
         return result;
+    }
+
+    /**
+     * 执行SHELL命令
+     *
+     * @param cmd 命令脚本
+     * @return 执行结果
+     */
+    public static String execCommand(String cmd) throws Exception {
+        Process proc = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", cmd});
+        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+        }
+        IOUtil.close(reader);
+        BufferedReader errorReader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+        while ((line = errorReader.readLine()) != null) {
+            builder.append(line);
+        }
+        IOUtil.close(errorReader);
+        proc.waitFor();
+        log.info("exec shell command, cmd: {}, result: {}", cmd, builder);
+        return builder.toString();
     }
 
     private static Class<?>[] getArgType(Object... args) {
