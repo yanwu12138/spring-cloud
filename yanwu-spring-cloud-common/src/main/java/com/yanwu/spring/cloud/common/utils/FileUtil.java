@@ -436,6 +436,53 @@ public class FileUtil {
     }
 
     /**
+     * 文件重命名
+     *
+     * @param filepath 文件全路径
+     * @param newName  新文件名
+     */
+    public static boolean rename(String filepath, String newName) {
+        return rename(new File(filepath), newName);
+    }
+
+    /**
+     * 文件重命名
+     *
+     * @param file    文件
+     * @param newName 新文件名
+     */
+    public static boolean rename(File file, String newName) {
+        return rename(file, file.getParentFile().getPath(), newName);
+    }
+
+    /**
+     * 文件重命名
+     *
+     * @param filepath    文件全路径
+     * @param newFilepath 新文件目录
+     * @param newName     新文件名
+     */
+    public static boolean rename(String filepath, String newFilepath, String newName) {
+        return rename(new File(filepath), newFilepath, newName);
+    }
+
+    /**
+     * 文件重命名
+     *
+     * @param file        文件
+     * @param newFilepath 新文件目录
+     * @param newName     新文件名
+     */
+    public static boolean rename(File file, String newFilepath, String newName) {
+        if (!file.exists()) {
+            log.error("file rename failed, because file is not exists.");
+            return false;
+        }
+        File newFile = new File(newFilepath + File.separator + newName);
+        return file.renameTo(newFile);
+    }
+
+    /**
      * 分片写文件
      *
      * @param path     文件目标位置
