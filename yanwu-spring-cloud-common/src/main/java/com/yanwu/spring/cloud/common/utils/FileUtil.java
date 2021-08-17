@@ -436,6 +436,44 @@ public class FileUtil {
     }
 
     /**
+     * 覆盖文件内容
+     *
+     * @param filepath 文件路径
+     * @param block    新内容
+     */
+    public static boolean resetFile(String filepath, byte[] block) {
+        return resetFile(new File(filepath), block);
+    }
+
+    /**
+     * 覆盖文件内容
+     *
+     * @param file  文件
+     * @param block 新内容
+     */
+    public static boolean resetFile(File file, byte[] block) {
+        if (!file.exists() || !file.isFile()) {
+            log.error("file reset failed, because file is not exists.");
+            return false;
+        }
+        String newFilepath = file.getParentFile().getPath() + File.separator + file.getName() + "_backup";
+        if (!rename(file, file.getParentFile().getPath(), file.getName() + "_backup")) {
+            log.error("file reset failed, because file backup failed.");
+            return false;
+        }
+        try {
+            appendWrite(file.getPath(), block);
+            deleteFile(newFilepath);
+            return true;
+        } catch (Exception e) {
+            log.error("file reset failed. reply to the source file.", e);
+            deleteFile(file.getPath());
+            rename(newFilepath, file.getName());
+            return false;
+        }
+    }
+
+    /**
      * 文件重命名
      *
      * @param filepath 文件全路径
@@ -474,7 +512,7 @@ public class FileUtil {
      * @param newName     新文件名
      */
     public static boolean rename(File file, String newFilepath, String newName) {
-        if (!file.exists()) {
+        if (!file.exists() || !file.isFile()) {
             log.error("file rename failed, because file is not exists.");
             return false;
         }
