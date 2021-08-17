@@ -29,7 +29,9 @@ public class CommandUtil {
      */
     public static Object invoke(Class<?> clazz, String methodName, Object... args) throws Exception {
         Method method = clazz.getDeclaredMethod(methodName, getArgType(args));
-        return method.invoke(ContextUtil.getBean(clazz), args);
+        Object result = method.invoke(ContextUtil.getBean(clazz), args);
+        log.info("invoke. class: {}, method: {}, params: [{}], result: [{}]", clazz.getName(), method.getName(), args, result);
+        return result;
     }
 
     private static Class<?>[] getArgType(Object... args) {
