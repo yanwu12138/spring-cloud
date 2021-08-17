@@ -457,7 +457,7 @@ public class FileUtil {
             return false;
         }
         String newFilepath = file.getParentFile().getPath() + File.separator + file.getName() + "_backup";
-        if (!rename(file, file.getParentFile().getPath(), file.getName() + "_backup")) {
+        if (!rename(file, newFilepath)) {
             log.error("file reset failed, because file backup failed.");
             return false;
         }
