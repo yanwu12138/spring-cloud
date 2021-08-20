@@ -29,21 +29,29 @@ public class SerialPortHandler implements SerialPortEventListener {
     public void serialEvent(SerialPortEvent event) {
         switch (event.getEventType()) {
             // ===== 解析串口读取的数据
-            case SerialPortEvent.BI: // 通讯中断
-            case SerialPortEvent.OE: // 溢位错误
-            case SerialPortEvent.FE: // 帧错误
-            case SerialPortEvent.PE: // 奇偶校验错误
-            case SerialPortEvent.CD: // 载波检测
-            case SerialPortEvent.CTS: // 清除发送
-            case SerialPortEvent.DSR: // 数据设备准备好
-            case SerialPortEvent.RI: // 响铃侦测
-            case SerialPortEvent.OUTPUT_BUFFER_EMPTY: // 输出缓冲区已清空
-                break;
-            case SerialPortEvent.DATA_AVAILABLE: // 有数据到达
-                // 调用读取数据的方法
-                readMessage();
-                break;
+            // ----- 通讯中断
+            case SerialPortEvent.BI:
+                // ----- 溢位错误
+            case SerialPortEvent.OE:
+                // ----- 帧错误
+            case SerialPortEvent.FE:
+                // ----- 奇偶校验错误
+            case SerialPortEvent.PE:
+                // ----- 载波检测
+            case SerialPortEvent.CD:
+                // ----- 清除发送
+            case SerialPortEvent.CTS:
+                // ----- 数据设备准备好
+            case SerialPortEvent.DSR:
+                // ----- 响铃侦测
+            case SerialPortEvent.RI:
+                // ----- 输出缓冲区已清空
+            case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
             default:
+                break;
+            // ===== 有数据到达，调用读取数据的方法
+            case SerialPortEvent.DATA_AVAILABLE:
+                readMessage();
                 break;
         }
     }
@@ -71,7 +79,7 @@ public class SerialPortHandler implements SerialPortEventListener {
         try (OutputStream outputStream = serialPortServer.getSerialPort().getOutputStream()) {
             outputStream.write(writerBuffer);
             outputStream.flush();
-            log.info("send message: {}", data);
+            log.info("sender message: {}", data);
         } catch (NullPointerException e) {
             throw new RuntimeException("Can't find the serial port.");
         } catch (IOException e) {

@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty.server;
 
+import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.config.NettyConfig;
 import com.yanwu.spring.cloud.netty.handler.SerialPortHandler;
 import gnu.io.CommPortIdentifier;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.TooManyListenersException;
 
@@ -55,7 +58,7 @@ public class SerialPortServer {
                     // ----- 设置串口通讯参数:波特率，数据位，停止位,校验方式
                     serialPort.setSerialPortParams(nettyConfig.getBaudRate(), nettyConfig.getDataBit(),
                             nettyConfig.getStopBit(), nettyConfig.getCheckoutBit());
-                    log.info("serial port listener success.");
+                    log.info("serial port listener success. serialPort: {}", nettyConfig.getSerialNumber());
                 } catch (PortInUseException e) {
                     throw new RuntimeException("The serial port is occupied");
                 } catch (TooManyListenersException e) {
@@ -70,6 +73,21 @@ public class SerialPortServer {
         // 若不存在该串口则抛出异常
         if (!exists) {
             log.error("this serial port does not exist. serialPort: {}", nettyConfig.getSerialNumber());
+        }
+    }
+
+    /**
+     * 发送信息到串口
+     */
+    public void sendComm(String data) {
+        byte[] writerBuffer = ByteUtil.hexStrToBytes(data);
+        try (OutputStream outputStream = serialPort.getOutputStream()) {
+            outputStream.write(writerBuffer);
+            outputStream.flush();
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Can't find the serial port.");
+        } catch (IOException e) {
+            throw new RuntimeException("IO exception occurred when sending information to the serial port.");
         }
     }
 
