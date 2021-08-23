@@ -30,7 +30,7 @@ public class ResolverUtil {
      * @return 对象
      */
     public static <T> T regexParse(String hexStr, String regex, Class<T> clazz) throws Exception {
-        T obj = clazz.newInstance();
+        T instance = clazz.newInstance();
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(hexStr.toUpperCase());
         if (matcher.find()) {
@@ -41,13 +41,13 @@ public class ResolverUtil {
                     if ("serialVersionUID".equals(field.getName())) {
                         continue;
                     }
-                    field.set(obj, matcher.group(field.getName()));
+                    field.set(instance, matcher.group(field.getName()));
                 } catch (Exception e) {
                     log.error("device regex parse error: ", e);
                 }
             }
         }
-        return obj;
+        return instance;
     }
 
     public static void main(String[] args) throws Exception {
