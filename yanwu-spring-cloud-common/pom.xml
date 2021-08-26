@@ -25,6 +25,7 @@
         <commons.httpcore.version>4.4.4</commons.httpcore.version>
         <commons.httpclient.version>4.5.2</commons.httpclient.version>
         <disruptor.version>3.4.2</disruptor.version>
+        <ganymed.ssh2.version>262</ganymed.ssh2.version>
         <guava.version>22.0</guava.version>
         <java.mail.version>1.4.7</java.mail.version>
         <java.version>1.8</java.version>
@@ -273,6 +274,12 @@
             <groupId>org.locationtech.spatial4j</groupId>
             <artifactId>spatial4j</artifactId>
             <version>${spatial4j.version}</version>
+        </dependency>
+        <!-- SSH相关支持 -->
+        <dependency>
+            <groupId>ch.ethz.ganymed</groupId>
+            <artifactId>ganymed-ssh2</artifactId>
+            <version>${ganymed.ssh2.version}</version>
         </dependency>
     </dependencies>
 

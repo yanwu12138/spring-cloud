@@ -11,7 +11,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -336,16 +335,6 @@ public class IpMacUtil {
             result.insert(0, "0");
         }
         return result.toString();
-    }
-
-    public static void main(String[] args) {
-        Set<String> ips = new HashSet<>();
-        ips.add("127.0.0.1");
-        ips.add("156.164.356.101");
-        ips.add("172.16.0.56/24");
-        ips.add("121.111.146.12/11");
-        String param = "172.16.0.56";
-        System.out.println(check(ips, param));
     }
 
     private static boolean check(Set<String> ips, String param) {

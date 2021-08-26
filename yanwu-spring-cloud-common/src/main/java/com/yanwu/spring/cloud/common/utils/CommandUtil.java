@@ -1,10 +1,15 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.Session;
+import ch.ethz.ssh2.StreamGobbler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.telnet.TelnetClient;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Baofeng Xu
@@ -20,9 +25,8 @@ public class CommandUtil {
         throw new UnsupportedOperationException("CommandUtil should never be instantiated");
     }
 
-    /**
+    /***
      * 通过反射执行对应的函数
-     *
      * @param clazz      源对象(被代理对象)
      * @param methodName 被代理方法
      * @param args       被代理方法参数集
@@ -36,9 +40,121 @@ public class CommandUtil {
         return result;
     }
 
-    /**
+    /***
+     * 建立与服务器的连接，默认使用22端口
+     * @param ip       服务器IP  String host = "192.168.178.1";
+     * @param username 登录服务器的用户名
+     * @param password 登录服务器的密码
+     * @return 返回登录的连接， 在使用的最后一定记得关闭connect资源
+     */
+    public static Connection getSshConnection(String ip, String username, String password) {
+        return getSshConnection(ip, 22, username, password);
+    }
+
+    /***
+     * 建立与服务器的连接
+     * @param ip       服务器IP
+     * @param port     端口]
+     * @param username 登录服务器的用户名
+     * @param password 登录服务器的密码
+     * @return 返回登录的连接， 在使用的最后一定记得关闭connect资源
+     */
+    public static Connection getSshConnection(String ip, Integer port, String username, String password) {
+        boolean flag;
+        Connection connection = null;
+        try {
+            connection = new Connection(ip, port);
+            connection.connect();
+            flag = connection.authenticateWithPassword(username, password);
+            if (flag) {
+                return connection;
+            }
+        } catch (IOException e) {
+            log.info("get SSH connection failed.", e);
+            connection.close();
+        }
+        return connection;
+    }
+
+    public static void main(String[] args) {
+        String cmd = "beamselector switch " + 281 + " -f";
+        System.out.println(execTelnet("172.28.85.169", "admin", "P@55w0rd!", cmd));
+    }
+
+    /***
+     * 使用telnet登录然后执行相应的命令
+     * @param ip 服务器IP
+     * @param username 用户名
+     * @param password 密码
+     * @param cmd 命令
+     * @return 执行结果
+     */
+    public static Boolean execTelnet(String ip, String username, String password, String cmd) {
+        if (!IpMacUtil.checkIpv4(ip)) {
+            log.error("telnet client exec command failed, because ip format is incorrect.");
+            return Boolean.FALSE;
+        }
+        TelnetClient client = null;
+        try {
+            client = new TelnetClient();
+            client.connect(ip);
+            return execTelnet(client, username, password, cmd);
+        } catch (Exception e) {
+            log.error("exec telnet error.", e);
+            return Boolean.FALSE;
+        } finally {
+            if (client != null) {
+                try {
+                    client.disconnect();
+                } catch (Exception e) {
+                    log.error("client disconnect error.", e);
+                }
+            }
+        }
+    }
+
+    /***
+     * 使用telnet登录然后执行相应的命令
+     * @param client telnet客户端
+     * @param username 用户名
+     * @param password 密码
+     * @param cmd 命令
+     * @return 执行结果
+     */
+    public static Boolean execTelnet(TelnetClient client, String username, String password, String cmd) {
+        if (StringUtils.isBlank(username)) {
+            log.error("telnet client exec command failed, because username is empty.");
+            return Boolean.FALSE;
+        }
+        if (StringUtils.isBlank(password)) {
+            log.error("telnet client exec command failed, because password is empty.");
+            return Boolean.FALSE;
+        }
+        if (StringUtils.isBlank(cmd)) {
+            log.error("telnet client exec command failed, because cmd is empty.");
+            return Boolean.FALSE;
+        }
+        try (InputStream inputStream = client.getInputStream();
+             OutputStream outputStream = client.getOutputStream()) {
+            log.info(readUntil(inputStream));
+            // ----- 输入用户名
+            writeUtil(username, outputStream);
+            log.info(readUntil(inputStream));
+            // ----- 输入密码
+            writeUtil(password, outputStream);
+            log.info(readUntil(inputStream));
+            // ----- 执行命令
+            writeUtil(cmd, outputStream);
+            log.info(readUntil(inputStream));
+            return Boolean.TRUE;
+        } catch (Exception e) {
+            log.error("exec telnet error.", e);
+            return Boolean.FALSE;
+        }
+    }
+
+    /***
      * 执行SHELL命令
-     *
      * @param cmd 命令脚本
      * @return 执行结果
      */
@@ -61,6 +177,39 @@ public class CommandUtil {
         return builder.toString();
     }
 
+    /***
+     * 远程执行shell脚本或者命令
+     * @param cmd 即将执行的命令
+     * @return 命令执行完后返回的结果值
+     */
+    public static String execCommand(Connection connection, String cmd) {
+        String result = "";
+        Session session = null;
+        try {
+            if (connection != null) {
+                session = connection.openSession();
+                session.execCommand(cmd);
+                result = processStdout(session.getStdout());
+                if (StringUtils.isBlank(result)) {
+                    log.info("get standard output empty, connection: {}, cmd: {}", connection.getHostname(), cmd);
+                    result = processStdout(session.getStderr());
+                } else {
+                    log.info("exec command success, connection: {}, cmd: {}", connection.getHostname(), cmd);
+                }
+            }
+        } catch (IOException e) {
+            log.error("exec command failed, connection: {}, cmd: {}", connection.getHostname(), cmd, e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return result;
+    }
+
+    /***
+     * 获取参数集对应的类型集
+     */
     private static Class<?>[] getArgType(Object... args) {
         if (ArrayUtil.isEmpty(args)) {
             return new Class[]{};
@@ -72,4 +221,50 @@ public class CommandUtil {
         return result;
     }
 
+    /***
+     * 解析脚本执行返回的结果集
+     * @param in 输入流对象
+     * @return 以纯文本的格式返回
+     */
+    private static String processStdout(InputStream in) {
+        InputStream stdout = new StreamGobbler(in);
+        StringBuilder buffer = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                buffer.append(line).append("\n");
+            }
+        } catch (Exception e) {
+            log.info("parsing script error.", e);
+        }
+        return buffer.toString();
+    }
+
+    /***
+     * 写入命令方法
+     */
+    public static void writeUtil(String cmd, OutputStream os) throws IOException {
+        try {
+            cmd = cmd + "\n";
+            os.write(cmd.getBytes());
+            os.flush();
+        } catch (IOException e) {
+            log.error("write command error. cmd: {}", cmd, e);
+            throw e;
+        }
+    }
+
+    /***
+     * 读到指定位置,不在向下读
+     */
+    public static String readUntil(InputStream inputStream) throws IOException {
+        try {
+            byte[] charBytes = new byte[inputStream.available()];
+            inputStream.read(charBytes);
+            return new String(charBytes, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.error("read command result error.", e);
+            throw e;
+        }
+    }
 }
