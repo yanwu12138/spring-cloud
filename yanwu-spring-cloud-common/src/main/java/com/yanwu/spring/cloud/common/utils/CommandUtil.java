@@ -77,7 +77,7 @@ public class CommandUtil {
     }
 
     public static void main(String[] args) {
-        String cmd = "beamselector switch " + 281 + " -f";
+        String cmd = "beamselector switch " + 289 + " -f";
         System.out.println(execTelnet("172.28.85.169", "admin", "P@55w0rd!", cmd));
     }
 
@@ -107,7 +107,11 @@ public class CommandUtil {
                 try {
                     client.disconnect();
                 } catch (Exception e) {
-                    log.error("client disconnect error.", e);
+                    if (!(e instanceof NullPointerException)) {
+                        log.error("client disconnect error.", e);
+                    } else {
+                        log.error("client disconnect error.");
+                    }
                 }
             }
         }
@@ -135,17 +139,18 @@ public class CommandUtil {
             return Boolean.FALSE;
         }
         try (InputStream inputStream = client.getInputStream();
-             OutputStream outputStream = client.getOutputStream()) {
-            log.info(readUntil(inputStream));
+             OutputStream outputStream = client.getOutputStream();
+             InputStreamReader reader = new InputStreamReader(inputStream)) {
+            log.info("telnet client: {}", readUntil(":", reader));
             // ----- 输入用户名
             writeUtil(username, outputStream);
-            log.info(readUntil(inputStream));
+            log.info("telnet client: {}", readUntil(":", reader));
             // ----- 输入密码
             writeUtil(password, outputStream);
-            log.info(readUntil(inputStream));
+            log.info("telnet client: {}", readUntil(".", reader));
             // ----- 执行命令
             writeUtil(cmd, outputStream);
-            log.info(readUntil(inputStream));
+            log.info("telnet client: {}", readUntil(":", reader));
             return Boolean.TRUE;
         } catch (Exception e) {
             log.error("exec telnet error.", e);
@@ -227,9 +232,10 @@ public class CommandUtil {
      * @return 以纯文本的格式返回
      */
     private static String processStdout(InputStream in) {
-        InputStream stdout = new StreamGobbler(in);
         StringBuilder buffer = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8))) {
+        try (InputStream stdout = new StreamGobbler(in);
+             InputStreamReader reader = new InputStreamReader(stdout, StandardCharsets.UTF_8);
+             BufferedReader br = new BufferedReader(reader)) {
             String line;
             while ((line = br.readLine()) != null) {
                 buffer.append(line).append("\n");
@@ -244,27 +250,37 @@ public class CommandUtil {
      * 写入命令方法
      */
     public static void writeUtil(String cmd, OutputStream os) throws IOException {
-        try {
-            cmd = cmd + "\n";
-            os.write(cmd.getBytes());
-            os.flush();
-        } catch (IOException e) {
-            log.error("write command error. cmd: {}", cmd, e);
-            throw e;
-        }
+        cmd = cmd + "\n";
+        os.write(cmd.getBytes());
+        os.flush();
     }
 
     /***
      * 读到指定位置,不在向下读
      */
-    public static String readUntil(InputStream inputStream) throws IOException {
+    public static String readUntil(String endFlag, InputStreamReader reader) {
+        char[] charBytes = new char[1024];
+        int n;
+        boolean flag = false;
+        String str = "";
         try {
-            byte[] charBytes = new byte[inputStream.available()];
-            inputStream.read(charBytes);
-            return new String(charBytes, StandardCharsets.UTF_8);
+            while ((n = reader.read(charBytes)) != -1) {
+                for (int i = 0; i < n; i++) {
+                    char c = charBytes[i];
+                    str += c;
+                    //当拼接的字符串以指定的字符串结尾时,不在继续读
+                    if (str.endsWith(endFlag)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    break;
+                }
+            }
         } catch (IOException e) {
-            log.error("read command result error.", e);
-            throw e;
+            log.error("read command error.", e);
         }
+        return str;
     }
 }
