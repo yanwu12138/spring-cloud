@@ -42,7 +42,7 @@ public class CommandUtil {
 
     /***
      * 建立与服务器的连接，默认使用22端口
-     * @param ip       服务器IP  String host = "192.168.178.1";
+     * @param ip       服务器IP
      * @param username 登录服务器的用户名
      * @param password 登录服务器的密码
      * @return 返回登录的连接， 在使用的最后一定记得关闭connect资源
@@ -54,12 +54,16 @@ public class CommandUtil {
     /***
      * 建立与服务器的连接
      * @param ip       服务器IP
-     * @param port     端口]
+     * @param port     端口
      * @param username 登录服务器的用户名
      * @param password 登录服务器的密码
      * @return 返回登录的连接， 在使用的最后一定记得关闭connect资源
      */
     public static Connection getSshConnection(String ip, Integer port, String username, String password) {
+        if (!IpMacUtil.checkIpv4(ip)) {
+            log.error("get SSH connection failed, because ip format is incorrect.");
+            return null;
+        }
         boolean flag;
         Connection connection = null;
         try {
@@ -183,24 +187,60 @@ public class CommandUtil {
     }
 
     /***
+     * 远程执行shell脚本或者命令，默认使用22端口
+     * @param ip       服务器IP
+     * @param username 登录服务器的用户名
+     * @param password 登录服务器的密码
+     * @return 执行结果
+     */
+    public static String execCommand(String ip, String username, String password, String cmd) {
+        return execCommand(ip, 22, username, password, cmd);
+    }
+
+    /***
+     * 远程执行shell脚本或者命令
+     * @param ip       服务器IP
+     * @param port     端口
+     * @param username 登录服务器的用户名
+     * @param password 登录服务器的密码
+     * @return 执行结果
+     */
+    public static String execCommand(String ip, Integer port, String username, String password, String cmd) {
+        Connection connection = null;
+        try {
+            connection = getSshConnection(ip, port, username, password);
+            return execCommand(connection, cmd);
+        } catch (Exception e) {
+            log.error("exec command error.", e);
+            return null;
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+
+    /***
      * 远程执行shell脚本或者命令
      * @param cmd 即将执行的命令
      * @return 命令执行完后返回的结果值
      */
     public static String execCommand(Connection connection, String cmd) {
+        if (connection == null) {
+            log.warn("exec command failed, because connection is empty.");
+            return null;
+        }
         String result = "";
         Session session = null;
         try {
-            if (connection != null) {
-                session = connection.openSession();
-                session.execCommand(cmd);
-                result = processStdout(session.getStdout());
-                if (StringUtils.isBlank(result)) {
-                    log.info("get standard output empty, connection: {}, cmd: {}", connection.getHostname(), cmd);
-                    result = processStdout(session.getStderr());
-                } else {
-                    log.info("exec command success, connection: {}, cmd: {}", connection.getHostname(), cmd);
-                }
+            session = connection.openSession();
+            session.execCommand(cmd);
+            result = processStdout(session.getStdout());
+            if (StringUtils.isBlank(result)) {
+                log.info("get standard output empty, connection: {}, cmd: {}", connection.getHostname(), cmd);
+                result = processStdout(session.getStderr());
+            } else {
+                log.info("exec command success, connection: {}, cmd: {}", connection.getHostname(), cmd);
             }
         } catch (IOException e) {
             log.error("exec command failed, connection: {}, cmd: {}", connection.getHostname(), cmd, e);
@@ -258,29 +298,23 @@ public class CommandUtil {
     /***
      * 读到指定位置,不在向下读
      */
-    public static String readUntil(String endFlag, InputStreamReader reader) {
-        char[] charBytes = new char[1024];
-        int n;
+    public static String readUntil(String endFlag, InputStreamReader reader) throws IOException {
+        char[] chars = new char[1024];
         boolean flag = false;
-        String str = "";
-        try {
-            while ((n = reader.read(charBytes)) != -1) {
-                for (int i = 0; i < n; i++) {
-                    char c = charBytes[i];
-                    str += c;
-                    //当拼接的字符串以指定的字符串结尾时,不在继续读
-                    if (str.endsWith(endFlag)) {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (flag) {
+        StringBuilder builder = new StringBuilder();
+        while (reader.read(chars) != -1) {
+            for (char c : chars) {
+                builder.append(c);
+                // ----- 当拼接的字符串以指定的字符串结尾时,不在继续读
+                if (builder.toString().endsWith(endFlag)) {
+                    flag = true;
                     break;
                 }
             }
-        } catch (IOException e) {
-            log.error("read command error.", e);
+            if (flag) {
+                break;
+            }
         }
-        return str;
+        return builder.toString();
     }
 }
