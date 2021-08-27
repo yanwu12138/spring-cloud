@@ -64,25 +64,25 @@ public class CommandUtil {
             log.error("get SSH connection failed, because ip format is incorrect.");
             return null;
         }
-        boolean flag;
         Connection connection = null;
         try {
             connection = new Connection(ip, port);
             connection.connect();
-            flag = connection.authenticateWithPassword(username, password);
-            if (flag) {
+            if (connection.authenticateWithPassword(username, password)) {
                 return connection;
+            } else {
+                connection.close();
             }
         } catch (IOException e) {
             log.info("get SSH connection failed.", e);
             connection.close();
         }
-        return connection;
+        return null;
     }
 
     public static void main(String[] args) {
-        String cmd = "beamselector switch " + 289 + " -f";
-        System.out.println(execTelnet("172.28.85.169", "admin", "P@55w0rd!", cmd));
+        String cmd = "sh /root/docker-run/docker_ps.sh";
+        System.out.println(execCommand("192.168.56.150", "root", "xbf12138", cmd));
     }
 
     /***
