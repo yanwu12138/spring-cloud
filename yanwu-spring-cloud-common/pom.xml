@@ -13,20 +13,20 @@
     <properties>
         <aismessages.version>2.2.3</aismessages.version>
         <aspectjrt.version>1.8.13</aspectjrt.version>
-        <apache.zookeeper.version>3.4.8</apache.zookeeper.version>
+        <apache.zookeeper.version>3.4.14</apache.zookeeper.version>
         <zookeeper.curator.version>4.0.0</zookeeper.curator.version>
         <aliyun.sdk.oss.version>3.8.0</aliyun.sdk.oss.version>
         <cglib.version>3.2.5</cglib.version>
         <cidr.ip.trie.version>1.0.1</cidr.ip.trie.version>
         <commons.collections.version>3.2.2</commons.collections.version>
-        <commons.io.version>2.4</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
         <commons.net.version>3.6</commons.net.version>
         <commons.httpcore.version>4.4.4</commons.httpcore.version>
-        <commons.httpclient.version>4.5.2</commons.httpclient.version>
+        <commons.httpclient.version>4.5.13</commons.httpclient.version>
         <disruptor.version>3.4.2</disruptor.version>
         <ganymed.ssh2.version>262</ganymed.ssh2.version>
-        <guava.version>22.0</guava.version>
+        <guava.version>30.0-jre</guava.version>
         <java.mail.version>1.4.7</java.mail.version>
         <java.version>1.8</java.version>
         <jdk.version>1.8</jdk.version>
