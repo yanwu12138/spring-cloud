@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -610,6 +611,32 @@ public class FileUtil {
      */
     private static String getTargetFile(File file, long magic, long seqNum) {
         return file.getParent() + File.separator + getPrefix(file.getName()) + File.separator + magic + "_" + seqNum + ".slice";
+    }
+
+    /**
+     * 将多个文件合并成一个文件
+     *
+     * @param newFile  最终的文件
+     * @param oldFiles 需要合并的文件集合
+     */
+    private static String merge(File newFile, File... oldFiles) throws Exception {
+        if (Objects.isNull(newFile) || oldFiles == null || oldFiles.length == 0) {
+            return null;
+        }
+        checkFilePath(newFile, true);
+        String filePath = newFile.getPath();
+        for (File oldFile : oldFiles) {
+            if (Objects.nonNull(oldFile) && oldFile.isFile()) {
+                long position = 0, length = oldFile.length();
+                while (position < length) {
+                    int blockSize = (int) Math.min(SIZE, length - position);
+                    appendWrite(filePath, read(oldFile.getPath(), position, blockSize));
+                    position += blockSize;
+                }
+                deleteFile(oldFile);
+            }
+        }
+        return filePath;
     }
 
     /**

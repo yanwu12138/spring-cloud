@@ -3,7 +3,6 @@ package com.yanwu.spring.cloud.common.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.io.Closeable;
 import java.util.Objects;
 
 /**
@@ -20,7 +19,7 @@ public class IOUtil {
         throw new UnsupportedOperationException("IOUtil should never be instantiated");
     }
 
-    public static void close(Closeable closeable) {
+    public static void close(AutoCloseable closeable) {
         if (Objects.isNull(closeable)) {
             return;
         }
@@ -31,11 +30,11 @@ public class IOUtil {
         }
     }
 
-    public static void close(Closeable... closes) {
+    public static void close(AutoCloseable... closes) {
         if (ArrayUtils.isEmpty(closes)) {
             return;
         }
-        for (Closeable closeable : closes) {
+        for (AutoCloseable closeable : closes) {
             close(closeable);
         }
     }

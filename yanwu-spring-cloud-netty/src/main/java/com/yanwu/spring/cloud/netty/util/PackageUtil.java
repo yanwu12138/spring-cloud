@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.netty.util;
 
-import com.yanwu.spring.cloud.common.utils.ByteUtil;
+import com.yanwu.spring.cloud.netty.enums.PackageAnalyzeEnum;
+import io.netty.buffer.ByteBuf;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +19,7 @@ public class PackageUtil {
      * KEY: netty的通道ID
      * VALUE: 通道ID对应的半包缓存
      */
-    public static final Map<String, byte[]> CACHE = new ConcurrentHashMap<>();
+    public static final Map<String, ByteBuf> PACKAGE_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 报文中只有帧头和帧尾的标识符，没有报文长度的处理方式
@@ -28,33 +29,12 @@ public class PackageUtil {
      * ** 当报文为：{0xAA, 0xBB, 0x01, 0x02, 0xFF, 0xEE, 0xAA, 0xBB, 0x33, 0xFF, 0xEE} 时
      * ** 可能会将该报文拆解成：{0xAA, 0xBB, 0x01, 0x02, 0xFF, 0xEE} && {0xAA, 0xBB, 0x33, 0xFF, 0xEE} 这两个报文处理
      *
-     * @param data 原始报文
-     * @param head 包头
-     * @param tail 包尾
-     * @return 处理半包之后的结果
+     * @param channelId   通道号
+     * @param bytes       数据包
+     * @param analyzeEnum 解析方式
+     * @return 解析出来的完整包内容
      */
-    public static byte[] reader(String channelId, byte[] data, byte[] head, byte[] tail) {
-        if (data == null || data.length == 0) {
-            return new byte[]{};
-        }
-        if (!isHead(data, head)) {
-            // ----- 不以帧头开始，说明要么是个半包，要么丢包了
-            byte[] cache = CACHE.get(channelId);
-            if (cache == null || cache.length == 0) {
-                // ----- 如果之前没有半包的缓存，说明前面丢包了，不处理该报文
-                return new byte[]{};
-            }
-            // ----- 有缓存，和缓存拼起来，尝试解包
-            return reader(channelId, ByteUtil.merge(CACHE.get(channelId), data), head, tail);
-        }
-        // ----- 以帧头开始
-        int tailBegin = findTail(data, head, tail);
-        if (tailBegin == -1) {
-            // ----- 不以帧尾结束，缓存起来等下个报文
-            CACHE.put(channelId, data);
-            return new byte[]{};
-        }
-        // ----- 找到了帧尾，拿到完整的报文
+    public static byte[] reader(String channelId, byte[] bytes, PackageAnalyzeEnum analyzeEnum) {
 
         return new byte[]{};
     }
@@ -67,15 +47,7 @@ public class PackageUtil {
      * @return [true: 以帧头开始; false: 不以帧头开始]
      */
     private static boolean isHead(byte[] data, byte[] head) {
-        if (data == null || head == null || head.length == 0 || data.length < head.length) {
-            return false;
-        }
-        for (int i = 0; i < head.length; i++) {
-            if (head[i] != data[i]) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
     /**
@@ -87,40 +59,10 @@ public class PackageUtil {
      * @return 帧尾的位置，当返回结果为-1时，说明改报文中没有帧尾
      */
     private static int findTail(byte[] data, byte[] head, byte[] tail) {
-        boolean flag = data == null || head == null || head.length == 0 ||
-                tail == null || tail.length == 0 || data.length < head.length + tail.length;
-        if (flag || !isHead(data, head)) {
-            return -1;
-        }
-        int tailLength = tail.length;
-        boolean tailFlag = false;
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < tail.length; j++) {
-                if (data[i + j] != tail[j]) {
-                    break;
-                }
-                tailFlag = true;
-            }
-            if (tailFlag) {
-                break;
-            }
-        }
         return -1;
     }
 
 
     public static void main(String[] args) {
-        String channelId = "test-reader";
-        byte[] head = new byte[]{(byte) 0xAA};
-        byte[] tail = new byte[]{(byte) 0xFF};
-        // ----- test
-        byte[] data1 = {(byte) 0xAA, 0x01, 0x02};
-        System.out.println("第一包结果: " + ByteUtil.printBytes(reader(channelId, data1, head, tail)));
-        byte[] data2 = {0x03, 0x04, 0x05};
-        System.out.println("第二包结果: " + ByteUtil.printBytes(reader(channelId, data2, head, tail)));
-        byte[] data3 = {0x06, 0x07, 0x08};
-        System.out.println("第三包结果: " + ByteUtil.printBytes(reader(channelId, data3, head, tail)));
-        byte[] data4 = {0x09, 0x010, (byte) 0xFF};
-        System.out.println("第四包结果: " + ByteUtil.printBytes(reader(channelId, data4, head, tail)));
     }
 }
