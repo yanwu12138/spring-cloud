@@ -1,0 +1,1 @@
+INSERT IGNORE INTO yanwu_user (id, account, password, user_name, sex, description) VALUES (1, 'admin', '123456', '超级管理员', 1, '超级管理员');
