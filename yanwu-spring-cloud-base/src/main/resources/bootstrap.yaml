@@ -1,58 +1,15 @@
-server:
-  port: 8881
+#################### NACOS CONFIG ####################
 spring:
-  ### 解决数据库查询结果返回数据时的时区问题
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
-  datasource:
-    url: jdbc:mysql://192.168.56.150:3306/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
-    username: root
-    password: yanwu12138
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  redis:
-    host: 192.168.56.150
-    port: 6379
-    password: yanwu12138
-    timeout: 10000
-    database: 1
-#  cloud:
-#    alibaba:
-#      seata:
-#        tx-service-group: yanwu-seata-group-base
-### mybatis-plus 配置
-mybatis-plus:
-  ### Mapper.xml文件所在目录
-  mapper-locations: classpath:/mapper/*Mapper.xml,classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml
-  ### 实体类所在目录，多个目录用逗号分开
-  type-aliases-package: com.yanwu.spring.cloud.base.data.model
-  global-config:
-    refresh: true
-    db-config:
-      id-type: auto
-      db-type: mysql
-      table-underline: true
-      logic-delete-value: 1
-      logic-not-delete-value: 0
-  configuration:
-    map-underscore-to-camel-case: true
-    cache-enabled: false
-mybatis:
-  mapper-locations: classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml
-actable:
-  table:
-    auto: update
-  model:
-    pack: com.yanwu.spring.cloud.base.data.model
-  database:
-    type: mysql
-  index:
-    prefix: idx_
-  unique:
-    prefix: uni_
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 50000
-        readTimeout: 50000
+  application:
+    name: yanwu-base
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
+        group: DEFAULT_GROUP
+        namespace: 3737b0be-e299-4e4f-92f7-a3a1db22a078
+      config:
+        group: DEFAULT_GROUP
+        server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
+        namespace: 3737b0be-e299-4e4f-92f7-a3a1db22a078
+        file-extension: yaml

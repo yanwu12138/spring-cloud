@@ -39,10 +39,8 @@ public class AttachmentController {
     /**
      * 上传用户头像
      *
-     * @param request
-     * @param userId
-     * @return
-     * @throws Exception
+     * @param request 头像文件
+     * @param userId  userId
      */
     @LogParam
     @PostMapping(value = "upPortrait")
@@ -55,10 +53,8 @@ public class AttachmentController {
     /**
      * 上传文件
      *
-     * @param request
-     * @param id
-     * @return
-     * @throws Exception
+     * @param request 头像文件
+     * @param id      操作者
      */
     @LogParam
     @PostMapping(value = "uploadFile")
@@ -70,9 +66,7 @@ public class AttachmentController {
     /**
      * 下载文件
      *
-     * @param id
-     * @return
-     * @throws Exception
+     * @param id 操作者
      */
     @LogParam
     @GetMapping(value = "downloadFile/{id}")
@@ -83,9 +77,6 @@ public class AttachmentController {
 
     /**
      * 下载文件
-     *
-     * @return
-     * @throws Exception
      */
     @LogParam
     @GetMapping(value = "downloadFile")
@@ -96,10 +87,8 @@ public class AttachmentController {
     /**
      * 上传Excel
      *
-     * @param file
-     * @param id
-     * @return
-     * @throws Exception
+     * @param file 文件
+     * @param id   操作者
      */
     @LogParam
     @PostMapping(value = "uploadExcel")
@@ -110,9 +99,6 @@ public class AttachmentController {
 
     /**
      * 下载Excel
-     *
-     * @return
-     * @throws Exception
      */
     @LogParam
     @GetMapping(value = "downloadExcel")
@@ -120,7 +106,7 @@ public class AttachmentController {
         List<List<String>> contents = attachmentService.downloadExcel();
         List<String> head = ExcelUtil.assembleHead("id", "created", "update", "name", "att_name", "att_size", "att_type");
         SXSSFWorkbook workbook = ExcelUtil.assembleExcel(head, contents);
-        String fileName = "downloadExcel" + LocalDate.now().toString() + LocalTime.now().toString() + FileType.EXCEL_07.getSuffix();
+        String fileName = "downloadExcel" + LocalDate.now() + LocalTime.now().toString() + FileType.EXCEL_07.getSuffix();
         return ExcelUtil.exportExcel(workbook, fileName);
     }
 

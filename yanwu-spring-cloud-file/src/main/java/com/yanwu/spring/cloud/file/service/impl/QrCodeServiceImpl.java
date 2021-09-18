@@ -61,7 +61,6 @@ public class QrCodeServiceImpl implements QrCodeService {
                 // ----- 入库
                 Attachment attachment = new Attachment()
                         .setName(fileName)
-                        .setAttachmentName(fileName)
                         .setAttachmentAddress(filePath)
                         .setAttachmentType(FileType.JPG.ordinal());
                 attachmentService.save(attachment);

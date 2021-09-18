@@ -25,8 +25,8 @@ import org.springframework.web.client.RestTemplate;
 @EnableFeignClients
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan("com.yanwu.spring.cloud.file.data.mapper")
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
+@MapperScan({"com.yanwu.spring.cloud.file.data.mapper", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud", "com.gitee.sunchenbin.mybatis.actable.manager.*"})
 public class YanwuSpringCloudFileApplication {
 
     public static void main(String[] args) {

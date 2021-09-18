@@ -45,17 +45,17 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
         List<List<String>> result = ExcelUtil.analysisExcel(file, 0);
         log.info("uploadExcel: {}", result);
         Attachment attachment = new Attachment();
-        attachment.setRelationId(id);
         attachment.setAttachmentSize(file.getSize());
         attachment.setName(file.getSubmittedFileName());
-        attachment.setAttachmentName(file.getSubmittedFileName());
         attachment.setAttachmentType(FileType.EXCEL_07.ordinal());
+        attachment.setCreator(id);
+        attachment.setUpdator(id);
         save(attachment);
         return attachment;
     }
 
     @Override
-    public List<List<String>> downloadExcel() throws Exception {
+    public List<List<String>> downloadExcel() {
         List<Attachment> attachments = list();
         List<List<String>> contents = new ArrayList<>();
         for (Attachment attachment : attachments) {
@@ -64,7 +64,6 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
             content.add(String.valueOf(attachment.getCreated()));
             content.add(String.valueOf(attachment.getUpdated()));
             content.add(attachment.getName());
-            content.add(attachment.getAttachmentName());
             content.add(String.valueOf(attachment.getAttachmentSize()));
             content.add(String.valueOf(attachment.getAttachmentType()));
             contents.add(content);
@@ -82,18 +81,18 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
         for (MultipartFile file : multipartFileList) {
             String fileName = file.getOriginalFilename();
             FileType fileType = FileType.getFileTypeByName(fileName);
-            String filePath = "/src/file/" + fileType + File.separatorChar + LocalDate.now().toString();
+            String filePath = "/src/file/" + fileType + File.separatorChar + LocalDate.now();
             FileUtil.checkDirectoryPath(filePath);
             String dataPath = filePath + File.separatorChar + fileName;
             FileUtils.copyInputStreamToFile(file.getInputStream(), new File(dataPath));
             log.info("attachment upload attachmentAddress: {}", dataPath);
             Attachment attachment = new Attachment();
-            attachment.setRelationId(id);
             attachment.setName(fileName);
-            attachment.setAttachmentName(fileName);
             attachment.setAttachmentAddress(dataPath);
             attachment.setAttachmentSize(file.getSize());
             attachment.setAttachmentType(fileType.ordinal());
+            attachment.setCreator(id);
+            attachment.setUpdator(id);
             save(attachment);
             attachments.add(attachment);
         }
@@ -101,7 +100,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
     }
 
     @Override
-    public Attachment findById(Long id) throws Exception {
+    public Attachment findById(Long id) {
         return getById(id);
     }
 
