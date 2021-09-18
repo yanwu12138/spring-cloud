@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.file;
+package com.yanwu.spring.cloud.base;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -25,12 +25,12 @@ import org.springframework.web.client.RestTemplate;
 @EnableFeignClients
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan({"com.yanwu.spring.cloud.file.data.mapper", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
+@MapperScan(basePackages = {"com.yanwu.spring.cloud.base.data.mapper", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud", "com.gitee.sunchenbin.mybatis.actable.manager.*"})
-public class YanwuSpringCloudFileApplication {
+public class BaseApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YanwuSpringCloudFileApplication.class, args);
+        SpringApplication.run(BaseApplication.class, args);
     }
 
     @Bean

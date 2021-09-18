@@ -1,6 +1,5 @@
-package com.yanwu.spring.cloud.device;
+package com.yanwu.spring.cloud.message;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -11,16 +10,26 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * @author XuBaofeng.
+ * @date 2018-11-12 16:36.
+ * <p>
+ * description:
+ * * @EnableEurekaClient        启动eureka注册
+ * * @EnableDiscoveryClient     启动ribbon负载均衡
+ * * @EnableFeignClients        启动feign服务发现功能
+ * * @EnableHystrix             启动断路器
+ * * @EnableScheduling          启用scheduler定时任务
+ */
 @EnableHystrix
 @EnableFeignClients
-@SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan({"com.yanwu.spring.cloud.device.data.mapper", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud", "com.gitee.sunchenbin.mybatis.actable.manager.*"})
-public class YanwuSpringCloudDeviceApplication {
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
+public class MessageApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YanwuSpringCloudDeviceApplication.class, args);
+        SpringApplication.run(MessageApplication.class, args);
     }
 
     @Bean

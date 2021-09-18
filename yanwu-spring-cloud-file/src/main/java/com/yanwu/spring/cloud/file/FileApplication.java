@@ -1,5 +1,6 @@
-package com.yanwu.spring.cloud.message;
+package com.yanwu.spring.cloud.file;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -19,17 +20,17 @@ import org.springframework.web.client.RestTemplate;
  * * @EnableDiscoveryClient     启动ribbon负载均衡
  * * @EnableFeignClients        启动feign服务发现功能
  * * @EnableHystrix             启动断路器
- * * @EnableScheduling          启用scheduler定时任务
  */
 @EnableHystrix
 @EnableFeignClients
-@EnableDiscoveryClient
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
-public class YanwuSpringCloudMessageApplication {
+@EnableDiscoveryClient
+@MapperScan({"com.yanwu.spring.cloud.file.data.mapper", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud", "com.gitee.sunchenbin.mybatis.actable.manager.*"})
+public class FileApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YanwuSpringCloudMessageApplication.class, args);
+        SpringApplication.run(FileApplication.class, args);
     }
 
     @Bean

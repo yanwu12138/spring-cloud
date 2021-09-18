@@ -34,10 +34,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableDiscoveryClient
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud"}, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {InitSqlRunner.class})})
-public class YanwuSpringCloudNettyApplication {
+public class NettyApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YanwuSpringCloudNettyApplication.class, args);
+        SpringApplication.run(NettyApplication.class, args);
     }
 
     @Bean

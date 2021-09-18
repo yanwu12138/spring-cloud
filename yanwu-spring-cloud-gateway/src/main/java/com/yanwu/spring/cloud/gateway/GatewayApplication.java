@@ -14,10 +14,10 @@ import org.springframework.web.client.RestTemplate;
 @EnableHystrix
 @EnableDiscoveryClient
 @SpringBootApplication
-public class YanwuSpringCloudGatewayApplication {
+public class GatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YanwuSpringCloudGatewayApplication.class, args);
+        SpringApplication.run(GatewayApplication.class, args);
     }
 
     @Bean
