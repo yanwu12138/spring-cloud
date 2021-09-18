@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.message;
 
+import com.yanwu.spring.cloud.common.runner.InitSqlRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -8,6 +9,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -25,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableFeignClients
 @EnableDiscoveryClient
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud"}, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {InitSqlRunner.class})})
 public class MessageApplication {
 
     public static void main(String[] args) {
