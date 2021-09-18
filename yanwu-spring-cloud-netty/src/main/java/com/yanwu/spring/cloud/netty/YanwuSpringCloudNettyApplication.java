@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty;
 
+import com.yanwu.spring.cloud.common.runner.InitSqlRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -8,6 +9,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +33,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableFeignClients
 @EnableDiscoveryClient
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud"}, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {InitSqlRunner.class})})
 public class YanwuSpringCloudNettyApplication {
 
     public static void main(String[] args) {

@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
  * @date 2021/9/17 20:01.
  * <p>
  * description: 服务启动后执行init.sql中的SQL语句
+ * 注意：当某个项目没有数据库支持时，需要排除该类的加载，不然会抛异常
+ * 排除方式：@ComponentScan(basePackages = {"xxx.xxx"}, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {InitSqlRunner.class})})
  */
 @Slf4j
 @Component
