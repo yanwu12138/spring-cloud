@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
  * @author Baofeng Xu
  * @date 2021/9/17 20:01.
  * <p>
- * description:
+ * description: 服务启动后执行init.sql中的SQL语句
  */
 @Slf4j
 @Component
@@ -37,9 +37,9 @@ public class InitSqlRunner implements CommandLineRunner {
                 return;
             }
             try (InputStream inputStream = resource.getInputStream();
-                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                 String sql;
-                while ((sql = bufferedReader.readLine()) != null) {
+                while (StringUtils.isNotBlank(sql = reader.readLine())) {
                     if (StringUtils.isBlank(sql) || sql.startsWith("--")) {
                         // ----- 为空行或者为注解，不执行
                         continue;
