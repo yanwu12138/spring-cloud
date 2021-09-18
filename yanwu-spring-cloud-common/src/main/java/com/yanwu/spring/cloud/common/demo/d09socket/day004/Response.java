@@ -44,6 +44,6 @@ public class Response {
 
         writer.write(message);
         writer.flush();
-        IOUtil.close(writer, streamWriter, outputStream, socket);
+        IOUtil.closes(writer, streamWriter, outputStream, socket);
     }
 }

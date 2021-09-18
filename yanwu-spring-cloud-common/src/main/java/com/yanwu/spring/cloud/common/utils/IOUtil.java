@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author Baofeng Xu
@@ -30,12 +31,32 @@ public class IOUtil {
         }
     }
 
-    public static void close(AutoCloseable... closes) {
+    public static void closes(AutoCloseable... closes) {
         if (ArrayUtils.isEmpty(closes)) {
             return;
         }
         for (AutoCloseable closeable : closes) {
             close(closeable);
+        }
+    }
+
+    public static void close(Stream stream) {
+        if (Objects.isNull(stream)) {
+            return;
+        }
+        try {
+            stream.close();
+        } catch (Exception e) {
+            log.error("stream close error.", e);
+        }
+    }
+
+    public static void closes(Stream... closes) {
+        if (ArrayUtils.isEmpty(closes)) {
+            return;
+        }
+        for (Stream stream : closes) {
+            close(stream);
         }
     }
 
