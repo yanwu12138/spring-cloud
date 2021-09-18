@@ -61,7 +61,7 @@ public class YanwuUser extends BaseDo<Long> implements Serializable {
 
     /*** 角色ID */
     @TableField("role_id")
-    @Column(name = "role_id", type = BIGINT, length = 20, comment = "角色ID")
+    @Column(name = "role_id", type = BIGINT, length = 20, isNull = false, comment = "角色ID")
     private Long roleId;
 
     /*** 头像 */

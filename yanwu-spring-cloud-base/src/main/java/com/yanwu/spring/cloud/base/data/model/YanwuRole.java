@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
+import com.gitee.sunchenbin.mybatis.actable.annotation.Unique;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlCharsetConstant;
 import com.yanwu.spring.cloud.common.pojo.BaseDo;
 import lombok.Data;
@@ -30,6 +31,7 @@ public class YanwuRole extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = -7133802858877953995L;
 
     /*** 角色名称 ***/
+    @Unique
     @TableField("role_name")
     @Column(name = "role_name", type = VARCHAR, length = 32, isNull = false, comment = "角色名称")
     private String roleName;
