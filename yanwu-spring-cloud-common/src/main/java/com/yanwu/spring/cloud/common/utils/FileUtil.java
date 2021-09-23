@@ -712,13 +712,6 @@ public class FileUtil {
         Assert.isTrue(file.createNewFile(), "File does not exist.");
     }
 
-    public static void main(String[] args) throws Exception {
-        long start = System.currentTimeMillis();
-        String filepath = "E:\\大白文件夹\\yw.zip", md5 = "7519d39ebf2325ba0e90949ea8b27dbb";
-        System.out.println(checkFileMd5(filepath, md5));
-        System.out.println(System.currentTimeMillis() - start);
-    }
-
     /**
      * 校验文件的MD5值
      *
