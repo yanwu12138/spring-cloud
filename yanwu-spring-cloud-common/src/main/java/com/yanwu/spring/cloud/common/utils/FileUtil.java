@@ -22,6 +22,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.MessageDigest;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.concurrent.Future;
@@ -709,6 +710,87 @@ public class FileUtil {
         Assert.isTrue(flag, "File does not exist.");
         checkDirectoryPath(file.getParentFile());
         Assert.isTrue(file.createNewFile(), "File does not exist.");
+    }
+
+    public static void main(String[] args) throws Exception {
+        long start = System.currentTimeMillis();
+        String filepath = "E:\\大白文件夹\\yw.zip", md5 = "7519d39ebf2325ba0e90949ea8b27dbb";
+        System.out.println(checkFileMd5(filepath, md5));
+        System.out.println(System.currentTimeMillis() - start);
+    }
+
+    /**
+     * 校验文件的MD5值
+     *
+     * @param filepath 文件全路径
+     * @param md5      MD5值
+     * @return 校验结果【true: 校验通过; false: 校验不通过】
+     */
+    public static boolean checkFileMd5(String filepath, String md5) throws Exception {
+        if (StringUtils.isBlank(filepath)) {
+            log.error("check file md5 failed, because file path is empty.");
+            return false;
+        }
+        if (StringUtils.isBlank(md5)) {
+            log.error("check file md5 failed, because md5 is empty.");
+            return false;
+        }
+        String fileMd5 = calcFileMd5(filepath);
+        return StringUtils.isNotBlank(fileMd5) && fileMd5.equals(md5.toUpperCase());
+    }
+
+    /**
+     * 校验文件的MD5值
+     *
+     * @param file 文件
+     * @param md5  MD5值
+     * @return 校验结果【true: 校验通过; false: 校验不通过】
+     */
+    public static boolean checkFileMd5(File file, String md5) throws Exception {
+        if (!file.exists() || !file.isFile()) {
+            log.error("get file md5 failed, because file is empty.");
+            return false;
+        }
+        if (StringUtils.isBlank(md5)) {
+            log.error("check file md5 failed, because md5 is empty.");
+            return false;
+        }
+        String fileMd5 = calcFileMd5(file);
+        return StringUtils.isNotBlank(fileMd5) && fileMd5.equals(md5.toUpperCase());
+    }
+
+    /**
+     * 计算文件的MD5值
+     *
+     * @param filepath 文件全路径
+     * @return 文件的MD5值
+     */
+    public static String calcFileMd5(String filepath) throws Exception {
+        return StringUtils.isBlank(filepath) ? null : calcFileMd5(new File(filepath));
+    }
+
+    /**
+     * 计算文件的MD5值
+     *
+     * @param file 文件
+     * @return 文件的MD5值
+     */
+    public static String calcFileMd5(File file) throws Exception {
+        if (!file.exists() || !file.isFile()) {
+            log.error("calc file md5 failed, because file does not exist or is not a file.");
+            return null;
+        }
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        long length = file.length(), position = 0, blockSize = LIMIT_SIZE;
+        while (length > 0) {
+            blockSize = Math.min(blockSize, length);
+            digest.update(read(file.getPath(), position, (int) blockSize));
+            position += blockSize;
+            length -= blockSize;
+        }
+        String result = ByteUtil.bytesToHexStr(digest.digest());
+        log.info("calc file md5 success, file: {}, md5: {}", file.getPath(), result);
+        return result;
     }
 
 }
