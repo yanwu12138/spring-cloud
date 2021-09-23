@@ -110,6 +110,23 @@ public class DownLoadUtil {
     }
 
     /**
+     * 下载文件，并在下载完成后，校验MD5值是否正确；如果MD5校验未通过则删除已下载的文件
+     *
+     * @param fileUrl   资源路径
+     * @param localPath 文件路径
+     * @param md5       文件的MD5
+     */
+    public static boolean download(String fileUrl, String localPath, String md5) throws Exception {
+        download(fileUrl, localPath);
+        if (!FileUtil.checkFileMd5(localPath, md5)) {
+            log.error("download file failed, because md5 check failed.");
+            FileUtil.deleteFile(localPath);
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * 文件下载任务
      */
     @Data

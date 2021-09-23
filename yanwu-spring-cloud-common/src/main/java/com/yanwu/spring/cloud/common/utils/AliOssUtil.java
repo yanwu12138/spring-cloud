@@ -310,7 +310,48 @@ public class AliOssUtil {
     }
 
     /**
-     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件], 该方法不会释放 ossClient 资源
+     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * <p>
+     * 并校验文件的MD5值
+     *
+     * @param properties OSS 相关配置
+     * @param fileUrl    OSS fileUrl
+     * @param targetPath 本地文件路径
+     * @param md5        文件的MD5值
+     * @throws Exception Exception.class
+     */
+    public static OssResult<Void> download(OssProperties properties, String fileUrl, String targetPath, String md5) throws Exception {
+        return download(properties, fileUrl, new File(targetPath), md5);
+    }
+
+    /**
+     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * <p>
+     * 并校验文件的MD5值
+     *
+     * @param properties OSS相关配置
+     * @param fileUrl    OSS fileUrl
+     * @param file       本地文件
+     * @param md5        文件的MD5值
+     * @throws Exception Exception.class
+     */
+    public static OssResult<Void> download(OssProperties properties, String fileUrl, File file, String md5) throws Exception {
+        OssResult<Void> download = download(properties, fileUrl, file);
+        if (!download.getStatus()) {
+            return download;
+        }
+        if (!FileUtil.checkFileMd5(file.getPath(), md5)) {
+            log.error("download file failed, because md5 check failed.");
+            FileUtil.deleteFile(file);
+            return OssResult.failed("文件MD5值校验失败");
+        }
+        return download;
+    }
+
+    /**
+     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * <p>
+     * 该方法不会释放 ossClient 资源
      *
      * @param ossClient  OSS 客户端
      * @param bucket     OSS 桶
@@ -323,7 +364,9 @@ public class AliOssUtil {
     }
 
     /**
-     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件], 该方法不会释放 ossClient 资源
+     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * <p>
+     * 该方法不会释放 ossClient 资源
      *
      * @param ossClient OSS 客户端
      * @param bucket    OSS 桶
@@ -354,6 +397,49 @@ public class AliOssUtil {
         }
         ossClient.getObject(new GetObjectRequest(bucket, fileUrl), file);
         return OssResult.success();
+    }
+
+    /**
+     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * <p>
+     * 该方法不会释放 ossClient 资源
+     * <p>
+     * 并校验文件的MD5值
+     *
+     * @param ossClient  OSS 客户端
+     * @param bucket     OSS 桶
+     * @param fileUrl    OSS fileUrl
+     * @param targetPath 本地文件路径
+     * @param md5        文件的MD5值
+     */
+    public static OssResult<Void> download(OSS ossClient, String bucket, String fileUrl, String targetPath, String md5) throws Exception {
+        return download(ossClient, bucket, fileUrl, new File(targetPath), md5);
+    }
+
+    /**
+     * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * <p>
+     * 该方法不会释放 ossClient 资源
+     * <p>
+     * 并校验文件的MD5值
+     *
+     * @param ossClient OSS 客户端
+     * @param bucket    OSS 桶
+     * @param fileUrl   OSS fileUrl
+     * @param file      本地文件
+     * @param md5       文件的MD5值
+     */
+    public static OssResult<Void> download(OSS ossClient, String bucket, String fileUrl, File file, String md5) throws Exception {
+        OssResult<Void> download = download(ossClient, bucket, fileUrl, file);
+        if (!download.getStatus()) {
+            return download;
+        }
+        if (!FileUtil.checkFileMd5(file, md5)) {
+            log.error("download file failed, because md5 check failed.");
+            FileUtil.deleteFile(file);
+            return OssResult.failed("file md5 value verification failed.");
+        }
+        return download;
     }
 
     /**
