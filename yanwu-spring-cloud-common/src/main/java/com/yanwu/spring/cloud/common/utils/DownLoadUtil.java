@@ -119,10 +119,11 @@ public class DownLoadUtil {
     public static boolean download(String fileUrl, String localPath, String md5) throws Exception {
         download(fileUrl, localPath);
         if (!FileUtil.checkFileMd5(localPath, md5)) {
-            log.error("download file failed, because md5 check failed.");
+            log.error("download file failed, because md5 check failed. file: {}, md5: {}", localPath, md5);
             FileUtil.deleteFile(localPath);
             return false;
         }
+        log.info("download file check md5 success, file: {}, md5: {}", localPath, md5);
         return true;
     }
 

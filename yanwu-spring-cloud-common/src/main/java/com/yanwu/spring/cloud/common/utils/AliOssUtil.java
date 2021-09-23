@@ -345,6 +345,7 @@ public class AliOssUtil {
             FileUtil.deleteFile(file);
             return OssResult.failed("文件MD5值校验失败");
         }
+        log.info("download file check md5 success, file: {}, md5: {}", file.getPath(), md5);
         return download;
     }
 
@@ -439,6 +440,7 @@ public class AliOssUtil {
             FileUtil.deleteFile(file);
             return OssResult.failed("file md5 value verification failed.");
         }
+        log.info("download file check md5 success, file: {}, md5: {}", file.getPath(), md5);
         return download;
     }
 
