@@ -80,7 +80,7 @@ public class DownLoadUtil {
         int responseCode = httpConnection.getResponseCode();
         Assert.isTrue((responseCode <= 400), "get remote file size error. code: " + responseCode);
         long fileSize = Long.parseLong(httpConnection.getHeaderField(HttpHeaders.CONTENT_LENGTH));
-        Assert.isTrue((fileSize > 0), "get remote file size error. size is zero");
+        Assert.isTrue((fileSize > 0), "get remote file size error, size is zero.");
         long threadCount = Math.floorDiv(fileSize, UNIT_SIZE);
         threadCount = fileSize == threadCount * UNIT_SIZE ? threadCount : threadCount + 1;
 
