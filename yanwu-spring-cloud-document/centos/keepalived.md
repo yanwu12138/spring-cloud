@@ -43,10 +43,8 @@ firewall-cmd --reload
 #!/bin/bash
 count=`netstat -anp | grep 7101 | grep java | wc -l`
 if [ "$count" -eq 0 ]; then 
-   echo 1
    exit 1
 fi
-echo 0
 exit 0
 ```
 
