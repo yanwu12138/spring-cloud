@@ -11,7 +11,7 @@
 # ether src 00:16:3e:06:74:a8 or ether dst 00:16:3e:06:74:a8 	# 抓取该网卡数据 	  #
 # -w /home/admin/server-control/server-control.pcap 			# 将数据写入文件	  #
 ###################################################################################
-nohup tcpdump -i eth0 -vnn \( tcp \) and \( port 9090 \) and \( ether src 00:16:3e:06:74:a8 or ether dst 00:16:3e:06:74:a8 \) -w /home/admin/server-control/server-control.pcap &
+nohup tcpdump -i eth0 -vnn \( tcp \) and \( port 9090 \) and \( ether src 00:16:3e:06:74:a8 or ether dst 00:16:3e:06:74:a8 \) -w ./tcpdump.pcap &
 ```
 
 

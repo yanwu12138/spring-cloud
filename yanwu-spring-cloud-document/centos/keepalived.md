@@ -41,13 +41,13 @@ firewall-cmd --reload
 ```shell
 [root@localhost keepalived]# cat RUNTIME_CHECK.sh
 #!/bin/bash
-count=`curl 127.0.0.1:7101/lookup`
-if [ "$count" = "true" ]; then
-   echo $count
-   exit 0
+count=`netstat -anp | grep 7101 | grep java | wc -l`
+if [ "$count" -eq 0 ]; then 
+   echo 1
+   exit 1
 fi
-echo 1
-exit 1
+echo 0
+exit 0
 ```
 
 ##### 切换成主的脚本
