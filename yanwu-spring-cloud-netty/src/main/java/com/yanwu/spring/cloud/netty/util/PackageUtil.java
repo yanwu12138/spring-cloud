@@ -60,13 +60,13 @@ public class PackageUtil {
         List<byte[]> bytes2 = reader("11111", new byte[]{0x04, 0x05, 0x06}, PackageAnalyzeEnum.TYPE_1);
         bytes2.forEach(bytes -> log.info("bytes2: {}", ByteUtil.printBytes(bytes)));
 
-        List<byte[]> bytes3 = reader("11111", new byte[]{0x07, 0x08, 0x09, 0x01}, PackageAnalyzeEnum.TYPE_1);
+        List<byte[]> bytes3 = reader("11111", new byte[]{0x07, 0x08, 0x09, (byte) 0xAA}, PackageAnalyzeEnum.TYPE_1);
         bytes3.forEach(bytes -> log.info("bytes3: {}", ByteUtil.printBytes(bytes)));
 
-        List<byte[]> bytes4 = reader("11111", new byte[]{0x02, 0x03, 0x04, 0x05}, PackageAnalyzeEnum.TYPE_1);
+        List<byte[]> bytes4 = reader("11111", new byte[]{(byte) 0xFF, 0x03, 0x04, 0x05}, PackageAnalyzeEnum.TYPE_1);
         bytes4.forEach(bytes -> log.info("bytes4: {}", ByteUtil.printBytes(bytes)));
 
-        List<byte[]> bytes5 = reader("11111", new byte[]{0x01, 0x02, 0x03, 0x04}, PackageAnalyzeEnum.TYPE_1);
+        List<byte[]> bytes5 = reader("11111", new byte[]{(byte) 0xAA, (byte) 0xFF, 0x03, 0x04}, PackageAnalyzeEnum.TYPE_1);
         bytes5.forEach(bytes -> log.info("bytes5: {}", ByteUtil.printBytes(bytes)));
     }
 
@@ -84,67 +84,32 @@ public class PackageUtil {
         }
         // ----- 将完整（两个帧头之间）的报文解析出来
         List<byte[]> result = new ArrayList<>();
-        while (checkHead(bytes, head)) {
-            bytes = readByHead(bytes, head, result);
+        int index = 0, headNum = 0, begin = 0, end = -1;
+        while (index < bytes.length - head.length) {
+            byte[] headTemp = new byte[head.length];
+            System.arraycopy(bytes, index, headTemp, 0, headTemp.length);
+            if (Objects.deepEquals(head, headTemp)) {
+                // ----- 说明找到了帧头
+                if (headNum == 0) {
+                    begin = index - head.length;
+                }
+                if (headNum == 1) {
+                    byte[] dataTemp = new byte[index - begin];
+                    System.arraycopy(bytes, begin, dataTemp, 0, dataTemp.length);
+                    result.add(dataTemp);
+                    end = index;
+                }
+                headNum++;
+            }
+            index++;
         }
-        // ----- 将剩下不完整的报文缓存起来
-        if (bytes.length > 0) {
-            writeCache(channelId, bytes);
+        if (end > 0) {
+            // ----- 将剩下不完整的报文缓存起来
+            byte[] surplus = new byte[bytes.length - end];
+            System.arraycopy(bytes, end, surplus, 0, surplus.length);
+            writeCache(channelId, surplus);
         }
         return result;
-    }
-
-    /**
-     * 处理仅有帧头作为标识的数据
-     *
-     * @param bytes  报文
-     * @param head   帧头
-     * @param result 将完整的报文放入result做后续处理
-     * @return 解析后剩下的数据
-     */
-    private static byte[] readByHead(byte[] bytes, byte[] head, List<byte[]> result) {
-        int index = 0;
-        byte[] tempBytes;
-        // ----- 找到以帧头开始（包含帧头）的数据包
-        while (index < bytes.length - head.length) {
-            byte[] temp = new byte[head.length];
-            System.arraycopy(bytes, index, temp, 0, temp.length);
-            if (Objects.deepEquals(head, temp)) {
-                // ----- 说明找到了帧头
-                byte[] tempData = new byte[bytes.length - index];
-                System.arraycopy(bytes, index, tempData, 0, tempData.length);
-                result.add(tempData);
-                tempBytes = new byte[bytes.length - tempData.length];
-                System.arraycopy(bytes, tempData.length, tempBytes, 0, tempBytes.length);
-                return tempBytes;
-            }
-            index++;
-        }
-        return bytes;
-    }
-
-    /**
-     * 当协议只有帧头作为标识时，要解一个完整的包，需要取第一个帧头起始 到 第二个帧头之间的数据
-     *
-     * @param bytes 数据包
-     * @param head  帧头标识
-     * @return 是否可以解包【true: 可以; false: 不可以】
-     */
-    private static boolean checkHead(byte[] bytes, byte[] head) {
-        int index = 0, headNum = 0;
-        while (index < bytes.length - head.length) {
-            byte[] temp = new byte[head.length];
-            System.arraycopy(bytes, index, temp, 0, temp.length);
-            if (Objects.deepEquals(head, temp)) {
-                // ----- 说明找到了帧头
-                headNum++;
-                if (headNum >= 2) {
-                    return true;
-                }
-            }
-            index++;
-        }
-        return false;
     }
 
     /**
