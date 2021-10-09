@@ -28,6 +28,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
 /**
@@ -79,10 +80,13 @@ public class NettyController {
 
     @LogParam
     @GetMapping("/test")
-    public ResponseEnvelope<Void> test() {
-        nettyExecutor.execute(this::runRadar);
-        nettyExecutor.execute(this::runAis);
-        return ResponseEnvelope.success();
+    public Callable<ResponseEnvelope<Void>> test() throws InterruptedException {
+//        nettyExecutor.execute(this::runRadar);
+//        nettyExecutor.execute(this::runAis);
+        return () -> {
+            Thread.sleep(10000);
+            return ResponseEnvelope.success();
+        };
     }
 
     /***
