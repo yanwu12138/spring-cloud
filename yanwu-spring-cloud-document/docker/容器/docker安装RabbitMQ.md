@@ -9,7 +9,7 @@ docker pull rabbitmq:management
 
 ```shell
 #方式二：设置用户名和密码
-docker run -d --hostname my-rabbit --name rabbit -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password -p 15672:15672 -p 5672:5672 rabbitmq:management
+docker run -d --restart=always --hostname my-rabbit --name rabbit -e RABBITMQ_DEFAULT_USER=[USER] -e RABBITMQ_DEFAULT_PASS=[PASSWORD] -p 15672:15672 -p 5672:5672 rabbitmq:management
 ```
 
 ##### 访问ui页面

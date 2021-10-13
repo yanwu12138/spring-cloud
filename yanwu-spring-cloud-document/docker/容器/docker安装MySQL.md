@@ -28,18 +28,18 @@ docker run -d --restart=always --name mysql -v ~/mysql/data:/var/lib/mysql -e MY
 ##### 进入MySQL容器
 
 ```shell
-1 docker exec -ti mysql bash
+docker exec -ti mysql bash
 ```
 
 ##### 开启远程连接
 
 ```shell
-1 ### 登陆mysql
-2 mysql -uroot -pyanwu12138
-3 ### 开启远程连接
-4 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'yanwu12138' WITH GRANT OPTION;
-5 FLUSH PRIVILEGES;
-6 EXIT;
+### 登陆mysql
+mysql -uroot -pyanwu12138
+### 开启远程连接
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'yanwu12138' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+EXIT;
 ```
 
 ##### 解决MySQL中文乱码问题
@@ -67,7 +67,7 @@ docker run -d --restart=always --name mysql -v ~/mysql/data:/var/lib/mysql -e MY
 ##### 重启MySQL容器
 
 ```shell
-1 docker restart mysql
+docker restart mysql
 ```
 
 ![image-20210105142910577](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/01/2021010514291010.png)
