@@ -1,4 +1,4 @@
-#### 运行环境配置：opt.tgz
+#### 运行环境配置：[opt.tgz](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/file/opt.tgz)
 
 将**环境配置文件：**`opt.tgz` 拷贝到服务器**根目录**下, 然后将 `opt.tgz` 解压:
 
@@ -8,7 +8,7 @@ tar -zxvf opt.tgz -C /
 
 
 
-#### 应用程序配置：service.zip
+#### 应用程序配置：[service.zip](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/file/service.zip)
 
 将**启动脚本文件：** `service.tgz`拷贝到服务器**根目录**下, 然后将`service.tar`解压:
 
@@ -38,17 +38,25 @@ tar -zxvf service.tgz -C /
 
 -   `GC`日志配置
 
-    >   修改`GC`日志文件名称，避免当一个服务器运行多个程序的时候，不通的程序都将`GC`日志写到同一个文件。
+    >   修改`GC`日志文件名称：避免当一个服务器运行多个程序的时候，不通的程序都将`GC`日志写到同一个文件。
 
     -   setenv.sh
+
+        ```shell
+        vim /home/admin/service/bin/setenv.sh
+        ```
 
         ![image-20211019161450504](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/10/2021101916145050.png)
 
     -   appctl.sh
 
+        ```shell
+        vim /home/admin/service/bin/appctl.sh
+        ```
+
         ![image-20211019161425554](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/10/2021101916142525.png)
 
-#### 应用程序包：service-1.0.0-SNAPSHOT.tgz
+#### 应用程序包：[service-1.0.0-SNAPSHOT.tgz](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/file/service-1.0.0-SNAPSHOT.tgz)
 
 将应用程序包放入`/home/admin/service/target/`目录
 
