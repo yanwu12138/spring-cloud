@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.pojo;
+package com.yanwu.spring.cloud.netty.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -15,16 +15,5 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class DeviceBaseBO implements Serializable {
     private static final long serialVersionUID = 7222723385380290982L;
-    /*** 帧头 */
-    private String head;
-    /*** 设备编号 */
-    private String deviceNo;
-    /*** 控制码 */
-    private String code;
-    /*** 数据域 */
-    private String data;
-    /*** 帧尾 */
-    private String end;
-    /*** crc校验码 */
-    private String crc;
+
 }

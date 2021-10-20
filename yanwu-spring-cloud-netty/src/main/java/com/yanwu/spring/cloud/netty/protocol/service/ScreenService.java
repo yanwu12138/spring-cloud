@@ -2,31 +2,30 @@ package com.yanwu.spring.cloud.netty.protocol.service;
 
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
-import com.yanwu.spring.cloud.netty.model.alarmLamp.AlarmLampBaseBO;
+import com.yanwu.spring.cloud.netty.model.screen.ScreenBaseBO;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
 import com.yanwu.spring.cloud.netty.util.ResolverUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
- * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
- * @date 2019-11-21 13:02.
+ * @author Baofeng Xu
+ * @date 2021/10/20 15:30.
  * <p>
  * description:
  */
 @Slf4j
-@Component("alarmLamp")
-public class AlarmLampService extends AbstractHandler {
+@Component("screen")
+public class ScreenService extends AbstractHandler {
 
     @Override
     public void analysis(String ctxId, byte[] bytes) throws Exception {
-        AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.ALARM_LAMP_REGEX);
-        log.info("alarm lamp: {}", alarmLamp);
+        ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.SCREEN_REGEX);
+        log.info("screen: {}", screen);
     }
 
     @Override
     public <T> void sendMessage(String ctxId, T data) {
 
     }
-
 }

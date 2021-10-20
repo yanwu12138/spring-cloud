@@ -1,6 +1,8 @@
-package com.yanwu.spring.cloud.netty.model;
+package com.yanwu.spring.cloud.netty.model.alarmLamp;
 
+import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -11,22 +13,25 @@ import java.io.Serializable;
  * description:
  */
 @Data
-public class AlarmLampReqBO<T> implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class AlarmLampBaseBO extends DeviceBaseBO implements Serializable {
     private static final long serialVersionUID = -7750707584959340095L;
-    /*** 版本号 */
-    private String ver;
-    /*** 设备厂家 */
-    private String fn;
-    /*** 设备类型 */
-    private String type;
+
+    /*** 帧头 */
+    private String head;
     /*** 设备唯一标识 */
     private String sn;
     /*** 流水号 */
-    private Integer seq;
+    private String seq;
     /*** 主命令字 */
     private String mcode;
     /*** 子命令字 */
     private String ccode;
     /*** 数据域 */
-    private T data;
+    private String data;
+    /*** 帧尾 */
+    private String end;
+    /*** crc校验码 */
+    private String crc;
+
 }

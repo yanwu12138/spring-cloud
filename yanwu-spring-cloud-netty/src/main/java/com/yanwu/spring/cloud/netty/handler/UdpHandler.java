@@ -1,11 +1,11 @@
 package com.yanwu.spring.cloud.netty.handler;
 
-import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
 import com.yanwu.spring.cloud.netty.config.NettyConfig;
-import com.yanwu.spring.cloud.netty.protocol.factory.DeviceHandlerFactory;
-import com.yanwu.spring.cloud.netty.protocol.up.AbstractHandler;
+import com.yanwu.spring.cloud.netty.enums.DeviceTypeEnum;
+import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
+import com.yanwu.spring.cloud.netty.protocol.DeviceHandlerFactory;
 import com.yanwu.spring.cloud.netty.util.DeviceUtil;
 import com.yanwu.spring.cloud.netty.util.NettyUtils;
 import io.netty.buffer.ByteBuf;
@@ -65,7 +65,11 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
             AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
             // ----- 解析报文，业务处理
             Assert.notNull(handler, "handler is null");
-            handler.analysis(host, bytes);
+            try {
+                handler.analysis(host, bytes);
+            } catch (Exception e) {
+                log.error("udp analysis message error. message: {}", ByteUtil.printBytes(bytes), e);
+            }
         });
     }
 

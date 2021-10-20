@@ -1,7 +1,9 @@
 package com.yanwu.spring.cloud.netty.util;
 
-import com.yanwu.spring.cloud.common.pojo.DeviceBaseBO;
-import com.yanwu.spring.cloud.netty.constant.DeviceRegex;
+import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
+import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
+import com.yanwu.spring.cloud.netty.model.alarmLamp.AlarmLampBaseBO;
+import com.yanwu.spring.cloud.netty.model.screen.ScreenBaseBO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -24,17 +26,16 @@ public class ResolverUtil {
     /**
      * 正则解析方法
      *
-     * @param hexStr 16进制字符串（报文体）
-     * @param regex  正则表达式
-     * @param clazz  对应正则解析之后的封装类
+     * @param hexStr    16进制字符串（报文体）
+     * @param regexEnum 协议对应的正则表达式
      * @return 对象
      */
-    public static <T> T regexParse(String hexStr, String regex, Class<T> clazz) throws Exception {
-        T instance = clazz.newInstance();
-        Pattern pattern = Pattern.compile(regex);
+    public static DeviceBaseBO regexParse(String hexStr, DeviceRegexEnum regexEnum) throws Exception {
+        DeviceBaseBO instance = regexEnum.getClazz().newInstance();
+        Pattern pattern = Pattern.compile(regexEnum.getRegex());
         Matcher matcher = pattern.matcher(hexStr.toUpperCase());
         if (matcher.find()) {
-            Field[] fields = clazz.getDeclaredFields();
+            Field[] fields = regexEnum.getClazz().getDeclaredFields();
             for (Field field : fields) {
                 try {
                     field.setAccessible(true);
@@ -53,8 +54,11 @@ public class ResolverUtil {
     public static void main(String[] args) throws Exception {
         // 帧头：1字节；设备编号：2字节；命令字：1字节；数据域N字节；帧尾：1字节；校验码2字节
         String hexStr = "AA2F3001A00113489D0BFE08";
-        DeviceBaseBO device = ResolverUtil.regexParse(hexStr, DeviceRegex.Screen.SCREEN_NOVA_REGEX, DeviceBaseBO.class);
-        log.info("device: {}", device);
+        ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(hexStr, DeviceRegexEnum.SCREEN_REGEX);
+        log.info("screen: {}", screen);
+        hexStr = "484C131420210123000101100207ABBF1B90DBF1FFA81413BF1B4C48";
+        AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) ResolverUtil.regexParse(hexStr, DeviceRegexEnum.ALARM_LAMP_REGEX);
+        log.info("alarm lamp: {}", alarmLamp);
     }
 
 }

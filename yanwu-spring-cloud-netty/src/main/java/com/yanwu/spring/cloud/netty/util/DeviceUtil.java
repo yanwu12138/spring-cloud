@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.netty.util;
 
-import com.yanwu.spring.cloud.common.core.enums.DeviceTypeEnum;
+import com.yanwu.spring.cloud.netty.enums.DeviceTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 
 /**
