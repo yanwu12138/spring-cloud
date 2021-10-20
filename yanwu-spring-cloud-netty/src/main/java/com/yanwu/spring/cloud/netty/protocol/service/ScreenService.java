@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.netty.protocol.service;
 
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
+import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
 import com.yanwu.spring.cloud.netty.model.screen.ScreenBaseBO;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
 import com.yanwu.spring.cloud.netty.util.ResolverUtil;
@@ -22,10 +23,13 @@ public class ScreenService extends AbstractHandler {
     public void analysis(String ctxId, byte[] bytes) throws Exception {
         ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.SCREEN_REGEX);
         log.info("screen: {}", screen);
+        sendMessage(ctxId, screen);
     }
 
     @Override
-    public <T> void sendMessage(String ctxId, T data) {
-
+    public <T extends DeviceBaseBO> String assemble(T param) throws Exception {
+        ScreenBaseBO screen = (ScreenBaseBO) param;
+        return screen.getHead() + screen.getDeviceNo() + screen.getCode() +
+                screen.getData() + screen.getEnd() + screen.getCrc();
     }
 }
