@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,6 +28,11 @@ public class PackageUtil {
      * VALUE: 通道ID对应的半包缓存
      */
     public static final Map<String, ByteBuf> PACKAGE_CACHE = new ConcurrentHashMap<>();
+
+    public static void main(String[] args) {
+        PackageAnalyzeEnum[] values = PackageAnalyzeEnum.values();
+
+    }
 
     /**
      * 根据 analyzeEnum 做粘包、半包处理
@@ -45,72 +52,36 @@ public class PackageUtil {
         if (ArrayUtils.isEmpty(bytes)) {
             return Collections.emptyList();
         }
-        if (!analyzeEnum.isLength() && !analyzeEnum.isTail()) {
-            // ----- 该协议类型仅有帧头标识符
-            return readByHead(channelId, bytes, analyzeEnum.getHead());
+        if (analyzeEnum.isTail()) {
+            if (analyzeEnum.isLength()) {
+                // ----- 该协议类型为：TYPE_3（帧头 + 长度 + 帧尾）
+                return reader03(channelId, bytes, analyzeEnum);
+            } else {
+                // ----- 该协议类型为：TYPE_2（帧头 + 帧尾）
+                return reader02(channelId, bytes, analyzeEnum);
+            }
+        } else {
+            // ----- 该协议类型为：TYPE_1（帧头 + 长度）
+            return reader01(channelId, bytes, analyzeEnum);
         }
-        // ----- 根据协议是否包含帧头来选择不同的组包处理
+    }
+
+    private static List<byte[]> reader01(String channelId, byte[] bytes, PackageAnalyzeEnum analyzeEnum) {
+        bytes = readCache(channelId, bytes);
+
         return Collections.emptyList();
     }
 
-    public static void main(String[] args) {
-        List<byte[]> bytes1 = reader("11111", new byte[]{(byte) 0xAA, (byte) 0xFF, (byte) 0x01}, PackageAnalyzeEnum.TYPE_1);
-        bytes1.forEach(bytes -> log.info("bytes1: {}", ByteUtil.printBytes(bytes)));
-
-        List<byte[]> bytes2 = reader("11111", new byte[]{0x04, 0x05, 0x06}, PackageAnalyzeEnum.TYPE_1);
-        bytes2.forEach(bytes -> log.info("bytes2: {}", ByteUtil.printBytes(bytes)));
-
-        List<byte[]> bytes3 = reader("11111", new byte[]{0x07, 0x08, 0x09, (byte) 0xAA}, PackageAnalyzeEnum.TYPE_1);
-        bytes3.forEach(bytes -> log.info("bytes3: {}", ByteUtil.printBytes(bytes)));
-
-        List<byte[]> bytes4 = reader("11111", new byte[]{(byte) 0xFF, 0x03, 0x04, 0x05}, PackageAnalyzeEnum.TYPE_1);
-        bytes4.forEach(bytes -> log.info("bytes4: {}", ByteUtil.printBytes(bytes)));
-
-        List<byte[]> bytes5 = reader("11111", new byte[]{(byte) 0xAA, (byte) 0xFF, 0x03, 0x04}, PackageAnalyzeEnum.TYPE_1);
-        bytes5.forEach(bytes -> log.info("bytes5: {}", ByteUtil.printBytes(bytes)));
+    private static List<byte[]> reader02(String channelId, byte[] bytes, PackageAnalyzeEnum analyzeEnum) {
+        bytes = readCache(channelId, bytes);
+        return Collections.emptyList();
     }
 
-    /**
-     * 处理仅有帧头作为标识的数据
-     *
-     * @param bytes 报文
-     * @param head  帧头
-     * @return 数据包
-     */
-    private static List<byte[]> readByHead(String channelId, byte[] bytes, byte[] head) {
-        if (bytes.length < head.length) {
-            writeCache(channelId, bytes);
-            return Collections.emptyList();
-        }
-        // ----- 将完整（两个帧头之间）的报文解析出来
-        List<byte[]> result = new ArrayList<>();
-        int index = 0, headNum = 0, begin = 0, end = -1;
-        while (index < bytes.length - head.length) {
-            byte[] headTemp = new byte[head.length];
-            System.arraycopy(bytes, index, headTemp, 0, headTemp.length);
-            if (Objects.deepEquals(head, headTemp)) {
-                // ----- 说明找到了帧头
-                if (headNum == 0) {
-                    begin = index - head.length;
-                }
-                if (headNum == 1) {
-                    byte[] dataTemp = new byte[index - begin];
-                    System.arraycopy(bytes, begin, dataTemp, 0, dataTemp.length);
-                    result.add(dataTemp);
-                    end = index;
-                }
-                headNum++;
-            }
-            index++;
-        }
-        if (end > 0) {
-            // ----- 将剩下不完整的报文缓存起来
-            byte[] surplus = new byte[bytes.length - end];
-            System.arraycopy(bytes, end, surplus, 0, surplus.length);
-            writeCache(channelId, surplus);
-        }
-        return result;
+    private static List<byte[]> reader03(String channelId, byte[] bytes, PackageAnalyzeEnum analyzeEnum) {
+        bytes = readCache(channelId, bytes);
+        return Collections.emptyList();
     }
+
 
     /**
      * 读取缓存中的数据包

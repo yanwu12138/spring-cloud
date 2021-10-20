@@ -12,14 +12,12 @@ import org.apache.commons.lang3.ArrayUtils;
  */
 @Getter
 public enum PackageAnalyzeEnum {
-    /*** 报文类型：1 - 只定义了 帧头 ***/
-    TYPE_1(new byte[]{(byte) 0xAA, (byte) 0xFF}, null, null, null),
-    /*** 报文类型：2 - 定义了 帧头 && 长度 ***/
-    TYPE_2(new byte[]{(byte) 0xBB, (byte) 0xFF}, 2, 2, null),
-    /*** 报文类型：3 - 定义了 战投 && 帧尾 ***/
-    TYPE_3(new byte[]{(byte) 0xCC, (byte) 0xFF}, null, null, new byte[]{(byte) 0xDD, (byte) 0xFF}),
-    /*** 报文类型：4 - 定义了 帧头 && 长度 && 帧尾 ***/
-    TYPE_4(new byte[]{(byte) 0xEF, (byte) 0xFF}, 2, 2, new byte[]{(byte) 0xFF, (byte) 0xFF}),
+    /*** 报文类型：1 - 定义了 帧头 && 长度 ***/
+    TYPE_1(new byte[]{(byte) 0xAA, (byte) 0xAA}, 2, 2, null),
+    /*** 报文类型：2 - 定义了 帧头 && 帧尾 ***/
+    TYPE_2(new byte[]{(byte) 0xBB, (byte) 0xBB}, null, null, new byte[]{(byte) 0xCC, (byte) 0xCC}),
+    /*** 报文类型：3 - 定义了 帧头 && 长度 && 帧尾 ***/
+    TYPE_3(new byte[]{(byte) 0xDD, (byte) 0xDD}, 2, 2, new byte[]{(byte) 0xEE, (byte) 0xEE}),
 
     ;
 
@@ -33,23 +31,26 @@ public enum PackageAnalyzeEnum {
     private final byte[] tail;
 
     PackageAnalyzeEnum(byte[] head, Integer lengthIdx, Integer lengthLen, byte[] tail) {
-        checkInstance(head, lengthIdx, lengthLen);
         this.head = head;
         this.tail = tail;
         this.lengthLen = lengthLen;
         this.lengthIdx = lengthIdx;
+        checkInstance(this);
     }
 
     @SuppressWarnings("all")
-    private static void checkInstance(byte[] head, Integer lengthIdx, Integer lengthLen) {
-        if (ArrayUtils.isEmpty(head)) {
-            throw new UnsupportedOperationException("PackageAnalyzeEnum Initialization exception, Because head is empty.");
+    private static void checkInstance(PackageAnalyzeEnum analyze) {
+        if (!analyze.isHead()) {
+            throw new UnsupportedOperationException("PackageAnalyzeEnum Initialization exception, Because head is empty. this: " + analyze);
         }
-        if (lengthIdx != null && (lengthLen == null || lengthLen == 0)) {
-            throw new UnsupportedOperationException("PackageAnalyzeEnum Initialization exception, Because lengthIdx & lengthLen must exist at the same time. lengthIdx: " + lengthIdx + ", lengthLen: " + lengthLen);
+        if (!analyze.isTail() && !analyze.isLength()) {
+            throw new UnsupportedOperationException("PackageAnalyzeEnum Initialization exception, Because tail & length must exist at the same time. this: " + analyze);
         }
-        if (lengthLen != null && (lengthIdx == null || lengthIdx == 0)) {
-            throw new UnsupportedOperationException("PackageAnalyzeEnum Initialization exception, Because lengthIdx & lengthLen must exist at the same time. lengthIdx: " + lengthIdx + ", lengthLen: " + lengthLen);
+        if (analyze.lengthIdx != null && (analyze.lengthLen == null || analyze.lengthLen == 0)) {
+            throw new UnsupportedOperationException("PackageAnalyzeEnum Initialization exception, Because lengthIdx & lengthLen must exist at the same time. this: " + analyze);
+        }
+        if (analyze.lengthLen != null && (analyze.lengthIdx == null || analyze.lengthIdx == 0)) {
+            throw new UnsupportedOperationException("PackageAnalyzeEnum Initialization exception, Because lengthIdx & lengthLen must exist at the same time. this: " + analyze);
         }
     }
 

@@ -36,7 +36,7 @@ tar -zxvf service.tgz -C /
     ## -Dspring.profiles.active=***		对应环境的配置文件
     ```
 
--   `GC`日志配置
+-   `GC.log`日志配置
 
     >   修改`GC`日志文件名称：避免当一个服务器运行多个程序的时候，不通的程序都将`GC`日志写到同一个文件。
 
