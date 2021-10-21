@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.netty.handler;
 
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
-import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
+import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
 import com.yanwu.spring.cloud.netty.protocol.DeviceHandlerFactory;
@@ -31,6 +31,8 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
 
     @Resource
     private Executor nettyExecutor;
+    @Resource
+    private ClientSessionCache clientSessionCache;
 
     private static TcpHandler handler;
 
@@ -48,7 +50,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         String ctxId = NettyUtils.getChannelId(ctx);
-        ClientSessionMap.putContext(ctxId, ctx);
+        clientSessionCache.putContext(ctxId, ctx);
         byte[] bytes = (byte[]) msg;
         // ===== 处理上行业务
         handler.nettyExecutor.execute(() -> {
@@ -84,11 +86,11 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
         }
         try {
             String ctxId = NettyUtils.getChannelId(ctx);
-            if (ClientSessionMap.getContext(ctxId) == null) {
+            if (clientSessionCache.getContext(ctxId) == null) {
                 return;
             }
             log.info("channel close connection, channel: {}", ctxId);
-            ClientSessionMap.remove(ctxId);
+            clientSessionCache.remove(ctxId);
         } catch (Exception e) {
             log.error("channel close error: ", e);
         } finally {
@@ -103,10 +105,10 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         String ctxId = NettyUtils.getChannelId(ctx);
-        if (ClientSessionMap.getContext(ctxId) == null) {
+        if (clientSessionCache.getContext(ctxId) == null) {
             return;
         }
-        ClientSessionMap.remove(ctxId);
+        clientSessionCache.remove(ctxId);
         NettyUtils.close(ctx);
         log.error("netty tcp error：", cause);
     }
@@ -119,7 +121,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
      */
     public void send(String ctxId, String message) {
         message = message.replaceAll(" ", "");
-        ChannelHandlerContext channel = ClientSessionMap.getContext(ctxId);
+        ChannelHandlerContext channel = clientSessionCache.getContext(ctxId);
         if (channel == null || StringUtils.isBlank(message)) {
             return;
         }

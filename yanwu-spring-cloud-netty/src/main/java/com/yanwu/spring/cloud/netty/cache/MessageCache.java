@@ -137,8 +137,22 @@ public class MessageCache {
         });
     }
 
-    public MessageStatusBO getStatus(String sn) {
-        return statusOperations.get(DEVICE_QUEUE, sn);
+    public void senderMessage(String sn) {
+        String queueKey = DEVICE_SEQ_QUEUE + sn;
+        MessageStatusBO status = statusOperations.get(DEVICE_QUEUE, sn);
+        if (status == null) {
+            Set<String> range = queuesOperations.range(queueKey, 0, 1);
+            if (CollectionUtils.isEmpty(range)) {
+                return;
+            }
+
+        } else {
+            if (StringUtils.isBlank(status.getMessageKey())) {
+
+            } else {
+
+            }
+        }
     }
 
 }

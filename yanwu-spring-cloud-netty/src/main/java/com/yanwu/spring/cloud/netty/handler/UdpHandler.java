@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.netty.handler;
 
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
-import com.yanwu.spring.cloud.netty.cache.ClientSessionMap;
+import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.config.NettyConfig;
 import com.yanwu.spring.cloud.netty.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
@@ -39,6 +39,8 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
     private NettyConfig nettyConfig;
     @Resource
     private Executor nettyExecutor;
+    @Resource
+    private ClientSessionCache clientSessionCache;
 
     private static UdpHandler handler;
     private static volatile ChannelHandlerContext context;
@@ -53,7 +55,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
         initContext(ctx);
         DatagramPacket packet = (DatagramPacket) msg;
         String host = NettyUtils.getAddress(packet);
-        ClientSessionMap.putSocket(host, packet.sender());
+        clientSessionCache.putSocket(host, packet.sender());
         ByteBuf byteBuf = packet.copy().content();
         byte[] bytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(bytes);
@@ -114,7 +116,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
      * @param message 报文
      */
     public void send(String host, String message) {
-        InetSocketAddress socket = ClientSessionMap.getSocket(host);
+        InetSocketAddress socket = clientSessionCache.getSocket(host);
         if (socket == null || StringUtils.isBlank(message)) {
             return;
         }
