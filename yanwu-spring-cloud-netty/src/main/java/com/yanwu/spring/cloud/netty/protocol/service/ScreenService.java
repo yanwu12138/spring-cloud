@@ -23,7 +23,7 @@ public class ScreenService extends AbstractHandler {
     public void analysis(String ctxId, byte[] bytes) throws Exception {
         ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.SCREEN_REGEX);
         log.info("screen: {}", screen);
-        sendMessage(ctxId, screen);
+        sendTcpMessage(ctxId, screen);
     }
 
     @Override

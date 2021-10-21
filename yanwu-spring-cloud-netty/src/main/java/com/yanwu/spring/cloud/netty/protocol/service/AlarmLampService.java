@@ -23,7 +23,7 @@ public class AlarmLampService extends AbstractHandler {
     public void analysis(String ctxId, byte[] bytes) throws Exception {
         AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.ALARM_LAMP_REGEX);
         log.info("alarm lamp: {}", alarmLamp);
-        sendMessage(ctxId, alarmLamp);
+        sendTcpMessage(ctxId, alarmLamp);
     }
 
     @Override

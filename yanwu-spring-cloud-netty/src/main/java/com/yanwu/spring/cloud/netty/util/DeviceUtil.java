@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class DeviceUtil {
+    /*** 消息间隔时间：上一次消息发送完30秒后才能发送下一条消息 ***/
+    public static final long SEND_INTERVAL = 30 * 1000;
 
     private DeviceUtil() {
         throw new UnsupportedOperationException("DeviceUtil should never be instantiated");
@@ -54,6 +56,16 @@ public class DeviceUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 是否可以发送消息：上一次消息发送完30秒后才能发送下一条消息（上一条消息发送时间与当前时间是否间隔超过30秒）
+     *
+     * @param messageLastSendTime 上一次发送消息的时间
+     * @return 【true: 超过30秒; false: 不超过30秒】
+     */
+    public static boolean canSend(long messageLastSendTime) {
+        return System.currentTimeMillis() - messageLastSendTime > SEND_INTERVAL;
     }
 
 }
