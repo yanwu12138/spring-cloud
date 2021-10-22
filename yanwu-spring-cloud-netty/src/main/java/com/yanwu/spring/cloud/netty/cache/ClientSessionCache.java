@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.netty.cache;
 
 import io.netty.channel.ChannelHandlerContext;
-import jdk.nashorn.internal.ir.annotations.Reference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -92,15 +91,32 @@ public final class ClientSessionCache {
         UDP_SESSION_MAP.remove(ctxId);
     }
 
+    /**
+     * 设备与通道号的映射关系
+     *
+     * @param sn    设备唯一标识
+     * @param ctxId 通道号
+     */
     public void putDevice(String sn, String ctxId) {
         DEVICE_ONLINE_MAP.put(sn, ctxId);
         messageCache.online(sn);
     }
 
+    /**
+     * 根据设备唯一标识获取通道号
+     *
+     * @param sn 设备唯一标识
+     * @return 通道号
+     */
     public String getDevice(String sn) {
         return DEVICE_ONLINE_MAP.get(sn);
     }
 
+    /**
+     * 获取所有在线的设备
+     *
+     * @return 设备唯一标识集
+     */
     public Set<String> getOnlines() {
         return DEVICE_ONLINE_MAP.keySet();
     }

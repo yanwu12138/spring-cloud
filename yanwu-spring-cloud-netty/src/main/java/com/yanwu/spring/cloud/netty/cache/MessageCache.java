@@ -88,6 +88,11 @@ public class MessageCache {
         });
     }
 
+    /**
+     * 定时器 - 定时发送消息
+     *
+     * @param sn 设备唯一标志
+     */
     public void senderMessage(String sn) {
         redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
             MessageStatusBO status = statusOperations.get(DEVICE_QUEUE, sn);
@@ -113,6 +118,12 @@ public class MessageCache {
         });
     }
 
+    /**
+     * 收到消息回复后，删除发送中消息状态，等待发送下一条消息
+     *
+     * @param sn        设备唯一标识
+     * @param messageId 消息ID
+     */
     public void replyMessage(String sn, String messageId) {
         redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
             statusOperations.delete(DEVICE_QUEUE, sn);
@@ -120,6 +131,11 @@ public class MessageCache {
         });
     }
 
+    /**
+     * 设备上线时，重置消息发送次数
+     *
+     * @param sn 设备唯一标志
+     */
     public void online(String sn) {
         redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
             MessageStatusBO status = statusOperations.get(DEVICE_QUEUE, sn);

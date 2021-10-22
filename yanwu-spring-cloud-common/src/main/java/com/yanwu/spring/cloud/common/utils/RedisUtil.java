@@ -177,23 +177,4 @@ public class RedisUtil {
         });
     }
 
-    public <T> CallableResult<T> syncMultiExec(String key, Long value, Callable<CallableResult<T>> callable) {
-        return syncMultiExec(key, value, EXPIRE_TIME, callable);
-    }
-
-    public <T> CallableResult<T> syncMultiExec(String key, Long value, Integer timeout, Callable<CallableResult<T>> callable) {
-        if (!lock(key, value, timeout)) {
-            log.error("redis run failed because lock failed. key: {}, value: {}", key, value);
-            return CallableResult.failed();
-        }
-        try {
-            return multiExec(callable);
-        } catch (Exception e) {
-            log.error("redis execute callable error.", e);
-            return CallableResult.failed();
-        } finally {
-            unLock(key, value);
-        }
-    }
-
 }
