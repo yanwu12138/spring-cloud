@@ -1,10 +1,14 @@
 package com.yanwu.spring.cloud.netty.model;
 
+import com.yanwu.spring.cloud.common.pojo.SortedList;
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
+import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Baofeng Xu
@@ -23,7 +27,7 @@ public class MessageQueueBO implements Comparable<MessageQueueBO>, Serializable 
     /*** 设备类型 ***/
     private String instance;
 
-    /*** 消息的入队时间 ***/
+    /*** 消息的入队时间: 根据时间进行排序 ***/
     private Long time;
 
     private MessageQueueBO() {
