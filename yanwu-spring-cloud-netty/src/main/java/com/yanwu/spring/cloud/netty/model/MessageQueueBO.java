@@ -1,14 +1,10 @@
 package com.yanwu.spring.cloud.netty.model;
 
-import com.yanwu.spring.cloud.common.pojo.SortedList;
-import com.yanwu.spring.cloud.common.utils.JsonUtil;
-import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Baofeng Xu
