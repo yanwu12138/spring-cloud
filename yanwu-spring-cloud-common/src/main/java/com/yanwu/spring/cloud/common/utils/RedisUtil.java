@@ -77,7 +77,6 @@ public class RedisUtil {
             }
             ThreadUtil.sleep(SLEEP_TIME);
         }
-        log.info("redis lock success. key: {}, value: {}", key, value);
         return true;
     }
 
@@ -109,7 +108,6 @@ public class RedisUtil {
             return;
         }
         lockOperations.getOperations().delete(key(key));
-        log.info("redis unLock success. key: {}, value: {}", key, value);
     }
 
     private String key(String key) {

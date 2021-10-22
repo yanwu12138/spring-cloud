@@ -32,6 +32,7 @@ public class AlarmLampService extends AbstractHandler {
     public void analysis(String ctxId, byte[] bytes) throws Exception {
         AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.ALARM_LAMP_REGEX);
         log.info("alarm lamp: {}", alarmLamp);
+        messageCache.replyMessage(alarmLamp.getSn(), "test2");
         clientSessionCache.putDevice(alarmLamp.getSn(), ctxId);
         messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "alarmLamp"));
         SortedList<MessageQueueBO> queues = new SortedList<>();

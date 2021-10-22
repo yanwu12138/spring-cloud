@@ -32,6 +32,7 @@ public class ScreenService extends AbstractHandler {
     public void analysis(String ctxId, byte[] bytes) throws Exception {
         ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.SCREEN_REGEX);
         log.info("screen: {}", screen);
+        messageCache.replyMessage(screen.getDeviceNo(), "test1");
         clientSessionCache.putDevice(screen.getDeviceNo(), ctxId);
         messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "screen"));
         SortedList<MessageQueueBO> queues = new SortedList<>();

@@ -89,15 +89,18 @@ public class MessageCache {
     }
 
     public void senderMessage(String sn) {
-        String queueKey = DEVICE_SEQ_QUEUE + sn;
-        redisUtil.syncMultiExec(sn, Thread.currentThread().getId(), () -> {
+        redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
             MessageStatusBO status = statusOperations.get(DEVICE_QUEUE, sn);
             if (status == null) {
                 // ----- 当前没有发送中状态的数据，取出队列最右的一条数据直接发送
-                status = MessageStatusBO.getInstance(sn, queuesOperations.rightPop(queueKey));
-                tcpHandler.send(sn, status.getMessage());
-                status.successSend();
-                statusOperations.put(DEVICE_QUEUE, sn, status);
+                String queueKey = DEVICE_SEQ_QUEUE + sn;
+                MessageQueueBO queue = queuesOperations.rightPop(queueKey);
+                if (queue != null) {
+                    status = MessageStatusBO.getInstance(sn, queue);
+                    tcpHandler.send(sn, status.getMessage());
+                    status.successSend();
+                    statusOperations.put(DEVICE_QUEUE, sn, status);
+                }
             } else {
                 // ----- 当前已有发送中状态的数据，判断是否可以进行下一次发送
                 if (status.canSend()) {
@@ -110,4 +113,21 @@ public class MessageCache {
         });
     }
 
+    public void replyMessage(String sn, String messageId) {
+        redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
+            statusOperations.delete(DEVICE_QUEUE, sn);
+            return CallableResult.success();
+        });
+    }
+
+    public void online(String sn) {
+        redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
+            MessageStatusBO status = statusOperations.get(DEVICE_QUEUE, sn);
+            if (status != null) {
+                status.setTryTimes(3);
+                statusOperations.put(DEVICE_QUEUE, sn, status);
+            }
+            return CallableResult.success();
+        });
+    }
 }

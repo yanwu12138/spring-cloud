@@ -52,7 +52,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         String ctxId = NettyUtils.getChannelId(ctx);
-        clientSessionCache.putContext(ctxId, ctx);
+        handler.clientSessionCache.putContext(ctxId, ctx);
         byte[] bytes = (byte[]) msg;
         // ===== 处理上行业务
         handler.nettyExecutor.execute(() -> {
@@ -88,11 +88,11 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
         }
         try {
             String ctxId = NettyUtils.getChannelId(ctx);
-            if (clientSessionCache.getContext(ctxId) == null) {
+            if (handler.clientSessionCache.getContext(ctxId) == null) {
                 return;
             }
             log.info("channel close connection, channel: {}", ctxId);
-            clientSessionCache.remove(ctxId);
+            handler.clientSessionCache.remove(ctxId);
         } catch (Exception e) {
             log.error("channel close error: ", e);
         } finally {
@@ -107,10 +107,10 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         String ctxId = NettyUtils.getChannelId(ctx);
-        if (clientSessionCache.getContext(ctxId) == null) {
+        if (handler.clientSessionCache.getContext(ctxId) == null) {
             return;
         }
-        clientSessionCache.remove(ctxId);
+        handler.clientSessionCache.remove(ctxId);
         NettyUtils.close(ctx);
         log.error("netty tcp error：", cause);
     }
@@ -123,7 +123,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
      */
     public void send(String ctxId, String message) {
         message = message.replaceAll(" ", "");
-        ChannelHandlerContext channel = clientSessionCache.getContext(ctxId);
+        ChannelHandlerContext channel = handler.clientSessionCache.getContext(ctxId);
         if (channel == null || StringUtils.isBlank(message)) {
             return;
         }
@@ -133,8 +133,9 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
     }
 
     public void send(String sn, MessageQueueBO queue) throws Exception {
-        AbstractHandler handler = (AbstractHandler) ContextUtil.getBean(queue.getInstance());
-        send(sn, handler.assemble(queue));
+        AbstractHandler abstractHandler = (AbstractHandler) ContextUtil.getBean(queue.getInstance());
+        Assert.notNull(abstractHandler, "handler is null");
+        send(handler.clientSessionCache.getDevice(sn), abstractHandler.assemble(queue));
     }
 
 }

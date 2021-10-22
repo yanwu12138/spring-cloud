@@ -1,9 +1,11 @@
 package com.yanwu.spring.cloud.netty.cache;
 
 import io.netty.channel.ChannelHandlerContext;
+import jdk.nashorn.internal.ir.annotations.Reference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +24,9 @@ public final class ClientSessionCache {
     private static final Map<String, ChannelHandlerContext> TCP_SESSION_MAP = new ConcurrentHashMap<>();
     private static final Map<String, InetSocketAddress> UDP_SESSION_MAP = new ConcurrentHashMap<>();
     private static final Map<String, String> DEVICE_ONLINE_MAP = new ConcurrentHashMap<>();
+
+    @Resource
+    private MessageCache messageCache;
 
     public void sessionSync() {
         try {
@@ -89,6 +94,7 @@ public final class ClientSessionCache {
 
     public void putDevice(String sn, String ctxId) {
         DEVICE_ONLINE_MAP.put(sn, ctxId);
+        messageCache.online(sn);
     }
 
     public String getDevice(String sn) {
