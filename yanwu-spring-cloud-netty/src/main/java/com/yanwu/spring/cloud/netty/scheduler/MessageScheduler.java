@@ -30,8 +30,9 @@ public class MessageScheduler {
     public void senderMessage() {
         Set<String> sns = clientSessionCache.getOnlines();
         if (CollectionUtils.isEmpty(sns)) {
-            sns.forEach(sn -> messageCache.senderMessage(sn));
+            return;
         }
+        sns.forEach(sn -> messageCache.senderMessage(sn));
     }
 
 }

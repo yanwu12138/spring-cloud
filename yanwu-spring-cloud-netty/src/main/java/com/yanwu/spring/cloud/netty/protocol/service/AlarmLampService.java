@@ -4,7 +4,6 @@ import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
 import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
-import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
 import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import com.yanwu.spring.cloud.netty.model.alarmLamp.AlarmLampBaseBO;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
@@ -33,16 +32,14 @@ public class AlarmLampService extends AbstractHandler {
         AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.ALARM_LAMP_REGEX);
         log.info("alarm lamp: {}", alarmLamp);
         clientSessionCache.putDevice(alarmLamp.getSn(), ctxId);
-        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "00001"));
-        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000002", "00002"));
-        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "00001"));
+        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "alarmLamp"));
+        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000002", "alarmLamp"));
+        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "alarmLamp"));
     }
 
     @Override
-    public <T extends DeviceBaseBO> String assemble(T param) throws Exception {
-        AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) param;
-        return alarmLamp.getHead() + alarmLamp.getSn() + alarmLamp.getSeq() + alarmLamp.getMcode() +
-                alarmLamp.getCcode() + alarmLamp.getData() + alarmLamp.getEnd() + alarmLamp.getCrc();
+    public String assemble(MessageQueueBO param) {
+        return param.getMessage();
     }
 
 }

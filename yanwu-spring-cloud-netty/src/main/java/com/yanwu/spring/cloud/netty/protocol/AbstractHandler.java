@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.netty.protocol;
 
 import com.yanwu.spring.cloud.netty.handler.TcpHandler;
 import com.yanwu.spring.cloud.netty.handler.UdpHandler;
-import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
+import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -39,27 +39,6 @@ public abstract class AbstractHandler {
      * @return 对象转报文
      * @throws Exception .
      */
-    abstract public <T extends DeviceBaseBO> String assemble(T data) throws Exception;
+    abstract public String assemble(MessageQueueBO data) throws Exception;
 
-    /**
-     * tcp通道发送报文
-     *
-     * @param ctxId 通道号
-     * @param data  报文
-     * @throws Exception .
-     */
-    public <T extends DeviceBaseBO> void sendTcpMessage(String ctxId, T data) throws Exception {
-        tcpHandler.send(ctxId, assemble(data));
-    }
-
-    /**
-     * udp发送报文
-     *
-     * @param host 地址
-     * @param data 报文
-     * @throws Exception .
-     */
-    public <T extends DeviceBaseBO> void sendUdpMessage(String host, T data) throws Exception {
-        udpHandler.send(host, assemble(data));
-    }
 }

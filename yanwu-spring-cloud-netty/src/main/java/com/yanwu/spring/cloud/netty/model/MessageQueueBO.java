@@ -19,9 +19,11 @@ public class MessageQueueBO implements Serializable {
     /*** 消息 ***/
     private String message;
 
+    /*** 设备类型 ***/
+    private String instance;
 
-    /*** 如果需要去重：去重的规则 ***/
-    private String code;
+    /*** 消息的入队时间 ***/
+    private Long time;
 
     private MessageQueueBO() {
     }
@@ -29,10 +31,10 @@ public class MessageQueueBO implements Serializable {
     /**
      * 生成消息队列缓存对象
      *
-     * @param message 消息
-     * @param code    消息类型[如果需要去重，则以code为去重规则]
+     * @param message  消息
+     * @param instance 设备类型 [根据设备类型获取不同的处理server]
      */
-    public static MessageQueueBO getInstance(String message, String code) {
-        return new MessageQueueBO().setMessage(message).setCode(code);
+    public static MessageQueueBO getInstance(String message, String instance) {
+        return new MessageQueueBO().setMessage(message).setInstance(instance).setTime(System.currentTimeMillis());
     }
 }

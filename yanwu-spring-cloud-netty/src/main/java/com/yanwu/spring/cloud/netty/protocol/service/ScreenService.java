@@ -4,7 +4,6 @@ import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
 import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
-import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
 import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import com.yanwu.spring.cloud.netty.model.screen.ScreenBaseBO;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
@@ -33,15 +32,13 @@ public class ScreenService extends AbstractHandler {
         ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.SCREEN_REGEX);
         log.info("screen: {}", screen);
         clientSessionCache.putDevice(screen.getDeviceNo(), ctxId);
-        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "00001"));
-        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000002", "00002"));
-        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "00001"));
+        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "screen"));
+        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000002", "screen"));
+        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "screen"));
     }
 
     @Override
-    public <T extends DeviceBaseBO> String assemble(T param) throws Exception {
-        ScreenBaseBO screen = (ScreenBaseBO) param;
-        return screen.getHead() + screen.getDeviceNo() + screen.getCode() +
-                screen.getData() + screen.getEnd() + screen.getCrc();
+    public String assemble(MessageQueueBO param) {
+        return param.getMessage();
     }
 }

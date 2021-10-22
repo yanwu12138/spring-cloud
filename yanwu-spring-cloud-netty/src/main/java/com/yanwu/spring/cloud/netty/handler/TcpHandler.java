@@ -1,8 +1,10 @@
 package com.yanwu.spring.cloud.netty.handler;
 
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
+import com.yanwu.spring.cloud.common.utils.ContextUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.enums.DeviceTypeEnum;
+import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
 import com.yanwu.spring.cloud.netty.protocol.DeviceHandlerFactory;
 import com.yanwu.spring.cloud.netty.util.DeviceUtil;
@@ -128,6 +130,11 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
         byte[] bytes = ByteUtil.hexStrToBytes(message);
         log.info("send message, channel: {}, message: {}", ctxId, ByteUtil.printBytes(bytes));
         channel.writeAndFlush(bytes);
+    }
+
+    public void send(String sn, MessageQueueBO queue) throws Exception {
+        AbstractHandler handler = (AbstractHandler) ContextUtil.getBean(queue.getInstance());
+        send(sn, handler.assemble(queue));
     }
 
 }
