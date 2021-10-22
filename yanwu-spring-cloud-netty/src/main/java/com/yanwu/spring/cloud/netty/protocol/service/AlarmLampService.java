@@ -34,7 +34,7 @@ public class AlarmLampService extends AbstractHandler {
         log.info("alarm lamp: {}", alarmLamp);
         messageCache.replyMessage(alarmLamp.getSn(), "test2");
         clientSessionCache.putDevice(alarmLamp.getSn(), ctxId);
-        messageCache.addQueues(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "alarmLamp"));
+        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "alarmLamp"));
         SortedList<MessageQueueBO> queues = new SortedList<>();
         queues.add(MessageQueueBO.getInstance("A0000002", "alarmLamp"));
         queues.add(MessageQueueBO.getInstance("A0000001", "alarmLamp"));

@@ -76,7 +76,7 @@ public class MessageCache {
      * @param sn      设备唯一标志
      * @param message 消息
      */
-    public CallableResult<Long> addQueues(String sn, MessageQueueBO queue) {
+    public CallableResult<Long> addQueue(String sn, MessageQueueBO queue) {
         if (StringUtils.isBlank(sn) || queue == null) {
             return CallableResult.failed("SN或queue为空");
         }

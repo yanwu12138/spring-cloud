@@ -34,7 +34,7 @@ public class ScreenService extends AbstractHandler {
         log.info("screen: {}", screen);
         messageCache.replyMessage(screen.getDeviceNo(), "test1");
         clientSessionCache.putDevice(screen.getDeviceNo(), ctxId);
-        messageCache.addQueues(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "screen"));
+        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "screen"));
         SortedList<MessageQueueBO> queues = new SortedList<>();
         queues.add(MessageQueueBO.getInstance("B0000002", "screen"));
         queues.add(MessageQueueBO.getInstance("B0000001", "screen"));
