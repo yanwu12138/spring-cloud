@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.netty.cache;
 
 import com.yanwu.spring.cloud.common.pojo.CallableResult;
+import com.yanwu.spring.cloud.common.pojo.SortedList;
 import com.yanwu.spring.cloud.common.utils.RedisUtil;
 import com.yanwu.spring.cloud.netty.handler.TcpHandler;
 import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
@@ -13,7 +14,6 @@ import org.springframework.data.redis.core.ListOperations;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author Baofeng Xu
@@ -58,7 +58,7 @@ public class MessageCache {
      * @param sn     设备唯一标志
      * @param queues 消息集合
      */
-    public CallableResult<Long> addQueue(String sn, List<MessageQueueBO> queues) {
+    public CallableResult<Long> addQueues(String sn, SortedList<MessageQueueBO> queues) {
         if (StringUtils.isBlank(sn) || CollectionUtils.isEmpty(queues)) {
             return CallableResult.failed("SN或queues为空");
         }
@@ -76,7 +76,7 @@ public class MessageCache {
      * @param sn      设备唯一标志
      * @param message 消息
      */
-    public CallableResult<Long> addQueue(String sn, MessageQueueBO queue) {
+    public CallableResult<Long> addQueues(String sn, MessageQueueBO queue) {
         if (StringUtils.isBlank(sn) || queue == null) {
             return CallableResult.failed("SN或queue为空");
         }
