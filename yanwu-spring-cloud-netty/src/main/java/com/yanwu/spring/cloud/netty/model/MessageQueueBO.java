@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.netty.model;
 
 import lombok.Data;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-public class MessageQueueBO implements Serializable {
+public class MessageQueueBO implements Comparable<MessageQueueBO>, Serializable {
     private static final long serialVersionUID = -3798686682852024910L;
 
     /*** 消息 ***/
@@ -37,4 +38,10 @@ public class MessageQueueBO implements Serializable {
     public static MessageQueueBO getInstance(String message, String instance) {
         return new MessageQueueBO().setMessage(message).setInstance(instance).setTime(System.currentTimeMillis());
     }
+
+    @Override
+    public int compareTo(@NonNull MessageQueueBO target) {
+        return this.time.compareTo(target.getTime());
+    }
+
 }

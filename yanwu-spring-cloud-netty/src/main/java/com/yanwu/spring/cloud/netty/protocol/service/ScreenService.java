@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty.protocol.service;
 
+import com.yanwu.spring.cloud.common.pojo.SortedList;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
@@ -33,8 +34,10 @@ public class ScreenService extends AbstractHandler {
         log.info("screen: {}", screen);
         clientSessionCache.putDevice(screen.getDeviceNo(), ctxId);
         messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "screen"));
-        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000002", "screen"));
-        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", "screen"));
+        SortedList<MessageQueueBO> queues = new SortedList<>();
+        queues.add(MessageQueueBO.getInstance("B0000002", "screen"));
+        queues.add(MessageQueueBO.getInstance("B0000001", "screen"));
+        messageCache.addQueue(screen.getDeviceNo(), queues);
     }
 
     @Override

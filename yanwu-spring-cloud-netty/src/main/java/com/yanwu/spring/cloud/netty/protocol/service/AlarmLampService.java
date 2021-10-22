@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty.protocol.service;
 
+import com.yanwu.spring.cloud.common.pojo.SortedList;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
@@ -33,8 +34,10 @@ public class AlarmLampService extends AbstractHandler {
         log.info("alarm lamp: {}", alarmLamp);
         clientSessionCache.putDevice(alarmLamp.getSn(), ctxId);
         messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "alarmLamp"));
-        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000002", "alarmLamp"));
-        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "alarmLamp"));
+        SortedList<MessageQueueBO> queues = new SortedList<>();
+        queues.add(MessageQueueBO.getInstance("A0000002", "alarmLamp"));
+        queues.add(MessageQueueBO.getInstance("A0000001", "alarmLamp"));
+        messageCache.addQueue(alarmLamp.getSn(), queues);
     }
 
     @Override
