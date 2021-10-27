@@ -56,6 +56,30 @@
 
 ### 命令行
 
+#### MySQL
+
+##### 查看MySQL版本
+
+```sql
+SELECT VERSION();
+```
+
+##### 查看MySQL提供的引擎
+
+```sql
+SHOW ENGINES;
+```
+
+##### 查看默认存储引擎
+
+```sql
+SHOW VARIABLES LIKE '%storage_engine%';
+```
+
+![image-20211027102510310](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/10/2021102710251010.png)
+
+
+
 #### 数据库
 
 ##### 创建
