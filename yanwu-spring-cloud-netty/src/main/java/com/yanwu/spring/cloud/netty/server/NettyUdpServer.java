@@ -54,6 +54,8 @@ public class NettyUdpServer {
                     bootstrap.group(bossGroup)
                             .channel(NioDatagramChannel.class)
                             .option(ChannelOption.SO_BACKLOG, 1024)
+                            .option(ChannelOption.SO_RCVBUF, 8194)
+                            .option(ChannelOption.SO_SNDBUF, 8194)
                             // ----- 支持广播
                             .option(ChannelOption.SO_BROADCAST, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
