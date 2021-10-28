@@ -1,14 +1,18 @@
-package com.yanwu.spring.cloud.common.config;
+package com.yanwu.spring.cloud.common.runner;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author Baofeng Xu
@@ -19,26 +23,42 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class LogProjectConfigs implements CommandLineRunner {
+public class LogProjectConfigs {
     @Resource
     private Environment environment;
 
-    @Override
-    public void run(String... args) {
+    @PostConstruct
+    public void logConfigs() {
         log.info("======================================== log project configs begin ========================================");
         try {
+            SortedMap<String, Object> configs = new TreeMap<>();
             for (PropertySource<?> sources : ((AbstractEnvironment) environment).getPropertySources()) {
                 if (!(sources.getSource() instanceof Map)) {
                     continue;
                 }
-                for (Map.Entry<?, ?> entry : ((Map<?, ?>) sources.getSource()).entrySet()) {
-                    log.info("config property key: {} value: {}", logKey(entry.getKey()), entry.getValue());
-                }
+                Map<?, ?> source = (Map<?, ?>) sources.getSource();
+                source.forEach((key, value) -> configs.put(String.valueOf(key), value));
             }
+            int maxLen = getMaxLen(configs.keySet());
+            configs.forEach((key, value) -> log.info("config property key: {} value: {}", logKey(key, maxLen), value));
         } catch (Exception e) {
             log.error("log project configs error.", e);
         }
         log.info("======================================== log project configs end ========================================");
+    }
+
+    /***
+     * 找到最长的KEY的长度
+     * @param keySet KEY集合
+     * @return 最长的长度
+     */
+    private int getMaxLen(Set<String> keySet) {
+        if (CollectionUtils.isEmpty(keySet)) {
+            return -1;
+        }
+        final int[] maxLen = {0};
+        keySet.forEach(key -> maxLen[0] = Math.max(maxLen[0], key.length()));
+        return maxLen[0];
     }
 
     /**
@@ -47,10 +67,10 @@ public class LogProjectConfigs implements CommandLineRunner {
      * @param key KEY
      * @return 加长后的KEY
      */
-    private String logKey(Object key) {
-        int maxKeyLen = 64;
-        StringBuilder builder = new StringBuilder(String.valueOf(key));
-        while (builder.length() < maxKeyLen) {
+    private String logKey(String key, int maxLen) {
+        maxLen = maxLen <= 0 ? 64 : maxLen;
+        StringBuilder builder = new StringBuilder(key);
+        while (builder.length() < maxLen) {
             builder.append(" ");
         }
         return builder.toString();
