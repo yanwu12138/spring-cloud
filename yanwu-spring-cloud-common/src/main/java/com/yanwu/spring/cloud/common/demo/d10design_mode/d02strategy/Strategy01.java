@@ -37,42 +37,47 @@ public class Strategy01 {
         Cat[] cats = {new Cat(1.2, 3.5), new Cat(5, 0.2),
                 new Cat(0.6, 2.4), new Cat(3.4, 5)};
         sort(cats, (cat1, cat2) -> {
-            if (cat1.getWeight() < cat2.getWeight()) return -1;
-            else if (cat1.getWeight() > cat2.getWeight()) return 1;
+            if (cat1.getWeight() < cat2.getWeight()) {
+                return -1;
+            } else if (cat1.getWeight() > cat2.getWeight()) {
+                return 1;
+            }
             return 0;
         });
         System.out.println("cat weight: " + Arrays.toString(cats));
 
         sort(cats, (cat1, cat2) -> {
-            if (cat1.getHeight() < cat2.getHeight()) return -1;
-            else if (cat1.getHeight() > cat2.getHeight()) return 1;
+            if (cat1.getHeight() < cat2.getHeight()) {
+                return -1;
+            } else if (cat1.getHeight() > cat2.getHeight()) {
+                return 1;
+            }
             return 0;
         });
         System.out.println("cat height: " + Arrays.toString(cats));
 
         Dog[] dogs = {new Dog(5), new Dog(1), new Dog(3), new Dog(3), new Dog(2)};
         sort(dogs, (dog1, dog2) -> {
-            if (dog1.getAge() < dog2.getAge()) return -1;
-            else if (dog1.getAge() > dog2.getAge()) return 1;
+            if (dog1.getAge() < dog2.getAge()) {
+                return -1;
+            } else if (dog1.getAge() > dog2.getAge()) {
+                return 1;
+            }
             return 0;
         });
         System.out.println("dog age: " + Arrays.toString(dogs));
     }
-}
 
-@Data
-@AllArgsConstructor
-class Cat {
+    @Data
+    @AllArgsConstructor
+    private static class Cat {
+        private double weight;
+        private double height;
+    }
 
-    private double weight;
-
-    private double height;
-}
-
-@Data
-@AllArgsConstructor
-class Dog {
-
-    private int age;
-
+    @Data
+    @AllArgsConstructor
+    private static class Dog {
+        private int age;
+    }
 }

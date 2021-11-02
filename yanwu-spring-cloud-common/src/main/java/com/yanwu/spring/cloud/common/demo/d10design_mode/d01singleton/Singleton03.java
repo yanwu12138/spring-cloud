@@ -18,8 +18,7 @@ public class Singleton03 {
     /**
      * 向外提供对象的获取方法
      *
-     * @return Singleton02对象
-     * descreption: 使用双重检查可以避免线程不安全问题
+     * @return Singleton03对象
      */
     public static Singleton03 getInstance() {
         return Singleton03Holder.INSTANCE;
