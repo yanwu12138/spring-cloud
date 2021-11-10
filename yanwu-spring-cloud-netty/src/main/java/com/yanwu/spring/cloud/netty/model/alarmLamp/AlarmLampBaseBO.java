@@ -3,6 +3,8 @@ package com.yanwu.spring.cloud.netty.model.alarmLamp;
 import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -13,6 +15,8 @@ import java.io.Serializable;
  * description:
  */
 @Data
+@Accessors(chain = true)
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class AlarmLampBaseBO extends DeviceBaseBO implements Serializable {
     private static final long serialVersionUID = -7750707584959340095L;

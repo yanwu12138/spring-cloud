@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.netty.protocol.service;
 
-import com.yanwu.spring.cloud.common.pojo.SortedList;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
 import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
@@ -32,18 +32,13 @@ public class AlarmLampService extends AbstractHandler {
     public void analysis(String ctxId, byte[] bytes) throws Exception {
         AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.ALARM_LAMP_REGEX);
         log.info("alarm lamp: {}", alarmLamp);
-        messageCache.replyMessage(alarmLamp.getSn(), "test2");
         clientSessionCache.putDevice(alarmLamp.getSn(), ctxId);
-        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", AlarmLampService.class));
-        SortedList<MessageQueueBO<String>> queues = new SortedList<>();
-        queues.add(MessageQueueBO.getInstance("A0000002", AlarmLampService.class));
-        queues.add(MessageQueueBO.getInstance("A0000001", AlarmLampService.class));
-        messageCache.addQueues(alarmLamp.getSn(), queues);
+        messageCache.replyMessage(alarmLamp.getSn(), Long.parseLong(alarmLamp.getMessageId()));
     }
 
     @Override
     public <T> String assemble(MessageQueueBO<T> param) {
-        return (String) param.getMessage();
+        return ByteUtil.gbkStrToHexStr(JsonUtil.toCompactJsonString(param.getMessage()));
     }
 
 }

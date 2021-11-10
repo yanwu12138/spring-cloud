@@ -35,9 +35,9 @@ public class MessageQueueBO<T> implements Comparable<MessageQueueBO<T>>, Seriali
      * @param message  消息
      * @param instance 设备类型 [根据设备类型获取不同的处理server]
      */
-    public static <T> MessageQueueBO<T> getInstance(T message, Class<?> instance) {
+    public static <T> MessageQueueBO<T> getInstance(String key, T message, Class<?> instance) {
         MessageQueueBO<T> result = new MessageQueueBO<>();
-        result.setMessage(message).setInstance(instance).setTime(System.currentTimeMillis());
+        result.setKey(key).setMessage(message).setInstance(instance).setTime(System.currentTimeMillis());
         return result;
     }
 

@@ -35,28 +35,33 @@ public class ResolverUtil {
         Pattern pattern = Pattern.compile(regexEnum.getRegex());
         Matcher matcher = pattern.matcher(hexStr.toUpperCase());
         if (matcher.find()) {
-            Field[] fields = regexEnum.getClazz().getDeclaredFields();
-            for (Field field : fields) {
-                try {
-                    field.setAccessible(true);
-                    if ("serialVersionUID".equals(field.getName())) {
-                        continue;
-                    }
-                    field.set(instance, matcher.group(field.getName()));
-                } catch (Exception e) {
-                    log.error("device regex parse error: ", e);
-                }
-            }
+            Class<? extends DeviceBaseBO> clazz = regexEnum.getClazz();
+            assignment(instance, clazz.getDeclaredFields(), matcher);
+            assignment(instance, clazz.getSuperclass().getDeclaredFields(), matcher);
         }
         return instance;
     }
 
+    private static void assignment(DeviceBaseBO instance, Field[] fields, Matcher matcher) {
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                if ("serialVersionUID".equals(field.getName())) {
+                    continue;
+                }
+                field.set(instance, matcher.group(field.getName()));
+            } catch (Exception e) {
+                log.error("device regex parse error: ", e);
+            }
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         // 帧头：1字节；设备编号：2字节；命令字：1字节；数据域N字节；帧尾：1字节；校验码2字节
-        String hexStr = "AA2F3001A00113489D0BFE0B";
+        String hexStr = "AA000000002F3001A00113489D0BFE0B";
         ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(hexStr, DeviceRegexEnum.SCREEN_REGEX);
         log.info("screen: {}", screen);
-        hexStr = "484C131420210123000101100207ABBF1B90DBF1FFA81413BF1B4C48";
+        hexStr = "484C00000000131420210123000101100207ABBF1B90DBF1FFA81413BF1B4C48";
         AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) ResolverUtil.regexParse(hexStr, DeviceRegexEnum.ALARM_LAMP_REGEX);
         log.info("alarm lamp: {}", alarmLamp);
     }

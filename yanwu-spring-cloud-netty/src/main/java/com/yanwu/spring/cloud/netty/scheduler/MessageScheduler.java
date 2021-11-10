@@ -50,7 +50,7 @@ public class MessageScheduler<T> {
     /***
      * 每天凌晨4点中删除一个月前的消息
      */
-    @Scheduled(cron = "0 0 4 * * ? *")
+    @Scheduled(cron = "0 0 4 * * ?")
     public void removeExpiredMessage() {
         try {
             CallableResult<Map<String, MessageQueueBO<T>>> result = messageCache.removeExpiredMessage();

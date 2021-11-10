@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.netty.protocol.service;
 
-import com.yanwu.spring.cloud.common.pojo.SortedList;
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.netty.cache.ClientSessionCache;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
 import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
@@ -32,17 +32,12 @@ public class ScreenService extends AbstractHandler {
     public void analysis(String ctxId, byte[] bytes) throws Exception {
         ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(ByteUtil.bytesToHexStr(bytes), DeviceRegexEnum.SCREEN_REGEX);
         log.info("screen: {}", screen);
-        messageCache.replyMessage(screen.getDeviceNo(), "test1");
+        messageCache.replyMessage(screen.getDeviceNo(), Long.parseLong(screen.getMessageId()));
         clientSessionCache.putDevice(screen.getDeviceNo(), ctxId);
-        messageCache.addQueue(screen.getDeviceNo(), MessageQueueBO.getInstance("B0000001", ScreenService.class));
-        SortedList<MessageQueueBO<String>> queues = new SortedList<>();
-        queues.add(MessageQueueBO.getInstance("B0000002", ScreenService.class));
-        queues.add(MessageQueueBO.getInstance("B0000001", ScreenService.class));
-        messageCache.addQueues(screen.getDeviceNo(), queues);
     }
 
     @Override
     public <T> String assemble(MessageQueueBO<T> param) {
-        return (String) param.getMessage();
+        return ByteUtil.gbkStrToHexStr(JsonUtil.toCompactJsonString(param.getMessage()));
     }
 }

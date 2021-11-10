@@ -43,7 +43,6 @@ import java.util.Set;
 public class MessageCache<T> {
 
     private static final String DEVICE_QUEUE = "device:queue:";
-    private static final String DEVICE_MESSAGE = "device:message";
     private static final String DEVICE_STATUS = "device:message:status";
 
     /*** 一个月的数据为过期数据 ***/
@@ -205,20 +204,26 @@ public class MessageCache<T> {
                     return CallableResult.success();
                 }
                 String queue = queues.stream().findFirst().get();
-                if (StringUtils.isBlank(queue)) {
+                if (StringUtils.isNotBlank(queue)) {
                     MessageQueueBO<T> message = messagesOperations.get(queue);
                     status = MessageStatusBO.getMessage(sn, message);
-                    queuesOperations.remove(queueKey, queue);
+                    senderMessage(sn, status);
+                    queuesOperations.remove(queueKey, status.getMessage().getKey());
+                    return CallableResult.success();
                 }
             }
             // ----- 当前已有发送中状态的数据，判断是否可以进行下一次发送
             if (status != null && status.canSend()) {
-                tcpHandler.send(sn, status.getMessage());
-                status = status.successSend();
-                statusOperations.put(DEVICE_QUEUE, sn, status);
+                senderMessage(sn, status);
             }
             return CallableResult.success();
         });
+    }
+
+    private void senderMessage(String sn, MessageStatusBO status) throws Exception {
+        tcpHandler.send(sn, status.getMessage());
+        status = status.successSend();
+        statusOperations.put(DEVICE_STATUS, sn, status);
     }
 
     /**
@@ -227,10 +232,13 @@ public class MessageCache<T> {
      * @param sn        设备唯一标识
      * @param messageId 消息ID
      */
-    public void replyMessage(String sn, String messageId) {
+    public void replyMessage(String sn, Long messageId) {
         redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
             // ----- 删除已经发发送成功的消息
             MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
+            if (status == null || status.getMessageId().compareTo(messageId) != 0) {
+                return CallableResult.success();
+            }
             messagesOperations.getOperations().delete(status.getMessage().getKey());
             // ----- 取出一条新消息准备发送
             String queueKey = DEVICE_QUEUE + sn;
@@ -240,11 +248,11 @@ public class MessageCache<T> {
                 return CallableResult.success();
             }
             String queue = queues.stream().findFirst().get();
-            if (StringUtils.isBlank(queue)) {
+            if (StringUtils.isNotBlank(queue)) {
                 MessageQueueBO<T> message = messagesOperations.get(queue);
                 status = MessageStatusBO.nextMessage(sn, message, status.getMessageId());
+                statusOperations.put(DEVICE_STATUS, sn, status);
                 queuesOperations.remove(queueKey, queue);
-                statusOperations.put(DEVICE_QUEUE, sn, status);
             }
             return CallableResult.success();
         });

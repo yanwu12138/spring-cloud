@@ -3,6 +3,8 @@ package com.yanwu.spring.cloud.netty.model.screen;
 import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * @author Baofeng Xu
@@ -11,6 +13,8 @@ import lombok.EqualsAndHashCode;
  * description:
  */
 @Data
+@Accessors(chain = true)
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class ScreenBaseBO extends DeviceBaseBO {
     private static final long serialVersionUID = 8343735829797804631L;
