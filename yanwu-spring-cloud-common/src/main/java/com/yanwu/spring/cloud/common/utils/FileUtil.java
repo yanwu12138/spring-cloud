@@ -430,8 +430,6 @@ public class FileUtil {
         try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(Paths.get(path), StandardOpenOption.READ)) {
             Future<Integer> read = channel.read(block, position);
             while (!read.isDone()) {
-                // ----- 睡50毫秒， 不抢占资源
-                ThreadUtil.sleep(5);
             }
         }
         return block.array();
@@ -538,8 +536,6 @@ public class FileUtil {
         try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(Paths.get(path), StandardOpenOption.WRITE)) {
             Future<Integer> write = channel.write(buffer, position);
             while (!write.isDone()) {
-                // ----- 睡50毫秒， 不抢占资源
-                ThreadUtil.sleep(5);
             }
         }
     }

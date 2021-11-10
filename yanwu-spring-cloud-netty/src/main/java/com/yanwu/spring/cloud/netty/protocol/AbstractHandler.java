@@ -39,6 +39,6 @@ public abstract class AbstractHandler {
      * @return 对象转报文
      * @throws Exception .
      */
-    abstract public String assemble(MessageQueueBO data) throws Exception;
+    abstract public <T> String assemble(MessageQueueBO<T> data) throws Exception;
 
 }

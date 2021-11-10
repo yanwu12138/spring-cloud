@@ -64,3 +64,33 @@ http {
 }
 ```
 
+#### nginx反向代理
+
+```shell
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+
+    keepalive_timeout  65;
+	
+    server {
+        listen       8080;
+        server_name  localhost;
+        location / {
+        	##### 配置反向代理的地址
+			proxy_pass http://192.168.56.150:80;
+            root   html;
+            index  index.html index.htm;
+        }
+    }
+}
+```
+

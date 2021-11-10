@@ -22,10 +22,22 @@ public final class NettyUtils {
         throw new UnsupportedOperationException("NettyUtils should never be instantiated");
     }
 
+    /**
+     * 获取通道号
+     *
+     * @param ctx 通道
+     * @return 通道号
+     */
     public static String getChannelId(ChannelHandlerContext ctx) {
         return ctx == null ? "" : ctx.channel().id().asLongText();
     }
 
+    /**
+     * 获取IP
+     *
+     * @param packet 数据包
+     * @return IP
+     */
     public static String getAddress(DatagramPacket packet) {
         if (packet == null || packet.sender() == null) {
             return null;
@@ -39,6 +51,12 @@ public final class NettyUtils {
         ctx.close();
     }
 
+    /**
+     * 获取网卡
+     *
+     * @param interfaceName 网卡名称
+     * @return 网卡
+     */
     public static NetworkInterface getInterface(String interfaceName) {
         try {
             return NetworkInterface.getByName(interfaceName);

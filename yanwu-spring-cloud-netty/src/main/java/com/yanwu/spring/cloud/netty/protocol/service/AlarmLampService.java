@@ -34,16 +34,16 @@ public class AlarmLampService extends AbstractHandler {
         log.info("alarm lamp: {}", alarmLamp);
         messageCache.replyMessage(alarmLamp.getSn(), "test2");
         clientSessionCache.putDevice(alarmLamp.getSn(), ctxId);
-        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", "alarmLamp"));
-        SortedList<MessageQueueBO> queues = new SortedList<>();
-        queues.add(MessageQueueBO.getInstance("A0000002", "alarmLamp"));
-        queues.add(MessageQueueBO.getInstance("A0000001", "alarmLamp"));
+        messageCache.addQueue(alarmLamp.getSn(), MessageQueueBO.getInstance("A0000001", AlarmLampService.class));
+        SortedList<MessageQueueBO<String>> queues = new SortedList<>();
+        queues.add(MessageQueueBO.getInstance("A0000002", AlarmLampService.class));
+        queues.add(MessageQueueBO.getInstance("A0000001", AlarmLampService.class));
         messageCache.addQueues(alarmLamp.getSn(), queues);
     }
 
     @Override
-    public String assemble(MessageQueueBO param) {
-        return param.getMessage();
+    public <T> String assemble(MessageQueueBO<T> param) {
+        return (String) param.getMessage();
     }
 
 }

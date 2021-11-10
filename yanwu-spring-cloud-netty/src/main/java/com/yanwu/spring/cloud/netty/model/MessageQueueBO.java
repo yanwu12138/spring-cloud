@@ -14,20 +14,20 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-public class MessageQueueBO implements Comparable<MessageQueueBO>, Serializable {
+public class MessageQueueBO<T> implements Comparable<MessageQueueBO<T>>, Serializable {
     private static final long serialVersionUID = -3798686682852024910L;
 
-    /*** 消息 ***/
-    private String message;
+    /*** 消息的唯一标识 ***/
+    private String key;
 
-    /*** 设备类型 ***/
-    private String instance;
+    /*** 消息 ***/
+    private T message;
+
+    /*** 设备类型: 对应不通的handler执行消息发送 ***/
+    private Class<?> instance;
 
     /*** 消息的入队时间: 根据时间进行排序 ***/
     private Long time;
-
-    private MessageQueueBO() {
-    }
 
     /**
      * 生成消息队列缓存对象
@@ -35,13 +35,14 @@ public class MessageQueueBO implements Comparable<MessageQueueBO>, Serializable 
      * @param message  消息
      * @param instance 设备类型 [根据设备类型获取不同的处理server]
      */
-    public static MessageQueueBO getInstance(String message, String instance) {
-        return new MessageQueueBO().setMessage(message).setInstance(instance).setTime(System.currentTimeMillis());
+    public static <T> MessageQueueBO<T> getInstance(T message, Class<?> instance) {
+        MessageQueueBO<T> result = new MessageQueueBO<>();
+        result.setMessage(message).setInstance(instance).setTime(System.currentTimeMillis());
+        return result;
     }
 
     @Override
-    public int compareTo(@NonNull MessageQueueBO target) {
+    public int compareTo(@NonNull MessageQueueBO<T> target) {
         return this.time.compareTo(target.getTime());
     }
-
 }
