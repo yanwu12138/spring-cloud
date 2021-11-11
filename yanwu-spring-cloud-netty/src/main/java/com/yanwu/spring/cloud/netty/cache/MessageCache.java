@@ -253,7 +253,7 @@ public class MessageCache<T> {
             if (StringUtils.isNotBlank(queue)) {
                 MessageQueueBO<T> message = messagesOperations.get(queue);
                 status = MessageStatusBO.nextMessage(sn, message, status.getMessageId());
-                statusOperations.put(DEVICE_STATUS, sn, status);
+                senderMessage(sn, status);
                 queuesOperations.remove(queueKey, queue);
             }
             return CallableResult.success();
