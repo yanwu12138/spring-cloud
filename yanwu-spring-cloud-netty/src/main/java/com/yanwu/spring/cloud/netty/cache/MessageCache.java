@@ -162,7 +162,7 @@ public class MessageCache<T> {
             // ----- 判断消息是否过期
             redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
                 MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
-                if ((System.currentTimeMillis() - status.getTime()) > EXPIRED_TIME) {
+                if ((System.currentTimeMillis() - status.getLastSendTime()) > EXPIRED_TIME) {
                     String queueKey = getQueueKey(sn);
                     // ----- 该消息过期，删除该消息缓存，并将消息写入文件
                     statusOperations.delete(DEVICE_STATUS, sn);
@@ -170,7 +170,7 @@ public class MessageCache<T> {
                     if (CollectionUtils.isNotEmpty(range)) {
                         range.forEach(queue -> {
                             MessageQueueBO<T> message = messagesOperations.get(queue.getValue());
-                            if ((System.currentTimeMillis() - status.getTime()) > EXPIRED_TIME) {
+                            if ((System.currentTimeMillis() - status.getLastSendTime()) > EXPIRED_TIME) {
                                 // ----- 删除过期消息
                                 result.put(queue.getValue(), message);
                                 messagesOperations.getOperations().delete(queue.getValue());
@@ -199,7 +199,7 @@ public class MessageCache<T> {
         redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
             String queueKey = getQueueKey(sn);
             MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
-            if (status == null) {
+            if (status == null || status.getMessage() == null) {
                 // ----- 当前没有发送中状态的数据，取出队列中的第一条数据直接发送
                 Set<String> queues = queuesOperations.range(queueKey, 0, 0);
                 if (CollectionUtils.isEmpty(queues)) {
@@ -208,14 +208,15 @@ public class MessageCache<T> {
                 String queue = queues.stream().findFirst().get();
                 if (StringUtils.isNotBlank(queue)) {
                     MessageQueueBO<T> message = messagesOperations.get(queue);
-                    status = MessageStatusBO.getMessage(sn, message);
+                    long messageId = status == null ? 0L : status.getMessageId();
+                    status = MessageStatusBO.nextMessage(sn, message, messageId);
                     senderMessage(sn, status);
                     queuesOperations.remove(queueKey, status.getMessage().getKey());
                     return CallableResult.success();
                 }
             }
             // ----- 当前已有发送中状态的数据，判断是否可以进行下一次发送
-            if (status != null && status.canSend()) {
+            if (status != null && status.getMessage() != null && status.canSend()) {
                 senderMessage(sn, status);
             }
             return CallableResult.success();
@@ -238,26 +239,48 @@ public class MessageCache<T> {
         redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
             // ----- 删除已经发发送成功的消息
             MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
-            if (status == null || status.getMessageId().compareTo(messageId) != 0) {
+            if (status == null || status.getMessage() == null || status.getMessageId().compareTo(messageId) != 0) {
                 return CallableResult.success();
             }
             messagesOperations.getOperations().delete(status.getMessage().getKey());
-            // ----- 取出一条新消息准备发送
+            // ----- 看还有没有待发送的消息：如果有则取出一条新消息发送
             String queueKey = getQueueKey(sn);
             Set<String> queues = queuesOperations.range(queueKey, 0, 0);
             if (CollectionUtils.isEmpty(queues)) {
-                statusOperations.delete(DEVICE_STATUS, sn);
+                // ----- 没有待发送的消息
+                status = status.clearMessage();
+                statusOperations.put(DEVICE_STATUS, sn, status);
                 return CallableResult.success();
             }
-            String queue = queues.stream().findFirst().get();
-            if (StringUtils.isNotBlank(queue)) {
-                MessageQueueBO<T> message = messagesOperations.get(queue);
-                status = MessageStatusBO.nextMessage(sn, message, status.getMessageId());
-                senderMessage(sn, status);
-                queuesOperations.remove(queueKey, queue);
-            }
+            // ----- 有待发送的消息：取出一条新消息进行发送
+            nextSenderMessage(sn, queues.stream().findFirst().get(), queueKey, status);
             return CallableResult.success();
         });
+    }
+
+    /**
+     * @param sn       设备唯一标识
+     * @param queue    当前准备发送的消息KEY
+     * @param queueKey 设备的队列KEY
+     * @param status   设备发送消息状态
+     * @throws Exception .
+     */
+    private void nextSenderMessage(String sn, String queue, String queueKey, MessageStatusBO status) throws Exception {
+        if (StringUtils.isNotBlank(queue)) {
+            MessageQueueBO<T> message = messagesOperations.get(queue);
+            while (message == null) {
+                queuesOperations.remove(queueKey, queue);
+                Set<String> queues = queuesOperations.range(queueKey, 0, 0);
+                if (CollectionUtils.isEmpty(queues)) {
+                    return;
+                }
+                queue = queues.stream().findFirst().get();
+                message = messagesOperations.get(queue);
+            }
+            status = MessageStatusBO.nextMessage(sn, message, status.getMessageId());
+            senderMessage(sn, status);
+            queuesOperations.remove(queueKey, queue);
+        }
     }
 
     /**
