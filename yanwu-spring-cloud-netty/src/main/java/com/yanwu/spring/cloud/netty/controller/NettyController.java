@@ -85,4 +85,11 @@ public class NettyController {
         return ResponseEnvelope.success();
     }
 
+    @LogParam
+    @GetMapping("/remove")
+    public ResponseEnvelope<Void> remove() {
+        messageCache.removeExpiredMessage();
+        return ResponseEnvelope.success();
+    }
+
 }
