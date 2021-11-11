@@ -32,7 +32,7 @@ public class RedisUtil {
     /*** 每次自旋睡眠时间 ***/
     private static final Integer SLEEP_TIME = 100;
     /*** 分布式锁自旋次数 ***/
-    private static final Integer CYCLES = 30;
+    private static final Integer CYCLES = 100;
     /*** 分布式锁处理器 ***/
     @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
@@ -71,7 +71,7 @@ public class RedisUtil {
         // ----- 尝试获取锁，加锁成功直接返回，否则，循环尝试获取
         while (!tryLock(key, value, timeout)) {
             if (0 == (cycles--)) {
-                // ----- 最多循环30次（3S），当尝试了3S都没有获取到锁，则认为获取锁失败
+                // ----- 最多循环100次（10S），当尝试了10S都没有获取到锁，则认为获取锁失败
                 log.error("redis lock failed. key: {}, value: {}", key, value);
                 return false;
             }

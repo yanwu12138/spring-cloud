@@ -5,6 +5,7 @@ import com.yanwu.spring.cloud.common.pojo.CallableResult;
 import com.yanwu.spring.cloud.common.pojo.CommandBO;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.pojo.SortedList;
+import com.yanwu.spring.cloud.common.utils.RedisUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
 import com.yanwu.spring.cloud.netty.handler.TcpHandler;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.concurrent.Executor;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -37,6 +39,10 @@ public class NettyController {
     private UpgradeHandler upgradeHandler;
     @Resource
     private MessageCache<String> messageCache;
+    @Resource
+    private Executor nettyExecutor;
+    @Resource
+    private RedisUtil redisUtil;
 
     @LogParam
     @PostMapping("/tcp/send")
@@ -89,6 +95,41 @@ public class NettyController {
     @GetMapping("/remove")
     public ResponseEnvelope<Void> remove() {
         messageCache.removeExpiredMessage();
+        return ResponseEnvelope.success();
+    }
+
+    @LogParam
+    @GetMapping("/testRedisLock")
+    public ResponseEnvelope<Void> testRedisLock() {
+        //
+        nettyExecutor.execute(() -> redisUtil.executor("10000001", Thread.currentThread().getId(), () -> {
+            log.info("redis lock 1-1 {}: start", Thread.currentThread().getId());
+            ThreadUtil.sleep(10_000);
+            log.info("redis lock 1-1 {}: end", Thread.currentThread().getId());
+            return CallableResult.success();
+        }));
+        nettyExecutor.execute(() -> redisUtil.executor("10000001", Thread.currentThread().getId(), () -> {
+            log.info("redis lock 1-2 {}: start", Thread.currentThread().getId());
+            ThreadUtil.sleep(5_000);
+            log.info("redis lock 1-2 {}: end", Thread.currentThread().getId());
+            return CallableResult.success();
+        }));
+
+        //
+        nettyExecutor.execute(() -> redisUtil.executor("10000002", Thread.currentThread().getId(), () -> {
+            log.info("redis lock 2-1 {}: start", Thread.currentThread().getId());
+            ThreadUtil.sleep(7_000);
+            log.info("redis lock 2-1 {}: end", Thread.currentThread().getId());
+            return CallableResult.success();
+        }));
+        nettyExecutor.execute(() -> redisUtil.executor("10000002", Thread.currentThread().getId(), () -> {
+            log.info("redis lock 2-2 {}: start", Thread.currentThread().getId());
+            ThreadUtil.sleep(8_000);
+            log.info("redis lock 2-2 {}: end", Thread.currentThread().getId());
+            return CallableResult.success();
+        }));
+
+        ThreadUtil.sleep(20_000);
         return ResponseEnvelope.success();
     }
 
