@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import java.util.Set;
 public class MessageCache<T> {
 
     private static final String DEVICE_QUEUE = "device:queue:";
+    private static final String DEVICE_MESSAGE = "device:message:";
     private static final String DEVICE_STATUS = "device:message:status";
 
     /*** 一个月的数据为过期数据 ***/
@@ -85,12 +87,12 @@ public class MessageCache<T> {
      * @param sn       设备唯一标志
      * @param messages 消息集合
      */
-    public CallableResult<Long> addQueues(String sn, SortedList<MessageQueueBO<T>> messages) {
+    public CallableResult<Void> addQueues(String sn, SortedList<MessageQueueBO<T>> messages) {
         if (StringUtils.isBlank(sn) || CollectionUtils.isEmpty(messages)) {
             return CallableResult.failed("SN或queues为空");
         }
         return redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
-            String queueKey = DEVICE_QUEUE + sn;
+            String queueKey = getQueueKey(sn);
             log.info("add queues, queueKey: {}, messages: {}", queueKey, messages);
             // ----- 根据设备标识拿到当前设备的最高分数
             Set<ZSetOperations.TypedTuple<String>> range = queuesOperations.rangeWithScores(queueKey, 0, -1);
@@ -120,12 +122,12 @@ public class MessageCache<T> {
      * @param sn      设备唯一标志
      * @param message 消息
      */
-    public CallableResult<Long> addQueue(String sn, MessageQueueBO<T> message) {
+    public CallableResult<Void> addQueue(String sn, MessageQueueBO<T> message) {
         if (StringUtils.isBlank(sn) || message == null) {
             return CallableResult.failed("SN或queue为空");
         }
         return redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
-            String queueKey = DEVICE_QUEUE + sn;
+            String queueKey = getQueueKey(sn);
             log.info("add queue, queueKey: {}, message: {}", queueKey, message);
             // ----- 根据设备标识拿到当前设备的最高分数
             Set<ZSetOperations.TypedTuple<String>> range = queuesOperations.rangeWithScores(queueKey, 0, -1);
@@ -161,7 +163,7 @@ public class MessageCache<T> {
             redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
                 MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
                 if ((System.currentTimeMillis() - status.getTime()) > EXPIRED_TIME) {
-                    String queueKey = DEVICE_QUEUE + sn;
+                    String queueKey = getQueueKey(sn);
                     // ----- 该消息过期，删除该消息缓存，并将消息写入文件
                     statusOperations.delete(DEVICE_STATUS, sn);
                     Set<ZSetOperations.TypedTuple<String>> range = queuesOperations.rangeWithScores(queueKey, 0, -1);
@@ -195,7 +197,7 @@ public class MessageCache<T> {
      */
     public void senderMessage(String sn) {
         redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
-            String queueKey = DEVICE_QUEUE + sn;
+            String queueKey = getQueueKey(sn);
             MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
             if (status == null) {
                 // ----- 当前没有发送中状态的数据，取出队列中的第一条数据直接发送
@@ -241,7 +243,7 @@ public class MessageCache<T> {
             }
             messagesOperations.getOperations().delete(status.getMessage().getKey());
             // ----- 取出一条新消息准备发送
-            String queueKey = DEVICE_QUEUE + sn;
+            String queueKey = getQueueKey(sn);
             Set<String> queues = queuesOperations.range(queueKey, 0, 0);
             if (CollectionUtils.isEmpty(queues)) {
                 statusOperations.delete(DEVICE_STATUS, sn);
@@ -282,5 +284,14 @@ public class MessageCache<T> {
      */
     private double getMaxScore(Set<ZSetOperations.TypedTuple<String>> range) {
         return CollectionUtils.isEmpty(range) ? 0D : range.stream().mapToDouble(ZSetOperations.TypedTuple::getScore).max().orElse(0D);
+    }
+
+    private String getQueueKey(String sn) {
+        return DEVICE_QUEUE + sn;
+    }
+
+    public String getMessageKey(String... strs) {
+        Assert.isTrue((strs != null && strs.length > 0), "get message key error, because strs is empty.");
+        return DEVICE_MESSAGE + String.join(":", strs);
     }
 }

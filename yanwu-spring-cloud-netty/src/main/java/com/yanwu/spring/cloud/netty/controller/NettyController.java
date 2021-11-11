@@ -36,7 +36,7 @@ public class NettyController {
     @Resource
     private UpgradeHandler upgradeHandler;
     @Resource
-    private MessageCache messageCache;
+    private MessageCache<String> messageCache;
 
     @LogParam
     @PostMapping("/tcp/send")
@@ -67,20 +67,20 @@ public class NettyController {
     public ResponseEnvelope<Void> test() {
         // ----- alarmLamp
         SortedList<MessageQueueBO<String>> alarmQueues = new SortedList<>();
-        messageCache.addQueue("131420210123", MessageQueueBO.getInstance("A0000001", "A0000001", AlarmLampService.class));
+        messageCache.addQueue("131420210123", MessageQueueBO.getInstance(messageCache.getMessageKey("A0000001"), "A0000001", AlarmLampService.class));
         ThreadUtil.sleep(10);
-        alarmQueues.add(MessageQueueBO.getInstance("A0000002", "A0000002", AlarmLampService.class));
+        alarmQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("A0000002"), "A0000002", AlarmLampService.class));
         ThreadUtil.sleep(10);
-        alarmQueues.add(MessageQueueBO.getInstance("A0000001", "A0000003", AlarmLampService.class));
+        alarmQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("A0000001"), "A0000003", AlarmLampService.class));
         messageCache.addQueues("131420210123", alarmQueues);
 
         // ----- screen
         SortedList<MessageQueueBO<String>> screenQueues = new SortedList<>();
-        messageCache.addQueue("2F30", MessageQueueBO.getInstance("B0000001", "B0000001", ScreenService.class));
+        messageCache.addQueue("2F30", MessageQueueBO.getInstance(messageCache.getMessageKey("B0000001"), "B0000001", ScreenService.class));
         ThreadUtil.sleep(10);
-        screenQueues.add(MessageQueueBO.getInstance("B0000002", "B0000002", ScreenService.class));
+        screenQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("B0000002"), "B0000002", ScreenService.class));
         ThreadUtil.sleep(10);
-        screenQueues.add(MessageQueueBO.getInstance("B0000001", "B0000003", ScreenService.class));
+        screenQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("B0000001"), "B0000003", ScreenService.class));
         messageCache.addQueues("2F30", screenQueues);
         return ResponseEnvelope.success();
     }
