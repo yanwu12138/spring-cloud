@@ -17,10 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Baofeng Xu
@@ -40,7 +38,6 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-@SuppressWarnings("all")
 public class MessageCache<T> {
 
     private static final String DEVICE_QUEUE = "device:queue:";
@@ -61,6 +58,7 @@ public class MessageCache<T> {
      * value：消息的唯一标识 - MessageQueueBO#key
      * score：消息的入队时间
      */
+    @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
     private ZSetOperations<String, String> queuesOperations;
 
@@ -69,6 +67,7 @@ public class MessageCache<T> {
      * key：消息的唯一标识 - MessageQueueBO#key
      * value：消息详细内容
      */
+    @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
     private ValueOperations<String, MessageQueueBO<T>> messagesOperations;
 
@@ -78,8 +77,9 @@ public class MessageCache<T> {
      * field：设备的唯一标志
      * value：消息的发送状态
      */
+    @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
-    private HashOperations<String, String, MessageStatusBO> statusOperations;
+    private HashOperations<String, String, MessageStatusBO<T>> statusOperations;
 
     /**
      * 批量添加消息到缓存
@@ -91,11 +91,11 @@ public class MessageCache<T> {
         if (StringUtils.isBlank(sn) || CollectionUtils.isEmpty(messages)) {
             return CallableResult.failed("SN或queues为空");
         }
-        return redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
+        return redisUtil.executor(sn, () -> {
             String queueKey = getQueueKey(sn);
             log.info("add queues, queueKey: {}, messages: {}", queueKey, messages);
             // ----- 根据设备标识拿到当前设备的最高分数
-            Set<ZSetOperations.TypedTuple<String>> range = queuesOperations.rangeWithScores(queueKey, 0, -1);
+            Set<ZSetOperations.TypedTuple<String>> range = getAllQueue(queueKey);
             double maxScore = getMaxScore(range);
             // ----- 消息处理：将同key的旧的消息删除，增加新的消息入队
             Map<String, MessageQueueBO<T>> messageMap = new HashMap<>(messages.size());
@@ -126,11 +126,11 @@ public class MessageCache<T> {
         if (StringUtils.isBlank(sn) || message == null) {
             return CallableResult.failed("SN或queue为空");
         }
-        return redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
+        return redisUtil.executor(sn, () -> {
             String queueKey = getQueueKey(sn);
             log.info("add queue, queueKey: {}, message: {}", queueKey, message);
             // ----- 根据设备标识拿到当前设备的最高分数
-            Set<ZSetOperations.TypedTuple<String>> range = queuesOperations.rangeWithScores(queueKey, 0, -1);
+            Set<ZSetOperations.TypedTuple<String>> range = getAllQueue(queueKey);
             double maxScore = getMaxScore(range);
             // ----- 消息处理：将同key的旧的消息删除，增加新的消息入队
             range.removeIf(msg -> Objects.equals(msg.getValue(), message.getKey()));
@@ -160,15 +160,21 @@ public class MessageCache<T> {
         Map<String, MessageQueueBO<T>> result = new HashMap<>();
         sns.forEach(sn -> {
             // ----- 判断消息是否过期
-            redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
-                MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
+            redisUtil.executor(sn, () -> {
+                MessageStatusBO<T> status = statusOperations.get(DEVICE_STATUS, sn);
+                if (status == null) {
+                    return CallableResult.success();
+                }
                 if ((System.currentTimeMillis() - status.getLastSendTime()) > EXPIRED_TIME) {
                     String queueKey = getQueueKey(sn);
                     // ----- 该消息过期，删除该消息缓存，并将消息写入文件
                     statusOperations.delete(DEVICE_STATUS, sn);
-                    Set<ZSetOperations.TypedTuple<String>> range = queuesOperations.rangeWithScores(queueKey, 0, -1);
+                    Set<ZSetOperations.TypedTuple<String>> range = getAllQueue(queueKey);
                     if (CollectionUtils.isNotEmpty(range)) {
                         range.forEach(queue -> {
+                            if (queue == null || StringUtils.isBlank(queue.getValue())) {
+                                return;
+                            }
                             MessageQueueBO<T> message = messagesOperations.get(queue.getValue());
                             if ((System.currentTimeMillis() - status.getLastSendTime()) > EXPIRED_TIME) {
                                 // ----- 删除过期消息
@@ -196,16 +202,16 @@ public class MessageCache<T> {
      * @param sn 设备唯一标志
      */
     public void senderMessage(String sn) {
-        redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
+        redisUtil.executor(sn, () -> {
             String queueKey = getQueueKey(sn);
-            MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
+            MessageStatusBO<T> status = statusOperations.get(DEVICE_STATUS, sn);
             if (status == null || status.getMessage() == null) {
                 // ----- 当前没有发送中状态的数据，取出队列中的第一条数据直接发送
                 Set<String> queues = queuesOperations.range(queueKey, 0, 0);
                 if (CollectionUtils.isEmpty(queues)) {
                     return CallableResult.success();
                 }
-                String queue = queues.stream().findFirst().get();
+                String queue = queues.stream().findFirst().orElse(null);
                 if (StringUtils.isNotBlank(queue)) {
                     MessageQueueBO<T> message = messagesOperations.get(queue);
                     long messageId = status == null ? 0L : status.getMessageId();
@@ -223,7 +229,7 @@ public class MessageCache<T> {
         });
     }
 
-    private void senderMessage(String sn, MessageStatusBO status) throws Exception {
+    private void senderMessage(String sn, MessageStatusBO<T> status) throws Exception {
         tcpHandler.send(sn, status.getMessage());
         status = status.successSend();
         statusOperations.put(DEVICE_STATUS, sn, status);
@@ -236,9 +242,9 @@ public class MessageCache<T> {
      * @param messageId 消息ID
      */
     public void replyMessage(String sn, Long messageId) {
-        redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
+        redisUtil.executor(sn, () -> {
             // ----- 删除已经发发送成功的消息
-            MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
+            MessageStatusBO<T> status = statusOperations.get(DEVICE_STATUS, sn);
             if (status == null || status.getMessage() == null || status.getMessageId().compareTo(messageId) != 0) {
                 return CallableResult.success();
             }
@@ -253,7 +259,7 @@ public class MessageCache<T> {
                 return CallableResult.success();
             }
             // ----- 有待发送的消息：取出一条新消息进行发送
-            nextSenderMessage(sn, queues.stream().findFirst().get(), queueKey, status);
+            nextSenderMessage(sn, queues.stream().findFirst().orElse(null), queueKey, status);
             return CallableResult.success();
         });
     }
@@ -265,7 +271,7 @@ public class MessageCache<T> {
      * @param status   设备发送消息状态
      * @throws Exception .
      */
-    private void nextSenderMessage(String sn, String queue, String queueKey, MessageStatusBO status) throws Exception {
+    private void nextSenderMessage(String sn, String queue, String queueKey, MessageStatusBO<T> status) throws Exception {
         if (StringUtils.isNotBlank(queue)) {
             MessageQueueBO<T> message = messagesOperations.get(queue);
             while (message == null) {
@@ -274,8 +280,10 @@ public class MessageCache<T> {
                 if (CollectionUtils.isEmpty(queues)) {
                     return;
                 }
-                queue = queues.stream().findFirst().get();
-                message = messagesOperations.get(queue);
+                queue = queues.stream().findFirst().orElse(null);
+                if (StringUtils.isNotBlank(queue)) {
+                    message = messagesOperations.get(queue);
+                }
             }
             status = MessageStatusBO.nextMessage(sn, message, status.getMessageId());
             senderMessage(sn, status);
@@ -289,8 +297,8 @@ public class MessageCache<T> {
      * @param sn 设备唯一标志
      */
     public void online(String sn) {
-        redisUtil.executor(sn, Thread.currentThread().getId(), () -> {
-            MessageStatusBO status = statusOperations.get(DEVICE_STATUS, sn);
+        redisUtil.executor(sn, () -> {
+            MessageStatusBO<T> status = statusOperations.get(DEVICE_STATUS, sn);
             if (status != null) {
                 status.setTryNumber(3);
                 statusOperations.put(DEVICE_STATUS, sn, status);
@@ -306,7 +314,23 @@ public class MessageCache<T> {
      * @return 最大的分数
      */
     private double getMaxScore(Set<ZSetOperations.TypedTuple<String>> range) {
-        return CollectionUtils.isEmpty(range) ? 0D : range.stream().mapToDouble(ZSetOperations.TypedTuple::getScore).max().orElse(0D);
+        if (CollectionUtils.isEmpty(range)) {
+            return 0D;
+        }
+        AtomicReference<Double> maxScore = new AtomicReference<>(0D);
+        range.forEach(queue -> maxScore.set(Math.max(maxScore.get(), (queue.getScore() == null ? 0D : queue.getScore()))));
+        return maxScore.get();
+    }
+
+    /**
+     * 获取该小站的所有待发送消息
+     *
+     * @param queueKey 小站的KEY
+     * @return 待发送消息队列
+     */
+    private Set<ZSetOperations.TypedTuple<String>> getAllQueue(String queueKey) {
+        Set<ZSetOperations.TypedTuple<String>> range = queuesOperations.rangeWithScores(queueKey, 0, -1);
+        return CollectionUtils.isEmpty(range) ? Collections.emptySet() : range;
     }
 
     private String getQueueKey(String sn) {

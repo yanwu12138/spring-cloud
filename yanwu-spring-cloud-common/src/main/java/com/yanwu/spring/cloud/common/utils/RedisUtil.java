@@ -116,6 +116,18 @@ public class RedisUtil {
 
 
     /**
+     * 执行任务，锁的超时时间为默认的30S，默认使用线程ID作为value
+     *
+     * @param key      加锁唯一标识
+     * @param callable 加锁后执行的任务
+     * @return 执行结果返回值
+     */
+    public <T> CallableResult<T> executor(String key, Callable<CallableResult<T>> callable) {
+        return executor(key, Thread.currentThread().getId(), callable);
+    }
+
+
+    /**
      * 执行任务，锁的超时时间为默认的30S
      *
      * @param key      加锁唯一标识
