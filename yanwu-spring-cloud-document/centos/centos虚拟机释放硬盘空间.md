@@ -7,6 +7,9 @@
 -   在虚拟机中执行以下命令，执行完后将虚拟机关机。
 
     ```shell
+    ##### /empty 不断往 /empty 文件中写入空字符串
+    ###### 如要释放 / 目录资源则用 /empty；
+    ###### 如果要释放 /home 目录资源则用 /home/empty。
     sudo dd if=/dev/zero of=/empty
     sudo rm -f /empty
     ```
@@ -18,7 +21,4 @@
     VBoxManage.exe modifyhd E:\VMS\docker-vm\docker-vm.vdi --compact
     ```
 
-    
-
-    
 
