@@ -1,4 +1,5 @@
-#################### NACOS CONFIG ####################
+server:
+  port: 8885
 spring:
   application:
     name: yanwu-message
@@ -8,8 +9,43 @@ spring:
         server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
         group: DEFAULT_GROUP
         namespace: cf543eea-9362-47f5-a657-d0b4b4d8b065
-      config:
-        group: DEFAULT_GROUP
-        server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
-        namespace: cf543eea-9362-47f5-a657-d0b4b4d8b065
-        file-extension: yaml
+  rabbitmq:
+    host: 192.168.56.150
+    port: 5672
+    username: root
+    password: yanwu12138
+    ### 消息确认: 消息已发送至交换机
+    publisher-confirm-type: correlated
+    ### 消息确认: 消息已发送至队列
+    publisher-returns: true
+  rocket:
+    name-server: 192.168.56.150:9876
+    enabled: true
+    consumer:
+      - group: ConsumerBase
+        topic: yanwu_base
+        consumerType: 0
+        listeners:
+          - listener: baseListener
+            expression: topic_base1 || topic_base2
+      - group: ConsumerOther
+        topic: yanwu_other
+        consumerType: 1
+        listeners:
+          - listener: otherListener
+            expression: topic_other1 || topic_other2
+    producer:
+      - group: ProducerBase
+        topic: yanwu_base
+      - group: ProducerOther
+        topic: yanwu_other
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000

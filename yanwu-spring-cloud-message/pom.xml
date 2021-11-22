@@ -62,23 +62,16 @@
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
         <!-- rabbitMQ client -->
-        <!--        <dependency>-->
-        <!--            <groupId>com.rabbitmq</groupId>-->
-        <!--            <artifactId>amqp-client</artifactId>-->
-        <!--            <version>3.4.1</version>-->
-        <!--        </dependency>-->
-        <!-- apache rocketMQ client -->
         <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-client</artifactId>
-            <version>4.2.0</version>
+            <groupId>com.aliyun.openservices</groupId>
+            <artifactId>ons-client</artifactId>
+            <version>1.7.8.Final</version>
         </dependency>
-        <!-- alibaba rocketMQ client -->
-        <!--        <dependency>-->
-        <!--            <groupId>com.alibaba.rocketmq</groupId>-->
-        <!--            <artifactId>rocketmq-client</artifactId>-->
-        <!--            <version>3.2.6</version>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>3.2.6</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
