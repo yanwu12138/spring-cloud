@@ -1,4 +1,5 @@
-#################### NACOS CONFIG ####################
+server:
+  port: 8884
 spring:
   application:
     name: yanwu-netty
@@ -8,8 +9,33 @@ spring:
         server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
         group: DEFAULT_GROUP
         namespace: cf543eea-9362-47f5-a657-d0b4b4d8b065
-      config:
-        group: DEFAULT_GROUP
-        server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
-        namespace: cf543eea-9362-47f5-a657-d0b4b4d8b065
-        file-extension: yaml
+  redis:
+    host: 192.168.56.150
+    port: 6379
+    password: yanwu12138
+    timeout: 10000
+    database: 4
+  main:
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+netty:
+  tcp:
+    port: 6000
+  udp:
+    port: 7000
+  radio:
+    port: 9999
+  interface:
+    name: lo
+  broadcast:
+    ip: 225.1.2.10
+    port: 8000
+  source:
+    ip: 192.168.56.10
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000
