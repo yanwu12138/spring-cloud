@@ -127,6 +127,7 @@ public class DateUtil {
         YYYYMM("yyyyMM"),
         YYYY_MM_DD("yyyy-MM-dd"),
         YYYYMMDD("yyyyMMdd"),
+        YYYYMMDDHH("yyyyMMddHH"),
         HH_MM("HH:mm"),
         HHMM("HH mm"),
         HH_MM_SS("HH:mm:ss"),

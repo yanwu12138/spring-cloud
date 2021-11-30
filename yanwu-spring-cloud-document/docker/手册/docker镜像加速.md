@@ -18,6 +18,8 @@ EOF
 sudo systemctl daemon-reload
 ```
 
+![image-20211127103118488](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2021/11/2021112710311818.png)
+
 ##### 重启docker生效
 
 ```SHELL

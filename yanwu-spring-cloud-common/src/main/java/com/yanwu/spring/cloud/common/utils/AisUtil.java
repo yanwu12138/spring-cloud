@@ -1,13 +1,21 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.pojo.AisDynamicDataBO;
+import com.yanwu.spring.cloud.common.pojo.AisStaticDataBO;
 import dk.tbsalling.aismessages.AISInputStreamReader;
-import dk.tbsalling.aismessages.ais.messages.AISMessage;
+import dk.tbsalling.aismessages.ais.messages.Error;
+import dk.tbsalling.aismessages.ais.messages.*;
+import dk.tbsalling.aismessages.ais.messages.types.TransponderClass;
+import dk.tbsalling.aismessages.nmea.messages.NMEAMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,15 +28,22 @@ import java.util.List;
  */
 @Slf4j
 public class AisUtil {
+    private static final String AIS_SOURCE_PATH = "/home/admin/tmp/file/source/ais/";
+    /*** 船舶自身的广播信息 ***/
+    private static final String AIVDO = "AIVDO";
+    /*** 本船收到的其它船舶的信息 ***/
+    private static final String AIVDM = "AIVDM";
 
     public static void main(String[] args) throws IOException {
         log.info("-------------------- AISMessages Demo App Start --------------------");
         List<AISMessage> message = getMessage(DEMO_NMEA_STRINGS);
         message.forEach((aisMessage) -> log.info("Received AIS message: {}", aisMessage));
+        analysis(message);
         log.info("-------------------- AISMessages Demo App End--------------------");
     }
 
     private AisUtil() {
+        throw new UnsupportedOperationException("AisUtil should never be instantiated");
     }
 
     public static List<AISMessage> getMessage(String message) {
@@ -46,6 +61,249 @@ public class AisUtil {
             log.error("ais getMessage error. bytes: {}", ByteUtil.printBytes(bytes), e);
         }
         return result;
+    }
+
+    public static void analysis(List<AISMessage> messageList) {
+        if (CollectionUtils.isEmpty(messageList)) {
+            return;
+        }
+        messageList.forEach(message -> {
+            if (!message.isValid()) {
+                return;
+            }
+            Boolean ownship = ownship(message);
+            if (ownship == null) {
+                return;
+            }
+            int mmsi = message.getSourceMmsi().getMMSI();
+            if (message instanceof StaticDataReport) {
+                staticData(mmsi, ownship, (StaticDataReport) message);
+            } else if (message instanceof DynamicDataReport) {
+                dynamicData(mmsi, ownship, (DynamicDataReport) message);
+            } else if (message instanceof BaseStationReport) {
+                stationReport(mmsi, ownship, (BaseStationReport) message);
+            } else if (message instanceof Error) {
+                error(mmsi, ownship);
+            }
+        });
+    }
+
+
+    // ============================== 静态数据处理 ============================== //
+
+    /***
+     * 静态数据处理
+     */
+    private static void staticData(int mmsi, boolean ownship, StaticDataReport message) {
+        if (message instanceof ShipAndVoyageData) {
+            voyageRelated(mmsi, ownship, (ShipAndVoyageData) message);
+        } else if (message instanceof ClassBCSStaticDataReport) {
+            bClassStaticData(mmsi, ownship, (ClassBCSStaticDataReport) message);
+        } else {
+            log.warn("ais static data failed. mmsi: {}, message: {}", mmsi, message);
+        }
+    }
+
+    /**
+     * 船只静态航行数据
+     */
+    private static void voyageRelated(int mmsi, Boolean ownship, ShipAndVoyageData message) {
+        AisStaticDataBO staticClass = new AisStaticDataBO();
+        staticClass.setMmsi(mmsi).setSclass(message.getTransponderClass())
+                .setOwnship(ownship).setCtime(System.currentTimeMillis());
+        staticClass.setImo(message.getImo().getIMO())
+                .setCallcode(message.getCallsign())
+                .setName(message.getShipName())
+                .setDestination(message.getDestination())
+                .setStype(message.getShipType())
+                .setTrng(message.getToStern())
+                .setRrng(message.getToStarboard())
+                .setDraught(BigDecimal.valueOf(message.getDraught()));
+        staticClass(staticClass);
+    }
+
+    /**
+     * B类-静态数据
+     */
+    private static void bClassStaticData(int mmsi, Boolean ownship, ClassBCSStaticDataReport message) {
+        AisStaticDataBO staticClass = new AisStaticDataBO();
+        staticClass.setMmsi(mmsi).setSclass(message.getTransponderClass())
+                .setOwnship(ownship).setCtime(System.currentTimeMillis());
+        staticClass.setCallcode(message.getCallsign())
+                .setName(message.getShipName())
+                .setStype(message.getShipType())
+                .setTrng(message.getToStern())
+                .setRrng(message.getToStarboard());
+        staticClass(staticClass);
+    }
+
+
+    // ============================== 动态数据处理 ============================== //
+
+    /**
+     * 动态数据
+     */
+    private static void dynamicData(int mmsi, boolean ownship, DynamicDataReport message) {
+        if (message instanceof PositionReport) {
+            positionReport(mmsi, ownship, (PositionReport) message);
+        } else if (message instanceof ExtendedClassBEquipmentPositionReport) {
+            bClassExtended(mmsi, ownship, (ExtendedClassBEquipmentPositionReport) message);
+        } else if (message instanceof LongRangeBroadcastMessage) {
+            longRangeBroadcast(mmsi, ownship, (LongRangeBroadcastMessage) message);
+        } else if (message instanceof StandardSARAircraftPositionReport) {
+            sarAircraft(mmsi, ownship, (StandardSARAircraftPositionReport) message);
+        } else if (message instanceof StandardClassBCSPositionReport) {
+            bClassDynamicData(mmsi, ownship, (StandardClassBCSPositionReport) message);
+        } else {
+            log.warn("ais dynamic data failed. mmsi: {}, message: {}", mmsi, message);
+        }
+    }
+
+    /**
+     * A类-航行数据
+     */
+    private static void positionReport(int mmsi, Boolean ownship, PositionReport message) {
+        AisDynamicDataBO dynamicClass = new AisDynamicDataBO();
+        dynamicClass.setMmsi(mmsi).setSclass(message.getTransponderClass())
+                .setOwnship(ownship).setCtime(System.currentTimeMillis());
+        dynamicClass.setNavstatus(message.getNavigationStatus())
+                .setLon(BigDecimal.valueOf(message.getLongitude()))
+                .setLat(BigDecimal.valueOf(message.getLatitude()))
+                .setHeading(BigDecimal.valueOf(message.getTrueHeading()))
+                .setCourse(BigDecimal.valueOf(message.getCourseOverGround()))
+                .setSog(BigDecimal.valueOf(message.getSpeedOverGround()))
+                .setRturn(message.getRateOfTurn());
+        dynamicClass(dynamicClass);
+    }
+
+    /**
+     * B类-航行数据
+     */
+    private static void bClassExtended(Integer mmsi, boolean ownship, ExtendedClassBEquipmentPositionReport message) {
+        AisDynamicDataBO dynamicClass = new AisDynamicDataBO();
+        dynamicClass.setMmsi(mmsi).setSclass(message.getTransponderClass())
+                .setOwnship(ownship).setCtime(System.currentTimeMillis());
+        dynamicClass.setLon(BigDecimal.valueOf(message.getLongitude()))
+                .setLat(BigDecimal.valueOf(message.getLatitude()))
+                .setHeading(BigDecimal.valueOf(message.getTrueHeading()))
+                .setCourse(BigDecimal.valueOf(message.getCourseOverGround()))
+                .setSog(BigDecimal.valueOf(message.getSpeedOverGround()));
+        dynamicClass(dynamicClass);
+    }
+
+    /**
+     * 远程广播信息
+     */
+    private static void longRangeBroadcast(Integer mmsi, boolean ownship, LongRangeBroadcastMessage message) {
+        AisDynamicDataBO dynamicClass = new AisDynamicDataBO();
+        dynamicClass.setMmsi(mmsi).setSclass(message.getTransponderClass())
+                .setOwnship(ownship).setCtime(System.currentTimeMillis());
+        dynamicClass.setLon(BigDecimal.valueOf(message.getLongitude()))
+                .setLat(BigDecimal.valueOf(message.getLatitude()))
+                .setCourse(BigDecimal.valueOf(message.getCourseOverGround()))
+                .setSog(BigDecimal.valueOf(message.getSpeedOverGround()));
+        dynamicClass(dynamicClass);
+    }
+
+    /**
+     * 飞机
+     */
+    private static void sarAircraft(Integer mmsi, boolean ownship, StandardSARAircraftPositionReport message) {
+        AisDynamicDataBO dynamicClass = new AisDynamicDataBO();
+        dynamicClass.setMmsi(mmsi).setSclass(message.getTransponderClass())
+                .setOwnship(ownship).setCtime(System.currentTimeMillis());
+        dynamicClass.setLon(BigDecimal.valueOf(message.getLongitude()))
+                .setLat(BigDecimal.valueOf(message.getLatitude()))
+                .setCourse(BigDecimal.valueOf(message.getCourseOverGround()))
+                .setSog(BigDecimal.valueOf(message.getSpeedOverGround()));
+        dynamicClass(dynamicClass);
+    }
+
+    /**
+     * B类-航行数据
+     */
+    private static void bClassDynamicData(Integer mmsi, boolean ownship, StandardClassBCSPositionReport message) {
+        AisDynamicDataBO dynamicClass = new AisDynamicDataBO();
+        dynamicClass.setMmsi(mmsi).setSclass(message.getTransponderClass())
+                .setOwnship(ownship).setCtime(System.currentTimeMillis());
+        dynamicClass.setLon(BigDecimal.valueOf(message.getLongitude()))
+                .setLat(BigDecimal.valueOf(message.getLatitude()))
+                .setHeading(BigDecimal.valueOf(message.getTrueHeading()))
+                .setCourse(BigDecimal.valueOf(message.getCourseOverGround()))
+                .setSog(BigDecimal.valueOf(message.getSpeedOverGround()));
+        dynamicClass(dynamicClass);
+    }
+
+
+    // ============================== 基站数据处理 ============================== //
+
+    /**
+     * 基站数据处理
+     */
+    private static void stationReport(Integer mmsi, boolean ownship, BaseStationReport message) {
+        AisDynamicDataBO dynamicClass = new AisDynamicDataBO();
+        dynamicClass.setMmsi(mmsi).setSclass(TransponderClass.BS)
+                .setOwnship(ownship).setCtime(System.currentTimeMillis());
+        dynamicClass.setLon(BigDecimal.valueOf(message.getLongitude()))
+                .setLat(BigDecimal.valueOf(message.getLatitude()));
+        dynamicClass(dynamicClass);
+    }
+
+
+    // ============================== 无效数据处理 ============================== //
+
+    /**
+     * 无效数据
+     */
+    private static void error(Integer mmsi, boolean ownship) {
+        AisStaticDataBO staticClass = new AisStaticDataBO();
+        staticClass.setMmsi(mmsi).setSclass(null).setOwnship(ownship).setCtime(System.currentTimeMillis());
+        staticClass(staticClass);
+    }
+
+
+    // ============================== 将数据写到本地文件（一个小时一个文件） ============================== //
+
+    private static void staticClass(AisStaticDataBO staticClass) {
+        if (staticClass == null) {
+            return;
+        }
+        try {
+            String aisPath = AIS_SOURCE_PATH + getPath() + "_static";
+            FileUtil.appendWrite(aisPath, (JsonUtil.toCompactJsonString(staticClass) + "\r\n").getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            log.error("write ais static data failed.", e);
+        }
+    }
+
+    private static void dynamicClass(AisDynamicDataBO dynamicClass) {
+        if (dynamicClass == null) {
+            return;
+        }
+        try {
+            String aisPath = AIS_SOURCE_PATH + getPath() + "_dynamic";
+            FileUtil.appendWrite(aisPath, (JsonUtil.toCompactJsonString(dynamicClass) + "\r\n").getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            log.error("write ais dynamic data failed.", e);
+        }
+    }
+
+    /**
+     * 判断是否是本船
+     *
+     * @param message AIS
+     * @return 【true: 本船; false: 它船; null: 消息不正确】
+     */
+    private static Boolean ownship(AISMessage message) {
+        NMEAMessage[] nmeaMessages = message.getNmeaMessages();
+        if (nmeaMessages == null || nmeaMessages.length == 0) {
+            return null;
+        }
+        return AIVDO.equals(nmeaMessages[0].getMessageType());
+    }
+
+    private static String getPath() {
+        return DateUtil.toTimeStr(System.currentTimeMillis(), DateUtil.DateFormat.YYYYMMDDHH);
     }
 
     private final static String DEMO_NMEA_STRINGS = "!AIVDM,1,1,,A,18UG;P0012G?Uq4EdHa=c;7@051@,0*53\n" +

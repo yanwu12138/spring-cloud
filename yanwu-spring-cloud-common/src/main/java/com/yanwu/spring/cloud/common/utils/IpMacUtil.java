@@ -243,6 +243,11 @@ public class IpMacUtil {
         return String.join(":", result).toUpperCase();
     }
 
+    public static void main(String[] args) throws Exception {
+        String interfaceName = getInterfaceName();
+        System.out.println(interfaceName);
+    }
+
     /**
      * 获取网卡名称
      *
