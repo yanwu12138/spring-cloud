@@ -56,7 +56,7 @@
 -   卸载旧版本(如果安装过旧版本的话)
 
     ```SHELL
-    sudo yum remove docker  docker-common docker-selinux docker-engine
+    sudo yum remove docker docker-common docker-selinux docker-engine
     ```
 
 -   安装需要的软件包， yum-util 提供yum-config-manager功能，另外两个是devicemapper驱动依赖的

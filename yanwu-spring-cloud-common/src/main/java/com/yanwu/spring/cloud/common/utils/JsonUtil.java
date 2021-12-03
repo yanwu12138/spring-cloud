@@ -5,9 +5,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.SerializableString;
 import com.fasterxml.jackson.core.io.CharacterEscapes;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -87,6 +89,34 @@ public final class JsonUtil {
             log.error("Failed convert {} to JSON", obj, e);
         }
         return sw.toString();
+    }
+
+    /**
+     * 将json字符串转换成JsonNode对象
+     *
+     * @param json json字符串
+     * @return JsonNode
+     */
+    public static JsonNode toJsonNode(final String json) {
+        return toJsonNode(json, true);
+    }
+
+    /**
+     * 将json字符串转换成JsonNode对象
+     *
+     * @param json json字符串
+     * @return JsonNode
+     */
+    public static JsonNode toJsonNode(final String json, final boolean decodeForXss) {
+        try {
+            if (StringUtils.isBlank(json)) {
+                return null;
+            }
+            return getObjectMapper(decodeForXss).readTree(json);
+        } catch (Exception e) {
+            log.error("Failed convert jsonNode, json:{}", json, e);
+            return null;
+        }
     }
 
     /**
