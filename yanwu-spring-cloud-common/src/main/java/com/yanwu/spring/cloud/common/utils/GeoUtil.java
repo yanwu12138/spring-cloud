@@ -1,8 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import org.locationtech.spatial4j.context.SpatialContext;
 import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
-import org.locationtech.spatial4j.context.jts.JtsSpatialContextFactory;
 import org.locationtech.spatial4j.distance.DistanceUtils;
 import org.locationtech.spatial4j.shape.Point;
 import org.locationtech.spatial4j.shape.Shape;
@@ -26,8 +24,7 @@ public class GeoUtil {
     private static final BigDecimal MAX_LNG = BigDecimal.valueOf(180);
     private static final BigDecimal MIN_LAT = BigDecimal.valueOf(-90);
     private static final BigDecimal MAX_LAT = BigDecimal.valueOf(90);
-    private static final JtsSpatialContext JTS_SPATIAL = new JtsSpatialContextFactory().newSpatialContext();
-    private static final SpatialContext GEO_SPATIAL = SpatialContext.GEO;
+    private static final JtsSpatialContext JTS_GEO_SPATIAL = JtsSpatialContext.GEO;
 
     private GeoUtil() {
         throw new UnsupportedOperationException("GeoUtil should never be instantiated");
@@ -46,7 +43,7 @@ public class GeoUtil {
      * <b>（单位：米）</b>
      */
     public static Long getDistance(Point point1, Point point2) {
-        double distance = GEO_SPATIAL.calcDistance(point1, point2) * DistanceUtils.DEG_TO_KM;
+        double distance = JTS_GEO_SPATIAL.calcDistance(point1, point2) * DistanceUtils.DEG_TO_KM;
         return BigDecimal.valueOf(distance * 1000).longValue();
     }
 
@@ -79,7 +76,7 @@ public class GeoUtil {
      * 如：将 112.0200,24.8150;111.8260,24.7290;111.2700,24.3110;111.1990,24.2340;111.7780,25.4350 转换成成一个多边形控件对象
      */
     public static Shape toPolygon(String range) {
-        ShapeFactory.PolygonBuilder builder = JTS_SPATIAL.getShapeFactory().polygon();
+        ShapeFactory.PolygonBuilder builder = JTS_GEO_SPATIAL.getShapeFactory().polygon();
         String[] points = range.split(RANGE_SPLIT);
         for (String point : points) {
             String[] split = point.split(POINT_SPLIT);
@@ -93,7 +90,7 @@ public class GeoUtil {
      * 如：将 [[112.0200,24.8150], [111.8260,24.7290], [111.2700,24.3110], [111.1990,24.2340], [111.7780,25.4350]] 转换成成一个多边形控件对象
      */
     public static Shape toPolygon(Point[] points) {
-        ShapeFactory.PolygonBuilder builder = JTS_SPATIAL.getShapeFactory().polygon();
+        ShapeFactory.PolygonBuilder builder = JTS_GEO_SPATIAL.getShapeFactory().polygon();
         for (Point point : points) {
             builder.pointLatLon(point.getLat(), point.getLon());
         }
@@ -105,7 +102,7 @@ public class GeoUtil {
      * 如：将 [[112.0200,24.8150], [111.8260,24.7290], [111.2700,24.3110], [111.1990,24.2340], [111.7780,25.4350]] 转换成成一个多边形控件对象
      */
     public static Shape toPolygon(Double[][] points) {
-        ShapeFactory.PolygonBuilder builder = JTS_SPATIAL.getShapeFactory().polygon();
+        ShapeFactory.PolygonBuilder builder = JTS_GEO_SPATIAL.getShapeFactory().polygon();
         for (Double[] point : points) {
             builder.pointLatLon(point[1], point[0]);
         }
@@ -123,7 +120,7 @@ public class GeoUtil {
      * 根据中心点与半径画圆
      */
     public static Shape toCircle(Point point, Long radius) {
-        return GEO_SPATIAL.getShapeFactory().circle(point, radius);
+        return JTS_GEO_SPATIAL.getShapeFactory().circle(point, radius);
     }
 
     /**
@@ -144,7 +141,7 @@ public class GeoUtil {
     }
 
     private static Point geoPoint(double lon, double lat) {
-        return new PointImpl(lon, lat, GEO_SPATIAL);
+        return new PointImpl(lon, lat, JTS_GEO_SPATIAL);
     }
 
     public static void main(String[] args) {
