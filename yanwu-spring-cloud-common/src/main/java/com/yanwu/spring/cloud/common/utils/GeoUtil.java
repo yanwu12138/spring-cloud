@@ -53,6 +53,20 @@ public class GeoUtil {
     /**
      * 校验经纬度是否合法
      */
+    public static boolean checkLocation(Point point) {
+        return checkLocation(point.getLon(), point.getLat());
+    }
+
+    /**
+     * 校验经纬度是否合法
+     */
+    public static boolean checkLocation(Double lng, Double lat) {
+        return checkLocation(BigDecimal.valueOf(lng), BigDecimal.valueOf(lat));
+    }
+
+    /**
+     * 校验经纬度是否合法
+     */
     public static boolean checkLocation(BigDecimal lng, BigDecimal lat) {
         if (lng == null || lng.compareTo(MIN_LNG) < 0 || lng.compareTo(MAX_LNG) > 0) {
             return false;
@@ -64,7 +78,7 @@ public class GeoUtil {
      * 将字符串经纬度转换成空间对象
      * 如：将 112.0200,24.8150;111.8260,24.7290;111.2700,24.3110;111.1990,24.2340;111.7780,25.4350 转换成成一个多边形控件对象
      */
-    public static Shape shape(String range) {
+    public static Shape toPolygon(String range) {
         ShapeFactory.PolygonBuilder builder = JTS_CONTEXT.getShapeFactory().polygon();
         String[] points = range.split(RANGE_SPLIT);
         for (String point : points) {
@@ -72,6 +86,44 @@ public class GeoUtil {
             builder.pointLatLon(Double.parseDouble(split[1]), Double.parseDouble(split[0]));
         }
         return builder.build();
+    }
+
+    /**
+     * 将字符串经纬度转换成空间对象
+     * 如：将 [[112.0200,24.8150], [111.8260,24.7290], [111.2700,24.3110], [111.1990,24.2340], [111.7780,25.4350]] 转换成成一个多边形控件对象
+     */
+    public static Shape toPolygon(Point[] points) {
+        ShapeFactory.PolygonBuilder builder = JTS_CONTEXT.getShapeFactory().polygon();
+        for (Point point : points) {
+            builder.pointLatLon(point.getLat(), point.getLon());
+        }
+        return builder.build();
+    }
+
+    /**
+     * 将字符串经纬度转换成空间对象
+     * 如：将 [[112.0200,24.8150], [111.8260,24.7290], [111.2700,24.3110], [111.1990,24.2340], [111.7780,25.4350]] 转换成成一个多边形控件对象
+     */
+    public static Shape toPolygon(Double[][] points) {
+        ShapeFactory.PolygonBuilder builder = JTS_CONTEXT.getShapeFactory().polygon();
+        for (Double[] point : points) {
+            builder.pointLatLon(point[1], point[0]);
+        }
+        return builder.build();
+    }
+
+    /**
+     * 根据中心点与半径画圆
+     */
+    public static Shape toCircle(Double lng, Double lat, Long radius) {
+        return toCircle(geoPoint(lng, lat), radius);
+    }
+
+    /**
+     * 根据中心点与半径画圆
+     */
+    public static Shape toCircle(Point point, Long radius) {
+        return GEO_SPATIAL.getShapeFactory().circle(point, radius);
     }
 
     /**
@@ -97,8 +149,9 @@ public class GeoUtil {
 
     public static void main(String[] args) {
         String ponitStr = "-10,0; 0,-10; 10,0; 0,10; -10,0";
-        System.out.println(relate(shape(ponitStr), 10D, 0.0001D));
-        System.out.println(getDistance(120.0978742D, 28.1278978D, 121.4523452D, 30.8456237D));
+        System.out.println(relate(toPolygon(ponitStr), 10D, 0.0001D));
+        System.out.println(relate(toCircle(0D, 0D, 10L), 10D, 0.0001D));
+        System.out.println(getDistance(0D, 0D, 10D, 0D));
     }
 
 }
