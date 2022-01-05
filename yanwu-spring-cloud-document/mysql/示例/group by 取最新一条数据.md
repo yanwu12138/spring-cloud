@@ -6,6 +6,8 @@
 
 [edge_online_log.sql](./file/edge_online_log.sql)
 
+>   ![image-20220105114426225](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2022/01/2022010511442626.png)
+
 #### 实现方式
 
 ##### 先`ORDER BY`之后再分组
