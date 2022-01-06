@@ -9,6 +9,7 @@ import org.locationtech.spatial4j.shape.SpatialRelation;
 import org.locationtech.spatial4j.shape.impl.PointImpl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @author Baofeng Xu
@@ -25,6 +26,7 @@ public class GeoUtil {
     private static final BigDecimal MIN_LAT = BigDecimal.valueOf(-90);
     private static final BigDecimal MAX_LAT = BigDecimal.valueOf(90);
     private static final JtsSpatialContext JTS_GEO_SPATIAL = JtsSpatialContext.GEO;
+    private static final BigDecimal KILOMETER_PER_SEA = BigDecimal.valueOf(1.852);
 
     private GeoUtil() {
         throw new UnsupportedOperationException("GeoUtil should never be instantiated");
@@ -138,6 +140,28 @@ public class GeoUtil {
             default:
                 return false;
         }
+    }
+
+    /**
+     * 将海里转换成千米，每海里等于：1.852KM
+     * KM = SEA * 1.852
+     *
+     * @param distance 距离（海里）
+     * @return 千米
+     */
+    public static Double seaToKm(BigDecimal distance) {
+        return distance.multiply(KILOMETER_PER_SEA).doubleValue();
+    }
+
+    /**
+     * 将千米转换成海里，每海里等于：1.852KM
+     * SEA = KM / 1.852
+     *
+     * @param distance 千米
+     * @return 距离（海里）
+     */
+    public static Double kmToSea(Double distance) {
+        return BigDecimal.valueOf(distance).divide(KILOMETER_PER_SEA, RoundingMode.FLOOR).doubleValue();
     }
 
     private static Point geoPoint(double lon, double lat) {
