@@ -23,7 +23,7 @@ public class MessageQueueBO<T> implements Comparable<MessageQueueBO<T>>, Seriali
     /*** 消息 ***/
     private T message;
 
-    /*** 设备类型: 对应不通的handler执行消息发送 ***/
+    /*** 设备类型: 对应不同的handler执行消息发送 ***/
     private Class<?> instance;
 
     /*** 消息的入队时间: 根据时间进行排序 ***/
