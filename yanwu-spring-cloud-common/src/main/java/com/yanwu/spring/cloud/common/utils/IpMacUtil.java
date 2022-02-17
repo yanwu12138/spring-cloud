@@ -198,8 +198,9 @@ public class IpMacUtil {
     /**
      * 判断ip、端口是否可连接
      *
-     * @param host ip
-     * @param port 端口
+     * @param host    ip
+     * @param port    端口
+     * @param timeout 尝试连接超时时间
      * @return 【true: 可连接; false: 不可连接】
      */
     public static boolean checkHostConnectable(String host, int port, int timeout) {
@@ -245,7 +246,7 @@ public class IpMacUtil {
         System.out.println("--------------");
         System.out.println(checkHostConnectable("127.0.0.1", 7001));
         System.out.println("--------------");
-        System.out.println(checkHostReachable("122.0.1.2"));
+        System.out.println(checkHostReachable("192.168.56.111"));
         System.out.println("--------------");
     }
 
