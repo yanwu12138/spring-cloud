@@ -2,14 +2,14 @@ package com.yanwu.spring.cloud.common.utils;
 
 import com.github.veqryn.net.Cidr4;
 import com.yanwu.spring.cloud.common.core.common.Contents;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
+import java.io.IOException;
+import java.net.*;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
  * description: IP & MAC 工具类
  */
 @SuppressWarnings("unused")
+@Slf4j
 public class IpMacUtil {
     private static final int IPV4_SLICES_LEN = 4;
     private static final String UNKNOWN = "unknown";
@@ -184,6 +185,71 @@ public class IpMacUtil {
     }
 
     /**
+     * 判断ip、端口是否可连接（默认尝试3秒超时）
+     *
+     * @param host ip
+     * @param port 端口
+     * @return 【true: 可连接; false: 不可连接】
+     */
+    public static boolean checkHostConnectable(String host, int port) {
+        return checkHostConnectable(host, port, 3000);
+    }
+
+    /**
+     * 判断ip、端口是否可连接
+     *
+     * @param host ip
+     * @param port 端口
+     * @return 【true: 可连接; false: 不可连接】
+     */
+    public static boolean checkHostConnectable(String host, int port, int timeout) {
+        try (Socket socket = new Socket()) {
+            socket.setSoTimeout(timeout);
+            socket.connect(new InetSocketAddress(host, port), timeout);
+        } catch (IOException e) {
+            log.error("test if the IP is connectable failed. host: {}, port: {}, timeout: {}", host, port, timeout, e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 判断ip是否可以连接（默认尝试3秒超时）
+     *
+     * @param host ip
+     * @return 【true: 可连接; false: 不可连接】
+     */
+    public static boolean checkHostReachable(String host) {
+        return checkHostReachable(host, 3000);
+    }
+
+    /**
+     * 判断ip是否可以连接
+     *
+     * @param host    ip
+     * @param timeout 超时时间
+     * @return 【true: 可连接; false: 不可连接】
+     */
+    public static boolean checkHostReachable(String host, Integer timeout) {
+        try {
+            return InetAddress.getByName(host).isReachable(timeout);
+        } catch (IOException e) {
+            log.error("test if the IP is connectable failed. host: {}, timeout: {}", host, timeout, e);
+        }
+        return false;
+    }
+
+    public static void main(String[] args) throws Exception {
+        String interfaceName = getInterfaceName();
+        System.out.println(interfaceName);
+        System.out.println("--------------");
+        System.out.println(checkHostConnectable("127.0.0.1", 7001));
+        System.out.println("--------------");
+        System.out.println(checkHostReachable("122.0.1.2"));
+        System.out.println("--------------");
+    }
+
+    /**
      * 通过request获取用户的IP地址
      *
      * @param request 请求
@@ -241,11 +307,6 @@ public class IpMacUtil {
             result[i] = ByteUtil.headFill0(Integer.toHexString(mac[i] & 0xFF), 2);
         }
         return String.join(":", result).toUpperCase();
-    }
-
-    public static void main(String[] args) throws Exception {
-        String interfaceName = getInterfaceName();
-        System.out.println(interfaceName);
     }
 
     /**
