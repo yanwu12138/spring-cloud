@@ -241,13 +241,9 @@ public class IpMacUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        String interfaceName = getInterfaceName();
-        System.out.println(interfaceName);
-        System.out.println("--------------");
-        System.out.println(checkHostConnectable("127.0.0.1", 7001));
-        System.out.println("--------------");
-        System.out.println(checkHostReachable("192.168.56.111"));
-        System.out.println("--------------");
+        log.info("----- {}", getInterfaceName());
+        log.info("----- {}", checkHostConnectable("127.0.0.1", 7001));
+        log.info("----- {}", checkHostReachable("192.168.56.111"));
     }
 
     /**
