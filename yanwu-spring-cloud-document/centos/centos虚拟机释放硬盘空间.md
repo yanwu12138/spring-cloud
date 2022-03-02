@@ -4,7 +4,7 @@
 
 ##### Linux环境
 
--   在虚拟机中执行以下命令，执行完后将虚拟机关机。
+-   在虚拟机中执行以下命令。
 
     ```shell
     ##### /empty 不断往 /empty 文件中写入空字符串
@@ -14,11 +14,12 @@
     sudo rm -f /empty
     ```
 
+-   执行完后将虚拟机关机。
+
 -   然后进入宿主机 `VBoxManage.exe` 安装目录，执行以下命令
 
     ```shell
     ##### E:\VMS\docker-vm\docker-vm.vdi 为虚拟机虚拟文件绝对路径
     VBoxManage.exe modifyhd E:\VMS\docker-vm\docker-vm.vdi --compact
     ```
-
 
