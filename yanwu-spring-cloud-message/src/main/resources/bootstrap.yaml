@@ -8,7 +8,7 @@ spring:
       discovery:
         server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
         group: DEFAULT_GROUP
-        namespace: cf543eea-9362-47f5-a657-d0b4b4d8b065
+        namespace: a2e2dede-d9bf-4eae-a520-82f920801ab9
   rabbitmq:
     host: 127.0.0.1
     port: 5672
