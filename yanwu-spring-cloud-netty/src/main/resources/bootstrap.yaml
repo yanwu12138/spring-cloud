@@ -32,7 +32,7 @@ netty:
     ip: 225.1.2.10
     port: 8000
   source:
-    ip: 192.168.56.10
+    ip: 192.168.56.101
 feign:
   client:
     config:
