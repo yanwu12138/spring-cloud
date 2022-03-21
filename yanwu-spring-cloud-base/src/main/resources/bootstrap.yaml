@@ -6,7 +6,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: ${CONFIG_SERVER_URL:192.168.56.150:8848}
+        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
         group: DEFAULT_GROUP
         namespace: cf543eea-9362-47f5-a657-d0b4b4d8b065
   ### 解决数据库查询结果返回数据时的时区问题
@@ -14,12 +14,12 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   datasource:
-    url: jdbc:mysql://192.168.56.150:3306/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
     username: root
     password: yanwu12138
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
-    host: 192.168.56.150
+    host: 127.0.0.1
     port: 6379
     password: yanwu12138
     timeout: 10000

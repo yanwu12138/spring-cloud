@@ -80,11 +80,6 @@ public class CommandUtil {
         return null;
     }
 
-    public static void main(String[] args) {
-        String cmd = "sh /root/docker-run/docker_ps.sh";
-        System.out.println(execCommand("192.168.56.150", "root", "xbf12138", cmd));
-    }
-
     /***
      * 使用telnet登录然后执行相应的命令
      * @param ip 服务器IP
