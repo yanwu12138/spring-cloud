@@ -20,7 +20,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <lucene.version>8.0.0</lucene.version>
+        <lucene.version>7.7.2</lucene.version>
         <google.zxing.version>3.4.0</google.zxing.version>
         <mybatis.spring.version>2.1.2</mybatis.spring.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
@@ -53,11 +53,15 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>

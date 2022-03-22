@@ -82,3 +82,13 @@ zookeeper:
   backoff:
     baseSleepTime: 30
     maxRetries: 60
+elasticsearch:
+  host: 127.0.0.1
+  port: 9200
+  schema: http
+  timeout:
+    connect: 1000
+    socket: 30000
+    connectionRequest: 500
+  maxConnectNum: 100
+  maxConnectPerRoute: 100
