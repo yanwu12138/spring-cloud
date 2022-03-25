@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.file.service;
 
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.TestType;
 
 /**
  * @author Baofeng Xu
@@ -20,6 +21,14 @@ public interface ElasticsearchService {
     void indexCreate(EsIndex param) throws Exception;
 
     /**
+     * 删除索引
+     *
+     * @param param 索引
+     * @throws Exception .
+     */
+    void indexDelete(EsIndex param) throws Exception;
+
+    /**
      * 判断索引是否存在
      *
      * @param param 索引
@@ -29,20 +38,37 @@ public interface ElasticsearchService {
     boolean indexExists(EsIndex param) throws Exception;
 
     /**
-     * 删除索引
-     *
-     * @param param 索引
-     * @throws Exception .
-     */
-    void indexDelete(EsIndex param) throws Exception;
-
-    /**
      * 创建类型
      *
      * @param param 类型
      * @throws Exception .
      */
-    void typeAdd(EsType<?> param) throws Exception;
+    void typeCreate(EsType<?> param) throws Exception;
+
+    /**
+     * 获取类型数据
+     *
+     * @param param 类型
+     * @return 类型数据
+     * @throws Exception .
+     */
+    String typeSelect(EsType<?> param) throws Exception;
+
+    /**
+     * 修改类型数据
+     *
+     * @param param 类型
+     * @throws Exception .
+     */
+    void typeUpdate(EsType<?> param) throws Exception;
+
+    /**
+     * 删除类型
+     *
+     * @param param 类型
+     * @throws Exception .
+     */
+    void typeDelete(EsType<TestType> param) throws Exception;
 
     /**
      * 判断类型是否存在
@@ -52,21 +78,4 @@ public interface ElasticsearchService {
      * @throws Exception .
      */
     boolean typeExists(EsType<?> param) throws Exception;
-
-    /**
-     * 获取类型数据
-     *
-     * @param param 类型
-     * @return 类型数据
-     * @throws Exception .
-     */
-    String typeGet(EsType<?> param) throws Exception;
-
-    /**
-     * 修改类型数据
-     *
-     * @param param 类型
-     * @throws Exception .
-     */
-    void typeUpdate(EsType<?> param) throws Exception;
 }

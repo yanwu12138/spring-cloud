@@ -3,9 +3,12 @@ package com.yanwu.spring.cloud.file.service.impl;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.TestType;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -59,11 +62,11 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public void typeAdd(EsType<?> param) throws Exception {
+    public void typeCreate(EsType<?> param) throws Exception {
         IndexRequest request = new IndexRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         request.source(JsonUtil.toCompactJsonString(param.getData()), XContentType.JSON);
         IndexResponse response = elasticsearchClient.index(request, RequestOptions.DEFAULT);
-        log.info("elasticsearch type add, param: {}, result: {}", param, response);
+        log.info("elasticsearch type create, param: {}, result: {}", param, response);
     }
 
     @Override
@@ -77,10 +80,10 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public String typeGet(EsType<?> param) throws Exception {
+    public String typeSelect(EsType<?> param) throws Exception {
         GetRequest request = new GetRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         GetResponse response = elasticsearchClient.get(request, RequestOptions.DEFAULT);
-        log.info("elasticsearch type get, param: {}, result: {}", param, response);
+        log.info("elasticsearch type select, param: {}, result: {}", param, response);
         return JsonUtil.toCompactJsonString(response);
     }
 
@@ -90,6 +93,13 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         request.doc(JsonUtil.toCompactJsonString(param.getData()), XContentType.JSON);
         UpdateResponse response = elasticsearchClient.update(request, RequestOptions.DEFAULT);
         log.info("elasticsearch type update, param: {}, result: {}", param, response);
+    }
+
+    @Override
+    public void typeDelete(EsType<TestType> param) throws Exception {
+        DeleteRequest request = new DeleteRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
+        DeleteResponse response = elasticsearchClient.delete(request, RequestOptions.DEFAULT);
+        log.info("elasticsearch type select, param: {}, result: {}", param, response);
     }
 
 
