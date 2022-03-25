@@ -72,20 +72,24 @@ public class ElasticsearchController {
 
     @LogParam
     @GetMapping("type")
-    public ResponseEnvelope<String> typeSelect(@RequestBody EsType<TestType> param) throws Exception {
+    public ResponseEnvelope<String> typeSelect(@RequestBody EsType<?> param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.typeSelect(param));
     }
 
     @LogParam
     @PostMapping("type")
     public ResponseEnvelope<Void> typeUpdate(@RequestBody EsType<TestType> param) throws Exception {
-        elasticsearchService.typeUpdate(param);
+        if (elasticsearchService.typeExists(param)) {
+            elasticsearchService.typeUpdate(param);
+        } else {
+            elasticsearchService.typeCreate(param);
+        }
         return ResponseEnvelope.success();
     }
 
     @LogParam
     @DeleteMapping("type")
-    public ResponseEnvelope<Void> typeDelete(@RequestBody EsType<TestType> param) throws Exception {
+    public ResponseEnvelope<Void> typeDelete(@RequestBody EsType<?> param) throws Exception {
         if (elasticsearchService.typeExists(param)) {
             elasticsearchService.typeDelete(param);
         }
@@ -94,7 +98,7 @@ public class ElasticsearchController {
 
     @LogParam
     @GetMapping("type/exists")
-    public ResponseEnvelope<Boolean> typeExists(@RequestBody EsType<TestType> param) throws Exception {
+    public ResponseEnvelope<Boolean> typeExists(@RequestBody EsType<?> param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.typeExists(param));
     }
 

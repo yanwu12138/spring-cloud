@@ -3,7 +3,6 @@ package com.yanwu.spring.cloud.file.service.impl;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.TestType;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -96,7 +95,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public void typeDelete(EsType<TestType> param) throws Exception {
+    public void typeDelete(EsType<?> param) throws Exception {
         DeleteRequest request = new DeleteRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         DeleteResponse response = elasticsearchClient.delete(request, RequestOptions.DEFAULT);
         log.info("elasticsearch type select, param: {}, result: {}", param, response);

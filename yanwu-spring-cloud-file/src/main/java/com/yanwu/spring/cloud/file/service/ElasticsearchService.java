@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.file.service;
 
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.TestType;
 
 /**
  * @author Baofeng Xu
@@ -68,7 +67,7 @@ public interface ElasticsearchService {
      * @param param 类型
      * @throws Exception .
      */
-    void typeDelete(EsType<TestType> param) throws Exception;
+    void typeDelete(EsType<?> param) throws Exception;
 
     /**
      * 判断类型是否存在
