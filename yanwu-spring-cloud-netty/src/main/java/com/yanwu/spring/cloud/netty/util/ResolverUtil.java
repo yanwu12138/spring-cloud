@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty.util;
 
+import com.yanwu.spring.cloud.common.utils.ObjectUtil;
 import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
 import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
 import com.yanwu.spring.cloud.netty.model.alarmLamp.AlarmLampBaseBO;
@@ -36,8 +37,7 @@ public class ResolverUtil {
         Matcher matcher = pattern.matcher(hexStr.toUpperCase());
         if (matcher.find()) {
             Class<? extends DeviceBaseBO> clazz = regexEnum.getClazz();
-            assignment(instance, clazz.getDeclaredFields(), matcher);
-            assignment(instance, clazz.getSuperclass().getDeclaredFields(), matcher);
+            assignment(instance, ObjectUtil.fields(clazz), matcher);
         }
         return instance;
     }

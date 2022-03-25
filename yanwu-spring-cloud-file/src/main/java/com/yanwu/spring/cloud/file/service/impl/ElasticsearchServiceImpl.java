@@ -4,7 +4,6 @@ import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.*;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -23,10 +22,7 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.springframework.stereotype.Service;
 
@@ -126,7 +122,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     public List<EsTypeData> typeSearch(EsSearch param) throws Exception {
         SearchRequest request = new SearchRequest(param.getType().getIndex().getIndex());
         request.types(param.getType().getType());
-        request.source(searchBuilder(param));
+        request.source(param.searchBuilder(TestType.class));
         SearchResponse response = elasticsearchClient.search(request, DEFAULT);
         if (response.getHits().getHits() == null || response.getHits().getHits().length <= 0) {
             return Collections.emptyList();
@@ -137,28 +133,6 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         }
         log.info("elasticsearch type search, param: {}, result: {}", param, result);
         return result;
-    }
-
-    public SearchSourceBuilder searchBuilder(EsSearch param) {
-        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        // ***** 可以根据字段进行搜索，must表示符合条件的，mustnot表示不符合条件的
-        if (CollectionUtils.isNotEmpty(param.getData())) {
-            param.getData().forEach((searchParam) -> {
-                if (searchParam.getMust()) {
-                    queryBuilder.must(QueryBuilders.matchQuery(searchParam.getField(), searchParam.getValue()));
-                } else {
-                    queryBuilder.mustNot(QueryBuilders.matchQuery(searchParam.getField(), searchParam.getValue()));
-                }
-            });
-        }
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(queryBuilder);
-        // ***** 分页：获取记录数，默认为10
-        sourceBuilder.from(param.getPage());
-        sourceBuilder.size(param.getSize());
-        //第一个参数是获取字段，第二个字段是过滤的字段，默认获取全部字段
-        sourceBuilder.fetchSource(new String[]{"name", "age", "sex", "password"}, new String[]{});
-        return sourceBuilder;
     }
 
 }
