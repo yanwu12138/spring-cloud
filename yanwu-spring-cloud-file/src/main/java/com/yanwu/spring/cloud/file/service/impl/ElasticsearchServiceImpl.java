@@ -1,14 +1,17 @@
 package com.yanwu.spring.cloud.file.service.impl;
 
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.BaseIndex;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.BaseType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
@@ -34,42 +37,60 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     private RestHighLevelClient elasticsearchClient;
 
     @Override
-    public void indexCreate(BaseIndex<?> param) throws Exception {
-        CreateIndexRequest indexRequest = new CreateIndexRequest(param.getIndex());
-        CreateIndexResponse indexResponse = elasticsearchClient.indices().create(indexRequest, RequestOptions.DEFAULT);
-        log.info("elasticsearch index create: {}", indexResponse);
+    public void indexCreate(EsIndex param) throws Exception {
+        CreateIndexRequest request = new CreateIndexRequest(param.getIndex());
+        CreateIndexResponse response = elasticsearchClient.indices().create(request, RequestOptions.DEFAULT);
+        log.info("elasticsearch index create: {}", response);
     }
 
     @Override
-    public boolean indexExists(BaseIndex<?> param) throws Exception {
-        GetIndexRequest indexRequest = new GetIndexRequest(param.getIndex());
-        boolean exists = elasticsearchClient.indices().exists(indexRequest, RequestOptions.DEFAULT);
+    public boolean indexExists(EsIndex param) throws Exception {
+        GetIndexRequest request = new GetIndexRequest(param.getIndex());
+        boolean exists = elasticsearchClient.indices().exists(request, RequestOptions.DEFAULT);
         log.info("elasticsearch index exists, index: {}, exists: {}", param.getIndex(), exists);
         return exists;
     }
 
     @Override
-    public void indexDelete(BaseIndex<?> param) throws Exception {
-        DeleteIndexRequest indexRequest = new DeleteIndexRequest(param.getIndex());
-        elasticsearchClient.indices().delete(indexRequest, RequestOptions.DEFAULT);
+    public void indexDelete(EsIndex param) throws Exception {
+        DeleteIndexRequest request = new DeleteIndexRequest(param.getIndex());
+        elasticsearchClient.indices().delete(request, RequestOptions.DEFAULT);
         log.info("elasticsearch index delete, index: {}", param.getIndex());
     }
 
     @Override
-    public void typeAdd(BaseIndex<BaseType<?>> param) throws Exception {
-        IndexRequest indexRequest = new IndexRequest(param.getIndex(), param.getType(), param.getTypeData().getTypeId());
-        indexRequest.source(JsonUtil.toCompactJsonString(param.getTypeData().getData()), XContentType.JSON);
-        IndexResponse indexResponse = elasticsearchClient.index(indexRequest, RequestOptions.DEFAULT);
-        log.info("elasticsearch table add, param: {}, result: {}", param, indexResponse);
+    public void typeAdd(EsType<?> param) throws Exception {
+        IndexRequest request = new IndexRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
+        request.source(JsonUtil.toCompactJsonString(param.getData()), XContentType.JSON);
+        IndexResponse response = elasticsearchClient.index(request, RequestOptions.DEFAULT);
+        log.info("elasticsearch type add, param: {}, result: {}", param, response);
     }
 
     @Override
-    public boolean typeExists(BaseIndex<BaseType<?>> param) throws Exception {
-        GetRequest getRequest = new GetRequest(param.getIndex(), param.getType(), param.getTypeData().getTypeId());
-        getRequest.fetchSourceContext(new FetchSourceContext(false));
-        getRequest.storedFields("_none_");
-        boolean exists = elasticsearchClient.exists(getRequest, RequestOptions.DEFAULT);
-        log.info("elasticsearch table exists, param: {}, exists: {}", param, exists);
+    public boolean typeExists(EsType<?> param) throws Exception {
+        GetRequest request = new GetRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
+        request.fetchSourceContext(new FetchSourceContext(false));
+        request.storedFields("_none_");
+        boolean exists = elasticsearchClient.exists(request, RequestOptions.DEFAULT);
+        log.info("elasticsearch type exists, param: {}, exists: {}", param, exists);
         return exists;
     }
+
+    @Override
+    public String typeGet(EsType<?> param) throws Exception {
+        GetRequest request = new GetRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
+        GetResponse response = elasticsearchClient.get(request, RequestOptions.DEFAULT);
+        log.info("elasticsearch type get, param: {}, result: {}", param, response);
+        return JsonUtil.toCompactJsonString(response);
+    }
+
+    @Override
+    public void typeUpdate(EsType<?> param) throws Exception {
+        UpdateRequest request = new UpdateRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
+        request.doc(JsonUtil.toCompactJsonString(param.getData()), XContentType.JSON);
+        UpdateResponse response = elasticsearchClient.update(request, RequestOptions.DEFAULT);
+        log.info("elasticsearch type update, param: {}, result: {}", param, response);
+    }
+
+
 }

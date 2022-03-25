@@ -13,13 +13,10 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-public class BaseIndex<T extends Serializable> implements Serializable {
+public class EsIndex implements Serializable {
     private static final long serialVersionUID = 2602995042000556184L;
 
+    /*** 索引名称 ***/
     private String index;
-
-    private String type;
-
-    private BaseType<T> typeData;
 
 }

@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.file.service;
 
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.BaseIndex;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.BaseType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
 
 /**
  * @author Baofeng Xu
@@ -17,7 +17,7 @@ public interface ElasticsearchService {
      * @param param 索引
      * @throws Exception .
      */
-    void indexCreate(BaseIndex<?> param) throws Exception;
+    void indexCreate(EsIndex param) throws Exception;
 
     /**
      * 判断索引是否存在
@@ -26,7 +26,7 @@ public interface ElasticsearchService {
      * @return 【true: 存在; false: 不存在】
      * @throws Exception .
      */
-    boolean indexExists(BaseIndex<?> param) throws Exception;
+    boolean indexExists(EsIndex param) throws Exception;
 
     /**
      * 删除索引
@@ -34,7 +34,7 @@ public interface ElasticsearchService {
      * @param param 索引
      * @throws Exception .
      */
-    void indexDelete(BaseIndex<?> param) throws Exception;
+    void indexDelete(EsIndex param) throws Exception;
 
     /**
      * 创建类型
@@ -42,7 +42,7 @@ public interface ElasticsearchService {
      * @param param 类型
      * @throws Exception .
      */
-    void typeAdd(BaseIndex<BaseType<?>> param) throws Exception;
+    void typeAdd(EsType<?> param) throws Exception;
 
     /**
      * 判断类型是否存在
@@ -51,5 +51,22 @@ public interface ElasticsearchService {
      * @return 【true: 存在; false: 不存在】
      * @throws Exception .
      */
-    boolean typeExists(BaseIndex<BaseType<?>> param) throws Exception;
+    boolean typeExists(EsType<?> param) throws Exception;
+
+    /**
+     * 获取类型数据
+     *
+     * @param param 类型
+     * @return 类型数据
+     * @throws Exception .
+     */
+    String typeGet(EsType<?> param) throws Exception;
+
+    /**
+     * 修改类型数据
+     *
+     * @param param 类型
+     * @throws Exception .
+     */
+    void typeUpdate(EsType<?> param) throws Exception;
 }

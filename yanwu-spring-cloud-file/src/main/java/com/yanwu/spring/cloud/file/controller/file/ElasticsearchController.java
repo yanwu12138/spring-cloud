@@ -2,8 +2,9 @@ package com.yanwu.spring.cloud.file.controller.file;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.BaseIndex;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.BaseType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.TestType;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class ElasticsearchController {
 
     @LogParam
     @PostMapping("index/create")
-    public ResponseEnvelope<Void> indexCreate(@RequestBody BaseIndex<?> param) throws Exception {
+    public ResponseEnvelope<Void> indexCreate(@RequestBody EsIndex param) throws Exception {
         if (elasticsearchService.indexExists(param)) {
             return ResponseEnvelope.failed("索引已存在");
         }
@@ -39,13 +40,13 @@ public class ElasticsearchController {
 
     @LogParam
     @GetMapping("index/exists")
-    public ResponseEnvelope<Boolean> indexExists(@RequestBody BaseIndex<?> param) throws Exception {
+    public ResponseEnvelope<Boolean> indexExists(@RequestBody EsIndex param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.indexExists(param));
     }
 
     @LogParam
     @DeleteMapping("index/delete")
-    public ResponseEnvelope<Void> indexDelete(@RequestBody BaseIndex<?> param) throws Exception {
+    public ResponseEnvelope<Void> indexDelete(@RequestBody EsIndex param) throws Exception {
         if (elasticsearchService.indexExists(param)) {
             elasticsearchService.indexDelete(param);
         }
@@ -58,9 +59,9 @@ public class ElasticsearchController {
 
     @LogParam
     @PostMapping("type/create")
-    public ResponseEnvelope<Void> typeCreate(@RequestBody BaseIndex<BaseType<?>> param) throws Exception {
-        if (!elasticsearchService.indexExists(param)) {
-            indexCreate(param);
+    public ResponseEnvelope<Void> typeCreate(@RequestBody EsType<TestType> param) throws Exception {
+        if (!elasticsearchService.indexExists(param.getIndex())) {
+            indexCreate(param.getIndex());
         }
         if (elasticsearchService.typeExists(param)) {
             return ResponseEnvelope.failed("类型已存在");
@@ -71,8 +72,21 @@ public class ElasticsearchController {
 
     @LogParam
     @GetMapping("type/exists")
-    public ResponseEnvelope<Boolean> typeExists(@RequestBody BaseIndex<BaseType<?>> param) throws Exception {
+    public ResponseEnvelope<Boolean> typeExists(@RequestBody EsType<TestType> param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.typeExists(param));
+    }
+
+    @LogParam
+    @GetMapping("type/get")
+    public ResponseEnvelope<String> typeGet(@RequestBody EsType<TestType> param) throws Exception {
+        return ResponseEnvelope.success(elasticsearchService.typeGet(param));
+    }
+
+    @LogParam
+    @PostMapping("type/update")
+    public ResponseEnvelope<Void> typeUpdate(@RequestBody EsType<TestType> param) throws Exception {
+        elasticsearchService.typeUpdate(param);
+        return ResponseEnvelope.success();
     }
 
 

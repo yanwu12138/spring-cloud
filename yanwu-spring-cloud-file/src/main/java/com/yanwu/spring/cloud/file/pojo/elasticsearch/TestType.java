@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.file.pojo.elasticsearch;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -13,7 +14,8 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-public class TestType implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class TestType extends EsTypeData implements Serializable {
     private static final long serialVersionUID = -5176754743886876772L;
 
     private String name;
