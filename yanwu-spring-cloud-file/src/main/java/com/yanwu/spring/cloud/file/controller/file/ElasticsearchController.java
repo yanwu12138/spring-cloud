@@ -7,9 +7,12 @@ import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.TestType;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * @author Baofeng Xu
@@ -36,6 +39,15 @@ public class ElasticsearchController {
         }
         elasticsearchService.indexCreate(param);
         return ResponseEnvelope.success();
+    }
+
+    @LogParam
+    @GetMapping("index")
+    public ResponseEnvelope<Map<String, MappingMetaData>> indexSelect(@RequestBody EsIndex param) throws Exception {
+        if (!elasticsearchService.indexExists(param)) {
+            return ResponseEnvelope.failed("索引不存在");
+        }
+        return ResponseEnvelope.success(elasticsearchService.indexSelect(param));
     }
 
     @LogParam
@@ -72,7 +84,7 @@ public class ElasticsearchController {
 
     @LogParam
     @GetMapping("type")
-    public ResponseEnvelope<String> typeSelect(@RequestBody EsType<?> param) throws Exception {
+    public ResponseEnvelope<GetResponse> typeSelect(@RequestBody EsType<?> param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.typeSelect(param));
     }
 

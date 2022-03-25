@@ -2,6 +2,10 @@ package com.yanwu.spring.cloud.file.service;
 
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.cluster.metadata.MappingMetaData;
+
+import java.util.Map;
 
 /**
  * @author Baofeng Xu
@@ -18,6 +22,15 @@ public interface ElasticsearchService {
      * @throws Exception .
      */
     void indexCreate(EsIndex param) throws Exception;
+
+    /**
+     * 查询索引
+     *
+     * @param param 索引
+     * @return 索引数据
+     * @throws Exception .
+     */
+    Map<String, MappingMetaData> indexSelect(EsIndex param) throws Exception;
 
     /**
      * 删除索引
@@ -51,7 +64,7 @@ public interface ElasticsearchService {
      * @return 类型数据
      * @throws Exception .
      */
-    String typeSelect(EsType<?> param) throws Exception;
+    GetResponse typeSelect(EsType<?> param) throws Exception;
 
     /**
      * 修改类型数据
