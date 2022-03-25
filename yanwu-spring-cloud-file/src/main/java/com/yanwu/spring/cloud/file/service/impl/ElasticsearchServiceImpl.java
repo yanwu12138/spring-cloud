@@ -1,10 +1,10 @@
 package com.yanwu.spring.cloud.file.service.impl;
 
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.*;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -12,6 +12,8 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -20,12 +22,18 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.client.RequestOptions.DEFAULT;
@@ -114,5 +122,43 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         return exists;
     }
 
+    @Override
+    public List<EsTypeData> typeSearch(EsSearch param) throws Exception {
+        SearchRequest request = new SearchRequest(param.getType().getIndex().getIndex());
+        request.types(param.getType().getType());
+        request.source(searchBuilder(param));
+        SearchResponse response = elasticsearchClient.search(request, DEFAULT);
+        if (response.getHits().getHits() == null || response.getHits().getHits().length <= 0) {
+            return Collections.emptyList();
+        }
+        List<EsTypeData> result = new ArrayList<>();
+        for (SearchHit searchHit : response.getHits().getHits()) {
+            result.add(JsonUtil.toObject(searchHit.getSourceAsString(), TestType.class));
+        }
+        log.info("elasticsearch type search, param: {}, result: {}", param, result);
+        return result;
+    }
+
+    public SearchSourceBuilder searchBuilder(EsSearch param) {
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+        // ***** 可以根据字段进行搜索，must表示符合条件的，mustnot表示不符合条件的
+        if (CollectionUtils.isNotEmpty(param.getData())) {
+            param.getData().forEach((searchParam) -> {
+                if (searchParam.getMust()) {
+                    queryBuilder.must(QueryBuilders.matchQuery(searchParam.getField(), searchParam.getValue()));
+                } else {
+                    queryBuilder.mustNot(QueryBuilders.matchQuery(searchParam.getField(), searchParam.getValue()));
+                }
+            });
+        }
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(queryBuilder);
+        // ***** 分页：获取记录数，默认为10
+        sourceBuilder.from(param.getPage());
+        sourceBuilder.size(param.getSize());
+        //第一个参数是获取字段，第二个字段是过滤的字段，默认获取全部字段
+        sourceBuilder.fetchSource(new String[]{"name", "age", "sex", "password"}, new String[]{});
+        return sourceBuilder;
+    }
 
 }

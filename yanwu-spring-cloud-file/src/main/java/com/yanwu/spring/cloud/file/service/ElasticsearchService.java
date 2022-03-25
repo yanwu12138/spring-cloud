@@ -1,10 +1,13 @@
 package com.yanwu.spring.cloud.file.service;
 
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsSearch;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsTypeData;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -90,4 +93,13 @@ public interface ElasticsearchService {
      * @throws Exception .
      */
     boolean typeExists(EsType<?> param) throws Exception;
+
+    /**
+     * 查询类型数据
+     *
+     * @param param 参数
+     * @return 类型数据
+     * @throws Exception .
+     */
+    List<EsTypeData> typeSearch(EsSearch param) throws Exception;
 }

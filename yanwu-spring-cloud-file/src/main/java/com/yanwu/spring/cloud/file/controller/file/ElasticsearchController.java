@@ -2,9 +2,7 @@ package com.yanwu.spring.cloud.file.controller.file;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsType;
-import com.yanwu.spring.cloud.file.pojo.elasticsearch.TestType;
+import com.yanwu.spring.cloud.file.pojo.elasticsearch.*;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.GetResponse;
@@ -12,6 +10,7 @@ import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -112,6 +111,15 @@ public class ElasticsearchController {
     @GetMapping("type/exists")
     public ResponseEnvelope<Boolean> typeExists(@RequestBody EsType<?> param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.typeExists(param));
+    }
+
+    @LogParam
+    @GetMapping("type/search")
+    public ResponseEnvelope<List<EsTypeData>> typeSearch(@RequestBody EsSearch param) throws Exception {
+        if (!elasticsearchService.indexExists(param.getType().getIndex())) {
+            return ResponseEnvelope.failed("索引不存在");
+        }
+        return ResponseEnvelope.success(elasticsearchService.typeSearch(param));
     }
 
 
