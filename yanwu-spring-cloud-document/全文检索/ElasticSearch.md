@@ -286,71 +286,13 @@ sudo -su elasticsearch ./elasticsearch -d -Xmx2g -Xms2g
 
 
 
-#### ES Restful API
 
->   ES为开发者提供了非常丰富的基于HTTP协议的Rest API，只需要向ES服务端发送简单的Rest请求，就可以实现非常强大的功能。
->
->   **注意：查询是ES的核心。作为一个先进的搜索引擎，ES中提供了多种查询接口。本篇仅仅会涉及查询API的结构，而具体如何使用ES所提供的各种查询API，会在接下来的博文中做详细介绍。**
 
-##### 创建索引
 
-```shell
-##### index_test 索引名称
-curl -XPUT "localhost:9200/index_test"
-```
 
-**响应**：
 
-```json
-// -- 如果返回下面的信息，则说明索引创建成功。如果不是，则ES会返回相应的异常信息。
-{
-    "acknowledged": true,
-    "shards_acknowledged": true,
-    "index": "index_test"
-}
-```
 
->   上面的操作使用默认的配置信息创建一个索引。大多数情况下，我们想在索引创建的时候就将我们所需的mapping和其他配置确定好。下面的操作就可以在创建索引的同时，创建settings和mapping。
->
->   ```shell
->   ##### 注意 ' 号
->   curl -XPUT "localhost:9200/index_test" -d ' 
->   {
->   	"settings": {
->       	"index": {
->         		"number_of_replicas": "1", 	##### 设置复制数
->         		"number_of_shards": "5" 	##### 设置主分片数
->       	}
->     	},
->     	"mappings": { 						##### 创建mapping
->           "test_type": { 					##### 在index中创建一个新的type(相当于table)
->               "properties": {
->                   "name": { 				##### 创建一个字段（string类型数据，使用普通索引）
->                       "type": "string",
->                       "index": "not_analyzed"
->                   },
->                   "age": {
->                   	"type": "integer"
->                   }
->               }
->           }
->     	}
->   }'
->   ```
 
-##### 删除索引
 
-```shell
-##### index_test 索引名称
-curl -XDELETE "localhost:9200/index_test"
-```
 
-**响应**：
-
-```json
-// -- 如果返回下面的信息，则说明索引删除成功。如果不是，则ES会返回相应的异常信息。
-{
-    "acknowledged": true
-}
-```
 
