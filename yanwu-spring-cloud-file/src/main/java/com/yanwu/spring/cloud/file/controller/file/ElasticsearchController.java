@@ -85,6 +85,18 @@ public class ElasticsearchController {
     }
 
     @LogParam
+    @PutMapping("type/bulk/{index}")
+    public ResponseEnvelope<Void> typeCreate(@PathVariable("index") String index,
+                                             @RequestBody List<EsType> param) throws Exception {
+        EsIndex instance = EsIndex.getInstance(index);
+        if (!elasticsearchService.indexExists(instance)) {
+            indexCreate(instance);
+        }
+        elasticsearchService.typeBulkCreate(param);
+        return ResponseEnvelope.success();
+    }
+
+    @LogParam
     @GetMapping("type")
     public ResponseEnvelope<GetResponse> typeSelect(@RequestBody EsType param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.typeSelect(param));
@@ -102,10 +114,33 @@ public class ElasticsearchController {
     }
 
     @LogParam
+    @PostMapping("type/bulk/{index}")
+    public ResponseEnvelope<Void> typeUpdate(@PathVariable("index") String index,
+                                             @RequestBody List<EsType> param) throws Exception {
+        EsIndex instance = EsIndex.getInstance(index);
+        if (!elasticsearchService.indexExists(instance)) {
+            indexCreate(instance);
+        }
+        elasticsearchService.typeBulkUpdate(param);
+        return ResponseEnvelope.success();
+    }
+
+    @LogParam
     @DeleteMapping("type")
     public ResponseEnvelope<Void> typeDelete(@RequestBody EsType param) throws Exception {
         if (elasticsearchService.typeExists(param)) {
             elasticsearchService.typeDelete(param);
+        }
+        return ResponseEnvelope.success();
+    }
+
+    @LogParam
+    @DeleteMapping("type/bulk/{index}")
+    public ResponseEnvelope<Void> typeDelete(@PathVariable("index") String index,
+                                             @RequestBody List<EsType> param) throws Exception {
+        EsIndex instance = EsIndex.getInstance(index);
+        if (elasticsearchService.indexExists(instance)) {
+            elasticsearchService.typeBulkDelete(param);
         }
         return ResponseEnvelope.success();
     }
