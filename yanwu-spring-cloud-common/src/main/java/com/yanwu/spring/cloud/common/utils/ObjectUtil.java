@@ -17,6 +17,10 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class ObjectUtil {
 
+    public ObjectUtil() {
+        throw new UnsupportedOperationException("ObjectUtil should never be instantiated");
+    }
+
     /**
      * 获取对象所有的属性(共有+私有)
      *
