@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.file.pojo.elasticsearch;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
-public class EsType<T extends EsTypeData> implements Serializable {
+public class EsType implements Serializable {
     private static final long serialVersionUID = 5099977091556358817L;
 
     /*** 索引 ***/
@@ -25,6 +26,6 @@ public class EsType<T extends EsTypeData> implements Serializable {
     private String typeId;
 
     /*** 类型数据 ***/
-    private T data;
+    private JsonNode data;
 
 }

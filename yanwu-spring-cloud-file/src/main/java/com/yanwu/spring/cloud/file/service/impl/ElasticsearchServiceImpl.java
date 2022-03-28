@@ -80,7 +80,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public void typeCreate(EsType<?> param) throws Exception {
+    public void typeCreate(EsType param) throws Exception {
         IndexRequest request = new IndexRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         request.source(JsonUtil.toCompactJsonString(param.getData()), XContentType.JSON);
         IndexResponse response = elasticsearchClient.index(request, DEFAULT);
@@ -88,9 +88,9 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public void typeBulkCreate(List<EsType<?>> param) throws Exception {
+    public void typeBulkCreate(List<EsType> param) throws Exception {
         BulkRequest request = new BulkRequest();
-        for (EsType<?> type : param) {
+        for (EsType type : param) {
             IndexRequest index = new IndexRequest(type.getIndex().getIndex(), type.getType(), type.getTypeId());
             request.add(index.source(JsonUtil.toCompactJsonString(type.getData()), XContentType.JSON));
         }
@@ -99,7 +99,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public GetResponse typeSelect(EsType<?> param) throws Exception {
+    public GetResponse typeSelect(EsType param) throws Exception {
         GetRequest request = new GetRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         GetResponse response = elasticsearchClient.get(request, DEFAULT);
         log.info("elasticsearch type select, param: {}, result: {}", param, response);
@@ -107,7 +107,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public void typeUpdate(EsType<?> param) throws Exception {
+    public void typeUpdate(EsType param) throws Exception {
         UpdateRequest request = new UpdateRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         request.doc(JsonUtil.toCompactJsonString(param.getData()), XContentType.JSON);
         UpdateResponse response = elasticsearchClient.update(request, DEFAULT);
@@ -115,9 +115,9 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public void typeBulkUpdate(List<EsType<?>> param) throws Exception {
+    public void typeBulkUpdate(List<EsType> param) throws Exception {
         BulkRequest request = new BulkRequest();
-        for (EsType<?> type : param) {
+        for (EsType type : param) {
             UpdateRequest update = new UpdateRequest(type.getIndex().getIndex(), type.getType(), type.getTypeId());
             request.add(update.doc(JsonUtil.toCompactJsonString(type.getData()), XContentType.JSON));
         }
@@ -126,16 +126,16 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public void typeDelete(EsType<?> param) throws Exception {
+    public void typeDelete(EsType param) throws Exception {
         DeleteRequest request = new DeleteRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         DeleteResponse response = elasticsearchClient.delete(request, DEFAULT);
         log.info("elasticsearch type select, param: {}, result: {}", param, response);
     }
 
     @Override
-    public void typeBulkDelete(List<EsType<?>> param) throws Exception {
+    public void typeBulkDelete(List<EsType> param) throws Exception {
         BulkRequest request = new BulkRequest();
-        for (EsType<?> type : param) {
+        for (EsType type : param) {
             DeleteRequest delete = new DeleteRequest(type.getIndex().getIndex(), type.getType(), type.getTypeId());
             request.add(delete);
         }
@@ -144,7 +144,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
-    public boolean typeExists(EsType<?> param) throws Exception {
+    public boolean typeExists(EsType param) throws Exception {
         GetRequest request = new GetRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         request.fetchSourceContext(new FetchSourceContext(false));
         request.storedFields(NONE);

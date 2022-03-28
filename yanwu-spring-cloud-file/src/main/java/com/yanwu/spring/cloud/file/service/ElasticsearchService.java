@@ -59,7 +59,7 @@ public interface ElasticsearchService {
      * @param param 类型
      * @throws Exception .
      */
-    void typeCreate(EsType<?> param) throws Exception;
+    void typeCreate(EsType param) throws Exception;
 
     /**
      * 批量创建类型
@@ -67,7 +67,7 @@ public interface ElasticsearchService {
      * @param param 类型
      * @throws Exception .
      */
-    void typeBulkCreate(List<EsType<?>> param) throws Exception;
+    void typeBulkCreate(List<EsType> param) throws Exception;
 
     /**
      * 获取类型数据
@@ -76,7 +76,7 @@ public interface ElasticsearchService {
      * @return 类型数据
      * @throws Exception .
      */
-    GetResponse typeSelect(EsType<?> param) throws Exception;
+    GetResponse typeSelect(EsType param) throws Exception;
 
     /**
      * 修改类型数据
@@ -84,7 +84,7 @@ public interface ElasticsearchService {
      * @param param 类型
      * @throws Exception .
      */
-    void typeUpdate(EsType<?> param) throws Exception;
+    void typeUpdate(EsType param) throws Exception;
 
     /**
      * 批量修改类型数据
@@ -92,7 +92,7 @@ public interface ElasticsearchService {
      * @param param 类型
      * @throws Exception .
      */
-    void typeBulkUpdate(List<EsType<?>> param) throws Exception;
+    void typeBulkUpdate(List<EsType> param) throws Exception;
 
     /**
      * 删除类型
@@ -100,7 +100,7 @@ public interface ElasticsearchService {
      * @param param 类型
      * @throws Exception .
      */
-    void typeDelete(EsType<?> param) throws Exception;
+    void typeDelete(EsType param) throws Exception;
 
     /**
      * 批量删除类型
@@ -108,7 +108,7 @@ public interface ElasticsearchService {
      * @param param 类型
      * @throws Exception .
      */
-    void typeBulkDelete(List<EsType<?>> param) throws Exception;
+    void typeBulkDelete(List<EsType> param) throws Exception;
 
     /**
      * 判断类型是否存在
@@ -117,7 +117,7 @@ public interface ElasticsearchService {
      * @return 【true: 存在; false: 不存在】
      * @throws Exception .
      */
-    boolean typeExists(EsType<?> param) throws Exception;
+    boolean typeExists(EsType param) throws Exception;
 
     /**
      * 查询类型数据

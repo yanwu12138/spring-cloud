@@ -26,7 +26,7 @@ public class EsSearch extends PageParam<List<EsSearch.SearchParam>> implements S
     private static final long serialVersionUID = 8284271227476313729L;
 
     /*** 类型 ***/
-    private EsType<?> type;
+    private EsType type;
 
     /*** 查询结果需要排除的字段 ***/
     private String[] excludes;
