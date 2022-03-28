@@ -155,17 +155,22 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
 
     @Override
     public List<EsTypeData> typeSearch(EsSearch param) throws Exception {
+        return typeSearch(param, TestType.class);
+    }
+
+    @SuppressWarnings("all")
+    private List<EsTypeData> typeSearch(EsSearch param, Class<? extends EsTypeData> clazz) throws Exception {
         SearchRequest request = new SearchRequest(param.getType().getIndex().getIndex());
         request.types(param.getType().getType());
         // ***** 组装查询参数
-        request.source(param.searchBuilder(TestType.class));
+        request.source(param.searchBuilder(clazz));
         SearchResponse response = elasticsearchClient.search(request, DEFAULT);
         if (response.getHits().getHits() == null || response.getHits().getHits().length <= 0) {
             return Collections.emptyList();
         }
         List<EsTypeData> result = new ArrayList<>();
         for (SearchHit searchHit : response.getHits().getHits()) {
-            result.add(JsonUtil.toObject(searchHit.getSourceAsString(), TestType.class));
+            result.add(JsonUtil.toObject(searchHit.getSourceAsString(), clazz));
         }
         log.info("elasticsearch type search, param: {}, result: {}", param, result);
         return result;

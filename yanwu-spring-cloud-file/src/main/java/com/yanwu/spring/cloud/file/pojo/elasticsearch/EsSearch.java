@@ -50,12 +50,14 @@ public class EsSearch extends PageParam<List<EsSearch.SearchParam>> implements S
      */
     public SearchSourceBuilder searchBuilder(Class<?> clazz) {
         BoolQueryBuilder query = QueryBuilders.boolQuery();
-        // ***** 可以根据字段进行搜索，must表示符合条件的，mustnot表示不符合条件的
+        // ***** 根据字段与值进行搜索
         if (CollectionUtils.isNotEmpty(this.getData())) {
             this.getData().forEach((param) -> {
                 if (param.getMust()) {
+                    // ===== must：表示符合条件的（equals）
                     query.must(QueryBuilders.matchQuery(param.getField(), param.getValue()));
                 } else {
+                    // ===== mustNot：表示不符合条件的（!equals）
                     query.mustNot(QueryBuilders.matchQuery(param.getField(), param.getValue()));
                 }
             });
