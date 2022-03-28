@@ -147,7 +147,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     public boolean typeExists(EsType<?> param) throws Exception {
         GetRequest request = new GetRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         request.fetchSourceContext(new FetchSourceContext(false));
-        request.storedFields("_none_");
+        request.storedFields(NONE);
         boolean exists = elasticsearchClient.exists(request, DEFAULT);
         log.info("elasticsearch type exists, param: {}, result: {}", param, exists);
         return exists;

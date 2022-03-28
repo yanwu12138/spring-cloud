@@ -17,6 +17,7 @@ import java.util.Map;
  * description:
  */
 public interface ElasticsearchService {
+    String NONE = "_none_";
 
     /**
      * 创建索引
