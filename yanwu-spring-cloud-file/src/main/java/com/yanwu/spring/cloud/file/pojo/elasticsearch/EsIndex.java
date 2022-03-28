@@ -19,4 +19,7 @@ public class EsIndex implements Serializable {
     /*** 索引名称 ***/
     private String index;
 
+    public static EsIndex getInstance(String index) {
+        return new EsIndex().setIndex(index);
+    }
 }

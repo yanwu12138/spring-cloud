@@ -61,6 +61,14 @@ public interface ElasticsearchService {
     void typeCreate(EsType<?> param) throws Exception;
 
     /**
+     * 批量创建类型
+     *
+     * @param param 类型
+     * @throws Exception .
+     */
+    void typeBulkCreate(List<EsType<?>> param) throws Exception;
+
+    /**
      * 获取类型数据
      *
      * @param param 类型
@@ -78,12 +86,28 @@ public interface ElasticsearchService {
     void typeUpdate(EsType<?> param) throws Exception;
 
     /**
+     * 批量修改类型数据
+     *
+     * @param param 类型
+     * @throws Exception .
+     */
+    void typeBulkUpdate(List<EsType<?>> param) throws Exception;
+
+    /**
      * 删除类型
      *
      * @param param 类型
      * @throws Exception .
      */
     void typeDelete(EsType<?> param) throws Exception;
+
+    /**
+     * 批量删除类型
+     *
+     * @param param 类型
+     * @throws Exception .
+     */
+    void typeBulkDelete(List<EsType<?>> param) throws Exception;
 
     /**
      * 判断类型是否存在

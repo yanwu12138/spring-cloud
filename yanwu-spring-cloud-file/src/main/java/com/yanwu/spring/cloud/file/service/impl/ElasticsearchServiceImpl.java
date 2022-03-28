@@ -5,6 +5,8 @@ import com.yanwu.spring.cloud.file.pojo.elasticsearch.*;
 import com.yanwu.spring.cloud.file.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -86,6 +88,17 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
+    public void typeBulkCreate(List<EsType<?>> param) throws Exception {
+        BulkRequest request = new BulkRequest();
+        for (EsType<?> type : param) {
+            IndexRequest index = new IndexRequest(type.getIndex().getIndex(), type.getType(), type.getTypeId());
+            request.add(index.source(JsonUtil.toCompactJsonString(type.getData()), XContentType.JSON));
+        }
+        BulkResponse response = elasticsearchClient.bulk(request, DEFAULT);
+        log.info("elasticsearch type bulk create, param: {}, result: {}", param, response);
+    }
+
+    @Override
     public GetResponse typeSelect(EsType<?> param) throws Exception {
         GetRequest request = new GetRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         GetResponse response = elasticsearchClient.get(request, DEFAULT);
@@ -102,10 +115,32 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     }
 
     @Override
+    public void typeBulkUpdate(List<EsType<?>> param) throws Exception {
+        BulkRequest request = new BulkRequest();
+        for (EsType<?> type : param) {
+            UpdateRequest update = new UpdateRequest(type.getIndex().getIndex(), type.getType(), type.getTypeId());
+            request.add(update.doc(JsonUtil.toCompactJsonString(type.getData()), XContentType.JSON));
+        }
+        BulkResponse response = elasticsearchClient.bulk(request, DEFAULT);
+        log.info("elasticsearch type bulk update, param: {}, result: {}", param, response);
+    }
+
+    @Override
     public void typeDelete(EsType<?> param) throws Exception {
         DeleteRequest request = new DeleteRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
         DeleteResponse response = elasticsearchClient.delete(request, DEFAULT);
         log.info("elasticsearch type select, param: {}, result: {}", param, response);
+    }
+
+    @Override
+    public void typeBulkDelete(List<EsType<?>> param) throws Exception {
+        BulkRequest request = new BulkRequest();
+        for (EsType<?> type : param) {
+            DeleteRequest delete = new DeleteRequest(type.getIndex().getIndex(), type.getType(), type.getTypeId());
+            request.add(delete);
+        }
+        BulkResponse response = elasticsearchClient.bulk(request, DEFAULT);
+        log.info("elasticsearch type bulk delete, param: {}, result: {}", param, response);
     }
 
     @Override
@@ -122,6 +157,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     public List<EsTypeData> typeSearch(EsSearch param) throws Exception {
         SearchRequest request = new SearchRequest(param.getType().getIndex().getIndex());
         request.types(param.getType().getType());
+        // ***** 组装查询参数
         request.source(param.searchBuilder(TestType.class));
         SearchResponse response = elasticsearchClient.search(request, DEFAULT);
         if (response.getHits().getHits() == null || response.getHits().getHits().length <= 0) {
