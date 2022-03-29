@@ -54,6 +54,9 @@ public class ArrayUtil {
      * @return [true: 相等; false: 不相等]
      */
     public static boolean isEquals(Object[] arrA, Object[] arrB) {
+        if (arrA == null && arrB == null) {
+            return true;
+        }
         if (arrA == null || arrB == null || arrA.length != arrB.length) {
             return false;
         }
