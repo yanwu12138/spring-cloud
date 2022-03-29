@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
  * @author <a href="mailto:yanwu0527@163.com">baofeng Xu</a>
  * @date 2020-07-04 22:23:19.
  * <p>
- * describe:
+ * describe: 排序
  */
 @Slf4j
-public class A01Sort {
+public class A000Sort {
 
     public static void main(String[] args) {
         int[] array = A00Utils.array();
@@ -49,7 +49,7 @@ public class A01Sort {
         int[] heap = ArrayUtil.copyArray(array);
         long heapStart = System.nanoTime();
         heapSort(heap);
-        log.info("！堆排序: {} >> {}", heap, (System.nanoTime() - heapStart));
+        log.info("堆　排序: {} >> {}", heap, (System.nanoTime() - heapStart));
 
         int[] counting = ArrayUtil.copyArray(array);
         long countingStart = System.nanoTime();
@@ -59,7 +59,7 @@ public class A01Sort {
         int[] bucket = ArrayUtil.copyArray(array);
         long bucketStart = System.nanoTime();
         bucketSort(bucket);
-        log.info("！桶排序: {} >> {}", bucket, (System.nanoTime() - bucketStart));
+        log.info("桶　排序: {} >> {}", bucket, (System.nanoTime() - bucketStart));
 
         int[] radix = ArrayUtil.copyArray(array);
         long radixStart = System.nanoTime();

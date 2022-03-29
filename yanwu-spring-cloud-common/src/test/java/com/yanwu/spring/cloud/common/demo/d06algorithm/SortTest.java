@@ -21,7 +21,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void bubbleSort() {
-        A01Sort.bubbleSort(A00Utils.array());
+        A000Sort.bubbleSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -35,7 +35,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void selectionSort() {
-        A01Sort.selectionSort(A00Utils.array());
+        A000Sort.selectionSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -49,7 +49,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void insertionSort() {
-        A01Sort.insertionSort(A00Utils.array());
+        A000Sort.insertionSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -63,7 +63,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void shellSort() {
-        A01Sort.shellSort(A00Utils.array());
+        A000Sort.shellSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -77,7 +77,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void mergeSort() {
-        A01Sort.mergeSort(A00Utils.array());
+        A000Sort.mergeSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -91,7 +91,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void quickSort() {
-        A01Sort.quickSort(A00Utils.array());
+        A000Sort.quickSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -105,7 +105,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void heapSort() {
-        A01Sort.heapSort(A00Utils.array());
+        A000Sort.heapSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -119,7 +119,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void countingSort() {
-        A01Sort.countingSort(A00Utils.array());
+        A000Sort.countingSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -133,7 +133,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void bucketSort() {
-        A01Sort.bucketSort(A00Utils.array());
+        A000Sort.bucketSort(A00Utils.array());
     }
 
     // ----- 开启JMH测试
@@ -147,7 +147,7 @@ public class SortTest {
     // ----- 测试次数
     @Measurement(iterations = 1, time = 3)
     public void radixSort() {
-        A01Sort.radixSort(A00Utils.array());
+        A000Sort.radixSort(A00Utils.array());
     }
 
 }
