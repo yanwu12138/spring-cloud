@@ -14,14 +14,14 @@ public class A00Utils {
     private static final Random RANDOM = new Random();
 
     /**
-     * 随机生成数组
+     * 随机生成数组(正数 + 负数)
      *
      * @return 数组
      */
     public static int[] array() {
         int[] array = new int[RANDOM.nextInt(MAX_SIZE)];
         for (int i = 0; i < array.length - 1; i++) {
-            array[i] = RANDOM.nextInt(MAX_VALUE);
+            array[i] = RANDOM.nextInt((MAX_VALUE * 2)) - MAX_VALUE;
         }
         return array;
     }
