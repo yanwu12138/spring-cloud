@@ -296,13 +296,12 @@ public class A000Sort {
             maxValue = Math.max(maxValue, value);
             minValue = Math.min(minValue, value);
         }
-        int bucketLen = maxValue - minValue + 1;
-        int[] bucket = new int[bucketLen];
+        int[] bucket = new int[maxValue - minValue + 1];
         for (int value : arr) {
             bucket[value - minValue]++;
         }
         int sortedIndex = 0;
-        for (int j = 0; j < bucketLen; j++) {
+        for (int j = 0; j < bucket.length; j++) {
             while (bucket[j] > 0) {
                 arr[sortedIndex++] = j + minValue;
                 bucket[j]--;
