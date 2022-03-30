@@ -283,6 +283,7 @@ public class A000Sort {
 
     /**
      * 计数排序
+     * *** 缺陷：有可能会产生精度丢失和越界
      *
      * @param arr 数组
      */
@@ -290,15 +291,20 @@ public class A000Sort {
         if (checkArray(arr)) {
             return;
         }
-        int bucketLen = ArrayUtil.maxValue(arr) + 1;
+        int maxValue = 0, minValue = 0;
+        for (int value : arr) {
+            maxValue = Math.max(maxValue, value);
+            minValue = Math.min(minValue, value);
+        }
+        int bucketLen = maxValue - minValue + 1;
         int[] bucket = new int[bucketLen];
         for (int value : arr) {
-            bucket[value]++;
+            bucket[value - minValue]++;
         }
         int sortedIndex = 0;
         for (int j = 0; j < bucketLen; j++) {
             while (bucket[j] > 0) {
-                arr[sortedIndex++] = j;
+                arr[sortedIndex++] = j + minValue;
                 bucket[j]--;
             }
         }
