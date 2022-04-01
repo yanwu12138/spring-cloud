@@ -18,6 +18,7 @@ public class A002XOR {
         log.info("code2: {}", code_2((0B00111000100010101000100)));
         log.info("code3: {}", code_3(new int[]{2, 7, 3, 6, 7, 2, 1, 3, 6, 6, 2, 7, 1, 7, 6, 7}));
         log.info("code4: {}", code_4((0B00111000100010101000100)));
+        log.info("code5: {}", code_5(new int[]{3, 3, 3, 4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 7, 7, 7, 7, 7}, 3, 5));
     }
 
     /***
@@ -64,7 +65,7 @@ public class A002XOR {
      ** 7、已经得出a、b其中的一个就是 C2，那么另一个就是 C2 ^ C1
      */
     private static int[] code_3(int[] arr) {
-        if (arr == null || arr.length <= 2) {
+        if (arr == null || arr.length <= 1) {
             throw new RuntimeException("The parameter does not meet the conditions.");
         }
         int eor1 = code_1(arr);
@@ -100,6 +101,31 @@ public class A002XOR {
             count++;
         }
         return count;
+    }
+
+    /***
+     * 描述：一个数组中有一种数出现了K次，其它数都出现了M次，其中: K > 1 && K < M。找到出现了K次的数
+     * 要求：时间复杂度: O(n)，额外空间复杂度: O(1)
+     * 分析：准备一个长度为32为的数组
+     */
+    private static int code_5(int[] arr, int k, int m) {
+        if (arr == null || k < 1 || m < k || arr.length < k + m) {
+            throw new RuntimeException("The parameter does not meet the conditions: arr is empty.");
+        }
+        int[] sums = new int[32];
+        for (int item : arr) {
+            for (int index = 0; index < 32; index++) {
+                sums[index] += (item >> index) & 1;
+            }
+        }
+        int result = 0;
+        for (int i = 0; i < sums.length; i++) {
+            if ((sums[i] % m) != 0) {
+                // ----- 当该位置的总数%m结果为0时, 说明该位置必然出现了m次，否则%m的结果必然为k
+                result |= (1 << i);
+            }
+        }
+        return result;
     }
 
 }

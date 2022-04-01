@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import java.math.BigInteger;
+import java.util.Random;
 
 /**
  * @author Baofeng Xu
@@ -13,6 +14,17 @@ public class NumberUtil {
 
     private NumberUtil() {
         throw new UnsupportedOperationException("NumberUtil should never be instantiated");
+    }
+
+    /**
+     * 获取一个随机的int值[正数 + 负数]
+     *
+     * @param max 最大值
+     * @return 随机数
+     */
+    public static int random(Random random, int max) {
+        random = random == null ? new Random() : random;
+        return random.nextInt(max * 2) - max;
     }
 
     /**

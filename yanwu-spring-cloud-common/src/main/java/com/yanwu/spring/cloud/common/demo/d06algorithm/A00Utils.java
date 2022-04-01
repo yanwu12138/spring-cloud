@@ -1,5 +1,7 @@
 package com.yanwu.spring.cloud.common.demo.d06algorithm;
 
+import com.yanwu.spring.cloud.common.utils.NumberUtil;
+
 import java.util.Random;
 
 /**
@@ -21,7 +23,7 @@ public class A00Utils {
     public static int[] array() {
         int[] array = new int[RANDOM.nextInt(MAX_SIZE)];
         for (int i = 0; i < array.length - 1; i++) {
-            array[i] = RANDOM.nextInt((MAX_VALUE * 2)) - MAX_VALUE;
+            array[i] = NumberUtil.random(RANDOM, MAX_VALUE);
         }
         return array;
     }
