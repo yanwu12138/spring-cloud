@@ -136,7 +136,7 @@ public class A002XOR {
                 continue;
             }
             if (modulo != k) {
-                throw new RuntimeException("The parameter does not meet the conditions: arr is empty.");
+                throw new RuntimeException("The parameter does not meet the conditions.");
             }
             result |= (1 << i);
         }
