@@ -131,13 +131,13 @@ public class A002XOR {
         int result = 0;
         for (int i = 0; i < sums.length; i++) {
             int modulo = sums[i] % m;
+            // ----- 当该位置的总数%m结果为0时, 说明该位置必然出现了m次或0次，否则%m的结果必然为k
             if (modulo == 0) {
                 continue;
             }
             if (modulo != k) {
                 throw new RuntimeException("The parameter does not meet the conditions: arr is empty.");
             }
-            // ----- 当该位置的总数%m结果为0时, 说明该位置必然出现了m次，否则%m的结果必然为k
             result |= (1 << i);
         }
         return result;
