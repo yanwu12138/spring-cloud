@@ -106,7 +106,17 @@ public class A002XOR {
     /***
      * 描述：一个数组中有一种数出现了K次，其它数都出现了M次，其中: K > 1 && K < M。找到出现了K次的数
      * 要求：时间复杂度: O(n)，额外空间复杂度: O(1)
-     * 分析：准备一个长度为32为的数组
+     * 分析：
+     ** 1、准备一个长度为32为的数组：sums
+     ** 2、将每一个int值转换成二进制
+     ** 3、循环处理这些二进制数字，判断每隔二进制数的每位是否是：1
+     *** 是1：则在sums对应角标的位置 +1
+     *** 不是1： 则不做处理
+     ** 4、所有的数处理完后，处理最终的：sums
+     ** 5、循环处理sums中的数，判断当前是元素 %m 是否为：0
+     *** 是0：说明arr中出现了k次的数在转换成二进制的时候该位置必然是：0
+     *** 不是0：不是0则必然为：k（如果既不是0也不是k说明流程或数组错误）
+     ** 6、根据sums的循环的判断，依次给result的相对应的位置填入：1
      */
     private static int code_5(int[] arr, int k, int m) {
         if (arr == null || k < 1 || m < k || arr.length < k + m) {
@@ -120,10 +130,15 @@ public class A002XOR {
         }
         int result = 0;
         for (int i = 0; i < sums.length; i++) {
-            if ((sums[i] % m) != 0) {
-                // ----- 当该位置的总数%m结果为0时, 说明该位置必然出现了m次，否则%m的结果必然为k
-                result |= (1 << i);
+            int modulo = sums[i] % m;
+            if (modulo == 0) {
+                continue;
             }
+            if (modulo != k) {
+                throw new RuntimeException("The parameter does not meet the conditions: arr is empty.");
+            }
+            // ----- 当该位置的总数%m结果为0时, 说明该位置必然出现了m次，否则%m的结果必然为k
+            result |= (1 << i);
         }
         return result;
     }
