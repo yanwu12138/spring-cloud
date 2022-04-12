@@ -4,6 +4,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.AdviceSignature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -29,7 +30,7 @@ public class AspectUtil {
      * @param joinPoint 切点
      * @return 方法
      */
-    public static Method getMethodSignature(JoinPoint joinPoint) {
+    public static Method getMethod(JoinPoint joinPoint) {
         if (joinPoint == null) {
             return null;
         }
@@ -41,6 +42,18 @@ public class AspectUtil {
         } else {
             return null;
         }
+    }
+
+    public static String getSignature(Method method) {
+        RequestMapping requestMapping = method.getDeclaringClass().getAnnotation(RequestMapping.class);
+        if (requestMapping == null) {
+            return method.getName();
+        }
+        String[] value = requestMapping.value();
+        if (value.length == 0) {
+            return method.getName();
+        }
+        return value[0] + method.getName();
     }
 
 

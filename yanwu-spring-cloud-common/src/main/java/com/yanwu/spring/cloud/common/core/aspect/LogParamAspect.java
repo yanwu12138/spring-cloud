@@ -37,7 +37,7 @@ public class LogParamAspect {
     public Object doAround(ProceedingJoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         String txId = AspectUtil.getTxId();
-        Method method = AspectUtil.getMethodSignature(joinPoint);
+        Method method = AspectUtil.getMethod(joinPoint);
         try {
             log.info("Request   : [txId]: {}, [method]: {}, [param]: {}", txId, method, args);
             return joinPoint.proceed(args);
@@ -63,7 +63,7 @@ public class LogParamAspect {
     @AfterReturning(returning = "result", pointcut = "logParamPointcut()")
     public void doAfterReturning(JoinPoint joinPoint, Object result) {
         String txId = AspectUtil.getTxId();
-        Method method = AspectUtil.getMethodSignature(joinPoint);
+        Method method = AspectUtil.getMethod(joinPoint);
         if (result instanceof Serializable || result instanceof ResponseEntity) {
             log.info("Response  : [txId]: {}, [method]: {}, [return]: {}", txId, method, result);
         } else {
