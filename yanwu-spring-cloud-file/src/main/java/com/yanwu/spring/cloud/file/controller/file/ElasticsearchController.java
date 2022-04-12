@@ -45,7 +45,7 @@ public class ElasticsearchController {
     }
 
     @LogParam
-    @AccessLimit
+    @AccessLimit(needLogin = false)
     @GetMapping("index")
     public ResponseEnvelope<Map<String, MappingMetaData>> indexSelect(@RequestBody EsIndex param) throws Exception {
         if (!elasticsearchService.indexExists(param)) {
