@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.file;
 
+import com.yanwu.spring.cloud.common.core.annotation.AccessLimit;
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
@@ -44,6 +45,7 @@ public class ElasticsearchController {
     }
 
     @LogParam
+    @AccessLimit
     @GetMapping("index")
     public ResponseEnvelope<Map<String, MappingMetaData>> indexSelect(@RequestBody EsIndex param) throws Exception {
         if (!elasticsearchService.indexExists(param)) {

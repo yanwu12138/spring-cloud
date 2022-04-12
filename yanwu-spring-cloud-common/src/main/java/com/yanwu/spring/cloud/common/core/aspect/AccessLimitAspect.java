@@ -78,18 +78,18 @@ public class AccessLimitAspect {
                 key = ip;
             }
             // ===== 从缓存中拿到当前用户的访问次数：如果访问次数少于最大限制，则直接放行
-            ExpiringMap<String, Integer> eMap = BOOK.getOrDefault(method.getName(), ExpiringMap.builder().variableExpiration().build());
-            Integer count = eMap.getOrDefault(request.getRemoteAddr(), 0);
+            ExpiringMap<String, Integer> expiring = BOOK.getOrDefault(method.getName(), ExpiringMap.builder().variableExpiration().build());
+            Integer count = expiring.getOrDefault(key, 0);
             if (count == 0) {
-                eMap.put(key, count + 1, ExpirationPolicy.CREATED, annotation.seconds(), TimeUnit.SECONDS);
+                expiring.put(key, 1, ExpirationPolicy.CREATED, annotation.seconds(), TimeUnit.SECONDS);
             } else if (count < annotation.maxCount()) {
-                eMap.put(key, count + 1);
+                expiring.put(key, count + 1);
             } else {
                 // ===== 如果访问次数已经达到最大限制，则返回请求失败
                 log.error("Exception : [txId]: {}, [method]: {}, [param]: {}. {}", txId, method, args, "visit too frequently.");
                 return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, "访问过于频繁，请稍后再试");
             }
-            BOOK.put(method.getName(), eMap);
+            BOOK.put(method.getName(), expiring);
             return joinPoint.proceed(args);
         } catch (Throwable e) {
             log.error("Exception : [txId]: {}, [method]: {}, [param]: {}", txId, method, args, e);
