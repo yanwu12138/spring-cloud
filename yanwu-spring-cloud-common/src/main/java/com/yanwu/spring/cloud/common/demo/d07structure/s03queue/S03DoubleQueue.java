@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.demo.d07structure.s03queue;
 
-import com.yanwu.spring.cloud.common.demo.d07structure.s00model.DoubleNode;
+import com.yanwu.spring.cloud.common.demo.d07structure.s00model.Node;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -16,8 +16,8 @@ public class S03DoubleQueue<E extends Serializable> {
 
     private int top;
     private final int size;
-    private DoubleNode<E> left;
-    private DoubleNode<E> right;
+    private Node<E> left;
+    private Node<E> right;
 
     public S03DoubleQueue(int size) {
         this.top = -1;
@@ -50,7 +50,7 @@ public class S03DoubleQueue<E extends Serializable> {
         if (value == null || size() == size) {
             return false;
         }
-        DoubleNode<E> newNode = new DoubleNode<>(value);
+        Node<E> newNode = new Node<>(value);
         if (left == null) {
             left = newNode;
             right = newNode;
@@ -73,7 +73,7 @@ public class S03DoubleQueue<E extends Serializable> {
         if (size() == 0) {
             return null;
         }
-        DoubleNode<E> node;
+        Node<E> node;
         if (lOrR) {
             node = left;
             left = left.getNext();

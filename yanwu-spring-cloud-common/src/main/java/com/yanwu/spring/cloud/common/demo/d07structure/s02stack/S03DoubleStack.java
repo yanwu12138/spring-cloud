@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.demo.d07structure.s02stack;
 
-import com.yanwu.spring.cloud.common.demo.d07structure.s00model.DoubleNode;
+
+import com.yanwu.spring.cloud.common.demo.d07structure.s00model.Node;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -12,11 +13,11 @@ import java.io.Serializable;
  * describe: 双节点实现栈
  */
 @Slf4j
-public class S03DoubleStack<E extends Serializable> implements S00Stack<DoubleNode<Integer>> {
+public class S03DoubleStack<E extends Serializable> implements S00Stack<Node<Integer>> {
     private int top;
     private final int size;
-    private DoubleNode<Integer> head;
-    private DoubleNode<Integer> tail;
+    private Node<Integer> head;
+    private Node<Integer> tail;
 
     public S03DoubleStack(int size) {
         this.top = -1;
@@ -25,7 +26,7 @@ public class S03DoubleStack<E extends Serializable> implements S00Stack<DoubleNo
     }
 
     @Override
-    public boolean push(DoubleNode<Integer> node) {
+    public boolean push(Node<Integer> node) {
         if (node == null || top == (size - 1)) {
             return false;
         }
@@ -41,11 +42,11 @@ public class S03DoubleStack<E extends Serializable> implements S00Stack<DoubleNo
     }
 
     @Override
-    public DoubleNode<Integer> pop() {
+    public Node<Integer> pop() {
         if (top < 0) {
             return null;
         }
-        DoubleNode<Integer> result = tail;
+        Node<Integer> result = tail;
         tail = result.getLast();
         if (tail == null) {
             head = null;
@@ -58,7 +59,7 @@ public class S03DoubleStack<E extends Serializable> implements S00Stack<DoubleNo
     }
 
     @Override
-    public DoubleNode<Integer> top() {
+    public Node<Integer> top() {
         return tail;
     }
 
@@ -68,23 +69,23 @@ public class S03DoubleStack<E extends Serializable> implements S00Stack<DoubleNo
     }
 
     public static void main(String[] args) {
-        S03DoubleStack<DoubleNode<Integer>> myStack = new S03DoubleStack<>(10);
-        log.info("push: {}", myStack.push(new DoubleNode<>(0)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(1)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(2)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(3)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(4)));
+        S03DoubleStack<Node<Integer>> myStack = new S03DoubleStack<>(10);
+        log.info("push: {}", myStack.push(new Node<>(0)));
+        log.info("push: {}", myStack.push(new Node<>(1)));
+        log.info("push: {}", myStack.push(new Node<>(2)));
+        log.info("push: {}", myStack.push(new Node<>(3)));
+        log.info("push: {}", myStack.push(new Node<>(4)));
 
         log.info("pop: {}", myStack.pop());
-        DoubleNode<Integer> topNode = myStack.top();
+        Node<Integer> topNode = myStack.top();
 
-        log.info("push: {}", myStack.push(new DoubleNode<>(5)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(6)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(7)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(8)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(9)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(10)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(11)));
+        log.info("push: {}", myStack.push(new Node<>(5)));
+        log.info("push: {}", myStack.push(new Node<>(6)));
+        log.info("push: {}", myStack.push(new Node<>(7)));
+        log.info("push: {}", myStack.push(new Node<>(8)));
+        log.info("push: {}", myStack.push(new Node<>(9)));
+        log.info("push: {}", myStack.push(new Node<>(10)));
+        log.info("push: {}", myStack.push(new Node<>(11)));
 
         log.info("size: {}", myStack.size());
 
@@ -100,8 +101,8 @@ public class S03DoubleStack<E extends Serializable> implements S00Stack<DoubleNo
         log.info("pop: {}", myStack.pop());
         log.info("pop: {}", myStack.pop());
 
-        log.info("push: {}", myStack.push(new DoubleNode<>(5)));
-        log.info("push: {}", myStack.push(new DoubleNode<>(6)));
+        log.info("push: {}", myStack.push(new Node<>(5)));
+        log.info("push: {}", myStack.push(new Node<>(6)));
         log.info("pop: {}", myStack.pop());
         topNode = myStack.top();
 

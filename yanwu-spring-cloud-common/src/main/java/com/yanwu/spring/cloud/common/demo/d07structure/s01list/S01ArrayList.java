@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.common.demo.d07structure.s01list;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:yanwu0527@163.com">baofeng Xu</a>
@@ -11,81 +12,88 @@ import java.io.Serializable;
  * describe:
  */
 @Slf4j
-public class S01ArrayList<E extends Serializable> implements S00List<Integer> {
-    private final Integer[] values;
+public class S01ArrayList<E extends Serializable> implements S00List<E> {
+    private final E[] values;
     private int top;
     private final int size;
 
+    @SuppressWarnings("all")
     public S01ArrayList(int size) {
         this.top = -1;
         this.size = size;
-        this.values = new Integer[size];
+        this.values = (E[]) new Object[size];
     }
 
     @Override
-    public Integer insert(Integer value) {
-        if (value == null || size == size()) {
-            return null;
+    public boolean add(E value) {
+        if (value == null || size() >= size) {
+            return false;
         }
         values[++top] = value;
-        return value;
+        return true;
     }
 
     @Override
-    public Integer select(Integer index) {
-        if (index < 0 || index > size() || size() == 0) {
+    public E get(int index) {
+        if (size() == 0 || index < 0 || index >= size()) {
             return null;
         }
         return values[index];
     }
 
     @Override
-    public Integer update(Integer index, Integer newVal) {
-        if (index < 0 || index > size() || size() == 0) {
+    public E set(int index, E newVal) {
+        if (index < 0 || index >= size() || newVal == null) {
             return null;
         }
-        Integer value = values[index];
+        E result = values[index];
         values[index] = newVal;
-        return value;
+        return result;
     }
 
     @Override
-    public Integer delete(Integer index) {
-        if (index < 0 || index > size() || size() == 0) {
-            return null;
+    public int set(E oldVal, E newVal) {
+        int result = 0;
+        if (oldVal == null || newVal == null || size() == 0) {
+            return result;
         }
-        Integer value = values[index];
-        int i = index;
-        while (i < size()) {
-            values[i] = values[++i];
-            values[top--] = null;
+        for (int index = 0; index < values.length; index++) {
+            if (Objects.equals(values[index], oldVal)) {
+                values[index] = newVal;
+                result++;
+            }
         }
-        return value;
+        return result;
     }
 
+    @Override
+    public int del(E value) {
+        int delNum = set(value, null);
+        top = top - delNum;
+        return delNum;
+    }
+
+    @Override
+    public E del(int index) {
+        if (size() == 0 || index < 0 || index >= size()) {
+            return null;
+        }
+        E result = set(index, null);
+        if (result != null) {
+            top--;
+        }
+        return result;
+    }
+
+    @Override
+    public void reverse() {
+
+    }
+
+    @Override
     public int size() {
         return top + 1;
     }
 
-    public static void main(String[] args) {
-        S01ArrayList<Integer> list = new S01ArrayList<>(5);
-        log.info("list: [insert] {}", list.insert(1));
-        log.info("list: [insert] {}", list.insert(1));
-        log.info("list: [insert] {}", list.insert(1));
-        log.info("list: [insert] {}", list.insert(4));
-        log.info("list: [insert] {}", list.insert(1));
-        log.info("list: [insert] {}", list.insert(5));
 
-        log.info("list: [delete] {}", list.delete(3));
-
-        log.info("list: [update] {}", list.update(1, 9));
-
-        log.info("list: [select] {}", list.select(1));
-
-        log.info("list: [size] {}", list.size());
-
-        log.info("list: [insert] {}", list.insert(4));
-
-        log.info("list: [size] {}", list.size());
-    }
 }

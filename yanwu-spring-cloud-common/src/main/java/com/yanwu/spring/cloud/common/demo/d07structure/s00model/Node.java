@@ -15,6 +15,7 @@ public class Node<E extends Serializable> implements Serializable {
     private static final long serialVersionUID = -7916391747385636915L;
 
     private E value;
+    private Node<E> last;
     private Node<E> next;
 
     public Node(E value) {

@@ -312,6 +312,12 @@
             <version>3.2.6</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Map依赖 -->
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>expiringmap</artifactId>
+            <version>0.5.10</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
