@@ -10,7 +10,7 @@
 
     ```shell
     cd /usr/local/nginx/conf/
-    echo -n "{USERNAMW}:" > {PASSWORD_FILE}							##### 指定用户名
+    echo -n "{USERNAME}:" > {PASSWORD_FILE}							##### 指定用户名
     openssl passwd {PASSWORD} >> {PASSWORD_FILE}					##### 指定密码
     ```
 

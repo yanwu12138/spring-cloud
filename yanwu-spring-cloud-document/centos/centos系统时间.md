@@ -37,7 +37,12 @@ timedatectl set-timezone Asia/Shanghai
 #### 增加时间NTP同步
 
 ```shell
-ntpdate ntp.ubuntu.com
+##### 安装ntp应用
+yum install ntp -y
+##### 启动ntp应用
+systemctl start ntpd
+##### 设置开机自启动ntp应用
+systemctl enable ntpd
 ```
 
 

@@ -56,7 +56,7 @@ public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implement
     @Getter
     @Version
     @TableField(value = "updated", strategy = FieldStrategy.NOT_EMPTY, fill = FieldFill.INSERT_UPDATE)
-    @Column(name = "updated", type = DATETIME, isNull = false, defaultValue = "CURRENT_TIMESTAMP", comment = "更新时间")
+    @Column(name = "updated", type = DATETIME, isNull = false, defaultValue = "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", comment = "更新时间")
     private Timestamp updated;
 
     /*** 启用禁用 ***/
