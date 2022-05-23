@@ -168,24 +168,25 @@ public class CommandUtil {
     }
 
     public static void execWinCommand(String cmd) throws Exception {
-        File tmpFile = new File("/home/admin/tmp/temp.tmp");
+        // ----- 新建一个用来存储结果的缓存文件
+        File tmpFile = new File("/home/admin/tmp/" + System.currentTimeMillis());
         FileUtil.checkFilePath(tmpFile, Boolean.TRUE);
         try (InputStream inputStream = Files.newInputStream(tmpFile.toPath());
              BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream))) {
-            // ----- 新建一个用来存储结果的缓存文件
             // ----- 执行命令
-            ProcessBuilder pb = new ProcessBuilder().command("cmd.exe", "/c", cmd).inheritIO();
+            ProcessBuilder builder = new ProcessBuilder().command("cmd.exe", "/c", cmd).inheritIO();
             // ----- 这里是把控制台中的红字变成了黑字，用通常的方法其实获取不到，控制台的结果是pb.start()方法内部输出的
-            pb.redirectErrorStream(true);
+            builder.redirectErrorStream(true);
             // ----- 把执行结果输出
-            pb.redirectOutput(tmpFile);
+            builder.redirectOutput(tmpFile);
             // ----- 等待语句执行完成，否则可能会读不到结果
-            pb.start().waitFor();
+            builder.start().waitFor();
             String line;
+            log.info("exec win command begin.....");
             while ((line = bufReader.readLine()) != null) {
-                System.out.println(line);
+                log.info("exec win command print: {}", line);
             }
-            log.info("exec win command, cmd: {}", cmd);
+            log.info("exec win command success, cmd: {}", cmd);
         } catch (Exception e) {
             log.error("exec win command failed.", e);
         } finally {
