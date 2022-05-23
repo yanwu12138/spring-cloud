@@ -168,7 +168,7 @@ public class CommandUtil {
     }
 
     public static void execWinCommand(String cmd) throws Exception {
-        File tmpFile = new File("/home/admin/temp/temp.tmp");
+        File tmpFile = new File("/home/admin/tmp/temp.tmp");
         FileUtil.checkFilePath(tmpFile, Boolean.TRUE);
         try (InputStream inputStream = Files.newInputStream(tmpFile.toPath());
              BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream))) {
