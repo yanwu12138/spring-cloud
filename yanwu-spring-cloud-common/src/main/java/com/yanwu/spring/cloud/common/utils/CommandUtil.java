@@ -163,18 +163,42 @@ public class CommandUtil {
         String oggPath = fileNamePath + ".ogg";
         String wavPath = fileNamePath + ".wav";
         String command = "ffmpeg -i " + oggPath + " -acodec pcm_s16le -ac 1 -ar 16000 " + wavPath + " -y";
-        execWinCommand(command);
+        System.out.println(execCommand(command));
         AudioUtil.playWav(wavPath);
     }
 
-    public static void execWinCommand(String cmd) throws Exception {
+    /***
+     * 执行系统命令
+     * @param cmd 命令脚本
+     * @return 执行结果
+     */
+    public static String execCommand(String cmd) throws Exception {
+        SystemUtil.SystemType systemType = SystemUtil.getSystemType();
+        switch (systemType) {
+            case WINDOWS:
+                return execWinCommand(cmd);
+            case LINUX:
+            case MAC_OS:
+                return execLinuxCommand(cmd);
+            default:
+                return null;
+        }
+    }
+
+    /***
+     * 执行WINDOWS命令
+     * @param cmd 命令脚本
+     * @return 执行结果
+     */
+    public static String execWinCommand(String cmd) throws Exception {
         // ----- 新建一个用来存储结果的缓存文件
         File tmpFile = new File("/home/admin/tmp/" + System.currentTimeMillis());
         FileUtil.checkFilePath(tmpFile, Boolean.TRUE);
         try (InputStream inputStream = Files.newInputStream(tmpFile.toPath());
              BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream))) {
+            StringBuilder result = new StringBuilder();
             // ----- 执行命令
-            ProcessBuilder builder = new ProcessBuilder().command("cmd.exe", "/c", cmd).inheritIO();
+            ProcessBuilder builder = new ProcessBuilder().command("cmd", "/c", cmd).inheritIO();
             // ----- 这里是把控制台中的红字变成了黑字，用通常的方法其实获取不到，控制台的结果是pb.start()方法内部输出的
             builder.redirectErrorStream(true);
             // ----- 把执行结果输出
@@ -182,13 +206,14 @@ public class CommandUtil {
             // ----- 等待语句执行完成，否则可能会读不到结果
             builder.start().waitFor();
             String line;
-            log.info("exec win command begin.....");
             while ((line = bufReader.readLine()) != null) {
-                log.info("exec win command print: {}", line);
+                result.append(line).append("\r\n");
             }
             log.info("exec win command success, cmd: {}", cmd);
+            return result.toString();
         } catch (Exception e) {
-            log.error("exec win command failed.", e);
+            log.error("exec win command failed,  cmd: {}.", cmd, e);
+            return null;
         } finally {
             FileUtil.deleteFile(tmpFile);
         }
@@ -199,23 +224,31 @@ public class CommandUtil {
      * @param cmd 命令脚本
      * @return 执行结果
      */
-    public static String execCommand(String cmd) throws Exception {
-        Process proc = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", cmd});
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        StringBuilder builder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            builder.append(line);
+    private static String execLinuxCommand(String cmd) {
+        BufferedReader reader = null;
+        BufferedReader errorReader = null;
+        try {
+            StringBuilder builder = new StringBuilder();
+            Process proc = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", cmd});
+            reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line).append("\r\n");
+            }
+            errorReader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            while ((line = errorReader.readLine()) != null) {
+                builder.append(line).append("\r\n");
+            }
+            proc.waitFor();
+            log.info("exec linux command, cmd: {}", cmd);
+            return builder.toString();
+        } catch (Exception e) {
+            log.error("exec linux command failed. cmd: {}.", cmd, e);
+            return null;
+        } finally {
+            IOUtil.close(reader);
+            IOUtil.close(errorReader);
         }
-        IOUtil.close(reader);
-        BufferedReader errorReader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-        while ((line = errorReader.readLine()) != null) {
-            builder.append(line);
-        }
-        IOUtil.close(errorReader);
-        proc.waitFor();
-        log.info("exec shell command, cmd: {}, result: {}", cmd, builder);
-        return builder.toString();
     }
 
     /***
