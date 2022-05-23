@@ -10,6 +10,7 @@ import org.apache.commons.net.telnet.TelnetClient;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 /**
  * @author Baofeng Xu
@@ -154,6 +155,41 @@ public class CommandUtil {
         } catch (Exception e) {
             log.error("exec telnet error.", e);
             return Boolean.FALSE;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        String fileNamePath = "E:\\home\\admin\\tmp\\file\\" + "recording" + File.separatorChar + "1653297704601";
+        String oggPath = fileNamePath + ".ogg";
+        String wavPath = fileNamePath + ".wav";
+        String command = "ffmpeg -i " + oggPath + " -acodec pcm_s16le -ac 1 -ar 16000 " + wavPath + " -y";
+        execWinCommand(command);
+        AudioUtil.playWav(wavPath);
+    }
+
+    public static void execWinCommand(String cmd) throws Exception {
+        File tmpFile = new File("/home/admin/temp/temp.tmp");
+        FileUtil.checkFilePath(tmpFile, Boolean.TRUE);
+        try (InputStream inputStream = Files.newInputStream(tmpFile.toPath());
+             BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream))) {
+            // ----- 新建一个用来存储结果的缓存文件
+            // ----- 执行命令
+            ProcessBuilder pb = new ProcessBuilder().command("cmd.exe", "/c", cmd).inheritIO();
+            // ----- 这里是把控制台中的红字变成了黑字，用通常的方法其实获取不到，控制台的结果是pb.start()方法内部输出的
+            pb.redirectErrorStream(true);
+            // ----- 把执行结果输出
+            pb.redirectOutput(tmpFile);
+            // ----- 等待语句执行完成，否则可能会读不到结果
+            pb.start().waitFor();
+            String line;
+            while ((line = bufReader.readLine()) != null) {
+                System.out.println(line);
+            }
+            log.info("exec win command, cmd: {}", cmd);
+        } catch (Exception e) {
+            log.error("exec win command failed.", e);
+        } finally {
+            FileUtil.deleteFile(tmpFile);
         }
     }
 
