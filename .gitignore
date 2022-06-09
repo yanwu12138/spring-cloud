@@ -35,3 +35,4 @@ local.properties
 .mvn/
 atlassian-ide-plugin.xml
 reader/*
+*.txt
