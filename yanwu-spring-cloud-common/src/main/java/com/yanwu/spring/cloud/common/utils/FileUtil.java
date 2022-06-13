@@ -22,6 +22,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -70,7 +71,7 @@ public class FileUtil {
         fileName = StringUtils.isNotBlank(fileName) ? fileName : sourceFile.getName() + FileType.ZIP.getSuffix();
         File targetFile = new File(targetDir + fileName);
         if (!targetFile.exists() || targetFile.delete()) {
-            try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(targetFile))) {
+            try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(targetFile.toPath()))) {
                 // ----- 压缩
                 toZip(zos, sourceFile, Contents.NUL);
             }
@@ -91,7 +92,7 @@ public class FileUtil {
             // ===== 文件，添加到压缩文件
             byte[] bytes = new byte[Contents.DEFAULT_SIZE];
             zos.putNextEntry(new ZipEntry(directory));
-            try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(sourceFile), Contents.DEFAULT_SIZE)) {
+            try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(sourceFile.toPath()), Contents.DEFAULT_SIZE)) {
                 int read;
                 while ((read = bis.read(bytes, 0, Contents.DEFAULT_SIZE)) != -1) {
                     zos.write(bytes, 0, read);
@@ -162,7 +163,7 @@ public class FileUtil {
         // ----- 文件
         if (targetFile.createNewFile()) {
             try (InputStream is = new BufferedInputStream(zipFile.getInputStream(zipEntry));
-                 OutputStream os = new BufferedOutputStream(new FileOutputStream(targetFile))) {
+                 OutputStream os = new BufferedOutputStream(Files.newOutputStream(targetFile.toPath()))) {
                 int read;
                 byte[] bytes = new byte[Contents.DEFAULT_SIZE];
                 while ((read = is.read(bytes)) != -1) {
@@ -312,11 +313,12 @@ public class FileUtil {
             log.error("export error, file is not exists, file: {}", file.getPath());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        if (file.isFile()) {
+        BasicFileAttributes fileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+        if (fileAttributes.isRegularFile()) {
             // ----- 下载文件
             log.info("export file: {}", file.getPath());
-            return file.length() < LIMIT_SIZE ? exportSmallFile(file) : exportBigFile(file, response);
-        } else if (file.isDirectory()) {
+            return fileAttributes.size() < LIMIT_SIZE ? exportSmallFile(file) : exportBigFile(file, response);
+        } else if (fileAttributes.isDirectory()) {
             // ----- 下载文件夹
             log.info("export directory: {}", file.getPath());
             return exportDirectory(file, response);
@@ -623,8 +625,9 @@ public class FileUtil {
         checkFilePath(newFile, true);
         String filePath = newFile.getPath();
         for (File oldFile : oldFiles) {
-            if (Objects.nonNull(oldFile) && oldFile.isFile()) {
-                long position = 0, length = oldFile.length();
+            BasicFileAttributes fileAttributes = Files.readAttributes(oldFile.toPath(), BasicFileAttributes.class);
+            if (fileAttributes.isRegularFile()) {
+                long position = 0, length = fileAttributes.size();
                 while (position < length) {
                     int blockSize = (int) Math.min(SIZE, length - position);
                     appendWrite(filePath, read(oldFile.getPath(), position, blockSize));
@@ -765,12 +768,13 @@ public class FileUtil {
      * @return 文件的MD5值
      */
     public static String calcFileMd5(File file) throws Exception {
-        if (!file.exists() || !file.isFile()) {
+        BasicFileAttributes fileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+        if (!file.exists() || !fileAttributes.isRegularFile()) {
             log.error("calc file md5 failed, because file does not exist or is not a file.");
             return null;
         }
         MessageDigest digest = MessageDigest.getInstance("MD5");
-        long length = file.length(), position = 0, blockSize = LIMIT_SIZE;
+        long length = fileAttributes.size(), position = 0, blockSize = LIMIT_SIZE;
         while (length > 0) {
             blockSize = Math.min(blockSize, length);
             digest.update(read(file.getPath(), position, (int) blockSize));
