@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 
 import static com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant.*;
@@ -43,7 +43,7 @@ public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implement
     @Getter
     @TableField(value = "created", strategy = FieldStrategy.NOT_EMPTY, fill = FieldFill.INSERT)
     @Column(name = "created", type = DATETIME, isNull = false, defaultValue = "CURRENT_TIMESTAMP", comment = "创建时间")
-    private Timestamp created;
+    private LocalDateTime created;
 
     /*** 更新者 ***/
     @Getter
@@ -57,7 +57,7 @@ public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implement
     @Version
     @TableField(value = "updated", strategy = FieldStrategy.NOT_EMPTY, fill = FieldFill.INSERT_UPDATE)
     @Column(name = "updated", type = DATETIME, isNull = false, defaultValue = "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", comment = "更新时间")
-    private Timestamp updated;
+    private LocalDateTime updated;
 
     /*** 启用禁用 ***/
     @Getter
