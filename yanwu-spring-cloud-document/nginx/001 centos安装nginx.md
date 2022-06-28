@@ -9,7 +9,7 @@
 >   安装 nginx 需要先将官网下载的源码进行编译，编译依赖 gcc 环境，如果没有 gcc 环境，则需要安装：
 
 ```shell
-yum install gcc-c++
+yum install gcc-c++ -y
 ```
 
 ##### PCRE pcre-devel 安装

@@ -26,7 +26,7 @@
 ```shell
 ##### cat /usr/local/nginx/conf/nginx.conf
 user root;
-worker_processes ;
+worker_processes 1;
 pid /usr/local/nginx/logs/nginx.pid;
 events {
     worker_connections 1024;

@@ -8,10 +8,9 @@
 # -i eth0							# 指定网卡			#
 # tcp 								# 抓取TCP报文		#
 # port 9090 						# 抓取9090端口 		#
-# ether 00:16:3e:06:74:a8			# 抓取该网卡数据 	  #
 # -w ./tcpdump.pcap		 			# 将数据写入文件	  #
 #########################################################
-nohup tcpdump -i eth0 -vnn \( tcp \) and \( port 9090 \) and \( ether 00:16:3e:06:74:a8 \) -w ./tcpdump.pcap &
+nohup tcpdump -i eth0 -vnn tcp and port 9090 -w ./tcpdump.pcap &
 ```
 
 

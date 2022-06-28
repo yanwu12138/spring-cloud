@@ -58,7 +58,7 @@ yum install yasm -y
 ##### 编译与安装
 
 ```shell
-./configure --enable-shared --prefix=/usr/local/ffmpeg
+./configure --enable-shared --prefix=/usr/local/ffmpeg  --enable-openssl
 make && make install
 ```
 
