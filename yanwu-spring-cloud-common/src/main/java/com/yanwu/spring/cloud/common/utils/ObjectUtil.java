@@ -1,12 +1,12 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Baofeng Xu
@@ -15,10 +15,68 @@ import java.util.Objects;
  * description:
  */
 @SuppressWarnings("unused")
+@Slf4j
 public class ObjectUtil {
 
-    public ObjectUtil() {
+    private ObjectUtil() {
         throw new UnsupportedOperationException("ObjectUtil should never be instantiated");
+    }
+
+    public static Field field(Object obj, String fieldName) {
+        if (obj == null || obj.getClass() == null || StringUtils.isBlank(fieldName)) {
+            return null;
+        }
+        Class<?> clazz = obj.getClass();
+        Field[] declaredFields = clazz.getDeclaredFields();
+        Field result = null;
+        if (declaredFields.length > 0 && (result = field(declaredFields, fieldName)) != null) {
+            return result;
+        }
+        Set<Field> superFields = new HashSet<>();
+        superclassField(clazz, superFields);
+        if (!superFields.isEmpty()) {
+            result = field(superFields, fieldName);
+        }
+        return result;
+    }
+
+    private static void superclassField(Class<?> clazz, Set<Field> result) {
+        if (clazz == null) {
+            return;
+        }
+        Class<?> superclass = clazz.getSuperclass();
+        if (superclass == null) {
+            return;
+        }
+        Field[] superclassFields = superclass.getDeclaredFields();
+        if (superclassFields.length > 0) {
+            result.addAll(Arrays.asList(superclassFields));
+        }
+        superclassField(superclass, result);
+    }
+
+    private static Field field(Collection<Field> fields, String failedName) {
+        if (CollectionUtils.isEmpty(fields)) {
+            return null;
+        }
+        for (Field field : fields) {
+            if (failedName.equals(field.getName())) {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    private static Field field(Field[] fields, String failedName) {
+        if (fields.length == 0) {
+            return null;
+        }
+        for (Field field : fields) {
+            if (failedName.equals(field.getName())) {
+                return field;
+            }
+        }
+        return null;
     }
 
     /**
@@ -96,6 +154,19 @@ public class ObjectUtil {
             result[i] = list.get(i);
         }
         return result;
+    }
+
+    public static Object fieldValue(Object obj, String fieldName) throws Exception {
+        if (obj == null || Objects.isNull(obj.getClass()) || StringUtils.isBlank(fieldName)) {
+            return null;
+        }
+        Class<?> clazz = obj.getClass();
+        Field field = field(obj, fieldName);
+        if (field == null) {
+            return null;
+        }
+        field.setAccessible(true);
+        return field.get(obj);
     }
 
 }

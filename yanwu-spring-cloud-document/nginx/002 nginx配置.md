@@ -45,8 +45,8 @@ http {
 		location /fileG/ {
             alias /home/file/;
     	    autoindex on;
-    	    autoindex_exact_size on;
     	    autoindex_localtime on;
+    	    autoindex_exact_size off;
         }
 
 		location /fileR/ {
