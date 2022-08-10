@@ -1,11 +1,14 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -22,6 +25,29 @@ public class ObjectUtil {
         throw new UnsupportedOperationException("ObjectUtil should never be instantiated");
     }
 
+    /***
+     * 判断是否是静态函数
+     * @param method 函数
+     * @return 【true: 是静态; false: 非静态】
+     */
+    public static boolean isStatic(@NonNull Method method) {
+        return Modifier.isStatic(method.getModifiers());
+    }
+
+    /***
+     * 判断是否是静态字段
+     * @param field 字段
+     * @return 【true: 静态; false: 非静态】
+     */
+    public static boolean isStatic(@NonNull Field field) {
+        return Modifier.isStatic(field.getModifiers());
+    }
+
+    /***
+     * 根据对象和字段名获取字段对象
+     * @param obj       对象
+     * @param fieldName 字段名
+     */
     public static Field field(Object obj, String fieldName) {
         if (obj == null || obj.getClass() == null || StringUtils.isBlank(fieldName)) {
             return null;
@@ -40,6 +66,11 @@ public class ObjectUtil {
         return result;
     }
 
+    /***
+     * 根据对象类型找到所有的属性
+     * @param clazz  对象
+     * @param result 结果集
+     */
     private static void superclassField(Class<?> clazz, Set<Field> result) {
         if (clazz == null) {
             return;
@@ -55,6 +86,11 @@ public class ObjectUtil {
         superclassField(superclass, result);
     }
 
+    /***
+     * 从属性集合中找到对应的属性
+     * @param fields     属性集
+     * @param failedName 属性名称
+     */
     private static Field field(Collection<Field> fields, String failedName) {
         if (CollectionUtils.isEmpty(fields)) {
             return null;
@@ -67,6 +103,11 @@ public class ObjectUtil {
         return null;
     }
 
+    /***
+     * 从属性集合中找到对应的属性
+     * @param fields     属性集
+     * @param failedName 属性名称
+     */
     private static Field field(Field[] fields, String failedName) {
         if (fields.length == 0) {
             return null;
@@ -79,9 +120,8 @@ public class ObjectUtil {
         return null;
     }
 
-    /**
+    /***
      * 获取对象所有的属性(共有+私有)
-     *
      * @param obj 对象
      * @param <T> T
      * @return 所有的属性
@@ -90,9 +130,8 @@ public class ObjectUtil {
         return fields(obj.getClass());
     }
 
-    /**
+    /***
      * 获取对象所有的属性(共有+私有)
-     *
      * @param clazz 对象类型
      * @param <T>   T
      * @return 所有的属性
@@ -113,9 +152,8 @@ public class ObjectUtil {
     }
 
 
-    /**
+    /***
      * 获取对象所有的属性的字段名(共有+私有)
-     *
      * @param obj 对象
      * @param <T> T
      * @return 所有的属性
@@ -124,9 +162,8 @@ public class ObjectUtil {
         return fieldNames(fields(obj.getClass()));
     }
 
-    /**
+    /***
      * 获取对象所有的属性的字段名(共有+私有)
-     *
      * @param clazz 对象类型
      * @param <T>   T
      * @return 所有的属性
@@ -156,6 +193,12 @@ public class ObjectUtil {
         return result;
     }
 
+    /***
+     * 根据属性名从对象中获取对应的属性值
+     * @param obj       对象
+     * @param fieldName 属性名
+     * @return 属性值
+     */
     public static Object fieldValue(Object obj, String fieldName) throws Exception {
         if (obj == null || Objects.isNull(obj.getClass()) || StringUtils.isBlank(fieldName)) {
             return null;

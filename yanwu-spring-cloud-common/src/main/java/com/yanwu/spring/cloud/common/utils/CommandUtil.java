@@ -36,23 +36,15 @@ public class CommandUtil {
      */
     public static Object invoke(Class<?> clazz, String methodName, Object... args) throws Exception {
         Method method = clazz.getDeclaredMethod(methodName, getArgType(args));
-        Object result = method.invoke(ContextUtil.getBean(clazz), args);
-        log.info("invoke. class: {}, method: {}, params: [{}], result: [{}]", clazz.getName(), method.getName(), args, result);
-        return result;
-    }
-
-    /***
-     * 通过反射执行对应的静态函数
-     * @param clazz      源对象(被代理对象)
-     * @param methodName 被代理静态方法
-     * @param args       被代理方法参数集
-     * @return 函数执行结果
-     * @throws Exception Exception.class
-     */
-    public static Object invokeStatic(Class<?> clazz, String methodName, Object... args) throws Exception {
-        Method method = clazz.getDeclaredMethod(methodName, getArgType(args));
-        Object result = method.invoke(null, args);
-        log.info("invoke static. class: {}, method: {}, params: [{}], result: [{}]", clazz.getName(), method.getName(), args, result);
+        Object object;
+        if (ObjectUtil.isStatic(method)) {
+            object = null;
+        } else {
+            object = ContextUtil.getBean(clazz);
+            object = object == null ? clazz.newInstance() : object;
+        }
+        Object result = method.invoke(object, args);
+        log.info("invoke. class: {}, method: {}, params: {}, result: [{}]", clazz.getName(), method.getName(), args, result);
         return result;
     }
 
