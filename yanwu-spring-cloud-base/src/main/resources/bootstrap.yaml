@@ -14,14 +14,14 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://60.205.57.82:3306/yanwu_base?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
     username: root
-    password: yanwu12138
+    password: xbf_JS.2643
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
-    host: 127.0.0.1
+    host: 60.205.57.82
     port: 6379
-    password: yanwu12138
+    password: xbf_JS.2643
     timeout: 10000
     database: 1
 #  cloud:

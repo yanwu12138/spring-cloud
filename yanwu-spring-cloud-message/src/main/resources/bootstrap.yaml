@@ -10,16 +10,16 @@ spring:
         group: DEFAULT_GROUP
         namespace: a2e2dede-d9bf-4eae-a520-82f920801ab9
   rabbitmq:
-    host: 127.0.0.1
+    host: 60.205.57.82
     port: 5672
     username: root
-    password: yanwu12138
+    password: xbf_JS.2643
     ### 消息确认: 消息已发送至交换机
     publisher-confirm-type: correlated
     ### 消息确认: 消息已发送至队列
     publisher-returns: true
   rocket:
-    name-server: 127.0.0.1:9876
+    name-server: 60.205.57.82:9876
     enabled: true
     consumer:
       - group: ConsumerBase

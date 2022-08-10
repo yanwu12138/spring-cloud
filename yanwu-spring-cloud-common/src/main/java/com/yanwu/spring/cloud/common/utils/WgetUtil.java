@@ -220,6 +220,8 @@ public class WgetUtil {
             }
             num++;
         } while (num < tryNnm);
+        FileUtil.deleteFile(path);
+        log.error("wget failed, command: {}", command);
         return false;
     }
 
