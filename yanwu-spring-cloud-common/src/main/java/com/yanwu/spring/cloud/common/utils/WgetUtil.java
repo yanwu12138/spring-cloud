@@ -280,7 +280,7 @@ public class WgetUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        Object result = CommandUtil.invoke(WgetUtil.class, "wgetHttp", "https://bird-ops.oss-cn-shanghai.aliyuncs.com/upgrade/package/2.0/1001/1001-2.3.8.8.bin", "E:\\download\\edge-center.jar", 2);
+        Object result = CommandUtil.invoke(WgetUtil.class, "wgetHttp", "https://bird-ops.oss-cn-shanghai.aliyuncs.com/upgrade/package/2.0/1001/1001-2.3.8.8.bin", "E:\\download\\edge-center.jar");
         System.out.println(result);
         System.out.println(CommandUtil.invoke(WgetUtil.class, "test"));
     }
