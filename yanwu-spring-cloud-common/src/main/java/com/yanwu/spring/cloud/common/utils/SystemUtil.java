@@ -19,6 +19,10 @@ public class SystemUtil {
         return SystemType.getInstance(sysType);
     }
 
+    public static boolean isWindows() {
+        return SystemType.WINDOWS.equals(getSystemType());
+    }
+
     @Getter
     public enum SystemType {
         // ----- 操作系统类
