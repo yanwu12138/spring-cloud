@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Baofeng Xu
  * @date 2022/8/9 17:08.
  * <p>
- * description: 使用wget下载文件
+ * description: 使用wget下载文件(默认断点续传)
  * <p>
  */
 @Slf4j
