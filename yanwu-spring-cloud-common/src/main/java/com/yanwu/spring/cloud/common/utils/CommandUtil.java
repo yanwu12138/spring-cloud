@@ -42,6 +42,21 @@ public class CommandUtil {
     }
 
     /***
+     * 通过反射执行对应的静态函数
+     * @param clazz      源对象(被代理对象)
+     * @param methodName 被代理静态方法
+     * @param args       被代理方法参数集
+     * @return 函数执行结果
+     * @throws Exception Exception.class
+     */
+    public static Object invokeStatic(Class<?> clazz, String methodName, Object... args) throws Exception {
+        Method method = clazz.getDeclaredMethod(methodName, getArgType(args));
+        Object result = method.invoke(null, args);
+        log.info("invoke static. class: {}, method: {}, params: [{}], result: [{}]", clazz.getName(), method.getName(), args, result);
+        return result;
+    }
+
+    /***
      * 建立与服务器的连接，默认使用22端口
      * @param ip       服务器IP
      * @param username 登录服务器的用户名
