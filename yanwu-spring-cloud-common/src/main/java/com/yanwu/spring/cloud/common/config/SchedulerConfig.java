@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadFactory;
  */
 @Configuration
 @EnableScheduling
-@ConditionalOnProperty(prefix = "yanwu.spring.cloud.scheduler.enabled", value = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "yanwu.spring.cloud.scheduler", value = "enabled", havingValue = "true", matchIfMissing = true)
 public class SchedulerConfig implements SchedulingConfigurer {
 
     @Override
