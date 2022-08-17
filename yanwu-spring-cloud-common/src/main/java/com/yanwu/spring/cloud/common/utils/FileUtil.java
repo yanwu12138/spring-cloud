@@ -15,6 +15,8 @@ import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
@@ -48,6 +50,39 @@ public class FileUtil {
 
     private FileUtil() {
         throw new UnsupportedOperationException("FileUtil should never be instantiated");
+    }
+
+    /**
+     * 根据文件地址获取文件大小
+     *
+     * @param fileUrl 远程文件地址
+     * @return [-1: 未获取到文件大小]
+     */
+    public static long fileSize(String fileUrl) throws Exception {
+        if (StringUtils.isBlank(fileUrl)) {
+            return -1;
+        }
+        return fileSize(new URL(fileUrl));
+    }
+
+    /**
+     * 根据文件地址获取文件大小
+     *
+     * @param fileUrl 远程文件地址
+     * @return [-1: 未获取到文件大小]
+     */
+    public static long fileSize(URL fileUrl) throws Exception {
+        URLConnection conn = null;
+        try {
+            conn = fileUrl.openConnection();
+            return conn.getContentLength();
+        } catch (Exception e) {
+            return -1;
+        } finally {
+            if (conn != null) {
+                IOUtil.close(conn.getInputStream());
+            }
+        }
     }
 
     /**
