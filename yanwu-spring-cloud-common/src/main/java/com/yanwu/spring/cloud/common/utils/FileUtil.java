@@ -72,6 +72,9 @@ public class FileUtil {
      * @return [-1: 未获取到文件大小]
      */
     public static long fileSize(URL fileUrl) throws Exception {
+        if (fileUrl == null) {
+            return -1;
+        }
         URLConnection conn = null;
         try {
             conn = fileUrl.openConnection();
