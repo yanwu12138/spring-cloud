@@ -59,10 +59,7 @@ public class FileUtil {
      * @return [-1: 未获取到文件大小]
      */
     public static long fileSize(String fileUrl) throws Exception {
-        if (StringUtils.isBlank(fileUrl)) {
-            return -1;
-        }
-        return fileSize(new URL(fileUrl));
+        return StringUtils.isBlank(fileUrl) ? -1 : fileSize(new URL(fileUrl));
     }
 
     /**
