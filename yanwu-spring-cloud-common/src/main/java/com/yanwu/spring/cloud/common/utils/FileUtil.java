@@ -66,6 +66,10 @@ public class FileUtil {
         return file.isFile() ? file.length() : -1;
     }
 
+    public static void main(String[] args) throws Exception {
+        System.out.println(remoteFileSize("https://bird-test-1.oss-cn-beijing.aliyuncs.com/test-0.0.0.34.bin"));
+    }
+
     /**
      * 根据文件地址获取文件大小
      * - 该方法可能存在误差
@@ -91,8 +95,7 @@ public class FileUtil {
         URLConnection conn = null;
         try {
             conn = fileUrl.openConnection();
-            int contentLength = conn.getContentLength();
-            return contentLength > 0 ? contentLength : conn.getInputStream().available();
+            return conn.getContentLength();
         } catch (Exception e) {
             return -1;
         } finally {
