@@ -55,32 +55,50 @@ public class FileUtil {
     /**
      * 根据文件地址获取文件大小
      *
-     * @param fileUrl 远程文件地址
+     * @param filePath 本地文件地址
      * @return [-1: 未获取到文件大小]
      */
-    public static long fileSize(String fileUrl) throws Exception {
-        return StringUtils.isBlank(fileUrl) ? -1 : fileSize(new URL(fileUrl));
+    private static long localFileSize(String filePath) {
+        if (StringUtils.isBlank(filePath)) {
+            return -1;
+        }
+        File file = new File(filePath);
+        return file.isFile() ? file.length() : -1;
     }
 
     /**
      * 根据文件地址获取文件大小
+     * - 该方法可能存在误差
      *
      * @param fileUrl 远程文件地址
      * @return [-1: 未获取到文件大小]
      */
-    public static long fileSize(URL fileUrl) throws Exception {
+    public static long remoteFileSize(String fileUrl) throws Exception {
+        return StringUtils.isBlank(fileUrl) ? -1 : remoteFileSize(new URL(fileUrl));
+    }
+
+    /**
+     * 根据文件地址获取文件大小
+     * - 该方法可能存在误差
+     *
+     * @param fileUrl 远程文件地址
+     * @return [-1: 未获取到文件大小]
+     */
+    public static long remoteFileSize(URL fileUrl) throws Exception {
         if (fileUrl == null) {
             return -1;
         }
         URLConnection conn = null;
         try {
             conn = fileUrl.openConnection();
-            return conn.getContentLength();
+            int contentLength = conn.getContentLength();
+            return contentLength > 0 ? contentLength : conn.getInputStream().available();
         } catch (Exception e) {
             return -1;
         } finally {
             if (conn != null) {
                 IOUtil.close(conn.getInputStream());
+                IOUtil.close(conn.getOutputStream());
             }
         }
     }
