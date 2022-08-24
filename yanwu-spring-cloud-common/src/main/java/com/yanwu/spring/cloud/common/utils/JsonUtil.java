@@ -49,6 +49,31 @@ public final class JsonUtil {
         throw new UnsupportedOperationException("JsonUtil should never be instantiated");
     }
 
+    /**
+     * 从JsonNode取出字符串
+     *
+     * @param node json
+     * @param key  K
+     * @return V
+     */
+    public static String pathText(JsonNode node, String key) {
+        return pathText(node, key, "");
+    }
+
+    /**
+     * 从JsonNode取出字符串
+     *
+     * @param node         json
+     * @param key          K
+     * @param defaultValue 当json为空或者key不存在时返回该默认值
+     * @return V || DV
+     */
+    public static String pathText(JsonNode node, String key, String defaultValue) {
+        if (node == null || StringUtils.isBlank(key)) {
+            return defaultValue;
+        }
+        return node.findPath(key).asText(defaultValue);
+    }
 
     /**
      * 将对象转换成json字符串
