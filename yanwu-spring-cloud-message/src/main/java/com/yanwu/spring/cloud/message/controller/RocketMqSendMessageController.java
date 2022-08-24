@@ -32,7 +32,7 @@ public class RocketMqSendMessageController<T extends Serializable> {
         WrapperMessage message = new WrapperMessage();
         message.setTag(tag);
         message.setTopic(topic);
-        message.setBody(JsonUtil.toCompactJsonString(param));
+        message.setBody(JsonUtil.toString(param));
         rocketProducerWrapperBean.sendOneway(message);
         return ResponseEnvelope.success(Boolean.TRUE);
     }

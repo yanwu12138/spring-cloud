@@ -69,7 +69,7 @@ public class MessageScheduler<T> {
                     + File.separator + DateUtil.filling(dateTime.getMonthValue()) + File.separator + DateUtil.datetimeStr(dateTime);
             messages.forEach((key, message) -> {
                 try {
-                    byte[] block = (key + " - " + JsonUtil.toCompactJsonString(message) + "\r\n").getBytes(StandardCharsets.UTF_8);
+                    byte[] block = (key + " - " + JsonUtil.toString(message) + "\r\n").getBytes(StandardCharsets.UTF_8);
                     FileUtil.appendWrite(filepath, block);
                 } catch (Exception e) {
                     log.error("write expired message error.", e);

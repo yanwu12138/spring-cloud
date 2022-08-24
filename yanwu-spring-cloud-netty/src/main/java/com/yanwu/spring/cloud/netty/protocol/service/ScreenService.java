@@ -38,6 +38,6 @@ public class ScreenService extends AbstractHandler {
 
     @Override
     public <T> String assemble(MessageQueueBO<T> param) {
-        return ByteUtil.gbkStrToHexStr(JsonUtil.toCompactJsonString(param.getMessage()));
+        return ByteUtil.gbkStrToHexStr(JsonUtil.toString(param.getMessage()));
     }
 }

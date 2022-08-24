@@ -36,14 +36,14 @@ public class WebSocketService {
     public void onOpen(Session session, @PathParam("accountId") String accountId) {
         if (StringUtils.isBlank(accountId)) {
             log.error("web socket on open failed, because accountId is empty.");
-            sendMessage(JsonUtil.toCompactJsonString(ResponseEnvelope.failed("accountId不能为空")));
+            sendMessage(JsonUtil.toString(ResponseEnvelope.failed("accountId不能为空")));
             return;
         }
         this.session = session;
         this.accountId = accountId;
         this.lastTime = System.currentTimeMillis();
         WEB_SOCKET_CACHE.add(this);
-        sendMessage(JsonUtil.toCompactJsonString(ResponseEnvelope.success("conn_success")));
+        sendMessage(JsonUtil.toString(ResponseEnvelope.success("conn_success")));
         log.info("web socket on open, accountId: {}, count: {}", accountId, WEB_SOCKET_CACHE.size());
     }
 

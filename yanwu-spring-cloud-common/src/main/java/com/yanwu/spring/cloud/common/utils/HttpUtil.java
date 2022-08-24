@@ -179,7 +179,7 @@ public class HttpUtil {
         if (Objects.isNull(param)) {
             return;
         }
-        String paramStr = JsonUtil.toCompactJsonString(param);
+        String paramStr = JsonUtil.toString(param);
         StringEntity entity = new StringEntity(paramStr, UTF8);
         entity.setContentType(APPLICATION_JSON);
         request.setEntity(entity);

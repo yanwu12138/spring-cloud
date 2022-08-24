@@ -47,7 +47,7 @@ public class Crc16Util {
      */
     public static <T> int getCrc16ByJson(T json) {
         Assert.isTrue(Objects.nonNull(json), "The object cannot be empty!");
-        return getCrc16ByJson(JsonUtil.toJsonString(json));
+        return getCrc16ByJson(JsonUtil.formatJson(json));
     }
 
     /**

@@ -270,7 +270,7 @@ public class AisUtil {
         }
         try {
             String aisPath = AIS_SOURCE_PATH + getPath() + "_static";
-            FileUtil.appendWrite(aisPath, (JsonUtil.toCompactJsonString(staticClass) + "\r\n").getBytes(StandardCharsets.UTF_8));
+            FileUtil.appendWrite(aisPath, (JsonUtil.toString(staticClass) + "\r\n").getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error("write ais static data failed.", e);
         }
@@ -282,7 +282,7 @@ public class AisUtil {
         }
         try {
             String aisPath = AIS_SOURCE_PATH + getPath() + "_dynamic";
-            FileUtil.appendWrite(aisPath, (JsonUtil.toCompactJsonString(dynamicClass) + "\r\n").getBytes(StandardCharsets.UTF_8));
+            FileUtil.appendWrite(aisPath, (JsonUtil.toString(dynamicClass) + "\r\n").getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error("write ais dynamic data failed.", e);
         }

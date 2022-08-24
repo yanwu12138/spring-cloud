@@ -81,7 +81,7 @@ public final class JsonUtil {
      * @param obj object
      * @return json字符串
      */
-    public static String toJsonString(final Object obj) {
+    public static String formatJson(final Object obj) {
         try {
             return toJsonStringRaw(obj);
         } catch (Exception e) {
@@ -96,8 +96,8 @@ public final class JsonUtil {
      * @param obj object
      * @return json字符串
      */
-    public static String toCompactJsonString(final Object obj) {
-        return toCompactJsonString(obj, false);
+    public static String toString(final Object obj) {
+        return toString(obj, false);
     }
 
     /**
@@ -106,7 +106,7 @@ public final class JsonUtil {
      * @param obj object
      * @return json字符串
      */
-    public static String toCompactJsonString(final Object obj, final boolean decodeForXss) {
+    public static String toString(final Object obj, final boolean decodeForXss) {
         StringWriter sw = new StringWriter();
         try {
             getObjectMapper(decodeForXss).writer().writeValue(sw, obj);
@@ -202,7 +202,7 @@ public final class JsonUtil {
         if (source == null) {
             return null;
         }
-        return toObject(toJsonString(source), clazz);
+        return toObject(formatJson(source), clazz);
     }
 
     /**

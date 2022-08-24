@@ -82,7 +82,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     @Override
     public void typeCreate(EsType param) throws Exception {
         IndexRequest request = new IndexRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
-        request.source(JsonUtil.toCompactJsonString(param.getData()), XContentType.JSON);
+        request.source(JsonUtil.toString(param.getData()), XContentType.JSON);
         IndexResponse response = elasticsearchClient.index(request, DEFAULT);
         log.info("elasticsearch type create, param: {}, result: {}", param, response);
     }
@@ -92,7 +92,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         BulkRequest request = new BulkRequest();
         for (EsType type : param) {
             IndexRequest index = new IndexRequest(type.getIndex().getIndex(), type.getType(), type.getTypeId());
-            request.add(index.source(JsonUtil.toCompactJsonString(type.getData()), XContentType.JSON));
+            request.add(index.source(JsonUtil.toString(type.getData()), XContentType.JSON));
         }
         BulkResponse response = elasticsearchClient.bulk(request, DEFAULT);
         log.info("elasticsearch type bulk create, param: {}, result: {}", param, response);
@@ -109,7 +109,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     @Override
     public void typeUpdate(EsType param) throws Exception {
         UpdateRequest request = new UpdateRequest(param.getIndex().getIndex(), param.getType(), param.getTypeId());
-        request.doc(JsonUtil.toCompactJsonString(param.getData()), XContentType.JSON);
+        request.doc(JsonUtil.toString(param.getData()), XContentType.JSON);
         UpdateResponse response = elasticsearchClient.update(request, DEFAULT);
         log.info("elasticsearch type update, param: {}, result: {}", param, response);
     }
@@ -119,7 +119,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         BulkRequest request = new BulkRequest();
         for (EsType type : param) {
             UpdateRequest update = new UpdateRequest(type.getIndex().getIndex(), type.getType(), type.getTypeId());
-            request.add(update.doc(JsonUtil.toCompactJsonString(type.getData()), XContentType.JSON));
+            request.add(update.doc(JsonUtil.toString(type.getData()), XContentType.JSON));
         }
         BulkResponse response = elasticsearchClient.bulk(request, DEFAULT);
         log.info("elasticsearch type bulk update, param: {}, result: {}", param, response);

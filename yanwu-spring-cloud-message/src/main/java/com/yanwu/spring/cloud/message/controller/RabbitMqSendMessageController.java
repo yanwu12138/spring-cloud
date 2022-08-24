@@ -56,7 +56,7 @@ public class RabbitMqSendMessageController<T extends Serializable> {
     private void sender(String exchange, String routing, MessageBO<T> param) {
         param.setCreate(new Timestamp(System.currentTimeMillis()));
         log.info("sender, exchange: {}, routing: {}, param: {}", exchange, routing, param);
-        template.convertAndSend(exchange, routing, JsonUtil.toCompactJsonString(param));
+        template.convertAndSend(exchange, routing, JsonUtil.toString(param));
     }
 
 }

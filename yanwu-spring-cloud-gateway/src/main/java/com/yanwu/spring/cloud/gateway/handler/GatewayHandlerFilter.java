@@ -90,7 +90,7 @@ public class GatewayHandlerFilter implements GlobalFilter, Ordered {
         switch (Objects.requireNonNull(request.getMethod())) {
             case GET:
             case DELETE:
-                tmoParam = JsonUtil.toJsonString(request.getQueryParams());
+                tmoParam = JsonUtil.formatJson(request.getQueryParams());
             case PUT:
             case POST:
                 MediaType contentType = request.getHeaders().getContentType();
