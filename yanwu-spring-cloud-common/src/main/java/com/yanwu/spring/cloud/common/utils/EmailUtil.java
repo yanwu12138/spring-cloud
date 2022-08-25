@@ -29,7 +29,7 @@ public class EmailUtil {
     /*** 发件人账户名 */
     private static final String ACCOUNT = "499496273@qq.com";
     /*** 发件人账户密码[注：此密码不是邮箱登陆密码，而是邮箱授权密码] */
-    private static final String PASSWORD = "xxxxxxxx";
+    private static final String PASSWORD = "gvoggmlkhdpncbec";
 
     private static final String CONTENT_TYPE = "text/html;charset=UTF-8";
 
@@ -55,6 +55,12 @@ public class EmailUtil {
 
     private EmailUtil() {
         throw new UnsupportedOperationException("EmailUtil should never be instantiated");
+    }
+
+    public static void main(String[] args) throws Exception {
+        sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, "yanwu0527@163.com", null,
+                "测试邮件", "尊敬的用户：305306733@qq.com，您的车票已经抢票成功！信息如下:乘客:王栋,日期:2019-10-30,车次:K824,地点:杭州06:30-合肥07:23,席别:硬座。请在30分钟内完成付款！更多信息请查询未付款订单。"
+                , "E:\\tool\\服务器.md", "E:\\document\\波束切换\\备忘录.md","E:\\home\\appuser\\file\\antenna\\beamData\\newtecBeamData.json");
     }
 
     /**

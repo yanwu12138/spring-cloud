@@ -12,8 +12,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +64,7 @@ public class AliOssUtil {
         if (!file.exists() || !file.isFile()) {
             return OssResult.failed("OSS upload failed: file is not exists or file is not file.");
         }
-        try (InputStream is = new FileInputStream(file)) {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
             return upload(properties, is, type, file.getName());
         }
     }
@@ -122,7 +122,7 @@ public class AliOssUtil {
         if (!file.exists() || !file.isFile()) {
             return OssResult.failed("OSS upload failed: file is not exists or file is not file.");
         }
-        try (InputStream is = new FileInputStream(file)) {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
             return upload(ossClient, bucket, is, type, file.getName());
         }
     }
