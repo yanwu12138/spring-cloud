@@ -58,7 +58,7 @@ public class EmailUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, "yanwu0527@163.com", new String[]{},
+        sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, "yanwu0527@163.com", new String[]{"baofeng.xu@birdsat.cn"},
                 "测试邮件", "尊敬的用户：305306733@qq.com，您的车票已经抢票成功！信息如下:乘客:王栋,日期:2019-10-30,车次:K824,地点:杭州06:30-合肥07:23,席别:硬座。请在30分钟内完成付款！更多信息请查询未付款订单。"
                 , "E:\\tool\\服务器.md", "E:\\document\\波束切换\\备忘录.md","E:\\home\\appuser\\file\\antenna\\beamData\\newtecBeamData.json");
     }
