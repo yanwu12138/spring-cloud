@@ -100,7 +100,7 @@ sudo -su admin ./appctl.sh stop
     #!/bin/bash
     su - admin <<EOF
     cd /home/admin/{SERVER}/bin/
-    source ./appctl.sh start
+    source ./appctl.sh rstart
     exit;
     EOF
     ```

@@ -49,18 +49,18 @@ EXIT;
 -   修改`/etc/mysql/my.cnf`文件，加入以下配置
 
     ```shell
-    [mysql] 
+    [mysql]
     default-character-set=utf8
-    [mysql.server] 
+    [mysql.server]
     default-character-set=utf8
-    [mysqld_safe] 
+    [mysqld_safe]
     default-character-set=utf8
-    [client] 
+    [client]
     default-character-set=utf8
-    [mysqld] 
-    character_set_server=utf8 
+    [mysqld]
+    character_set_server=utf8
     init_connect='SET NAMES utf8'
-    default-time-zone = '+8:00'
+    default-time-zone='+8:00'
     lower_case_table_names=1
     ```
 
