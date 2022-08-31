@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 @SuppressWarnings("unused")
 public class WgetUtil {
-    private static final String SPLIT = " ";
 
     private WgetUtil() {
         throw new UnsupportedOperationException("WgetUtil should never be instantiated");
