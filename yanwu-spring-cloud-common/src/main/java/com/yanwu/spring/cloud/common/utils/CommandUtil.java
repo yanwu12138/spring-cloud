@@ -43,6 +43,7 @@ public class CommandUtil {
             object = ContextUtil.getBean(clazz);
             object = object == null ? clazz.newInstance() : object;
         }
+        method.setAccessible(true);
         Object result = method.invoke(object, args);
         log.info("invoke. class: {}, method: {}, params: {}, result: [{}]", clazz.getName(), method.getName(), args, result);
         return result;
