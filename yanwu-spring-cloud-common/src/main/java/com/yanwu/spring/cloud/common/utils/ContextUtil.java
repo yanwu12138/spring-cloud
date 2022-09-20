@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -34,21 +35,21 @@ public class ContextUtil implements ApplicationContextAware {
     }
 
     public static Object getBean(String beanName) {
-        if (context == null) {
+        if (context == null || StringUtils.isBlank(beanName)) {
             return null;
         }
         return context.getBean(beanName);
     }
 
     public static <T> T getBean(Class<T> clazz) {
-        if (context == null) {
+        if (context == null || clazz == null) {
             return null;
         }
         return context.getBean(clazz);
     }
 
     public static <T> T getBean(String beanName, Class<T> clazz) {
-        if (context == null) {
+        if (context == null || StringUtils.isBlank(beanName) || clazz == null) {
             return null;
         }
         return context.getBean(beanName, clazz);
