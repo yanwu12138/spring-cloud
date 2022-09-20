@@ -45,7 +45,7 @@ public class CommandUtil {
         }
         method.setAccessible(true);
         Object result = method.invoke(object, args);
-        log.info("invoke. class: {}, method: {}, params: {}, result: [{}]", clazz.getName(), method.getName(), args, result);
+        log.info("invoke. class: {}, method: {}, params: {}, result: [{}]", clazz.getSimpleName(), method.getName(), args, result);
         return result;
     }
 
