@@ -232,7 +232,7 @@ public class CommandUtil {
      * @param cmd 命令脚本
      * @return 执行结果
      */
-    private static String execLinuxCommand(String cmd) {
+    public static String execLinuxCommand(String cmd) {
         BufferedReader reader = null;
         BufferedReader errorReader = null;
         try {
