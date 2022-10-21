@@ -20,7 +20,7 @@
     <!--fishbone服务日志输出规则-->
     <appender name="logAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd-HH}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <MaxHistory>360</MaxHistory>
             <maxFileSize>200MB</maxFileSize>
         </rollingPolicy>
