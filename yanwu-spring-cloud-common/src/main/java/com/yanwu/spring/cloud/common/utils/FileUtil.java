@@ -842,4 +842,43 @@ public class FileUtil {
         return result;
     }
 
+    /**
+     * 获取文件的创建时间
+     *
+     * @param filePath 文件路径
+     * @return 创建时间
+     */
+    public static long createTime(String filePath) {
+        return StringUtils.isBlank(filePath) ? -1 : createTime(new File(filePath));
+    }
+
+    /**
+     * 获取文件的创建时间
+     *
+     * @param file 文件
+     * @return 创建时间
+     */
+    public static long createTime(File file) {
+        return file == null ? -1 : createTime(file.toPath());
+    }
+
+    /**
+     * 获取文件的创建时间
+     *
+     * @param path 文件
+     * @return 创建时间
+     */
+    public static long createTime(java.nio.file.Path path) {
+        if (path == null) {
+            return -1;
+        }
+        try {
+            BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+            return attributes.creationTime().toMillis();
+        } catch (Exception e) {
+            log.error("get file create time failed, file: {}.", path, e);
+            return -1;
+        }
+    }
+
 }
