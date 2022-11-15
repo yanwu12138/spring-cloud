@@ -76,6 +76,9 @@ public class NettyConfig {
     @Value("${serialport.stopBit:1}")
     private Integer stopBit;
 
+    @Getter
+    private int serverWorker;
+
     @JsonIgnore
     public NetworkInterface getInter() {
         NetworkInterface anInterface = NettyUtils.getInterface(interfaceName);

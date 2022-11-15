@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -28,6 +29,7 @@ import java.util.concurrent.Executor;
 @Slf4j
 @Component
 public class NettyTcpServer {
+    private static final AtomicInteger ATOMIC_INDEX = new AtomicInteger(0);
     /*** 创建bootstrap */
     private ServerBootstrap bootstrap;
     /*** BOSS */
@@ -52,8 +54,12 @@ public class NettyTcpServer {
                     throw new RuntimeException("netty udp server start error, port is illegal!");
                 }
                 bootstrap = new ServerBootstrap();
-                bossGroup = new NioEventLoopGroup();
-                workGroup = new NioEventLoopGroup();
+                bossGroup = new NioEventLoopGroup(1, r -> {
+                    return new Thread(r, "netty-boos-" + ATOMIC_INDEX.getAndIncrement());
+                });
+                workGroup = new NioEventLoopGroup(nettyConfig.getServerWorker(), r -> {
+                    return new Thread(r, "netty-worker-" + ATOMIC_INDEX.getAndIncrement());
+                });
                 while (!Thread.currentThread().isInterrupted()) {
                     bootstrap.group(bossGroup, workGroup)
                             .channel(NioServerSocketChannel.class)

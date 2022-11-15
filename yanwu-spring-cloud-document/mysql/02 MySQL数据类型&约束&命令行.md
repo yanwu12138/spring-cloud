@@ -262,3 +262,32 @@ SHOW INDEX FROM TABLE_NAME;
 -- 示例
 SHOW INDEX FROM yanwu_user;
 ```
+
+
+
+#### 用户
+
+##### 添加用户
+
+```sql
+-- 切换到mysql数据库
+use mysql;
+-- 添加用户：[username: 用户名; password: 密码]
+insert into user (host,user,password) values('%','username','password');
+-- 刷新
+flush privileges;
+```
+
+##### 更改用户密码
+
+```sql
+-- 切换到mysql数据库
+use mysql;
+-- 更改用户密码：[username: 用户名; password: 密码]
+update user set password = password('password') where user='username';
+-- 刷新
+flush privileges;
+```
+
+
+

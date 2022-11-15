@@ -12,7 +12,7 @@
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "registry-mirrors": ["{加速器地址}"]
+  "registry-mirrors": ["https://024gw3m4.mirror.aliyuncs.com"]
 }
 EOF
 sudo systemctl daemon-reload

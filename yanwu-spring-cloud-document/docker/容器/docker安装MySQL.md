@@ -16,13 +16,13 @@ docker image ls
 
 ```shell
 #######################################################
-# yanwu12138                  # root账号密码
+# Js_2643.                    # root账号密码
 # ~/mysql/data:/var/lib/mysql # mysql数据文件存放位置
 # mysql:5.7                   # 镜像名称与镜像版本
 # 3306:3306                   # 容器端口映射
 # restart=always              # 自动重启mysql容器
 #######################################################
-docker run -d --restart=always --name mysql -v ~/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=yanwu12138 -p 3306:3306 mysql:5.7
+docker run -d --restart=always --name mysql -v ~/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=Js_2643. -p 3306:3306 mysql:5.7
 ```
 
 ##### 进入MySQL容器
@@ -35,9 +35,9 @@ docker exec -ti mysql bash
 
 ```shell
 ### 登陆mysql
-mysql -uroot -pyanwu12138
+mysql -uroot -pJs_2643\.
 ### 开启远程连接
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'yanwu12138' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Js_2643.' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 EXIT;
 ```
