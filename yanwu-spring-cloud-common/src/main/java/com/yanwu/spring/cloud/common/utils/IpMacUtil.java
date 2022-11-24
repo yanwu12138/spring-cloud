@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.common.utils;
 
 import com.github.veqryn.net.Cidr4;
 import com.yanwu.spring.cloud.common.core.common.Contents;
+import com.yanwu.spring.cloud.common.pojo.PingBO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ public class IpMacUtil {
     private static final String UNKNOWN = "unknown";
     private static final String LOCAL_IPV4 = "127.0.0.1";
     private static final String LOCAL_IPV6 = "0:0:0:0:0:0:0:1";
+    private static final Pattern DOMAIN_PATTERN = Pattern.compile("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$");
     private static final Pattern IPV4_PATTERN = Pattern.compile("^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$");
     private static final Pattern IPV6_PATTERN = Pattern.compile("^([\\da-fA-F]{1,4}:){7}[\\da-fA-F]{1,4}$");
 
@@ -165,6 +167,16 @@ public class IpMacUtil {
     }
 
     /**
+     * 校验域名
+     *
+     * @param domain 域名
+     * @return true: 合法; false: 不合法
+     */
+    public static boolean checkDomain(String domain) {
+        return StringUtils.isNotBlank(domain) && DOMAIN_PATTERN.matcher(domain).find();
+    }
+
+    /**
      * 校验IPV4地址
      *
      * @param ip IPV4地址
@@ -240,10 +252,45 @@ public class IpMacUtil {
         return false;
     }
 
+    /**
+     * 对指定IP进行ping包，并返回结果(默认ping4个包)
+     *
+     * @param address IP地址 || 域名
+     * @return 当返回为null时说明参数异常
+     */
+    public static PingBO ping(String address) throws Exception {
+        return ping(address, 4);
+    }
+
+    /**
+     * 对指定IP进行ping包，并返回结果
+     *
+     * @param address IP地址 || 域名
+     * @param times   ping包次数
+     * @return 当返回为null时说明参数异常
+     */
+    public static PingBO ping(String address, int times) throws Exception {
+        if ((!checkIpv4(address) && !checkDomain(address)) || times <= 0) {
+            return null;
+        }
+        String command;
+        if (SystemUtil.isWindows()) {
+            command = StringUtils.joinWith(" ", "ping", address, "-n", times);
+        } else {
+            command = StringUtils.joinWith(" ", "ping", address, "-c", times);
+        }
+        return PingBO.getInstance(times, CommandUtil.execCommand(command));
+    }
+
     public static void main(String[] args) throws Exception {
         log.info("----- {}", getInterfaceName());
         log.info("----- {}", checkHostConnectable("127.0.0.1", 7001));
         log.info("----- {}", checkHostReachable("192.168.56.111"));
+
+        log.info("----- {}", ping("127.0.0.1", 10));
+        log.info("----- {}", ping("www.baidu.com"));
+        log.info("----- {}", ping("www.zhihu.com"));
+        log.info("----- {}", ping("business.boxingtong.net"));
     }
 
     /**
