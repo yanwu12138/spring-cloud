@@ -29,9 +29,9 @@ public class PingBO implements Serializable {
     /*** 收到回复的次数 ***/
     private int receive = 0;
     /*** 丢包率 ***/
-    private double loss = 100.0;
+    private int loss = 100;
     /*** 延迟(ms) ***/
-    private double time = 1000.0;
+    private int time = 1000;
 
     public static PingBO getInstance(int times, String commandResult) {
         PingBO result = new PingBO();
@@ -58,18 +58,18 @@ public class PingBO implements Serializable {
         return receive;
     }
 
-    private static double calcLoss(int times, int receive) {
+    private static int calcLoss(int times, int receive) {
         if (times <= 0 || receive <= 0) {
-            return 100.0D;
+            return 100;
         }
         if (times <= receive) {
-            return 0.0;
+            return 0;
         }
-        BigDecimal loss = BigDecimal.valueOf(times - receive).divide(BigDecimal.valueOf(times), 4, RoundingMode.HALF_UP);
-        return loss.multiply(BigDecimal.valueOf(100)).doubleValue();
+        BigDecimal loss = BigDecimal.valueOf(times - receive).divide(BigDecimal.valueOf(times), 2, RoundingMode.HALF_UP);
+        return loss.multiply(BigDecimal.valueOf(100)).intValue();
     }
 
-    private static double calcTime(String commandResult) {
+    private static int calcTime(String commandResult) {
         double sum = 0.0;
         int times = 0;
         Matcher matcher = TIMES_PATTERN.matcher(commandResult);
@@ -85,7 +85,7 @@ public class PingBO implements Serializable {
         if (times == 0) {
             return -1;
         }
-        return BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(times), 2, RoundingMode.HALF_UP).doubleValue();
+        return BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(times), 1, RoundingMode.HALF_UP).intValue();
     }
 
 }
