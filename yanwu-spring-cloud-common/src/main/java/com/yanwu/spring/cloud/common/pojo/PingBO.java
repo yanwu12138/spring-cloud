@@ -23,7 +23,8 @@ public class PingBO implements Serializable {
     private static final Pattern RECEIVE_PATTERN = Pattern.compile(" TTL=([\\s\\S]*?)", Pattern.CASE_INSENSITIVE);
     private static final Pattern TIMES_PATTERN = Pattern.compile("time[<|=]([\\s\\S]*?)ms", Pattern.CASE_INSENSITIVE);
 
-
+    /*** ping命令目标地址 ***/
+    private String address;
     /*** 总共ping的次数 ***/
     private int max;
     /*** 收到回复的次数 ***/
@@ -33,17 +34,24 @@ public class PingBO implements Serializable {
     /*** 延迟(ms) ***/
     private int time = 99999;
 
-    public static PingBO getInstance(int times, String commandResult) {
-        PingBO result = new PingBO();
-        result.setMax(times);
+    private PingBO() {
+    }
+
+    public static PingBO getInstance(String address, int times) {
+        return new PingBO().setAddress(address).setMax(times);
+    }
+
+    public static PingBO getInstance(String address, int times, String commandResult) {
+        PingBO instance = getInstance(address, times);
+        instance.setMax(times);
         if (StringUtils.isBlank(commandResult)) {
-            return result;
+            return instance;
         }
         int receive = calcReceive(commandResult);
-        result.setReceive(receive);
-        result.setLoss(calcLoss(times, receive));
-        result.setTime(calcTime(commandResult));
-        return result;
+        instance.setReceive(receive);
+        instance.setLoss(calcLoss(times, receive));
+        instance.setTime(calcTime(commandResult));
+        return instance;
     }
 
     private static int calcReceive(String commandResult) {

@@ -271,7 +271,10 @@ public class IpMacUtil {
      */
     public static PingBO ping(String address, int times) {
         if ((!checkIpv4(address) && !checkDomain(address)) || times <= 0) {
-            return null;
+            return PingBO.getInstance(address, times);
+        }
+        if (!checkHostReachable(address, 1000)) {
+            return PingBO.getInstance(address, times);
         }
         String command;
         if (SystemUtil.isWindows()) {
@@ -279,7 +282,7 @@ public class IpMacUtil {
         } else {
             command = StringUtils.joinWith(" ", "ping", address, "-c", times, "-w", (times + 1));
         }
-        return PingBO.getInstance(times, CommandUtil.execCommand(command));
+        return PingBO.getInstance(address, times, CommandUtil.execCommand(command));
     }
 
     public static void main(String[] args) throws Exception {
