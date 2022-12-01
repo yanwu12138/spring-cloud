@@ -275,9 +275,9 @@ public class IpMacUtil {
         }
         String command;
         if (SystemUtil.isWindows()) {
-            command = StringUtils.joinWith(" ", "ping", address, "-n", times);
+            command = StringUtils.joinWith(" ", "ping", address, "-n", times, "-w", (times + 1));
         } else {
-            command = StringUtils.joinWith(" ", "ping", address, "-c", times);
+            command = StringUtils.joinWith(" ", "ping", address, "-c", times, "-w", (times + 1));
         }
         return PingBO.getInstance(times, CommandUtil.execCommand(command));
     }
@@ -290,7 +290,7 @@ public class IpMacUtil {
         log.info("----- {}", ping("127.0.0.1", 9));
         log.info("----- {}", ping("www.baidu.com"));
         log.info("----- {}", ping("www.zhihu.com"));
-        log.info("----- {}", ping("business.boxingtong.net"));
+        log.info("----- {}", ping("39.25.7.12"));
     }
 
     /**
