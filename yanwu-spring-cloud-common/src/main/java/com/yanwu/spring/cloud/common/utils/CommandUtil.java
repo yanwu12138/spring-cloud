@@ -177,15 +177,12 @@ public class CommandUtil {
         } else {
             command = new String[]{"/bin/sh", "-c", cmd};
         }
-        InputStreamReader streamReader = null;
-        BufferedReader reader = null;
-        InputStreamReader errorStreamReader = null;
-        BufferedReader errorReader = null;
+        BufferedReader reader = null, errorReader = null;
+        InputStreamReader streamReader = null, errorStreamReader = null;
         try {
             Process proc = Runtime.getRuntime().exec(command);
             streamReader = new InputStreamReader(proc.getInputStream());
             reader = new BufferedReader(streamReader);
-
             String line;
             StringBuilder builder = new StringBuilder();
             while ((line = reader.readLine()) != null) {
@@ -197,10 +194,10 @@ public class CommandUtil {
                 builder.append(line).append("\r\n");
             }
             proc.waitFor();
-            log.info("exec linux command, cmd: {}", cmd);
+            log.info("exec command success, cmd: {}", cmd);
             return builder.toString();
         } catch (Exception e) {
-            log.error("exec linux command failed. cmd: {}.", cmd, e);
+            log.error("exec command failed. cmd: {}.", cmd, e);
             return null;
         } finally {
             IOUtil.closes(errorReader, errorStreamReader, reader, streamReader);
