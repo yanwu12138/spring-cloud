@@ -43,7 +43,6 @@ public class PingBO implements Serializable {
 
     public static PingBO getInstance(String address, int times, String commandResult) {
         PingBO instance = getInstance(address, times);
-        instance.setMax(times);
         if (StringUtils.isBlank(commandResult)) {
             return instance;
         }
