@@ -31,7 +31,7 @@ public class PingBO implements Serializable {
     /*** 丢包率 ***/
     private int loss = 100;
     /*** 延迟(ms) ***/
-    private int time = 1000;
+    private int time = 99999;
 
     public static PingBO getInstance(int times, String commandResult) {
         PingBO result = new PingBO();

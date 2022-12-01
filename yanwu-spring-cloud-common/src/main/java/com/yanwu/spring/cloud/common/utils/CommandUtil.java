@@ -165,82 +165,29 @@ public class CommandUtil {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        String fileNamePath = "E:\\home\\admin\\tmp\\file\\" + "recording" + File.separatorChar + "1653297704601";
-        String oggPath = fileNamePath + ".ogg";
-        String wavPath = fileNamePath + ".wav";
-        String command = "ffmpeg -i " + oggPath + " -acodec pcm_s16le -ac 1 -ar 16000 " + wavPath + " -y";
-        System.out.println(execCommand(command));
-        AudioUtil.playWav(wavPath);
-    }
-
     /***
-     * 执行系统命令
+     * 本地执行系统命令
      * @param cmd 命令脚本
      * @return 执行结果
      */
     public static String execCommand(String cmd) {
-        SystemUtil.SystemType systemType = SystemUtil.getSystemType();
-        switch (systemType) {
-            case WINDOWS:
-                return execWinCommand(cmd);
-            case LINUX:
-            case MAC_OS:
-                return execLinuxCommand(cmd);
-            default:
-                return null;
+        String[] command;
+        if (SystemUtil.isWindows()) {
+            command = new String[]{"cmd", "/c", cmd};
+        } else {
+            command = new String[]{"/bin/sh", "-c", cmd};
         }
-    }
-
-    /***
-     * 执行WINDOWS命令
-     * @param cmd 命令脚本
-     * @return 执行结果
-     */
-    public static String execWinCommand(String cmd) {
-        BufferedReader bufReader = null;
-        InputStreamReader streamReader = null;
-        try {
-            StringBuilder result = new StringBuilder();
-            // ----- 执行命令
-            ProcessBuilder builder = new ProcessBuilder().command("cmd", "/c", cmd).inheritIO();
-            // ----- 这里是把控制台中的红字变成了黑字，用通常的方法其实获取不到，控制台的结果是pb.start()方法内部输出的
-            builder.redirectErrorStream(true);
-            // ----- 等待语句执行完成，否则可能会读不到结果
-            Process start = builder.start();
-            start.waitFor();
-            streamReader = new InputStreamReader(start.getInputStream());
-            bufReader = new BufferedReader(streamReader);
-            String line;
-            while ((line = bufReader.readLine()) != null) {
-                result.append(line).append("\r\n");
-            }
-            log.info("exec win command success, cmd: {}", cmd);
-            return result.toString();
-        } catch (Exception e) {
-            log.error("exec win command failed,  cmd: {}.", cmd, e);
-            return null;
-        } finally {
-            IOUtil.closes(bufReader, streamReader);
-        }
-    }
-
-    /***
-     * 执行SHELL命令
-     * @param cmd 命令脚本
-     * @return 执行结果
-     */
-    public static String execLinuxCommand(String cmd) {
         InputStreamReader streamReader = null;
         BufferedReader reader = null;
         InputStreamReader errorStreamReader = null;
         BufferedReader errorReader = null;
         try {
-            StringBuilder builder = new StringBuilder();
-            Process proc = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", cmd});
+            Process proc = Runtime.getRuntime().exec(command);
             streamReader = new InputStreamReader(proc.getInputStream());
             reader = new BufferedReader(streamReader);
+
             String line;
+            StringBuilder builder = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\r\n");
             }
@@ -258,6 +205,17 @@ public class CommandUtil {
         } finally {
             IOUtil.closes(errorReader, errorStreamReader, reader, streamReader);
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+//        String fileNamePath = "E:\\home\\admin\\tmp\\file\\" + "recording" + File.separatorChar + "1653297704601";
+//        String oggPath = fileNamePath + ".ogg";
+//        String wavPath = fileNamePath + ".wav";
+//        String command = "ffmpeg -i " + oggPath + " -acodec pcm_s16le -ac 1 -ar 16000 " + wavPath + " -y";
+//        System.out.println(execCommand(command));
+//        AudioUtil.playWav(wavPath);
+
+        System.out.println(execCommand("192.168.18.254", "root", "tcjjxsj3", "ping 192.168.18.254 -c 4 -w 5"));
     }
 
     /***
