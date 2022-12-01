@@ -88,4 +88,13 @@ public class PingBO implements Serializable {
         return BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(times), 1, RoundingMode.HALF_UP).intValue();
     }
 
+    /**
+     * 是否ping通
+     *
+     * @return [true: 可以ping通; false: ping不通]
+     */
+    public boolean isReachable() {
+        return receive > 0;
+    }
+
 }
