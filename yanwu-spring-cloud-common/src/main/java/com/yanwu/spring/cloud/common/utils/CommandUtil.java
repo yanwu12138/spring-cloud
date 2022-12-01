@@ -216,6 +216,22 @@ public class CommandUtil {
 //        AudioUtil.playWav(wavPath);
 
         System.out.println(execCommand("192.168.18.254", "root", "tcjjxsj3", "ping 192.168.18.254 -c 4 -w 5"));
+
+        System.out.println(checkDiskOccupy("home"));
+        System.out.println(checkDiskOccupy("root"));
+    }
+
+    private static String checkDiskOccupy(String partition) {
+        String command = "df -h | grep " + partition + " | awk '{print $5}'";
+        String diskOccupy = execCommand("192.168.18.254", "root", "tcjjxsj3", command);
+        if (StringUtils.isBlank(diskOccupy)) {
+            return partition + "分区磁盘占用检查异常";
+        }
+        if (diskOccupy.compareTo("21%") > 0) {
+            return "主机盒" + partition + "分区磁盘占用过高，" + diskOccupy;
+        } else {
+            return partition + "分区磁盘占用正常，" + diskOccupy;
+        }
     }
 
     /***
