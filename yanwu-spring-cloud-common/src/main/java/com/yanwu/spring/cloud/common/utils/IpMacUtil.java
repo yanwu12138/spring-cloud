@@ -258,7 +258,7 @@ public class IpMacUtil {
      * @param address IP地址 || 域名
      * @return 当返回为null时说明参数异常
      */
-    public static PingBO ping(String address) throws Exception {
+    public static PingBO ping(String address) {
         return ping(address, 4);
     }
 
@@ -269,7 +269,7 @@ public class IpMacUtil {
      * @param times   ping包次数
      * @return 当返回为null时说明参数异常
      */
-    public static PingBO ping(String address, int times) throws Exception {
+    public static PingBO ping(String address, int times) {
         if ((!checkIpv4(address) && !checkDomain(address)) || times <= 0) {
             return null;
         }

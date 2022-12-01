@@ -10,7 +10,6 @@ import org.apache.commons.net.telnet.TelnetClient;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 /**
  * @author Baofeng Xu
@@ -180,7 +179,7 @@ public class CommandUtil {
      * @param cmd 命令脚本
      * @return 执行结果
      */
-    public static String execCommand(String cmd) throws Exception {
+    public static String execCommand(String cmd) {
         SystemUtil.SystemType systemType = SystemUtil.getSystemType();
         switch (systemType) {
             case WINDOWS:
@@ -198,21 +197,20 @@ public class CommandUtil {
      * @param cmd 命令脚本
      * @return 执行结果
      */
-    public static String execWinCommand(String cmd) throws Exception {
-        // ----- 新建一个用来存储结果的缓存文件
-        File tmpFile = new File("/home/admin/tmp/" + System.currentTimeMillis());
-        FileUtil.checkFilePath(tmpFile, Boolean.TRUE);
-        try (InputStream inputStream = Files.newInputStream(tmpFile.toPath());
-             BufferedReader bufReader = new BufferedReader(new InputStreamReader(inputStream))) {
+    public static String execWinCommand(String cmd) {
+        BufferedReader bufReader = null;
+        InputStreamReader streamReader = null;
+        try {
             StringBuilder result = new StringBuilder();
             // ----- 执行命令
             ProcessBuilder builder = new ProcessBuilder().command("cmd", "/c", cmd).inheritIO();
             // ----- 这里是把控制台中的红字变成了黑字，用通常的方法其实获取不到，控制台的结果是pb.start()方法内部输出的
             builder.redirectErrorStream(true);
-            // ----- 把执行结果输出
-            builder.redirectOutput(tmpFile);
             // ----- 等待语句执行完成，否则可能会读不到结果
-            builder.start().waitFor();
+            Process start = builder.start();
+            start.waitFor();
+            streamReader = new InputStreamReader(start.getInputStream());
+            bufReader = new BufferedReader(streamReader);
             String line;
             while ((line = bufReader.readLine()) != null) {
                 result.append(line).append("\r\n");
@@ -223,7 +221,7 @@ public class CommandUtil {
             log.error("exec win command failed,  cmd: {}.", cmd, e);
             return null;
         } finally {
-            FileUtil.deleteFile(tmpFile);
+            IOUtil.closes(bufReader, streamReader);
         }
     }
 
@@ -233,17 +231,21 @@ public class CommandUtil {
      * @return 执行结果
      */
     public static String execLinuxCommand(String cmd) {
+        InputStreamReader streamReader = null;
         BufferedReader reader = null;
+        InputStreamReader errorStreamReader = null;
         BufferedReader errorReader = null;
         try {
             StringBuilder builder = new StringBuilder();
             Process proc = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", cmd});
-            reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            streamReader = new InputStreamReader(proc.getInputStream());
+            reader = new BufferedReader(streamReader);
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line).append("\r\n");
             }
-            errorReader = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            errorStreamReader = new InputStreamReader(proc.getErrorStream());
+            errorReader = new BufferedReader(errorStreamReader);
             while ((line = errorReader.readLine()) != null) {
                 builder.append(line).append("\r\n");
             }
@@ -254,8 +256,7 @@ public class CommandUtil {
             log.error("exec linux command failed. cmd: {}.", cmd, e);
             return null;
         } finally {
-            IOUtil.close(reader);
-            IOUtil.close(errorReader);
+            IOUtil.closes(errorReader, errorStreamReader, reader, streamReader);
         }
     }
 
