@@ -228,7 +228,7 @@ public class CommandUtil {
             return partition + "分区磁盘占用检查异常";
         }
         if (diskOccupy.compareTo("21%") > 0) {
-            return "主机盒" + partition + "分区磁盘占用过高，" + diskOccupy;
+            return partition + "分区磁盘占用过高，" + diskOccupy;
         } else {
             return partition + "分区磁盘占用正常，" + diskOccupy;
         }
