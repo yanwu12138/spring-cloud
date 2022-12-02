@@ -273,7 +273,7 @@ public class IpMacUtil {
         if ((!checkIpv4(address) && !checkDomain(address)) || times <= 0) {
             return PingBO.getInstance(address, times);
         }
-        if (!checkHostReachable(address, 1000)) {
+        if (SystemUtil.isWindows() && !checkHostReachable(address, 1000)) {
             return PingBO.getInstance(address, times);
         }
         String command;

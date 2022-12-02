@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.pojo;
 
+import com.yanwu.spring.cloud.common.utils.SystemUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,8 @@ import java.util.regex.Pattern;
 @Accessors(chain = true)
 public class PingBO implements Serializable {
     private static final long serialVersionUID = 7179539695519326224L;
-    private static final Pattern RECEIVE_PATTERN = Pattern.compile(" TTL=([\\s\\S]*?)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern WINDOWS_RECEIVE_PATTERN = Pattern.compile("time[<|=]([\\s\\S]*?)ms ttl=([\\s\\S]*?)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern LINUX_RECEIVE_PATTERN = Pattern.compile("ttl=([\\s\\S]*?) time[<|=]([\\s\\S]*?)ms", Pattern.CASE_INSENSITIVE);
     private static final Pattern TIMES_PATTERN = Pattern.compile("time[<|=]([\\s\\S]*?)ms", Pattern.CASE_INSENSITIVE);
 
     /*** ping命令目标地址 ***/
@@ -42,6 +44,7 @@ public class PingBO implements Serializable {
     }
 
     public static PingBO getInstance(String address, int times, String commandResult) {
+        commandResult = commandResult.toLowerCase();
         PingBO instance = getInstance(address, times);
         if (StringUtils.isBlank(commandResult)) {
             return instance;
@@ -58,7 +61,12 @@ public class PingBO implements Serializable {
         if (StringUtils.isBlank(commandResult)) {
             return receive;
         }
-        Matcher matcher = RECEIVE_PATTERN.matcher(commandResult);
+        Matcher matcher;
+        if (SystemUtil.isWindows()) {
+            matcher = WINDOWS_RECEIVE_PATTERN.matcher(commandResult);
+        } else {
+            matcher = LINUX_RECEIVE_PATTERN.matcher(commandResult);
+        }
         while (matcher.find()) {
             receive++;
         }
@@ -90,7 +98,7 @@ public class PingBO implements Serializable {
             times++;
         }
         if (times == 0) {
-            return -1;
+            return 99999;
         }
         return BigDecimal.valueOf(sum).divide(BigDecimal.valueOf(times), 1, RoundingMode.HALF_UP).intValue();
     }
