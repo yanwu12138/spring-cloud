@@ -278,9 +278,9 @@ public class IpMacUtil {
         }
         String command;
         if (SystemUtil.isWindows()) {
-            command = StringUtils.joinWith(" ", "ping", address, "-n", times, "-w", (times + 1));
+            command = StringUtils.joinWith(" ", "ping", address, "-n", times, "-W", (times + 1));
         } else {
-            command = StringUtils.joinWith(" ", "ping", address, "-c", times, "-w", (times + 1));
+            command = StringUtils.joinWith(" ", "ping", address, "-c", times, "-W", (times + 1));
         }
         return PingBO.getInstance(address, times, CommandUtil.execCommand(command));
     }
