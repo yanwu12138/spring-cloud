@@ -15,7 +15,7 @@ docker image ls
 ##### nacos-server容器启动脚本
 
 ```SHELL
-docker run --name nacos -d -p 8848:8848 --privileged=true --restart=always -e JVM_XMS=512m -e JVM_XMX=2048m -e MODE=standalone -e PREFER_HOST_MODE=hostname -v /home/nacos/logs:/home/nacos/logs  nacos/nacos-server:1.1.3
+docker run --name nacos -d -p 8848:8848 --privileged=true --restart=always -e JVM_XMS=512m -e JVM_XMX=1024m -e MODE=standalone -e PREFER_HOST_MODE=hostname -v /home/nacos/logs:/home/nacos/logs  nacos/nacos-server:1.1.3
 ```
 
 ##### 访问nacos主页查看nacos-server是否启动成功

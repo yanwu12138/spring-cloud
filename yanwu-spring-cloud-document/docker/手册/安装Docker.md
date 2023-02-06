@@ -50,7 +50,7 @@
 -   使用 `root` 权限登录 Centos。确保 yum 包更新到最新。
 
     ```SHELL
-    sudo yum update
+    sudo yum update -y
     ```
 
 -   卸载旧版本(如果安装过旧版本的话)
