@@ -35,12 +35,6 @@ public class AliOssUtil {
         throw new UnsupportedOperationException("AliOssUtil should never be instantiated");
     }
 
-    public static void main(String[] args) throws Exception {
-        OssProperties instance = OssProperties.getInstance("LTAI5tHp9Dyfnq57fPFrPK8P", "XHv6eKwxMOSv6iXXlGI0hHphBLcji0", "oss-cn-hangzhou.aliyuncs.com", "ap-server-test");
-        OssResult<String> upload = upload(instance, OssFileTypeEnum.DEFAULT, "E:\\tool\\code\\code.zip");
-        System.out.println(upload);
-    }
-
     /**
      * 上传本地文件到OSS
      *
