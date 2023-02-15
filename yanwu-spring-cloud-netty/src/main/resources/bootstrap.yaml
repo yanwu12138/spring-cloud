@@ -6,13 +6,13 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
+        server-addr: ${CONFIG_SERVER_URL:192.168.56.50:8848}
         group: DEFAULT_GROUP
         namespace: a2e2dede-d9bf-4eae-a520-82f920801ab9
   redis:
-    host: 60.205.57.82
+    host: 192.168.56.50
     port: 6379
-    password: xbf_JS.2643
+    password: Js_2643.
     timeout: 10000
     database: 4
   main:

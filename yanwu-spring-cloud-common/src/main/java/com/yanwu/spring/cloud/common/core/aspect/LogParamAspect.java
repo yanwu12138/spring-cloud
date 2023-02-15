@@ -39,10 +39,10 @@ public class LogParamAspect {
         String txId = AspectUtil.getTxId();
         Method method = AspectUtil.getMethod(joinPoint);
         try {
-            log.info("Request   : [txId]: {}, [method]: {}, [param]: {}", txId, method, args);
+            log.info("Request   : [txId]: {}, [class]: {}, [method]: {}, [param]: {}", txId, getClassName(method), method.getName(), args);
             return joinPoint.proceed(args);
         } catch (Throwable e) {
-            log.error("Exception : [txId]: {}, [method]: {}, [param]: {}", txId, method, args, e);
+            log.error("Exception : [txId]: {}, [class]: {}, [method]: {}, [param]: {}", txId, getClassName(method), method.getName(), args, e);
             String message = "";
             if (e instanceof IllegalArgumentException || e instanceof BusinessException) {
                 message = e.getMessage();
@@ -65,10 +65,14 @@ public class LogParamAspect {
         String txId = AspectUtil.getTxId();
         Method method = AspectUtil.getMethod(joinPoint);
         if (result instanceof Serializable || result instanceof ResponseEntity) {
-            log.info("Response  : [txId]: {}, [method]: {}, [return]: {}", txId, method, result);
+            log.info("Response  : [txId]: {}, [class]: {}, [method]: {}, [return]: {}", txId, getClassName(method), method.getName(), result);
         } else {
-            log.info("Response  : [txId]: {}, [method]: {}, [return]: {}", txId, method, "The response could not be serialized.");
+            log.info("Response  : [txId]: {}, [class]: {}, [method]: {}, [return]: {}", txId, getClassName(method), method.getName(), "The response could not be serialized.");
         }
+    }
+
+    private String getClassName(Method method) {
+        return method.getDeclaringClass().getSimpleName();
     }
 
 }

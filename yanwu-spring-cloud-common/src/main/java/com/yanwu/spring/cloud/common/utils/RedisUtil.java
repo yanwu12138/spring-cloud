@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
     /*** 分布式锁固定前缀 ***/
     private static final String REDIS_LOCK = "redis_lock_";
+    private static final String REDIS_SEQ = "redis_seq_";
     /*** 分布式锁过期时间 ***/
     private static final Integer EXPIRE_TIME = 30;
     /*** 每次自旋睡眠时间 ***/
@@ -43,6 +44,21 @@ public class RedisUtil {
     private RedisOperations<?, ?> redisOperations;
 
     private RedisUtil() {
+    }
+
+    /**
+     * 获取一个sequence序列号
+     *
+     * @param key KEY
+     * @return 自增系列号
+     */
+    public Long increment(String key) {
+        CallableResult<Long> result = executor(key, () -> {
+            String seqKey = key(REDIS_SEQ, key);
+            Long increment = lockOperations.increment(seqKey);
+            return CallableResult.success(increment);
+        });
+        return result.getData();
     }
 
     /**
@@ -89,7 +105,7 @@ public class RedisUtil {
      * @return [true: 加锁成功; false: 加锁失败]
      */
     private boolean tryLock(String key, Long value, Integer timeout) {
-        Boolean result = lockOperations.setIfAbsent(key(key), String.valueOf(value), timeout, TimeUnit.SECONDS);
+        Boolean result = lockOperations.setIfAbsent(key(REDIS_LOCK, key), String.valueOf(value), timeout, TimeUnit.SECONDS);
         return result != null && result;
     }
 
@@ -103,15 +119,15 @@ public class RedisUtil {
         Assert.isTrue(StringUtils.isNotBlank(key), "redis locks are identified as null.");
         Assert.isTrue((value != null), "the redis release lock is identified as null.");
         // ----- 通过value判断是否是该锁：是则释放；不是则不释放，避免误删
-        if (!String.valueOf(value).equals(lockOperations.get(key(key)))) {
+        if (!String.valueOf(value).equals(lockOperations.get(key(REDIS_LOCK, key)))) {
             log.error("redis unLock failed. key: {}, value: {}", key, value);
             return;
         }
-        lockOperations.getOperations().delete(key(key));
+        lockOperations.getOperations().delete(key(REDIS_LOCK, key));
     }
 
-    private String key(String key) {
-        return REDIS_LOCK + key;
+    private String key(String prefix, String key) {
+        return prefix + key;
     }
 
 

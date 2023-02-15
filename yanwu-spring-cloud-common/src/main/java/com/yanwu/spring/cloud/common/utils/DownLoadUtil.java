@@ -72,7 +72,7 @@ public class DownLoadUtil {
      * @param fileUrl   资源路径
      * @param localPath 文件路径
      */
-    public static void download(String fileUrl, String localPath) throws Exception {
+    public static long download(String fileUrl, String localPath) throws Exception {
         // ----- 获取远程文件的大小，根据文件大小决定线程的个数
         log.info("download file begin, localPath: {}, fileUrl: {}", localPath, fileUrl);
         HttpURLConnection httpConnection = (HttpURLConnection) new URL(fileUrl).openConnection();
@@ -107,6 +107,7 @@ public class DownLoadUtil {
             log.error("downLoad await error.", e);
         }
         log.info("download file done！localPath: {}, time: {} S", localPath, (System.currentTimeMillis() - start) / 1000);
+        return fileSize;
     }
 
     /**
@@ -116,15 +117,15 @@ public class DownLoadUtil {
      * @param localPath 文件路径
      * @param md5       文件的MD5
      */
-    public static boolean download(String fileUrl, String localPath, String md5) throws Exception {
-        download(fileUrl, localPath);
+    public static long download(String fileUrl, String localPath, String md5) throws Exception {
+        long filesize = download(fileUrl, localPath);
         if (!FileUtil.checkFileMd5(localPath, md5)) {
             log.error("download file failed, because md5 check failed. file: {}, md5: {}", localPath, md5);
             FileUtil.deleteFile(localPath);
-            return false;
+            return -1L;
         }
         log.info("download file check md5 success, file: {}, md5: {}", localPath, md5);
-        return true;
+        return filesize;
     }
 
     /**

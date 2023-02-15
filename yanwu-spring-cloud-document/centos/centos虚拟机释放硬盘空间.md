@@ -20,6 +20,8 @@
 
     ```shell
     ##### E:\VMS\docker-vm\docker-vm.vdi 为虚拟机虚拟文件绝对路径
+    ##### E:\VMS\docker-vm\Snapshots\{xxxx-xxxx-xxxx-xxxx-xxxx}.vdi 为虚拟机虚拟文件绝对路径
     VBoxManage.exe modifyhd E:\VMS\docker-vm\docker-vm.vdi --compact
+    VBoxManage.exe modifyhd E:\VMS\docker-vm\Snapshots\{xxxx-xxxx-xxxx-xxxx-xxxx}.vdi --compact
     ```
 
