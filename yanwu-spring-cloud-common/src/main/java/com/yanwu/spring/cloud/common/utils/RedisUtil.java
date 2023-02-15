@@ -54,9 +54,16 @@ public class RedisUtil {
      */
     public Long increment(String key) {
         CallableResult<Long> result = executor(key, () -> {
-            String seqKey = key(REDIS_SEQ, key);
-            Long increment = lockOperations.increment(seqKey);
+            Long increment = lockOperations.increment(key(REDIS_SEQ, key));
             return CallableResult.success(increment);
+        });
+        return result.getData();
+    }
+
+    public Long decrement(String key) {
+        CallableResult<Long> result = executor(key, () -> {
+            Long decrement = lockOperations.decrement(key(REDIS_SEQ, key));
+            return CallableResult.success(decrement);
         });
         return result.getData();
     }
