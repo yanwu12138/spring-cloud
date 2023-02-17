@@ -37,11 +37,11 @@ public class RedisUtil {
     /*** 分布式锁处理器 ***/
     @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
-    private ValueOperations<String, String> lockOperations;
+    private ValueOperations<String, String> operations;
     /*** 事务处理器 ***/
     @SuppressWarnings("all")
     @Resource(name = "redisTemplate")
-    private RedisOperations<?, ?> redisOperations;
+    private RedisOperations<?, ?> executeOperations;
 
     private RedisUtil() {
     }
@@ -54,7 +54,7 @@ public class RedisUtil {
      */
     public Long increment(String key) {
         CallableResult<Long> result = executor(key, () -> {
-            Long increment = lockOperations.increment(key(REDIS_SEQ, key));
+            Long increment = operations.increment(key(REDIS_SEQ, key));
             return CallableResult.success(increment);
         });
         return result.getData();
@@ -62,7 +62,7 @@ public class RedisUtil {
 
     public Long decrement(String key) {
         CallableResult<Long> result = executor(key, () -> {
-            Long decrement = lockOperations.decrement(key(REDIS_SEQ, key));
+            Long decrement = operations.decrement(key(REDIS_SEQ, key));
             return CallableResult.success(decrement);
         });
         return result.getData();
@@ -112,7 +112,7 @@ public class RedisUtil {
      * @return [true: 加锁成功; false: 加锁失败]
      */
     private boolean tryLock(String key, Long value, Integer timeout) {
-        Boolean result = lockOperations.setIfAbsent(key(REDIS_LOCK, key), String.valueOf(value), timeout, TimeUnit.SECONDS);
+        Boolean result = operations.setIfAbsent(key(REDIS_LOCK, key), String.valueOf(value), timeout, TimeUnit.SECONDS);
         return result != null && result;
     }
 
@@ -126,11 +126,11 @@ public class RedisUtil {
         Assert.isTrue(StringUtils.isNotBlank(key), "redis locks are identified as null.");
         Assert.isTrue((value != null), "the redis release lock is identified as null.");
         // ----- 通过value判断是否是该锁：是则释放；不是则不释放，避免误删
-        if (!String.valueOf(value).equals(lockOperations.get(key(REDIS_LOCK, key)))) {
+        if (!String.valueOf(value).equals(operations.get(key(REDIS_LOCK, key)))) {
             log.error("redis unLock failed. key: {}, value: {}", key, value);
             return;
         }
-        lockOperations.getOperations().delete(key(REDIS_LOCK, key));
+        operations.getOperations().delete(key(REDIS_LOCK, key));
     }
 
     private String key(String prefix, String key) {
@@ -193,7 +193,7 @@ public class RedisUtil {
      * @return 执行结果返回值
      */
     public <T> CallableResult<T> multiExec(Callable<CallableResult<T>> callable) {
-        return redisOperations.execute(new SessionCallback<CallableResult<T>>() {
+        return executeOperations.execute(new SessionCallback<CallableResult<T>>() {
             @Override
             public <K, V> CallableResult<T> execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
                 try {
