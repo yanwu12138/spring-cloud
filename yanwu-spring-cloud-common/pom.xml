@@ -21,7 +21,7 @@
         <commons.collections.version>3.2.2</commons.collections.version>
         <commons.io.version>2.7</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
-        <commons.net.version>3.6</commons.net.version>
+        <commons.net.version>3.9.0</commons.net.version>
         <commons.httpcore.version>4.4.4</commons.httpcore.version>
         <commons.httpclient.version>4.5.13</commons.httpclient.version>
         <disruptor.version>3.4.2</disruptor.version>
