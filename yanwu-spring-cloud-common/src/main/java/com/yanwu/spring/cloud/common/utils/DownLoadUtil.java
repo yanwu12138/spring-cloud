@@ -80,6 +80,7 @@ public class DownLoadUtil {
         int responseCode = httpConnection.getResponseCode();
         Assert.isTrue((responseCode <= 400), "get remote file size error. code: " + responseCode);
         long fileSize = Long.parseLong(httpConnection.getHeaderField(HttpHeaders.CONTENT_LENGTH));
+        final long fileSizeResult = fileSize;
         Assert.isTrue((fileSize > 0), "get remote file size error, size is zero.");
         long threadCount = Math.floorDiv(fileSize, UNIT_SIZE);
         threadCount = fileSize == threadCount * UNIT_SIZE ? threadCount : threadCount + 1;
@@ -106,8 +107,8 @@ public class DownLoadUtil {
         } catch (InterruptedException e) {
             log.error("downLoad await error.", e);
         }
-        log.info("download file done！localPath: {}, time: {} S", localPath, (System.currentTimeMillis() - start) / 1000);
-        return fileSize;
+        log.info("download file done！localPath: {}, size: {} KB, time: {} S", localPath, fileSizeResult, (System.currentTimeMillis() - start) / 1000);
+        return fileSizeResult;
     }
 
     /**

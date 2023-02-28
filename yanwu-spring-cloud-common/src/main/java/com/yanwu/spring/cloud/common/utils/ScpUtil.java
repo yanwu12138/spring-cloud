@@ -12,11 +12,11 @@ import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.scp.client.ScpClient;
 import org.apache.sshd.scp.client.ScpClientCreator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Baofeng Xu
@@ -39,6 +39,57 @@ public class ScpUtil {
         System.out.println(upload(server, "E:\\download\\test.zip", "/root/test.zip"));
         System.out.println(upload(server, "E:\\download\\music", "/root/music"));
         System.out.println(download(server, "/root/music", "E:\\download\\music111111111"));
+        read172BEdgeLog();
+    }
+
+    private static void read172BEdgeLog() {
+        String logFile = "E:\\download\\enableBackupBeamData.log";
+        File file = new File(logFile);
+        List<String> sns = new ArrayList<>();
+        try (BufferedReader buffered = new BufferedReader(new FileReader(file))) {
+            String line;
+            while (StringUtils.isNotBlank((line = buffered.readLine()))) {
+                if (!line.contains("json=null")) {
+                    continue;
+                }
+                line = line.split(", sn=")[1];
+                line = line.split(", messageSeq=")[0];
+                if (sns.contains(line)) {
+                    continue;
+                }
+                sns.add(line);
+            }
+        } catch (Exception e) {
+            log.error("读取172B小站SN错误", e);
+        }
+
+        String sql = "SELECT\n" +
+                "\tsn,\n" +
+                "\tversion \n" +
+                "FROM\n" +
+                "\tbackup_beam_enable_record b\n" +
+                "\tLEFT JOIN t_device td ON td.box_code = b.sn \n" +
+                "\tAND td.type = 1\n" +
+                "\tLEFT JOIN t_device tdm ON td.ship_id = tdm.ship_id \n" +
+                "\tAND tdm.type = 3 \n" +
+                "WHERE\n" +
+                "\tb.STATUS = 10 \n" +
+                "\tAND tdm.model = 335 \n" +
+                "\tAND tdm.device_model = 462 \n" +
+                "\tAND version = '1671610047053' \n" +
+                "\tAND sn IN (" + StringUtils.join(sns, ",") + ")";
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println(sns.size());
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println(sql);
+        System.out.println();
+        System.out.println();
+        System.out.println();
     }
 
     /**
