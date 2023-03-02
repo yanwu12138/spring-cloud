@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.pojo.RemoteServer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.telnet.TelnetClient;
@@ -23,24 +24,23 @@ public class TelnetUtil {
         throw new UnsupportedOperationException("TelnetUtil should never be instantiated");
     }
 
-    /***
+    /**
      * 使用telnet登录然后执行相应的命令
-     * @param ip 服务器IP
-     * @param username 用户名
-     * @param password 密码
-     * @param cmd 命令
+     *
+     * @param server 服务器相关配置
+     * @param cmd    命令
      * @return 执行结果
      */
-    public static Boolean execTelnet(String ip, String username, String password, String cmd) {
-        if (!IpMacUtil.checkIpv4(ip)) {
+    public static Boolean execTelnet(RemoteServer server, String cmd) {
+        if (!IpMacUtil.checkIpv4(server.getHost())) {
             log.error("telnet client exec command failed, because ip format is incorrect.");
             return Boolean.FALSE;
         }
         TelnetClient client = null;
         try {
             client = new TelnetClient();
-            client.connect(ip);
-            return execTelnet(client, username, password, cmd);
+            client.connect(server.getHost());
+            return execTelnet(client, server.getAccount(), server.getPassword(), cmd);
         } catch (Exception e) {
             log.error("exec telnet error.", e);
             return Boolean.FALSE;
@@ -67,7 +67,7 @@ public class TelnetUtil {
      * @param cmd 命令
      * @return 执行结果
      */
-    public static Boolean execTelnet(TelnetClient client, String username, String password, String cmd) {
+    private static Boolean execTelnet(TelnetClient client, String username, String password, String cmd) {
         if (StringUtils.isBlank(username)) {
             log.error("telnet client exec command failed, because username is empty.");
             return Boolean.FALSE;

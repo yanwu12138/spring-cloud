@@ -1,8 +1,9 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yanwu.spring.cloud.common.pojo.RemoteServer;
 import lombok.Data;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +34,7 @@ public class ScpUtil {
     }
 
     public static void main(String[] args) {
-        Server server = Server.getInstance("192.168.56.50", "root", "Js_2643.", VerifyEnum.PASSWORD);
+        ScpServer server = ScpServer.getInstance("192.168.56.50", "root", "Js_2643.");
         System.out.println(download(server, "/root/dist.zip", "E:\\download\\test.zip"));
         System.out.println(upload(server, "E:\\download\\test.zip", "/root/test.zip"));
         System.out.println(upload(server, "E:\\download\\music", "/root/music"));
@@ -98,7 +99,7 @@ public class ScpUtil {
      * @param remote 远程文件地址
      * @param local  本地文件地址
      */
-    public static boolean download(Server server, String remote, String local) {
+    public static boolean download(ScpServer server, String remote, String local) {
         FileUtil.deleteFile(local);
         try {
             if (createSession(server)) {
@@ -121,7 +122,7 @@ public class ScpUtil {
      * @param local  本地文件地址
      * @param remote 远程文件地址
      */
-    public static boolean upload(Server server, String local, String remote) {
+    public static boolean upload(ScpServer server, String local, String remote) {
         if (StringUtils.isBlank(local)) {
             return false;
         }
@@ -131,7 +132,17 @@ public class ScpUtil {
         }
         try {
             if (createSession(server)) {
-                server.getScpClient().upload(local, remote, ScpClient.Option.Recursive);
+                if (file.isDirectory()) {
+                    File[] files = file.listFiles();
+                    if (files == null || files.length == 0) {
+                        return false;
+                    }
+                    for (File item : files) {
+                        server.getScpClient().upload(item.toPath(), remote, ScpClient.Option.Recursive);
+                    }
+                } else {
+                    server.getScpClient().upload(local, remote, ScpClient.Option.Recursive);
+                }
                 return true;
             }
             return false;
@@ -146,10 +157,7 @@ public class ScpUtil {
     /**
      * 创建会话
      */
-    private static boolean createSession(Server server) {
-        if (server == null || !server.check()) {
-            return false;
-        }
+    private static boolean createSession(ScpServer server) {
         try {
             // ----- 创建SSH客户端
             SshClient client = SshClient.setUpDefaultClient();
@@ -175,17 +183,9 @@ public class ScpUtil {
 
     @Data
     @Accessors(chain = true)
-    public static class Server implements AutoCloseable {
-        /*** 服务器地址 ***/
-        public String host;
-        /*** 服务器端口 ***/
-        public Integer port;
-        /*** 服务器账户 ***/
-        public String account;
-        /*** 校验类型 ***/
-        public VerifyEnum verifyType;
-        /*** 服务器校验方式：密码或者publicKey文件 ***/
-        public String verify;
+    @EqualsAndHashCode(callSuper = true)
+    public static class ScpServer extends RemoteServer implements AutoCloseable {
+        private static final long serialVersionUID = -5638428580056712820L;
 
         /*** SCP相关客户端 ***/
         @JsonIgnore
@@ -195,26 +195,33 @@ public class ScpUtil {
         @JsonIgnore
         public ClientSession session;
 
-
-        @SuppressWarnings("all")
-        private static Server getInstance(String host, String account, String verify, VerifyEnum verifyType) {
-            return getInstance(host, 22, account, verify, verifyType);
+        protected ScpServer() {
         }
 
-        @SuppressWarnings("all")
-        private static Server getInstance(String host, Integer port, String account, String verify, VerifyEnum verifyType) {
-            return new Server().setHost(host).setPort(port).setAccount(account).setVerify(verify).setVerifyType(verifyType);
+        public static ScpServer getInstance(String host, String account, String password) {
+            return getInstance(host, DEFAULT_PORT, account, password);
         }
 
-        /*** 检查参数是否合法 ***/
-        public boolean check() {
-            if (!IpMacUtil.checkIpv4(host)) {
-                return false;
+        public static ScpServer getInstance(String host, Integer port, String account, String password) {
+            return getInstance(host, port, account, password, VerifyType.PASSWORD);
+        }
+
+        public static ScpServer getInstance(String host, String account, String password, VerifyType verifyType) {
+            return getInstance(host, DEFAULT_PORT, account, password, verifyType);
+        }
+
+        public static ScpServer getInstance(String host, Integer port, String account, String password, VerifyType verifyType) {
+            if (StringUtils.isBlank(host) || StringUtils.isBlank(account) || StringUtils.isBlank(password)) {
+                log.error("remote server getInstance failed. host: {}, account: {}, password: {}", host, account, password);
+                throw new RuntimeException("remote server get instance failed.");
             }
-            if (StringUtils.isBlank(account)) {
-                return false;
-            }
-            return !StringUtils.isBlank(verify);
+            ScpServer instance = new ScpServer();
+            instance.setHost(host);
+            instance.setPort(port);
+            instance.setAccount(account);
+            instance.setPassword(password);
+            instance.setVerifyType(verifyType);
+            return instance;
         }
 
         /*** 释放资源 ***/
@@ -248,14 +255,14 @@ public class ScpUtil {
                     break;
                 case PASSWORD:
                 default:
-                    session.addPasswordIdentity(verify);
+                    session.addPasswordIdentity(password);
             }
         }
 
         private KeyPair getKeyPair() throws Exception {
             KeyPair keyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
             try (ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream()) {
-                byteArrayStream.write(FileUtil.read(verify));
+                byteArrayStream.write(FileUtil.read(password));
                 try (ObjectOutputStream objectStream = new ObjectOutputStream(byteArrayStream)) {
                     objectStream.writeObject(keyPair);
                 }
@@ -267,12 +274,6 @@ public class ScpUtil {
         public String toString() {
             return JsonUtil.toString(this);
         }
-    }
-
-    @Getter
-    public enum VerifyEnum {
-        PASSWORD, PUBLIC_KEY,
-        ;
     }
 
 }

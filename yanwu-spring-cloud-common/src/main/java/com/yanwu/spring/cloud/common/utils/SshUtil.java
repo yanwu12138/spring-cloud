@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.common.utils;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import com.yanwu.spring.cloud.common.pojo.RemoteServer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,14 +28,16 @@ public class SshUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(execCommand("192.168.18.254", "root", "tcjjxsj3", "ping 192.168.18.254 -c 4 -w 5"));
+        RemoteServer server = RemoteServer.getInstance("192.168.56.50", "root", "Js_2643.");
+        System.out.println(execCommand(server, "ping 192.168.56.100 -c 4 -w 5"));
         System.out.println(checkDiskOccupy("home"));
         System.out.println(checkDiskOccupy("root"));
     }
 
     private static String checkDiskOccupy(String partition) {
         String command = "df -h | grep " + partition + " | awk '{print $5}'";
-        String diskOccupy = execCommand("192.168.18.254", "root", "tcjjxsj3", command);
+        RemoteServer server = RemoteServer.getInstance("192.168.56.50", "root", "Js_2643.");
+        String diskOccupy = execCommand(server, command);
         if (StringUtils.isBlank(diskOccupy)) {
             return partition + "分区磁盘占用检查异常";
         }
@@ -45,42 +48,15 @@ public class SshUtil {
         }
     }
 
-    /***
-     * 远程执行shell脚本或者命令，默认使用22端口
-     * @param ip       服务器IP
-     * @param username 登录服务器的用户名
-     * @param password 登录服务器的密码
-     * @return 执行结果
-     */
-    public static String execCommand(String ip, String username, String password, String cmd) {
-        return execCommand(ip, 22, username, password, cmd);
-    }
-
-    /***
+    /**
      * 远程执行shell脚本或者命令
-     * @param ip       服务器IP
-     * @param port     端口
-     * @param username 登录服务器的用户名
-     * @param password 登录服务器的密码
-     * @return 执行结果
-     */
-    public static String execCommand(String ip, Integer port, String username, String password, String cmd) {
-        Connection connection = null;
-        try {
-            connection = getSshConnection(ip, port, username, password);
-            return execCommand(connection, cmd);
-        } catch (Exception e) {
-            log.error("exec command error.", e);
-            return null;
-        }
-    }
-
-    /***
-     * 远程执行shell脚本或者命令
-     * @param cmd 即将执行的命令
+     *
+     * @param server 服务器相关配置
+     * @param cmd    即将执行的命令
      * @return 命令执行完后返回的结果值
      */
-    private static String execCommand(Connection connection, String cmd) {
+    public static String execCommand(RemoteServer server, String cmd) {
+        Connection connection = getSshConnection(server);
         if (connection == null) {
             log.warn("exec command failed, because connection is empty.");
             return null;
@@ -108,43 +84,27 @@ public class SshUtil {
         return result;
     }
 
-
-    /***
-     * 建立与服务器的连接，默认使用22端口
-     * @param ip       服务器IP
-     * @param username 登录服务器的用户名
-     * @param password 登录服务器的密码
-     * @return 返回登录的连接， 在使用的最后一定记得关闭connect资源
-     */
-    private static Connection getSshConnection(String ip, String username, String password) {
-        return getSshConnection(ip, 22, username, password);
-    }
-
-    /***
+    /**
      * 建立与服务器的连接
-     * @param ip       服务器IP
-     * @param port     端口
-     * @param username 登录服务器的用户名
-     * @param password 登录服务器的密码
+     *
+     * @param server 服务器相关信息
      * @return 返回登录的连接， 在使用的最后一定记得关闭connect资源
      */
-    private static Connection getSshConnection(String ip, Integer port, String username, String password) {
-        if (!IpMacUtil.checkIpv4(ip)) {
-            log.error("get SSH connection failed, because ip format is incorrect.");
-            return null;
-        }
+    private static Connection getSshConnection(RemoteServer server) {
         Connection connection = null;
         try {
-            connection = new Connection(ip, port);
+            connection = new Connection(server.getHost(), server.getPort());
             connection.connect();
-            if (connection.authenticateWithPassword(username, password)) {
+            if (server.connectionVerify(connection)) {
                 return connection;
             } else {
                 connection.close();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.info("get SSH connection failed.", e);
-            connection.close();
+            if (connection != null) {
+                connection.close();
+            }
         }
         return null;
     }
@@ -156,9 +116,7 @@ public class SshUtil {
      */
     private static String processStdout(InputStream in) {
         StringBuilder buffer = new StringBuilder();
-        try (InputStream stdout = new StreamGobbler(in);
-             InputStreamReader reader = new InputStreamReader(stdout, StandardCharsets.UTF_8);
-             BufferedReader br = new BufferedReader(reader)) {
+        try (InputStream stdout = new StreamGobbler(in); InputStreamReader reader = new InputStreamReader(stdout, StandardCharsets.UTF_8); BufferedReader br = new BufferedReader(reader)) {
             String line;
             while ((line = br.readLine()) != null) {
                 buffer.append(line).append("\n");
