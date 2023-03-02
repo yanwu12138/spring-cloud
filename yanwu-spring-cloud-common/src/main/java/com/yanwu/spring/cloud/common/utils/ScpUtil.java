@@ -7,7 +7,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sshd.client.SshClient;
-import org.apache.sshd.client.keyverifier.DefaultKnownHostsServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.scp.client.ScpClient;
 import org.apache.sshd.scp.client.ScpClientCreator;
@@ -34,12 +33,12 @@ public class ScpUtil {
     }
 
     public static void main(String[] args) {
-        Server server = Server.getInstance("192.168.56.50", "root", "Js_2643.");
+        Server server = Server.getInstance("192.168.56.50", "root", "Js_2643.", VerifyEnum.PASSWORD);
         System.out.println(download(server, "/root/dist.zip", "E:\\download\\test.zip"));
         System.out.println(upload(server, "E:\\download\\test.zip", "/root/test.zip"));
         System.out.println(upload(server, "E:\\download\\music", "/root/music"));
         System.out.println(download(server, "/root/music", "E:\\download\\music111111111"));
-        read172BEdgeLog();
+//        read172BEdgeLog();
     }
 
     private static void read172BEdgeLog() {
@@ -100,21 +99,8 @@ public class ScpUtil {
      * @param local  本地文件地址
      */
     public static boolean download(Server server, String remote, String local) {
-        return download(server, remote, local, VerifyEnum.PASSWORD);
-    }
-
-    /**
-     * SCP下载文件
-     *
-     * @param server     服务器相关配置
-     * @param remote     远程文件地址
-     * @param local      本地文件地址
-     * @param verifyType 服务器校验方式
-     */
-    public static boolean download(Server server, String remote, String local, VerifyEnum verifyType) {
         FileUtil.deleteFile(local);
         try {
-            server.setVerifyType(verifyType);
             if (createSession(server)) {
                 server.getScpClient().download(remote, local, ScpClient.Option.Recursive);
                 return true;
@@ -136,19 +122,6 @@ public class ScpUtil {
      * @param remote 远程文件地址
      */
     public static boolean upload(Server server, String local, String remote) {
-        return upload(server, local, remote, VerifyEnum.PASSWORD);
-    }
-
-
-    /**
-     * SCP上传文件
-     *
-     * @param server     服务器相关配置
-     * @param local      本地文件地址
-     * @param remote     远程文件地址
-     * @param verifyType 服务器校验方式
-     */
-    public static boolean upload(Server server, String local, String remote, VerifyEnum verifyType) {
         if (StringUtils.isBlank(local)) {
             return false;
         }
@@ -157,7 +130,6 @@ public class ScpUtil {
             return false;
         }
         try {
-            server.setVerifyType(verifyType);
             if (createSession(server)) {
                 server.getScpClient().upload(local, remote, ScpClient.Option.Recursive);
                 return true;
@@ -181,7 +153,6 @@ public class ScpUtil {
         try {
             // ----- 创建SSH客户端
             SshClient client = SshClient.setUpDefaultClient();
-            client.setServerKeyVerifier(new DefaultKnownHostsServerKeyVerifier((clientSession, remoteAddress, serverKey) -> false, true));
             client.start();
             ClientSession session = client.connect(server.getAccount(), server.getHost(), server.getPort()).verify(VERIFY_TIMEOUT).getSession();
             // ----- 密码认证
@@ -226,13 +197,13 @@ public class ScpUtil {
 
 
         @SuppressWarnings("all")
-        private static Server getInstance(String host, String account, String verify) {
-            return getInstance(host, 22, account, verify);
+        private static Server getInstance(String host, String account, String verify, VerifyEnum verifyType) {
+            return getInstance(host, 22, account, verify, verifyType);
         }
 
         @SuppressWarnings("all")
-        private static Server getInstance(String host, Integer port, String account, String verify) {
-            return new Server().setHost(host).setPort(port).setAccount(account).setVerify(verify);
+        private static Server getInstance(String host, Integer port, String account, String verify, VerifyEnum verifyType) {
+            return new Server().setHost(host).setPort(port).setAccount(account).setVerify(verify).setVerifyType(verifyType);
         }
 
         /*** 检查参数是否合法 ***/
