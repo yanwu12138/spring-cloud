@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -160,6 +162,7 @@ public class TreeUtil {
 
     @Data
     @Accessors(chain = true)
+    @SuppressWarnings("all")
     @EqualsAndHashCode(callSuper = true)
     private static class TestNode extends TreeNodeBO<TestNode> {
         private static final long serialVersionUID = -4375256989348090867L;
@@ -167,24 +170,26 @@ public class TreeUtil {
         private String nodeCode;
 
         private static void test() {
-            String listStr = "[{\"nodeId\":1,\"parentId\":0,\"nodeCode\":\"1\",\"nodeName\":\"1\"},{\"nodeId\":2,\"parentId\":0,\"nodeCode\":\"2\",\"nodeName\":\"2\"},{\"nodeId\":3,\"parentId\":1,\"nodeCode\":\"1_3\",\"nodeName\":\"1_3\"},{\"nodeId\":4,\"parentId\":3,\"nodeCode\":\"1_3_4\",\"nodeName\":\"1_3_4\"},{\"nodeId\":5,\"parentId\":3,\"nodeCode\":\"1_3_5\",\"nodeName\":\"1_3_5\"},{\"nodeId\":6,\"parentId\":5,\"nodeCode\":\"1_3_5_6\",\"nodeName\":\"1_3_5_6\"},{\"nodeId\":7,\"parentId\":1,\"nodeCode\":\"1_7\",\"nodeName\":\"1_7\"},{\"nodeId\":8,\"parentId\":0,\"nodeCode\":\"8\",\"nodeName\":\"8\"},{\"nodeId\":9,\"parentId\":8,\"nodeCode\":\"8_9\",\"nodeName\":\"8_9\"},{\"nodeId\":10,\"parentId\":8,\"nodeCode\":\"8_10\",\"nodeName\":\"8_10\"},{\"nodeId\":11,\"parentId\":9,\"nodeCode\":\"8_9_11\",\"nodeName\":\"8_9_11\"},{\"nodeId\":12,\"parentId\":10,\"nodeCode\":\"8_10_12\",\"nodeName\":\"8_10_12\"}]";
-            List<TestNode> listNode1 = JsonUtil.toObjectList(listStr, TestNode.class);
-            System.out.println();
-            System.out.println("test1: " + JsonUtil.toString(listNode1));
-            System.out.println();
+            long begin, done;
+            List<TestNode> listNode1 = listNodes();
+            System.out.println("------------------------------------------------------------");
+            System.out.println("listToTree >> start: " + (begin = System.currentTimeMillis()));
             List<TestNode> treeNode1 = listToTree(listNode1, TestNode.class);
-            System.out.println();
-            System.out.println("test2: " + JsonUtil.toString(treeNode1));
-            System.out.println();
+            System.out.println("listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("------------------------------------------------------------");
+            System.out.println("treeToList >> start: " + (begin = System.currentTimeMillis()));
             List<TestNode> listNode2 = treeToList(treeNode1, TestNode.class);
-            System.out.println();
-            System.out.println("test3: " + JsonUtil.toString(listNode2));
-            System.out.println();
+            System.out.println("treeToList >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("------------------------------------------------------------");
+            System.out.println("listToTree >> start: " + (begin = System.currentTimeMillis()));
             List<TestNode> treeNode2 = listToTree(listNode2, TestNode.class);
-            System.out.println();
-            System.out.println("test4: " + JsonUtil.toString(treeNode2));
-            System.out.println();
+            System.out.println("listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("------------------------------------------------------------");
+            System.out.println("nodes: " + JsonUtil.toString(treeNode2));
+            checkListNodes(listNode1, listNode2);
+        }
 
+        private static void checkListNodes(List<TestNode> listNode1, List<TestNode> listNode2) {
             for (TestNode node : listNode1) {
                 List<TestNode> collect = listNode2.stream().filter(item -> item.getNodeCode().equals(node.getNodeCode())).collect(Collectors.toList());
                 if (collect.size() != 1) {
@@ -194,6 +199,53 @@ public class TreeUtil {
             }
         }
 
+        private static List<TestNode> listNodes() {
+            List<TestNode> nodes = new ArrayList<>();
+            TestNode topNode = new TestNode();
+            topNode.setNodeId(1L).setParentId(TOP_NODE_ID);
+            topNode.setNodeName("1").setNodeCode("1");
+            nodes.add(topNode);
+            int level = 1;
+            long index = 2;
+            while (index < 10000) {
+                TestNode instance = new TestNode();
+                String code;
+                Long parentId;
+                if (RandomUtils.nextBoolean()) {
+                    // ----- 新增顶级节点
+                    parentId = TOP_NODE_ID;
+                    code = String.valueOf(index);
+                } else {
+                    // ----- 新增子节点
+                    TestNode parentNode = null;
+                    if (RandomUtils.nextBoolean()) {
+                        int nextInt = RandomUtils.nextInt(1, level);
+                        for (TestNode item : nodes) {
+                            int matches = StringUtils.countMatches(item.getNodeCode(), "_");
+                            if (matches == nextInt && item.getChild().size() < 5) {
+                                parentNode = item;
+                            }
+                        }
+                        if (parentNode != null) {
+                            if (level < 10) {
+                                level++;
+                            }
+                        } else {
+                            parentNode = nodes.stream().findAny().get();
+                        }
+                    } else {
+                        parentNode = nodes.stream().findAny().get();
+                    }
+                    parentId = parentNode.getNodeId();
+                    code = parentNode.getNodeCode() + "_" + index;
+                }
+                instance.setNodeId(index).setParentId(parentId);
+                instance.setNodeName(code).setNodeCode(code);
+                nodes.add(instance);
+                index++;
+            }
+            return nodes;
+        }
     }
 
 }
