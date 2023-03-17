@@ -219,27 +219,23 @@ public class TreeUtil {
                 TestNode instance = new TestNode();
                 String code;
                 Long parentId;
-                if (RandomUtils.nextBoolean()) {
+                if (RandomUtils.nextInt(1, 10) <= 2) {
                     // ----- 新增顶级节点
                     parentId = TOP_NODE_ID;
                     code = String.valueOf(index);
                 } else {
                     // ----- 新增子节点
                     TestNode parentNode = null;
-                    if (RandomUtils.nextInt(1, 10) > 2) {
-                        int nextInt = RandomUtils.nextInt(1, level);
-                        for (TestNode item : nodes) {
-                            int matches = StringUtils.countMatches(item.getNodeCode(), "_");
-                            if (matches == nextInt && item.getChild().size() < 5) {
-                                parentNode = item;
-                            }
+                    int nextInt = RandomUtils.nextInt(1, level);
+                    for (TestNode item : nodes) {
+                        int matches = StringUtils.countMatches(item.getNodeCode(), "_");
+                        if (matches == nextInt && item.getChild().size() < 5) {
+                            parentNode = item;
                         }
-                        if (parentNode != null) {
-                            if (level < 10) {
-                                level++;
-                            }
-                        } else {
-                            parentNode = nodes.stream().findAny().get();
+                    }
+                    if (parentNode != null) {
+                        if (level < 10) {
+                            level++;
                         }
                     } else {
                         parentNode = nodes.stream().findAny().get();
