@@ -173,23 +173,23 @@ public class TreeUtil {
         private static void test() {
             long begin, done;
             List<TestNode> listNode1 = listNodes();
-            System.out.println("------------------------------------------------------------");
-            System.out.println("listToTree >> start: " + (begin = System.currentTimeMillis()));
+            System.out.println("============================================================");
+            System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()));
             List<TestNode> treeNode1 = listToTree(listNode1, TestNode.class);
-            System.out.println("listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
-            System.out.println("------------------------------------------------------------");
-            System.out.println("treeToList >> start: " + (begin = System.currentTimeMillis()));
+            System.out.println("| listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("|-----------------------------------------------------------");
+            System.out.println("| treeToList >> start: " + (begin = System.currentTimeMillis()));
             List<TestNode> listNode2 = treeToList(treeNode1, TestNode.class);
-            System.out.println("treeToList >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
-            System.out.println("------------------------------------------------------------");
-            System.out.println("listToTree >> start: " + (begin = System.currentTimeMillis()));
+            System.out.println("| treeToList >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("|-----------------------------------------------------------");
+            System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()));
             List<TestNode> treeNode2 = listToTree(listNode2, TestNode.class);
-            System.out.println("listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
-            System.out.println("------------------------------------------------------------");
-            System.out.println("checkListNodes >> start: " + (begin = System.currentTimeMillis()));
+            System.out.println("| listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("|-----------------------------------------------------------");
+            System.out.println("| checkListNodes >> start: " + (begin = System.currentTimeMillis()));
             checkListNodes(listNode1, listNode2);
-            System.out.println("checkListNodes >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
-            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println("| checkListNodes >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("============================================================");
             System.out.println(JsonUtil.toString(treeNode2));
         }
 
