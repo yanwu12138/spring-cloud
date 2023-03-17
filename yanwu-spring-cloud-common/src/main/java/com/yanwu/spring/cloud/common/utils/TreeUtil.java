@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -185,11 +186,18 @@ public class TreeUtil {
             List<TestNode> treeNode2 = listToTree(listNode2, TestNode.class);
             System.out.println("listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("------------------------------------------------------------");
-            System.out.println("nodes: " + JsonUtil.toString(treeNode2));
+            System.out.println("checkListNodes >> start: " + (begin = System.currentTimeMillis()));
             checkListNodes(listNode1, listNode2);
+            System.out.println("checkListNodes >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println(JsonUtil.toString(treeNode2));
         }
 
         private static void checkListNodes(List<TestNode> listNode1, List<TestNode> listNode2) {
+            if (listNode1.size() != listNode2.size()) {
+                System.out.println("------- ERROR -------");
+                throw new RuntimeException();
+            }
             for (TestNode node : listNode1) {
                 List<TestNode> collect = listNode2.stream().filter(item -> item.getNodeCode().equals(node.getNodeCode())).collect(Collectors.toList());
                 if (collect.size() != 1) {
@@ -203,7 +211,7 @@ public class TreeUtil {
             List<TestNode> nodes = new ArrayList<>();
             TestNode topNode = new TestNode();
             topNode.setNodeId(1L).setParentId(TOP_NODE_ID);
-            topNode.setNodeName("1").setNodeCode("1");
+            topNode.setNodeCode("1").setNodeName(RandomStringUtils.randomAlphanumeric(10));
             nodes.add(topNode);
             int level = 1;
             long index = 2;
@@ -218,7 +226,7 @@ public class TreeUtil {
                 } else {
                     // ----- 新增子节点
                     TestNode parentNode = null;
-                    if (RandomUtils.nextBoolean()) {
+                    if (RandomUtils.nextInt(1, 10) > 2) {
                         int nextInt = RandomUtils.nextInt(1, level);
                         for (TestNode item : nodes) {
                             int matches = StringUtils.countMatches(item.getNodeCode(), "_");
@@ -240,7 +248,7 @@ public class TreeUtil {
                     code = parentNode.getNodeCode() + "_" + index;
                 }
                 instance.setNodeId(index).setParentId(parentId);
-                instance.setNodeName(code).setNodeCode(code);
+                instance.setNodeCode(code).setNodeName(RandomStringUtils.randomAlphanumeric(10));
                 nodes.add(instance);
                 index++;
             }
