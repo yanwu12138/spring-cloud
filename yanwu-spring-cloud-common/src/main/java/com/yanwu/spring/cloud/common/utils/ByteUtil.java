@@ -63,11 +63,6 @@ public class ByteUtil {
         return result;
     }
 
-    public static void main(String[] args) {
-        byte[] a0000001s = hexStrToBytes("A0000001");
-        System.out.println(printBytes(a0000001s));
-    }
-
     /**
      * 将字节数组转换16进制数组输出格式
      *

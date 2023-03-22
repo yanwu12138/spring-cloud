@@ -60,7 +60,7 @@ public class EmailUtil {
     public static void main(String[] args) throws Exception {
         sendEmail(SEND_ADDRESS, ACCOUNT, PASSWORD, "yanwu0527@163.com", new String[]{"baofeng.xu@birdsat.cn"},
                 "测试邮件", "尊敬的用户：305306733@qq.com，您的车票已经抢票成功！信息如下:乘客:王栋,日期:2019-10-30,车次:K824,地点:杭州06:30-合肥07:23,席别:硬座。请在30分钟内完成付款！更多信息请查询未付款订单。"
-                , "E:\\tool\\服务器.md", "E:\\document\\波束切换\\备忘录.md","E:\\home\\appuser\\file\\antenna\\beamData\\newtecBeamData.json");
+                , "E:\\tool\\服务器.md", "E:\\document\\波束切换\\备忘录.md", "E:\\home\\appuser\\file\\antenna\\beamData\\newtecBeamData.json");
     }
 
     /**
@@ -90,7 +90,7 @@ public class EmailUtil {
         // ===== 创建定义整个应用程序所需的环境信息的 Session 对象
         Session session = Session.getInstance(PROPERTIES);
         // ===== 创建邮件的实例对象
-        Message msg = getMimeMessage(session, sendAddress, toRecipient, ccRecipient, subject, content, attachments);
+        Message msg = createMimeMessage(session, sendAddress, toRecipient, ccRecipient, subject, content, attachments);
         // ===== 根据session对象获取邮件传输对象Transport
         Transport transport = session.getTransport();
         // ----- 设置发件人的账户名和密码
@@ -114,9 +114,9 @@ public class EmailUtil {
      * @return 邮件的实例对象
      * @throws Exception e
      */
-    private static MimeMessage getMimeMessage(Session session, String sendAddress,
-                                              String toRecipient, String[] ccRecipient,
-                                              String subject, String content, String... attachments) throws Exception {
+    private static MimeMessage createMimeMessage(Session session, String sendAddress,
+                                                 String toRecipient, String[] ccRecipient,
+                                                 String subject, String content, String... attachments) throws Exception {
         // ----- 创建一封邮件的实例对象
         MimeMessage msg = new MimeMessage(session);
         // ===== 发件人地址

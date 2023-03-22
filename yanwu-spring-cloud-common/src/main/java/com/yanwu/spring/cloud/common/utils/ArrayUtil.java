@@ -266,4 +266,14 @@ public class ArrayUtil {
         return min;
     }
 
+    @SafeVarargs
+    public static <T> List<T> toList(T... values) {
+        List<T> list = new ArrayList<>();
+        if (values == null || values.length == 0) {
+            return list;
+        }
+        list.addAll(Arrays.asList(values));
+        return list;
+    }
+
 }

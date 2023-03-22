@@ -83,16 +83,16 @@ public class TelnetUtil {
         try (InputStream inputStream = client.getInputStream();
              OutputStream outputStream = client.getOutputStream();
              InputStreamReader reader = new InputStreamReader(inputStream)) {
-            log.info("telnet client: {}", readUntil(":", reader));
+            log.info("telnet client: {}", read(":", reader));
             // ----- 输入用户名
-            writeUtil(username, outputStream);
-            log.info("telnet client: {}", readUntil(":", reader));
+            write(username, outputStream);
+            log.info("telnet client: {}", read(":", reader));
             // ----- 输入密码
-            writeUtil(password, outputStream);
-            log.info("telnet client: {}", readUntil(".", reader));
+            write(password, outputStream);
+            log.info("telnet client: {}", read(".", reader));
             // ----- 执行命令
-            writeUtil(cmd, outputStream);
-            log.info("telnet client: {}", readUntil(":", reader));
+            write(cmd, outputStream);
+            log.info("telnet client: {}", read(":", reader));
             return Boolean.TRUE;
         } catch (Exception e) {
             log.error("exec telnet error.", e);
@@ -103,7 +103,7 @@ public class TelnetUtil {
     /***
      * 写入命令方法
      */
-    private static void writeUtil(String cmd, OutputStream os) throws IOException {
+    private static void write(String cmd, OutputStream os) throws IOException {
         cmd = cmd + "\n";
         os.write(cmd.getBytes());
         os.flush();
@@ -112,7 +112,7 @@ public class TelnetUtil {
     /***
      * 读到指定位置,不在向下读
      */
-    private static String readUntil(String endFlag, InputStreamReader reader) throws IOException {
+    private static String read(String endFlag, InputStreamReader reader) throws IOException {
         char[] chars = new char[1024];
         boolean flag = false;
         StringBuilder builder = new StringBuilder();

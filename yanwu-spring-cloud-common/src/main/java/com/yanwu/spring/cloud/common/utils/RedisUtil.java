@@ -60,6 +60,12 @@ public class RedisUtil {
         return result.getData();
     }
 
+    /**
+     * sequence序列号减一
+     *
+     * @param key KEY
+     * @return 自增系列号
+     */
     public Long decrement(String key) {
         CallableResult<Long> result = executor(key, () -> {
             Long decrement = operations.decrement(key(REDIS_SEQ, key));

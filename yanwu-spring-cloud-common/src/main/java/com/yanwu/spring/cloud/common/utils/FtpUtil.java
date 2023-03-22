@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.Encoding;
+import com.yanwu.spring.cloud.common.pojo.RemoteServer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -10,7 +11,11 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.util.Assert;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -31,6 +36,7 @@ public class FtpUtil {
     private static final Integer FTP_PORT = 21;
     private static final String USERNAME = "hoolink";
     private static final String PASSWORD = "hoolink123";
+    private static final RemoteServer REMOTE_SERVER = RemoteServer.getInstance(FTP_HOST, FTP_PORT, USERNAME, PASSWORD);
 
     private FtpUtil() {
         throw new UnsupportedOperationException("FtpUtil should never be instantiated");
@@ -39,31 +45,28 @@ public class FtpUtil {
     /**
      * 初始化FTP
      *
-     * @param host     ftp服务器地址
-     * @param port     ftp端口
-     * @param username ftp用户
-     * @param password ftp密码
+     * @param server ftp服务器
      */
-    private static FTPClient initClient(String host, Integer port, String username, String password) {
-        Assert.isTrue(StringUtils.isNotBlank(host), "init ftp client failed, host is null.");
+    private static FTPClient initClient(RemoteServer server) {
+        Assert.isTrue(StringUtils.isNotBlank(server.getHost()), "init ftp client failed, host is null.");
         // ----- 当端口为空时使用默认端口
         int code = -1;
-        port = port == null ? FTP_PORT : port;
+        int port = server.getPort() == null ? FTP_PORT : server.getPort();
         FTPClient ftpClient = new FTPClient();
         try {
             ftpClient.setControlEncoding(Encoding.UTF_8);
             // ----- 连接
-            ftpClient.connect(host, port);
-            ftpClient.login(username, password);
+            ftpClient.connect(server.getHost(), port);
+            ftpClient.login(server.getAccount(), server.getPassword());
             // ----- 检测连接是否成功
             code = ftpClient.getReplyCode();
             if (FTPReply.isPositiveCompletion(code)) {
-                log.info(" ----- init ftp server success host: {}, post: {}, user: {}, code: {}", host, port, username, code);
+                log.info(" ----- init ftp server success server: {}", server);
                 return ftpClient;
             }
-            log.error(" ----- init ftp server success host: {}, post: {}, user: {}, code: {}", host, port, username, code);
+            log.error(" ----- init ftp server success server: {}, code: {}", server, code);
         } catch (Exception e) {
-            log.error(" ----- init ftp server success host: {}, post: {}, user: {}, code: {}", host, port, username, code, e);
+            log.error(" ----- init ftp server success server: {}, code: {}", server, code, e);
         }
         close(ftpClient);
         return null;
@@ -72,23 +75,20 @@ public class FtpUtil {
     /**
      * 上传文件
      *
-     * @param host       ftp服务器地址
-     * @param port       ftp端口
-     * @param username   ftp用户
-     * @param password   ftp密码
+     * @param server     ftp服务器
      * @param file       文件
      * @param userId     用户ID
      * @param targetPath 文件存放目录
      * @return 文件存放在ftp服务器地址
      */
-    public static String upload(String host, Integer port, String username, String password, File file, Long userId, String targetPath) {
-        FTPClient ftpClient = initClient(host, port, username, password);
+    public static String upload(RemoteServer server, File file, Long userId, String targetPath) {
+        FTPClient ftpClient = initClient(server);
         if (Objects.isNull(ftpClient) || Objects.isNull(file) || !file.isFile()) {
             return null;
         }
         String fileName = file.getName();
         String filePath = getFilePath(userId, targetPath);
-        try (InputStream is = new FileInputStream(file)) {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
             StringBuilder sb = new StringBuilder();
             // ----- 切换到对应目录
             changeDirectory(ftpClient, filePath.split(SEPARATOR));
@@ -114,10 +114,7 @@ public class FtpUtil {
     /**
      * 断点续传FTP
      *
-     * @param host       服务
-     * @param port       端口
-     * @param username   用户名
-     * @param password   密码
+     * @param server     ftp服务器
      * @param is         文件流
      * @param projectId  项目ID
      * @param targetPath 目标地址
@@ -126,9 +123,8 @@ public class FtpUtil {
      * @param ftpUrl     地址
      * @return 文件路径
      */
-    public static String uploadPart(String host, Integer port, String username, String password,
-                                    InputStream is, Long projectId, String targetPath, String fileName, Integer partNum, String ftpUrl) {
-        FTPClient ftpClient = initClient(host, port, username, password);
+    public static String uploadPart(RemoteServer server, InputStream is, Long projectId, String targetPath, String fileName, Integer partNum, String ftpUrl) {
+        FTPClient ftpClient = initClient(server);
         if (Objects.isNull(ftpClient) || Objects.isNull(is)) {
             return null;
         }
@@ -175,15 +171,12 @@ public class FtpUtil {
     /**
      * 删除ftp上的文件
      *
-     * @param host     ftp服务器地址
-     * @param port     ftp端口
-     * @param username ftp用户
-     * @param password ftp密码
+     * @param server   ftp服务器
      * @param filePath 资源文件
      * @return true || false
      */
-    public static boolean remove(String host, Integer port, String username, String password, String filePath) {
-        FTPClient ftpClient = initClient(host, port, username, password);
+    public static boolean remove(RemoteServer server, String filePath) {
+        FTPClient ftpClient = initClient(server);
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return false;
         }
@@ -206,16 +199,15 @@ public class FtpUtil {
     }
 
     /**
-     * @param host       ftp服务器地址
-     * @param port       ftp端口
-     * @param username   ftp用户
-     * @param password   ftp密码
+     * 下载ftp上的文件
+     *
+     * @param server     ftp服务器
      * @param filePath   资源路径
      * @param targetPath 目标路径
      * @return 文件
      */
-    public static File download(String host, Integer port, String username, String password, String filePath, String targetPath) {
-        FTPClient ftpClient = initClient(host, port, username, password);
+    public static File download(RemoteServer server, String filePath, String targetPath) {
+        FTPClient ftpClient = initClient(server);
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return null;
         }
@@ -225,7 +217,7 @@ public class FtpUtil {
         // ----- 获取文件名和文件
         String fileName = filePath.substring(filePath.lastIndexOf(SEPARATOR) + 1);
         File file = new File(targetPath + SEPARATOR + fileName);
-        try (OutputStream os = new FileOutputStream(file)) {
+        try (OutputStream os = Files.newOutputStream(file.toPath())) {
             // ----- 切换到对应目录
             changeDirectory(ftpClient, splitFtpFilePath(filePath));
             ftpClient.setBufferSize(1024);
@@ -251,15 +243,12 @@ public class FtpUtil {
     /**
      * 判断文件是否存在
      *
-     * @param host     ftp服务器地址
-     * @param port     ftp端口
-     * @param username ftp用户
-     * @param password ftp密码
+     * @param server   ftp服务器
      * @param filePath 文件地址
      * @return true || false
      */
-    public static boolean exists(String host, Integer port, String username, String password, String filePath) {
-        FTPClient ftpClient = initClient(host, port, username, password);
+    public static boolean exists(RemoteServer server, String filePath) {
+        FTPClient ftpClient = initClient(server);
         if (Objects.isNull(ftpClient) || StringUtils.isBlank(filePath)) {
             return false;
         }
