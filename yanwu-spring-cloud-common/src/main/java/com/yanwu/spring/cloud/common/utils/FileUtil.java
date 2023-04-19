@@ -26,8 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
-import java.util.Enumeration;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -64,10 +63,6 @@ public class FileUtil {
         }
         File file = new File(filePath);
         return file.isFile() ? file.length() : -1;
-    }
-
-    public static void main(String[] args) throws Exception {
-        System.out.println(remoteFileSize("https://bird-test-1.oss-cn-beijing.aliyuncs.com/test-0.0.0.34.bin"));
     }
 
     /**
@@ -538,6 +533,7 @@ public class FileUtil {
      * @param filepath 文件全路径
      * @param newName  新文件名
      */
+    @SuppressWarnings("all")
     public static boolean rename(String filepath, String newName) {
         return rename(new File(filepath), newName);
     }
@@ -781,12 +777,7 @@ public class FileUtil {
             log.error("check file md5 failed, because file path is empty.");
             return false;
         }
-        if (StringUtils.isBlank(md5)) {
-            log.error("check file md5 failed, because md5 is empty.");
-            return false;
-        }
-        String fileMd5 = calcFileMd5(filepath);
-        return StringUtils.isNotBlank(fileMd5) && fileMd5.equals(md5.toUpperCase());
+        return checkFileMd5(new File(filepath), md5);
     }
 
     /**
@@ -881,6 +872,123 @@ public class FileUtil {
             log.error("get file create time failed, file: {}.", path, e);
             return -1;
         }
+    }
+
+    /**
+     * 根据文件名和所给的目录，找到文件所在绝对路径
+     *
+     * @param dirPath  目录路径
+     * @param filename 文件名
+     * @return 文件所在绝对路径
+     */
+    public static String findFilepath(String dirPath, String filename) {
+        if (StringUtils.isBlank(dirPath) || StringUtils.isBlank(filename)) {
+            return null;
+        }
+        return findFilepath(new File(dirPath), filename);
+    }
+
+    /**
+     * 根据文件名和所给的目录，找到文件所在绝对路径
+     *
+     * @param file     目录路径
+     * @param filename 文件名
+     * @return 文件所在绝对路径
+     */
+    public static String findFilepath(File file, String filename) {
+        if (!file.exists() || StringUtils.isBlank(filename)) {
+            return null;
+        }
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File item : files) {
+                    if (item.isDirectory()) {
+                        String filepath = findFilepath(item, filename);
+                        if (StringUtils.isNotBlank(filepath)) {
+                            return filepath;
+                        }
+                    } else {
+                        if (item.getName().equalsIgnoreCase(filename)) {
+                            return item.getPath();
+                        }
+                    }
+                }
+            }
+        } else {
+            if (file.getName().equalsIgnoreCase(filename)) {
+                return file.getPath();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据文件名和所给的目录，模糊搜索所有文件名包含filename的文件所在绝对路径集合
+     *
+     * @param dirPath  目录路径
+     * @param filename 文件名
+     * @return 文件所在绝对路径集合
+     */
+    public static List<String> fuzzyFindFilepath(String dirPath, String filename) {
+        if (StringUtils.isBlank(dirPath) || StringUtils.isBlank(filename)) {
+            return Collections.emptyList();
+        }
+        return fuzzyFindFilepath(new File(dirPath), filename);
+    }
+
+    /**
+     * 根据文件名和所给的目录，模糊搜索所有文件名包含filename的文件所在绝对路径集合
+     *
+     * @param file     目录路径
+     * @param filename 文件名
+     * @return 文件所在绝对路径集合
+     */
+    public static List<String> fuzzyFindFilepath(File file, String filename) {
+        if (!file.exists() || StringUtils.isBlank(filename)) {
+            return Collections.emptyList();
+        }
+        List<String> result = new ArrayList<>();
+        fuzzyFindFilepath(file, filename.toLowerCase(), result);
+        return result;
+    }
+
+    /**
+     * 根据文件名和所给的目录，模糊搜索所有文件名包含filename的文件所在绝对路径集合
+     *
+     * @param file     目录路径
+     * @param filename 文件名
+     * @param result   符合条件的文件路径集合
+     */
+    private static void fuzzyFindFilepath(File file, String filename, List<String> result) {
+        if (!file.exists() || StringUtils.isBlank(filename)) {
+            return;
+        }
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File item : files) {
+                    if (item.isDirectory()) {
+                        fuzzyFindFilepath(item, filename, result);
+                    } else {
+                        if (item.getName().contains(filename)) {
+                            result.add(item.getPath());
+                        }
+                    }
+                }
+            }
+        } else {
+            if (file.getName().contains(filename)) {
+                result.add(file.getPath());
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        String filepath = findFilepath("/Users/xubaofeng/yanwu/ssh/server/", "ap_server_XG.sh");
+        System.out.println(filepath);
+        List<String> filepathArr = fuzzyFindFilepath("/Users/xubaofeng/yanwu/ssh/server/", "Gateway_proxy");
+        System.out.println(filepathArr);
     }
 
 }
