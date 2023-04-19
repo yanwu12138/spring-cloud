@@ -5,6 +5,9 @@ import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.protocol.BasicHttpContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +18,7 @@ import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -836,6 +840,59 @@ public class FileUtil {
     }
 
     /**
+     * 计算远程文件的MD5值
+     *
+     * @param fileUrl 地址
+     * @return 文件的MD5值
+     */
+    public static String calcRemoteFileMd5(String fileUrl) throws Exception {
+        if (StringUtils.isBlank(fileUrl)) {
+            log.error("calc remote file md5 failed, because file url is empty.");
+            return null;
+        }
+        HttpURLConnection connection = (HttpURLConnection) new URL(fileUrl).openConnection();
+        if (connection.getResponseCode() != 200) {
+            log.error("calc remote file md5 failed, because file url is unreachable.");
+            return null;
+        }
+        long fileSize = Long.parseLong(connection.getHeaderField(HttpHeaders.CONTENT_LENGTH));
+        if (fileSize <= 0) {
+            log.error("calc remote file md5 failed, because file size is unreachable.");
+            return null;
+        }
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        byte[] bytes, readBytes;
+        long position = 0, blockSize = LIMIT_SIZE;
+        HttpGet httpGet = new HttpGet(fileUrl);
+        while (fileSize > 0) {
+            // ----- 分片读取文件
+            blockSize = Math.min(blockSize, fileSize);
+            httpGet.addHeader("Range", "bytes=" + position + "-" + (position + blockSize - 1));
+            bytes = new byte[(int) blockSize];
+            int read, offset = 0;
+            try (CloseableHttpResponse response = DownLoadUtil.HTTP_CLIENT.execute(httpGet, new BasicHttpContext());
+                 BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent())) {
+                readBytes = new byte[Contents.DEFAULT_SIZE];
+                while ((read = bis.read(readBytes, 0, readBytes.length)) != -1) {
+                    System.arraycopy(readBytes, 0, bytes, offset, read);
+                    offset += read;
+                }
+            }
+            digest.update(bytes);
+            position += blockSize;
+            fileSize -= blockSize;
+        }
+        String result = ByteUtil.bytesToHexStr(digest.digest());
+        log.info("calc remote file md5 success, fileUrl: {}, md5: {}", fileUrl, result);
+        return result;
+    }
+
+    public static void main(String[] args) throws Exception {
+        calcRemoteFileMd5("https://bird-common.oss-cn-shanghai.aliyuncs.com/codepipeline_jobs_ServerController_4_codepipeline.zip");
+        calcFileMd5("/Users/xubaofeng/Downloads/codepipeline_jobs_ServerController_4_codepipeline.zip");
+    }
+
+    /**
      * 获取文件的创建时间
      *
      * @param filePath 文件路径
@@ -982,13 +1039,6 @@ public class FileUtil {
                 result.add(file.getPath());
             }
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        String filepath = findFilepath("/Users/xubaofeng/yanwu/ssh/server/", "ap_server_XG.sh");
-        System.out.println(filepath);
-        Set<String> filepathArr = fuzzyFindFilepath("/Users/xubaofeng/yanwu/ssh/server/", "Gateway_proxy");
-        System.out.println(filepathArr);
     }
 
 }
