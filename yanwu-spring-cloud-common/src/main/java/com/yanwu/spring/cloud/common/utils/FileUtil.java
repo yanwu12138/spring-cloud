@@ -930,9 +930,9 @@ public class FileUtil {
      * @param filename 文件名
      * @return 文件所在绝对路径集合
      */
-    public static List<String> fuzzyFindFilepath(String dirPath, String filename) {
+    public static Set<String> fuzzyFindFilepath(String dirPath, String filename) {
         if (StringUtils.isBlank(dirPath) || StringUtils.isBlank(filename)) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
         return fuzzyFindFilepath(new File(dirPath), filename);
     }
@@ -944,11 +944,11 @@ public class FileUtil {
      * @param filename 文件名
      * @return 文件所在绝对路径集合
      */
-    public static List<String> fuzzyFindFilepath(File file, String filename) {
+    public static Set<String> fuzzyFindFilepath(File file, String filename) {
         if (!file.exists() || StringUtils.isBlank(filename)) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
-        List<String> result = new ArrayList<>();
+        Set<String> result = new HashSet<>();
         fuzzyFindFilepath(file, filename.toLowerCase(), result);
         return result;
     }
@@ -960,7 +960,7 @@ public class FileUtil {
      * @param filename 文件名
      * @param result   符合条件的文件路径集合
      */
-    private static void fuzzyFindFilepath(File file, String filename, List<String> result) {
+    private static void fuzzyFindFilepath(File file, String filename, Set<String> result) {
         if (!file.exists() || StringUtils.isBlank(filename)) {
             return;
         }
@@ -987,7 +987,7 @@ public class FileUtil {
     public static void main(String[] args) throws Exception {
         String filepath = findFilepath("/Users/xubaofeng/yanwu/ssh/server/", "ap_server_XG.sh");
         System.out.println(filepath);
-        List<String> filepathArr = fuzzyFindFilepath("/Users/xubaofeng/yanwu/ssh/server/", "Gateway_proxy");
+        Set<String> filepathArr = fuzzyFindFilepath("/Users/xubaofeng/yanwu/ssh/server/", "Gateway_proxy");
         System.out.println(filepathArr);
     }
 
