@@ -39,7 +39,7 @@ public class DownLoadUtil {
     /*** 每个线程下载的字节数: 10M */
     private static final Long UNIT_SIZE = 10 * 1024 * 1024L;
     /*** 客户端 */
-    private static final CloseableHttpClient HTTP_CLIENT;
+    public static final CloseableHttpClient HTTP_CLIENT;
 
     static {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();

@@ -334,6 +334,18 @@
             <artifactId>sshd-scp</artifactId>
             <version>2.7.0</version>
         </dependency>
+        <!-- 微信支付SDK -->
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>0.2.7</version>
+        </dependency>
+        <!-- 阿里支付SDK -->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.35.101.ALL</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
