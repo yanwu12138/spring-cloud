@@ -44,7 +44,7 @@
 | `5`  | `SRV_FORCE_NO_UNDO_LOG_SCAN`：不查看重做日志，`InnoDB`存储引擎会将未提交的事务视为已提交。 |
 | `6`  | `SRV_FORCE_NO_LOG_REDO`：不执行前滚的操作。                  |
 
-__注：__ _当设置`innodb_force_recovery`大于`0`后，可以对表进行`select`、`create`、`drop`操作，但`insert`、`update`或者`delete`这类操作是不允许的。_
+__注：__ _当设置`innodb_force_recovery`大于`0`后，可以对表进行`select`、`create`、`drop`操作，但`insert`、`update`或者`delete`这类操作是不允许的。**大的参数包含小的参数，所以我们尝试恢复服务的时候，先尽量用最小参数尝试，小的不行再依次尝试用大的参数**_
 
 
 
