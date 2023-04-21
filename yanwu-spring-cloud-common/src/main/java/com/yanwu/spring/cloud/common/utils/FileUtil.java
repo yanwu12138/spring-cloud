@@ -870,7 +870,7 @@ public class FileUtil {
             httpGet.addHeader("Range", "bytes=" + position + "-" + (position + blockSize - 1));
             bytes = new byte[(int) blockSize];
             int read, offset = 0;
-            try (CloseableHttpResponse response = DownLoadUtil.HTTP_CLIENT.execute(httpGet, new BasicHttpContext());
+            try (CloseableHttpResponse response = HttpUtil.HTTP_CLIENT.execute(httpGet, new BasicHttpContext());
                  BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent())) {
                 readBytes = new byte[Contents.DEFAULT_SIZE];
                 while ((read = bis.read(readBytes, 0, readBytes.length)) != -1) {
@@ -888,8 +888,8 @@ public class FileUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        calcRemoteFileMd5("https://bird-common.oss-cn-shanghai.aliyuncs.com/codepipeline_jobs_ServerController_4_codepipeline.zip");
-        calcFileMd5("/Users/xubaofeng/Downloads/codepipeline_jobs_ServerController_4_codepipeline.zip");
+        String fileMd5 = calcRemoteFileMd5("https://bird-common.oss-cn-shanghai.aliyuncs.com/codepipeline_jobs_ServerController_4_codepipeline.zip");
+        System.out.println(fileMd5);
     }
 
     /**

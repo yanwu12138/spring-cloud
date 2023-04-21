@@ -7,9 +7,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.http.HttpHeaders;
@@ -38,13 +35,8 @@ public class DownLoadUtil {
     private static final ThreadPoolTaskExecutor EXECUTOR;
     /*** 每个线程下载的字节数: 10M */
     private static final Long UNIT_SIZE = 10 * 1024 * 1024L;
-    /*** 客户端 */
-    public static final CloseableHttpClient HTTP_CLIENT;
 
     static {
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(20);
-        HTTP_CLIENT = HttpClients.custom().setConnectionManager(cm).build();
         EXECUTOR = new ThreadPoolTaskExecutor();
         // ----- 设置核心线程数
         EXECUTOR.setCorePoolSize(10);
@@ -154,7 +146,7 @@ public class DownLoadUtil {
             httpGet.addHeader("Range", "bytes=" + offset + "-" + (offset + length - 1));
             File file = new File(fileName);
             try (RandomAccessFile raf = new RandomAccessFile(file, "rw");
-                 CloseableHttpResponse response = HTTP_CLIENT.execute(httpGet, context);
+                 CloseableHttpResponse response = HttpUtil.HTTP_CLIENT.execute(httpGet, context);
                  BufferedInputStream bis = new BufferedInputStream(response.getEntity().getContent())) {
                 int read;
                 byte[] bytes = new byte[Contents.DEFAULT_SIZE];

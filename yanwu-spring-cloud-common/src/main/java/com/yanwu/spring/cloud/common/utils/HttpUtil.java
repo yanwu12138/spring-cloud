@@ -13,6 +13,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,6 +34,14 @@ import static com.yanwu.spring.cloud.common.core.common.HttpConstants.*;
 @Slf4j
 @SuppressWarnings("unused")
 public class HttpUtil {
+    /*** 客户端 */
+    public static final CloseableHttpClient HTTP_CLIENT;
+
+    static {
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(20);
+        HTTP_CLIENT = HttpClients.custom().setConnectionManager(cm).build();
+    }
 
     private HttpUtil() {
         throw new UnsupportedOperationException("HttpUtil should never be instantiated");
