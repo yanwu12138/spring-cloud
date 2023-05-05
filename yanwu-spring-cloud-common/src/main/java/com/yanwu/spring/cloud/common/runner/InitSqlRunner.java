@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.Executor;
 
 /**
  * @author Baofeng Xu
@@ -25,37 +26,41 @@ import java.io.InputStreamReader;
 public class InitSqlRunner implements CommandLineRunner {
     @Resource
     private JdbcTemplate jdbcTemplate;
+    @Resource
+    private Executor initExecutors;
 
     @Override
     public void run(String... args) throws Exception {
-        try {
-            if (jdbcTemplate == null) {
-                // ----- 无数据库连接，不执行
-                return;
-            }
-            org.springframework.core.io.Resource resource = new ClassPathResource("init.sql");
-            if (!resource.exists()) {
-                // ----- init.sql文件不存在，无初始化脚本，直接结束
-                return;
-            }
-            try (InputStream inputStream = resource.getInputStream();
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                String sql;
-                while (StringUtils.isNotBlank(sql = reader.readLine())) {
-                    if (StringUtils.isBlank(sql) || sql.startsWith("--")) {
-                        // ----- 为空行或者为注解，不执行
-                        continue;
-                    }
-                    try {
-                        jdbcTemplate.execute(sql);
-                    } catch (Exception e) {
-                        log.warn("init sql execute error. sql: {}", sql, e);
+        initExecutors.execute(() -> {
+            try {
+                if (jdbcTemplate == null) {
+                    // ----- 无数据库连接，不执行
+                    return;
+                }
+                org.springframework.core.io.Resource resource = new ClassPathResource("init.sql");
+                if (!resource.exists()) {
+                    // ----- init.sql文件不存在，无初始化脚本，直接结束
+                    return;
+                }
+                try (InputStream inputStream = resource.getInputStream();
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                    String sql;
+                    while (StringUtils.isNotBlank(sql = reader.readLine())) {
+                        if (StringUtils.isBlank(sql) || sql.startsWith("--")) {
+                            // ----- 为空行或者为注解，不执行
+                            continue;
+                        }
+                        try {
+                            jdbcTemplate.execute(sql);
+                        } catch (Exception e) {
+                            log.warn("init sql execute error. sql: {}", sql, e);
+                        }
                     }
                 }
+            } catch (Exception e) {
+                log.error("init sql error.", e);
+                System.exit(-1);
             }
-        } catch (Exception e) {
-            log.error("init sql error.", e);
-            System.exit(-1);
-        }
+        });
     }
 }

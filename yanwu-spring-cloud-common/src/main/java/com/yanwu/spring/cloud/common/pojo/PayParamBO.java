@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Data
 @Accessors(chain = true)
 public class PayParamBO implements Serializable {
+    private static final long serialVersionUID = 6092700009402779247L;
 
     // ============================== 商户信息 ============================== //
     /*** 商户ID ***/

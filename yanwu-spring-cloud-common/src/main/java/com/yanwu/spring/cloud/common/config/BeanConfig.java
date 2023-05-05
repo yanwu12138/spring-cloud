@@ -48,4 +48,28 @@ public class BeanConfig {
         executor.initialize();
         return executor;
     }
+
+    /**
+     * 系统初始化线程池
+     */
+    @Bean
+    public Executor initExecutors() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        // ----- 设置核心线程数
+        executor.setCorePoolSize(1);
+        // ----- 设置最大线程数
+        executor.setMaxPoolSize(10);
+        // ----- 设置队列容量
+        executor.setQueueCapacity(20);
+        // ----- 设置线程活跃时间（秒）
+        executor.setKeepAliveSeconds(120);
+        // ----- 设置默认线程名称
+        executor.setThreadNamePrefix("main-init-executor-");
+        // ----- 设置拒绝策略
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // ----- 执行初始化
+        executor.initialize();
+        return executor;
+    }
+
 }
