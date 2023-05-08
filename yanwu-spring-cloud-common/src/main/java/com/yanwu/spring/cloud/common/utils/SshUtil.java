@@ -49,6 +49,28 @@ public class SshUtil {
     }
 
     /**
+     * 检查远程服务器密码是否正确
+     *
+     * @param server 服务器相关配置
+     * @return 【true: 正确; false: 不正确】
+     */
+    public static boolean checkRemotePassword(RemoteServer server) {
+        Connection connection = null;
+        try {
+            connection = new Connection(server.getHost(), server.getPort());
+            connection.connect();
+            return server.connectionVerify(connection);
+        } catch (Exception e) {
+            log.info("check server password failed, server: {}", server, e);
+            return false;
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+
+    /**
      * 远程执行shell脚本或者命令
      *
      * @param server 服务器相关配置
