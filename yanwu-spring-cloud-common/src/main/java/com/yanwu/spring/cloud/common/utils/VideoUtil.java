@@ -62,8 +62,8 @@ public class VideoUtil {
             byte[] buffer = new byte[DEFAULT_LENGTH];
             // ----- 第一次请求只返回content length来让客户端请求多次实际数据
             if (StringUtils.isBlank(rangeStr)) {
-                response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(contentLength));
                 responseHeader(response, file.getName(), HttpServletResponse.SC_OK);
+                response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(contentLength));
             } else {
                 // ----- 以后的多次以断点续传的方式来返回视频数据
                 responseHeader(response, file.getName(), HttpServletResponse.SC_PARTIAL_CONTENT);
