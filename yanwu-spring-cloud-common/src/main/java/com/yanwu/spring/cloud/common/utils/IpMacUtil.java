@@ -285,17 +285,6 @@ public class IpMacUtil {
         return PingBO.getInstance(address, times, CommandUtil.execCommand(command));
     }
 
-    public static void main(String[] args) throws Exception {
-        log.info("----- {}", getInterfaceName());
-        log.info("----- {}", checkHostConnectable("127.0.0.1", 7001));
-        log.info("----- {}", checkHostReachable("192.168.56.111"));
-
-        log.info("----- {}", ping("127.0.0.1", 9));
-        log.info("----- {}", ping("www.baidu.com"));
-        log.info("----- {}", ping("www.zhihu.com"));
-        log.info("----- {}", ping("39.25.7.12"));
-    }
-
     /**
      * 通过request获取用户的IP地址
      *

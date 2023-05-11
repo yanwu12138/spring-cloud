@@ -27,13 +27,6 @@ public class SshUtil {
         throw new UnsupportedOperationException("SshUtil should never be instantiated");
     }
 
-    public static void main(String[] args) throws Exception {
-        RemoteServer server = RemoteServer.getInstance("192.168.56.50", "root", "Js_2643.");
-        System.out.println(execCommand(server, "ping 192.168.56.100 -c 4 -w 5"));
-        System.out.println(checkDiskOccupy("home"));
-        System.out.println(checkDiskOccupy("root"));
-    }
-
     private static String checkDiskOccupy(String partition) {
         String command = "df -h | grep " + partition + " | awk '{print $5}'";
         RemoteServer server = RemoteServer.getInstance("192.168.56.50", "root", "Js_2643.");

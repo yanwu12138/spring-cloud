@@ -59,7 +59,7 @@ public class ObjectUtil {
             return result;
         }
         Set<Field> superFields = new HashSet<>();
-        superclassField(clazz, superFields);
+        superClassField(clazz, superFields);
         if (!superFields.isEmpty()) {
             result = field(superFields, fieldName);
         }
@@ -71,7 +71,7 @@ public class ObjectUtil {
      * @param clazz  对象
      * @param result 结果集
      */
-    private static void superclassField(Class<?> clazz, Set<Field> result) {
+    private static void superClassField(Class<?> clazz, Set<Field> result) {
         if (clazz == null) {
             return;
         }
@@ -83,7 +83,7 @@ public class ObjectUtil {
         if (superclassFields.length > 0) {
             result.addAll(Arrays.asList(superclassFields));
         }
-        superclassField(superclass, result);
+        superClassField(superclass, result);
     }
 
     /***
@@ -109,7 +109,7 @@ public class ObjectUtil {
      * @param failedName 属性名称
      */
     private static Field field(Field[] fields, String failedName) {
-        if (fields.length == 0) {
+        if (fields == null) {
             return null;
         }
         for (Field field : fields) {

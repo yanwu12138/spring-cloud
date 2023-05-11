@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -31,10 +30,6 @@ public class Aes128Util {
 
     private Aes128Util() {
         throw new UnsupportedOperationException("Aes128Util should never be instantiated");
-    }
-
-    public static void main(String[] args) {
-        System.out.println(RandomStringUtils.randomAlphanumeric(8));
     }
 
     /**

@@ -25,20 +25,13 @@ import java.security.KeyPairGenerator;
  * description: 使用java执行SCP命令
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class ScpUtil {
 
     public static final Long VERIFY_TIMEOUT = 30 * 1000L;
 
     private ScpUtil() {
         throw new UnsupportedOperationException("ScpUtil should never be instantiated");
-    }
-
-    public static void main(String[] args) {
-        ScpServer server = ScpServer.getInstance("192.168.56.50", "root", "Js_2643.");
-        System.out.println(download(server, "/root/dist.zip", "E:\\download\\test.zip"));
-        System.out.println(upload(server, "E:\\download\\test.zip", "/root/test.zip"));
-        System.out.println(upload(server, "E:\\download\\music", "/root/music"));
-        System.out.println(download(server, "/root/music", "E:\\download\\music111111111"));
     }
 
     /**

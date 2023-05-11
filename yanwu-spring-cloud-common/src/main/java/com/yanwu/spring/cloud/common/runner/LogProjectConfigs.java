@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.Executor;
 
 /**
  * @author Baofeng Xu
@@ -26,25 +27,29 @@ import java.util.TreeMap;
 public class LogProjectConfigs {
     @Resource
     private Environment environment;
+    @Resource
+    private Executor initExecutors;
 
     @PostConstruct
     public void logConfigs() {
-        log.info("======================================== log project configs begin ========================================");
-        try {
-            SortedMap<String, Object> configs = new TreeMap<>();
-            for (PropertySource<?> sources : ((AbstractEnvironment) environment).getPropertySources()) {
-                if (!(sources.getSource() instanceof Map)) {
-                    continue;
+        initExecutors.execute(() -> {
+            log.info("======================================== log project configs begin ========================================");
+            try {
+                SortedMap<String, Object> configs = new TreeMap<>();
+                for (PropertySource<?> sources : ((AbstractEnvironment) environment).getPropertySources()) {
+                    if (!(sources.getSource() instanceof Map)) {
+                        continue;
+                    }
+                    Map<?, ?> source = (Map<?, ?>) sources.getSource();
+                    source.forEach((key, value) -> configs.put(String.valueOf(key), value));
                 }
-                Map<?, ?> source = (Map<?, ?>) sources.getSource();
-                source.forEach((key, value) -> configs.put(String.valueOf(key), value));
+                int maxLen = getMaxLen(configs.keySet());
+                configs.forEach((key, value) -> log.info("config property key: {} value: {}", logKey(key, maxLen), value));
+            } catch (Exception e) {
+                log.error("log project configs error.", e);
             }
-            int maxLen = getMaxLen(configs.keySet());
-            configs.forEach((key, value) -> log.info("config property key: {} value: {}", logKey(key, maxLen), value));
-        } catch (Exception e) {
-            log.error("log project configs error.", e);
-        }
-        log.info("======================================== log project configs end ========================================");
+            log.info("======================================== log project configs done ========================================");
+        });
     }
 
     /***

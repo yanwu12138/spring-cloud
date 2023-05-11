@@ -887,11 +887,6 @@ public class FileUtil {
         return result;
     }
 
-    public static void main(String[] args) throws Exception {
-        String fileMd5 = calcRemoteFileMd5("https://bird-common.oss-cn-shanghai.aliyuncs.com/codepipeline_jobs_ServerController_4_codepipeline.zip");
-        System.out.println(fileMd5);
-    }
-
     /**
      * 获取文件的创建时间
      *
