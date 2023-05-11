@@ -47,7 +47,7 @@ public class SshUtil {
      * @param server 服务器相关配置
      * @return 【true: 正确; false: 不正确】
      */
-    public static boolean checkRemotePassword(RemoteServer server) {
+    public static boolean checkRemote(RemoteServer server) {
         Connection connection = null;
         try {
             connection = new Connection(server.getHost(), server.getPort());
