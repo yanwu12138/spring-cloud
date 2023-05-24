@@ -104,11 +104,12 @@ public class RSAUtils {
      * @throws Exception 加密过程中的异常信息
      */
     public static String encrypt(String content, String publicKey) throws Exception {
+        byte[] inputByte = content.getBytes(StandardCharsets.UTF_8);
         byte[] decoded = Base64.getDecoder().decode(publicKey);
         RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance(ALGORITHM_NAME).generatePublic(new X509EncodedKeySpec(decoded));
         Cipher cipher = Cipher.getInstance(ALGORITHM_NAME);
         cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-        return Base64.getEncoder().encodeToString(cipher.doFinal(content.getBytes(StandardCharsets.UTF_8)));
+        return Base64.getEncoder().encodeToString(cipher.doFinal(inputByte));
     }
 
     /**
