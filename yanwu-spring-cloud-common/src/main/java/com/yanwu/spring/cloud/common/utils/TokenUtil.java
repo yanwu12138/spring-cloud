@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.pojo.AccessToken;
+import com.yanwu.spring.cloud.common.utils.secret.Aes128Util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 

@@ -1,5 +1,6 @@
-package com.yanwu.spring.cloud.common.utils;
+package com.yanwu.spring.cloud.common.utils.secret;
 
+import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
