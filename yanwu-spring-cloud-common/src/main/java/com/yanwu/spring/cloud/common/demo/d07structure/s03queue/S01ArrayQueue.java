@@ -29,11 +29,7 @@ public class S01ArrayQueue<E extends Serializable> {
     }
 
     public boolean leftEnqueue(E value) {
-        if (value == null || size == size()) {
-            return false;
-        }
-
-        return true;
+        return value != null && size != size();
     }
 
     public E leftDequeue() {
@@ -41,10 +37,7 @@ public class S01ArrayQueue<E extends Serializable> {
     }
 
     public boolean rightEnqueue(E value) {
-        if (value == null || size == size()) {
-            return false;
-        }
-        return true;
+        return value != null && size != size();
     }
 
     public E rightDequeue() {
