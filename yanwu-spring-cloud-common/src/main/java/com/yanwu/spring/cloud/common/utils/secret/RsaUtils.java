@@ -25,12 +25,17 @@ import java.util.Map;
  * description:  RSA 加密工具类
  */
 @Slf4j
-public class RSAUtils {
+public class RsaUtils {
+
     /*** 密钥长度 于原文长度对应 以及越长速度越慢 ***/
     private final static int KEY_SIZE = 1024;
     /*** 用于缓存公钥与私钥对 ***/
     private static final String ALGORITHM_NAME = "RSA";
     private static final Map<String, KeyPairCO> KEY_PAIR_CACHE = new HashMap<>();
+
+    private RsaUtils() {
+        throw new UnsupportedOperationException("RsaUtils should never be instantiated");
+    }
 
     public static void main(String[] args) throws Exception {
         long begin = System.currentTimeMillis();
