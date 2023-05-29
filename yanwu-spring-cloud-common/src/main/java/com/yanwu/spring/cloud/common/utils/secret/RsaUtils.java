@@ -43,7 +43,7 @@ public class RsaUtils {
         while (count > 0) {
             // ===== 生成公钥和私钥
             long temp = System.currentTimeMillis();
-            String appId = RandomStringUtils.randomAlphanumeric(32);
+            String appId = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
             randomKeyPair(appId);
             String publicKey = getPublicKey(appId), privateKey = getPrivateKey(appId);
             String message = appId + "2023-05-17 11:30:22" + "A01,A02";
