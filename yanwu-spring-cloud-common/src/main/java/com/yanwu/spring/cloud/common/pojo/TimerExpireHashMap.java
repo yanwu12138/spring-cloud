@@ -64,10 +64,14 @@ public class TimerExpireHashMap<K, V> extends ConcurrentHashMap<K, V> implements
                 long localtime = System.currentTimeMillis();
                 for (Entry<Object, AtomicLong> entry : entries) {
                     try {
-                        if (localtime > entry.getValue().get() && function.apply(entry.getKey())) {
-                            // ----- Key到达过期时间并且回调过期处理成功，删除Key
-                            remove(entry.getKey());
-                            log.info("callback - timeout function key: {}", entry.getKey());
+                        if (localtime > entry.getValue().get()) {
+                            if (this.containsKey(entry.getKey()) && function.apply(entry.getKey())) {
+                                // ----- Key到达过期时间并且回调过期处理成功，删除Key
+                                remove(entry.getKey());
+                                log.info("callback - timeout function key: {}", entry.getKey());
+                            } else {
+                                remove(entry.getKey());
+                            }
                         }
                     } catch (Exception e) {
                         log.error("check timeout error, key: {}.", entry.getKey(), e);
