@@ -9,9 +9,11 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -76,6 +78,7 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
         if (CollectionUtils.isEmpty(entries)) {
             return;
         }
+        log.info("cache: {}", JsonUtil.toString(this));
         long localtime = System.currentTimeMillis();
         for (Entry<K, ExpiredNode<V>> entry : entries) {
             try {
@@ -94,8 +97,24 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
     @Override
     public ExpiredNode<V> put(@Nonnull K key, @Nonnull ExpiredNode<V> value) {
         value.resetTime();
-        value = super.put(key, value);
-        return value;
+        return super.put(key, value);
+    }
+
+    /*** 批量插入K-V时：给每个Key新增超时时间戳 ***/
+    @Override
+    public void putAll(@Nonnull Map<? extends K, ? extends ExpiredNode<V>> entries) {
+        if (MapUtils.isEmpty(entries)) {
+            return;
+        }
+        entries.values().forEach(ExpiredNode::resetTime);
+        super.putAll(entries);
+    }
+
+    /*** 新增K-V时：给每个Key新增超时时间戳 ***/
+    @Override
+    public ExpiredNode<V> putIfAbsent(@Nonnull K key, @Nonnull ExpiredNode<V> value) {
+        value.resetTime();
+        return super.putIfAbsent(key, value);
     }
 
     /*** 查询Key时：刷新该Key的超时时间戳 ***/
@@ -127,10 +146,12 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
             return result.setValue(value);
         }
 
+        /*** 重置最后访问时间 ***/
         public void resetTime() {
             this.lastTime = System.currentTimeMillis();
         }
 
+        /*** 检查是否超时：【true: 超时; false: 未超时】 ***/
         public boolean timeout(long localTime, long expired) {
             return localTime - lastTime >= expired;
         }
@@ -143,11 +164,16 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
         });
         map.put("aaa", ExpiredNode.getInstance("aaa"));
         ThreadUtil.sleep(1000);
-        map.put("bab", ExpiredNode.getInstance("bbb"));
+        map.put("bbb", ExpiredNode.getInstance("bbb"));
         ThreadUtil.sleep(5000);
         map.put("ccc", ExpiredNode.getInstance("ccc"));
         ThreadUtil.sleep(2000);
         System.out.println(JsonUtil.toString(map.getOrDefault("ccc", ExpiredNode.getInstance("123123"))));
+        ThreadUtil.sleep(2000);
+        Map<String, ExpiredNode<String>> temp = new ConcurrentHashMap<>();
+        temp.put("ddd", ExpiredNode.getInstance("ddd"));
+        temp.put("eee", ExpiredNode.getInstance("eee"));
+        map.putAll(temp);
     }
 
 }
