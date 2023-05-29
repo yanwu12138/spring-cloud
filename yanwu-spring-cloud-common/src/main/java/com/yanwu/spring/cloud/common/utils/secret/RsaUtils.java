@@ -53,22 +53,18 @@ public class RsaUtils {
             log.info("私钥: {}", privateKey);
             log.info("明文: {}", message);
             log.info("生成密钥消耗时间: {}", (System.currentTimeMillis() - temp));
-            log.info("==================== count: {} ====================", count);
             // ===== 使用公钥加密
             temp = System.currentTimeMillis();
             String encrypt = encrypt(message, publicKey);
             log.info("密文: {}", encrypt);
             log.info("加密时长: {}", System.currentTimeMillis() - temp);
-            log.info("==================== count: {} ====================", count);
             // ===== 使用私钥解密
             temp = System.currentTimeMillis();
             String decrypt = decrypt(encrypt, privateKey);
             log.info("明文: {}", decrypt);
             log.info("解密时长: {}, 加解密验证: {}", System.currentTimeMillis() - temp, message.equals(decrypt));
-            log.info("==================== count: {} ====================", count);
             if (!message.equals(decrypt)) {
                 log.error("加解密错误, appId: {}", appId);
-                log.info("==================== count: {} ====================", count);
                 throw new RuntimeException();
             }
             count--;
