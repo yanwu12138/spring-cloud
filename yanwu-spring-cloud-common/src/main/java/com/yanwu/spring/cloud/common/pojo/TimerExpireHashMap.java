@@ -56,11 +56,11 @@ public class TimerExpireHashMap<K, V> extends ConcurrentHashMap<K, V> implements
         EXPIRED_TIME.set(expired);
         SWAP_EXPIRED_POOL.scheduleWithFixedDelay(() -> {
             try {
-                log.info("cache: {}", this);
                 Set<Entry<Object, AtomicLong>> entries = EXPIRED_KEY_CACHE.entrySet();
                 if (CollectionUtils.isEmpty(entries)) {
                     return;
                 }
+                log.info("cache: {}", this);
                 long localtime = System.currentTimeMillis();
                 for (Entry<Object, AtomicLong> entry : entries) {
                     try {
@@ -83,7 +83,7 @@ public class TimerExpireHashMap<K, V> extends ConcurrentHashMap<K, V> implements
     @Override
     public V put(@Nonnull K key, @Nonnull V value) {
         value = super.put(key, value);
-        setExpiredTime(key);
+        setExpireTime(key);
         return value;
     }
 
@@ -92,7 +92,7 @@ public class TimerExpireHashMap<K, V> extends ConcurrentHashMap<K, V> implements
     public V get(@Nonnull Object key) {
         V value = super.get(key);
         if (value != null) {
-            setExpiredTime(key);
+            setExpireTime(key);
         }
         return value;
     }
@@ -106,15 +106,13 @@ public class TimerExpireHashMap<K, V> extends ConcurrentHashMap<K, V> implements
     }
 
     /*** 刷新Key的超时时间戳缓存 ***/
-    private synchronized void setExpiredTime(Object key) {
-        if (!EXPIRED_KEY_CACHE.containsKey(key)) {
-            EXPIRED_KEY_CACHE.put(key, new AtomicLong(System.currentTimeMillis()));
-        }
-        EXPIRED_KEY_CACHE.get(key).addAndGet(EXPIRED_TIME.get());
+    private synchronized void setExpireTime(Object key) {
+        long expireTime = System.currentTimeMillis() + EXPIRED_TIME.get();
+        EXPIRED_KEY_CACHE.put(key, new AtomicLong(expireTime));
     }
 
     public static void main(String[] args) {
-        TimerExpireHashMap<String, String> map = new TimerExpireHashMap<>(3000L, (key) -> {
+        TimerExpireHashMap<String, String> map = new TimerExpireHashMap<>(5000L, (key) -> {
             log.info("function - timeout function key: {}", key);
             return Boolean.TRUE;
         });
