@@ -135,7 +135,7 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
         @Getter
         @Setter
         private V value;
-        @Getter
+
         private Long lastTime = System.currentTimeMillis();
 
         private ExpiredNode() {

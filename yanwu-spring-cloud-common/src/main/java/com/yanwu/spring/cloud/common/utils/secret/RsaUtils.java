@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils.secret;
 
+import com.yanwu.spring.cloud.common.pojo.ExpiredHashMap;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Baofeng Xu
@@ -29,48 +29,42 @@ public class RsaUtils {
 
     /*** 密钥长度 于原文长度对应 以及越长速度越慢 ***/
     private final static int KEY_SIZE = 1024;
-    /*** 用于缓存公钥与私钥对 ***/
     private static final String ALGORITHM_NAME = "RSA";
-    private static final Map<String, KeyPairCO> KEY_PAIR_CACHE = new ConcurrentHashMap<>();
+    /*** 用于缓存公钥与私钥对, 过期时间5秒 ***/
+    private static final Map<String, ExpiredHashMap.ExpiredNode<KeyPairCO>> KEY_PAIR_CACHE = new ExpiredHashMap<>(5_000L, (key) -> Boolean.TRUE);
 
     private RsaUtils() {
         throw new UnsupportedOperationException("RsaUtils should never be instantiated");
     }
 
     public static void main(String[] args) throws Exception {
-        long begin = System.currentTimeMillis();
-        int count = 1000;
-        while (count > 0) {
-            // ===== 生成公钥和私钥
-            long temp = System.currentTimeMillis();
-            String appId = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
-            randomKeyPair(appId);
-            String publicKey = getPublicKey(appId), privateKey = getPrivateKey(appId);
-            String message = appId + "2023-05-17 11:30:22" + "A01,A02";
-            log.info("==================== count: {} ====================", count);
-            log.info("AppID: {}", appId);
-            log.info("公钥: {}", publicKey);
-            log.info("私钥: {}", privateKey);
-            log.info("明文: {}", message);
-            log.info("生成密钥消耗时间: {}", (System.currentTimeMillis() - temp));
-            // ===== 使用公钥加密
-            temp = System.currentTimeMillis();
-            String encrypt = encrypt(message, publicKey);
-            log.info("密文: {}", encrypt);
-            log.info("加密时长: {}", System.currentTimeMillis() - temp);
-            // ===== 使用私钥解密
-            temp = System.currentTimeMillis();
-            String decrypt = decrypt(encrypt, privateKey);
-            log.info("明文: {}", decrypt);
-            log.info("解密时长: {}, 加解密验证: {}", System.currentTimeMillis() - temp, message.equals(decrypt));
-            if (!message.equals(decrypt)) {
-                log.error("加解密错误, appId: {}", appId);
-                throw new RuntimeException();
-            }
-            count--;
+        // ===== 生成公钥和私钥
+        long temp = System.currentTimeMillis();
+        String appId = RandomStringUtils.randomAlphanumeric(32).toLowerCase();
+        randomKeyPair(appId);
+        String publicKey = getPublicKey(appId), privateKey = getPrivateKey(appId);
+        String message = appId + "2023-05-17 11:30:22" + "A01,A02";
+        log.info("========================================");
+        log.info("AppID: {}", appId);
+        log.info("公钥: {}", publicKey);
+        log.info("私钥: {}", privateKey);
+        log.info("明文: {}", message);
+        log.info("生成密钥消耗时间: {}", (System.currentTimeMillis() - temp));
+        // ===== 使用公钥加密
+        temp = System.currentTimeMillis();
+        String encrypt = encrypt(message, publicKey);
+        log.info("密文: {}", encrypt);
+        log.info("加密时长: {}", System.currentTimeMillis() - temp);
+        // ===== 使用私钥解密
+        temp = System.currentTimeMillis();
+        String decrypt = decrypt(encrypt, privateKey);
+        log.info("明文: {}", decrypt);
+        log.info("解密时长: {}, 加解密验证: {}", System.currentTimeMillis() - temp, message.equals(decrypt));
+        if (!message.equals(decrypt)) {
+            log.error("加解密错误, appId: {}", appId);
+            throw new RuntimeException();
         }
-        log.info("done, time: {}", System.currentTimeMillis() - begin);
-        log.info("==================== count: {} ====================", count);
+        log.info("========================================");
     }
 
     /**
@@ -85,7 +79,8 @@ public class RsaUtils {
         keyPairGen.initialize(KEY_SIZE, new SecureRandom(appId.getBytes(StandardCharsets.UTF_8)));
         // ----- 生成一个密钥对，保存在keyPair中
         synchronized (ALGORITHM_NAME) {
-            KEY_PAIR_CACHE.put(appId, KeyPairCO.getInstance(appId, keyPairGen.generateKeyPair()));
+            KeyPairCO instance = KeyPairCO.getInstance(appId, keyPairGen.generateKeyPair());
+            KEY_PAIR_CACHE.put(appId, ExpiredHashMap.ExpiredNode.getInstance(instance));
         }
     }
 
@@ -147,7 +142,7 @@ public class RsaUtils {
 
     private static KeyPairCO getKeyPairCO(String appId) {
         synchronized (ALGORITHM_NAME) {
-            return StringUtils.isBlank(appId) ? null : KEY_PAIR_CACHE.get(appId);
+            return StringUtils.isBlank(appId) ? null : KEY_PAIR_CACHE.get(appId).getValue();
         }
     }
 
