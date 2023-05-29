@@ -15,8 +15,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Baofeng Xu
@@ -31,7 +31,7 @@ public class RsaUtils {
     private final static int KEY_SIZE = 1024;
     /*** 用于缓存公钥与私钥对 ***/
     private static final String ALGORITHM_NAME = "RSA";
-    private static final Map<String, KeyPairCO> KEY_PAIR_CACHE = new HashMap<>();
+    private static final Map<String, KeyPairCO> KEY_PAIR_CACHE = new ConcurrentHashMap<>();
 
     private RsaUtils() {
         throw new UnsupportedOperationException("RsaUtils should never be instantiated");
