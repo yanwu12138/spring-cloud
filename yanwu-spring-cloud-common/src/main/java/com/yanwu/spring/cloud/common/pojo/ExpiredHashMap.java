@@ -35,13 +35,13 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, V> implements Ser
 
     /**
      * 构造该Map:
-     * 该Map每1秒执行一次过期检测，当检测到Map中的Key过期时，会回调对应的function
+     * 该Map每5秒执行一次过期检测，当检测到Map中的Key过期时，会回调对应的function
      *
      * @param expire   Key的过期时间，单位：毫秒
      * @param function Key过期时的回调函数，并通过回调的结果判断过期Key处理是否成功
      */
     public ExpiredHashMap(@Nonnull Long expire, @Nonnull Function<Object, Boolean> function) {
-        this(1_000L, expire, function);
+        this(5_000L, expire, function);
     }
 
     /**
