@@ -5,6 +5,7 @@ import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -56,7 +57,13 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
     public ExpiredHashMap(@Nonnull Long period, @Nonnull Long expire, @Nonnull Function<Object, Boolean> function) {
         super();
         EXPIRE_TIME.set(expire);
-        CHECK_EXPIRE_SCHEDULE.scheduleWithFixedDelay(() -> checkExpiredSchedule(function), (0), period, TimeUnit.MILLISECONDS);
+        CHECK_EXPIRE_SCHEDULE.scheduleWithFixedDelay(() -> {
+            try {
+                checkExpiredSchedule(function);
+            } catch (Exception e) {
+                log.error("check timeout schedule failed.", e);
+            }
+        }, 0, period, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -65,26 +72,21 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
      * @param function 回调函数
      */
     private void checkExpiredSchedule(@Nonnull Function<Object, Boolean> function) {
-        try {
-            Set<Entry<K, ExpiredNode<V>>> entries = this.entrySet();
-            if (CollectionUtils.isEmpty(entries)) {
-                return;
-            }
-            log.info("cache: {}", JsonUtil.toString(this));
-            long localtime = System.currentTimeMillis();
-            for (Entry<K, ExpiredNode<V>> entry : entries) {
-                try {
-                    if (entry.getValue().timeout(localtime, EXPIRE_TIME.get()) && function.apply(entry.getKey())) {
-                        // ----- Key到达过期时间并且回调过期处理成功，删除Key
-                        remove(entry.getKey());
-                        log.info("callback - timeout function key: {}", entry.getKey());
-                    }
-                } catch (Exception e) {
-                    log.error("check timeout error, key: {}.", entry.getKey(), e);
+        Set<Entry<K, ExpiredNode<V>>> entries = this.entrySet();
+        if (CollectionUtils.isEmpty(entries)) {
+            return;
+        }
+        long localtime = System.currentTimeMillis();
+        for (Entry<K, ExpiredNode<V>> entry : entries) {
+            try {
+                if (entry.getValue().timeout(localtime, EXPIRE_TIME.get()) && function.apply(entry.getKey())) {
+                    // ----- Key到达过期时间并且回调过期处理成功，删除Key
+                    remove(entry.getKey());
+                    log.info("callback - timeout function key: {}", entry.getKey());
                 }
+            } catch (Exception e) {
+                log.error("check  key: [{}] timeout failed.", entry.getKey(), e);
             }
-        } catch (Exception e) {
-            log.error("check timeout error.", e);
         }
     }
 
@@ -106,6 +108,7 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
         return value;
     }
 
+    @ToString
     @Accessors(chain = true)
     public static class ExpiredNode<V> implements Serializable {
         private static final long serialVersionUID = 1197572171199448469L;
