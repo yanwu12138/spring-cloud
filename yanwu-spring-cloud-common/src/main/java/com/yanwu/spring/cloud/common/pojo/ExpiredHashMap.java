@@ -134,7 +134,7 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
     }
 
     public static void main(String[] args) {
-        ExpiredHashMap<String, String> map = new ExpiredHashMap<>(3000L, (key) -> {
+        ExpiredHashMap<String, String> map = new ExpiredHashMap<>(3_000L, (key) -> {
             log.info("function - timeout function key: {}", key);
             return Boolean.TRUE;
         });
