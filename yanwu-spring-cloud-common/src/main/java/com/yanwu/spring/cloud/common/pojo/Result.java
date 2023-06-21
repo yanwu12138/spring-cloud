@@ -16,6 +16,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class Result<T> implements Serializable {
     private static final long serialVersionUID = 8137315026981867597L;
+    private static final String ERROR = "执行失败!";
 
     @Getter
     private T data;
@@ -30,6 +31,10 @@ public class Result<T> implements Serializable {
         return status != null && status;
     }
 
+    public boolean nonNull() {
+        return isSuccess() && data != null;
+    }
+
     public static <T> Result<T> success() {
         return success(null);
     }
@@ -39,11 +44,19 @@ public class Result<T> implements Serializable {
     }
 
     public static <T> Result<T> failed() {
-        return failed("执行失败");
+        return failed(ERROR);
+    }
+
+    public static <T> Result<T> failed(T data) {
+        return failed(data, ERROR);
     }
 
     public static <T> Result<T> failed(String message) {
-        return getInstance(null, Boolean.FALSE, message);
+        return failed(null, message);
+    }
+
+    public static <T> Result<T> failed(T data, String message) {
+        return getInstance(data, Boolean.FALSE, message);
     }
 
     private static <T> Result<T> getInstance(T data, Boolean status, String message) {
@@ -67,4 +80,5 @@ public class Result<T> implements Serializable {
         this.message = message;
         return this;
     }
+
 }

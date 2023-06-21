@@ -6,7 +6,7 @@ import com.aliyun.oss.model.DeleteObjectsRequest;
 import com.aliyun.oss.model.GetObjectRequest;
 import com.yanwu.spring.cloud.common.core.enums.OssFileTypeEnum;
 import com.yanwu.spring.cloud.common.pojo.OssProperties;
-import com.yanwu.spring.cloud.common.pojo.OssResult;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,9 +44,9 @@ public class AliOssUtil {
      * @return 上传结果
      * @throws Exception Exception.class
      */
-    public static OssResult<String> upload(OssProperties properties, OssFileTypeEnum type, String filePath) throws Exception {
+    public static Result<String> upload(OssProperties properties, OssFileTypeEnum type, String filePath) throws Exception {
         if (StringUtils.isBlank(filePath)) {
-            return OssResult.failed("OSS upload failed: filePath is blank.");
+            return Result.failed("OSS upload failed: filePath is blank.");
         }
         return upload(properties, type, new File(filePath));
     }
@@ -60,9 +60,9 @@ public class AliOssUtil {
      * @return 上传结果
      * @throws Exception Exception.class
      */
-    public static OssResult<String> upload(OssProperties properties, OssFileTypeEnum type, File file) throws Exception {
+    public static Result<String> upload(OssProperties properties, OssFileTypeEnum type, File file) throws Exception {
         if (!file.exists() || !file.isFile()) {
-            return OssResult.failed("OSS upload failed: file is not exists or file is not file.");
+            return Result.failed("OSS upload failed: file is not exists or file is not file.");
         }
         try (InputStream is = Files.newInputStream(file.toPath())) {
             return upload(properties, is, type, file.getName());
@@ -78,12 +78,12 @@ public class AliOssUtil {
      * @param fileName   本地文件名称
      * @return 上传结果
      */
-    public static OssResult<String> upload(OssProperties properties, InputStream is, OssFileTypeEnum type, String fileName) {
+    public static Result<String> upload(OssProperties properties, InputStream is, OssFileTypeEnum type, String fileName) {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
             if (ossClient == null) {
-                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
             }
             return upload(ossClient, properties.getBucket(), is, type, fileName);
         } finally {
@@ -101,9 +101,9 @@ public class AliOssUtil {
      * @return 上传结果
      * @throws Exception Exception.class
      */
-    public static OssResult<String> upload(OSS ossClient, String bucket, OssFileTypeEnum type, String filePath) throws Exception {
+    public static Result<String> upload(OSS ossClient, String bucket, OssFileTypeEnum type, String filePath) throws Exception {
         if (StringUtils.isBlank(filePath)) {
-            return OssResult.failed("OSS upload failed: filePath is blank.");
+            return Result.failed("OSS upload failed: filePath is blank.");
         }
         return upload(ossClient, bucket, type, new File(filePath));
     }
@@ -118,9 +118,9 @@ public class AliOssUtil {
      * @return 上传结果
      * @throws Exception Exception.class
      */
-    public static OssResult<String> upload(OSS ossClient, String bucket, OssFileTypeEnum type, File file) throws Exception {
+    public static Result<String> upload(OSS ossClient, String bucket, OssFileTypeEnum type, File file) throws Exception {
         if (!file.exists() || !file.isFile()) {
-            return OssResult.failed("OSS upload failed: file is not exists or file is not file.");
+            return Result.failed("OSS upload failed: file is not exists or file is not file.");
         }
         try (InputStream is = Files.newInputStream(file.toPath())) {
             return upload(ossClient, bucket, is, type, file.getName());
@@ -137,13 +137,13 @@ public class AliOssUtil {
      * @param fileName  本地文件名称
      * @return 上传结果
      */
-    public static OssResult<String> upload(OSS ossClient, String bucket, InputStream is, OssFileTypeEnum type, String fileName) {
+    public static Result<String> upload(OSS ossClient, String bucket, InputStream is, OssFileTypeEnum type, String fileName) {
         if (StringUtils.isBlank(bucket)) {
-            return OssResult.failed("OSS upload failed: bucket is blank.");
+            return Result.failed("OSS upload failed: bucket is blank.");
         }
         String urlPath = randomFilePath(type, fileName);
         ossClient.putObject(bucket, urlPath, is);
-        return checkExist(exist(ossClient, bucket, urlPath)) ? OssResult.success(urlPath) : OssResult.failed();
+        return checkExist(exist(ossClient, bucket, urlPath)) ? Result.success(urlPath) : Result.failed();
     }
 
     /**
@@ -153,15 +153,15 @@ public class AliOssUtil {
      * @param fileUrl    OSS fileUrl
      * @return data: [true: 删除成功; false: 删除失败]
      */
-    public static OssResult<Boolean> delete(OssProperties properties, String fileUrl) {
+    public static Result<Boolean> delete(OssProperties properties, String fileUrl) {
         if (StringUtils.isBlank(fileUrl)) {
-            return OssResult.failed("OSS delete failed: fileUrl is blank.");
+            return Result.failed("OSS delete failed: fileUrl is blank.");
         }
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
             if (ossClient == null) {
-                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
             }
             return delete(ossClient, properties.getBucket(), fileUrl);
         } finally {
@@ -177,15 +177,15 @@ public class AliOssUtil {
      * @param fileUrl   OSS fileUrl
      * @return data: [true: 删除成功; false: 删除失败]
      */
-    public static OssResult<Boolean> delete(OSS ossClient, String bucket, String fileUrl) {
+    public static Result<Boolean> delete(OSS ossClient, String bucket, String fileUrl) {
         if (StringUtils.isBlank(bucket)) {
-            return OssResult.failed("OSS delete failed: bucket is blank.");
+            return Result.failed("OSS delete failed: bucket is blank.");
         }
         if (StringUtils.isBlank(fileUrl)) {
-            return OssResult.failed("OSS delete failed: fileUrl is blank.");
+            return Result.failed("OSS delete failed: fileUrl is blank.");
         }
         ossClient.deleteObject(bucket, fileUrl);
-        return checkExist(exist(ossClient, bucket, fileUrl)) ? OssResult.success(Boolean.FALSE) : OssResult.success(Boolean.TRUE);
+        return checkExist(exist(ossClient, bucket, fileUrl)) ? Result.success(Boolean.FALSE) : Result.success(Boolean.TRUE);
     }
 
     /**
@@ -194,15 +194,15 @@ public class AliOssUtil {
      * @param properties OSS 相关配置
      * @param fileUrls   OSS fileUrls
      */
-    public static OssResult<List<String>> deletes(OssProperties properties, List<String> fileUrls) {
+    public static Result<List<String>> deletes(OssProperties properties, List<String> fileUrls) {
         if (CollectionUtils.isEmpty(fileUrls)) {
-            return OssResult.failed(fileUrls, "OSS deletes failed: fileUrls is empty.");
+            return Result.failed(fileUrls, "OSS deletes failed: fileUrls is empty.");
         }
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
             if (ossClient == null) {
-                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
             }
             return deletes(ossClient, properties.getBucket(), fileUrls);
         } finally {
@@ -218,12 +218,12 @@ public class AliOssUtil {
      * @param fileUrls  OSS fileUrls
      * @return 未被删除掉的文件
      */
-    public static OssResult<List<String>> deletes(OSS ossClient, String bucket, List<String> fileUrls) {
+    public static Result<List<String>> deletes(OSS ossClient, String bucket, List<String> fileUrls) {
         if (StringUtils.isBlank(bucket)) {
-            return OssResult.failed("OSS deletes failed: bucket is blank.");
+            return Result.failed("OSS deletes failed: bucket is blank.");
         }
         if (CollectionUtils.isEmpty(fileUrls)) {
-            return OssResult.failed(fileUrls, "OSS deletes failed: fileUrls is empty.");
+            return Result.failed(fileUrls, "OSS deletes failed: fileUrls is empty.");
         }
         ossClient.deleteObjects(new DeleteObjectsRequest(bucket).withKeys(fileUrls));
         List<String> result = new ArrayList<>();
@@ -232,7 +232,7 @@ public class AliOssUtil {
                 result.add(url);
             }
         });
-        return result.size() < fileUrls.size() ? OssResult.success(result) : OssResult.failed(result);
+        return result.size() < fileUrls.size() ? Result.success(result) : Result.failed(result);
     }
 
     /**
@@ -242,15 +242,15 @@ public class AliOssUtil {
      * @param fileUrl    OSS fileUrls
      * @return [true: 存在; false: 不存在]
      */
-    public static OssResult<Boolean> exist(OssProperties properties, String fileUrl) {
+    public static Result<Boolean> exist(OssProperties properties, String fileUrl) {
         if (StringUtils.isBlank(fileUrl)) {
-            return OssResult.failed("OSS exist failed: fileUrl is blank.");
+            return Result.failed("OSS exist failed: fileUrl is blank.");
         }
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
             if (ossClient == null) {
-                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
             }
             return exist(ossClient, properties.getBucket(), fileUrl);
         } finally {
@@ -266,14 +266,14 @@ public class AliOssUtil {
      * @param fileUrl   OSS fileUrls
      * @return [true: 存在; false: 不存在]
      */
-    public static OssResult<Boolean> exist(OSS ossClient, String bucket, String fileUrl) {
+    public static Result<Boolean> exist(OSS ossClient, String bucket, String fileUrl) {
         if (StringUtils.isBlank(bucket)) {
-            return OssResult.failed("OSS exist failed: bucket is blank.");
+            return Result.failed("OSS exist failed: bucket is blank.");
         }
         if (StringUtils.isBlank(fileUrl)) {
-            return OssResult.failed("OSS exist failed: fileUrl is blank.");
+            return Result.failed("OSS exist failed: fileUrl is blank.");
         }
-        return OssResult.success(ossClient.doesObjectExist(bucket, fileUrl));
+        return Result.success(ossClient.doesObjectExist(bucket, fileUrl));
     }
 
     /**
@@ -284,7 +284,7 @@ public class AliOssUtil {
      * @param targetPath 本地文件路径
      * @throws Exception Exception.class
      */
-    public static OssResult<Void> download(OssProperties properties, String fileUrl, String targetPath) throws Exception {
+    public static Result<Void> download(OssProperties properties, String fileUrl, String targetPath) throws Exception {
         return download(properties, fileUrl, new File(targetPath));
     }
 
@@ -296,12 +296,12 @@ public class AliOssUtil {
      * @param file       本地文件
      * @throws Exception Exception.class
      */
-    public static OssResult<Void> download(OssProperties properties, String fileUrl, File file) throws Exception {
+    public static Result<Void> download(OssProperties properties, String fileUrl, File file) throws Exception {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
             if (ossClient == null) {
-                return OssResult.failed("OSS properties configuration error. properties: " + properties.toString());
+                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
             }
             return download(ossClient, properties.getBucket(), fileUrl, file);
         } finally {
@@ -320,7 +320,7 @@ public class AliOssUtil {
      * @param md5        文件的MD5值
      * @throws Exception Exception.class
      */
-    public static OssResult<Void> download(OssProperties properties, String fileUrl, String targetPath, String md5) throws Exception {
+    public static Result<Void> download(OssProperties properties, String fileUrl, String targetPath, String md5) throws Exception {
         return download(properties, fileUrl, new File(targetPath), md5);
     }
 
@@ -335,15 +335,15 @@ public class AliOssUtil {
      * @param md5        文件的MD5值
      * @throws Exception Exception.class
      */
-    public static OssResult<Void> download(OssProperties properties, String fileUrl, File file, String md5) throws Exception {
-        OssResult<Void> download = download(properties, fileUrl, file);
+    public static Result<Void> download(OssProperties properties, String fileUrl, File file, String md5) throws Exception {
+        Result<Void> download = download(properties, fileUrl, file);
         if (!download.getStatus()) {
             return download;
         }
         if (!FileUtil.checkFileMd5(file.getPath(), md5)) {
             log.error("download file failed, because md5 check failed.");
             FileUtil.deleteFile(file);
-            return OssResult.failed("文件MD5值校验失败");
+            return Result.failed("文件MD5值校验失败");
         }
         log.info("download file check md5 success, file: {}, md5: {}", file.getPath(), md5);
         return download;
@@ -360,7 +360,7 @@ public class AliOssUtil {
      * @param targetPath 本地文件路径
      * @throws Exception Exception.class
      */
-    public static OssResult<Void> download(OSS ossClient, String bucket, String fileUrl, String targetPath) throws Exception {
+    public static Result<Void> download(OSS ossClient, String bucket, String fileUrl, String targetPath) throws Exception {
         return download(ossClient, bucket, fileUrl, new File(targetPath));
     }
 
@@ -374,30 +374,30 @@ public class AliOssUtil {
      * @param fileUrl   OSS fileUrl
      * @param file      本地文件
      */
-    public static OssResult<Void> download(OSS ossClient, String bucket, String fileUrl, File file) throws Exception {
+    public static Result<Void> download(OSS ossClient, String bucket, String fileUrl, File file) throws Exception {
         if (StringUtils.isBlank(bucket)) {
-            return OssResult.failed("OSS download failed: bucket is blank.");
+            return Result.failed("OSS download failed: bucket is blank.");
         }
         if (StringUtils.isBlank(fileUrl)) {
-            return OssResult.failed("OSS download failed: targetPath is blank.");
+            return Result.failed("OSS download failed: targetPath is blank.");
         }
         if (file.exists() && file.isDirectory()) {
             file = new File((file.getPath() + SEPARATOR + fileUrl.substring(fileUrl.lastIndexOf(SEPARATOR))));
         }
         if (file.exists() && file.isFile() && !FileUtil.deleteFile(file)) {
-            return OssResult.failed("OSS download failed: delete file error.");
+            return Result.failed("OSS download failed: delete file error.");
         }
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-            return OssResult.failed("OSS download failed: parent mkdir error.");
+            return Result.failed("OSS download failed: parent mkdir error.");
         }
         if (!file.createNewFile()) {
-            return OssResult.failed("OSS download failed: create new file error.");
+            return Result.failed("OSS download failed: create new file error.");
         }
         if (!checkExist(exist(ossClient, bucket, fileUrl))) {
-            return OssResult.failed("OSS download failed: remote file does not exist. fileUrl: " + fileUrl);
+            return Result.failed("OSS download failed: remote file does not exist. fileUrl: " + fileUrl);
         }
         ossClient.getObject(new GetObjectRequest(bucket, fileUrl), file);
-        return OssResult.success();
+        return Result.success();
     }
 
     /**
@@ -413,7 +413,7 @@ public class AliOssUtil {
      * @param targetPath 本地文件路径
      * @param md5        文件的MD5值
      */
-    public static OssResult<Void> download(OSS ossClient, String bucket, String fileUrl, String targetPath, String md5) throws Exception {
+    public static Result<Void> download(OSS ossClient, String bucket, String fileUrl, String targetPath, String md5) throws Exception {
         return download(ossClient, bucket, fileUrl, new File(targetPath), md5);
     }
 
@@ -430,15 +430,15 @@ public class AliOssUtil {
      * @param file      本地文件
      * @param md5       文件的MD5值
      */
-    public static OssResult<Void> download(OSS ossClient, String bucket, String fileUrl, File file, String md5) throws Exception {
-        OssResult<Void> download = download(ossClient, bucket, fileUrl, file);
+    public static Result<Void> download(OSS ossClient, String bucket, String fileUrl, File file, String md5) throws Exception {
+        Result<Void> download = download(ossClient, bucket, fileUrl, file);
         if (!download.getStatus()) {
             return download;
         }
         if (!FileUtil.checkFileMd5(file, md5)) {
             log.error("download file failed, because md5 check failed.");
             FileUtil.deleteFile(file);
-            return OssResult.failed("file md5 value verification failed.");
+            return Result.failed("file md5 value verification failed.");
         }
         log.info("download file check md5 success, file: {}, md5: {}", file.getPath(), md5);
         return download;
@@ -504,7 +504,7 @@ public class AliOssUtil {
      * @param exist exist() 函数结果
      * @return [true: 成功; false: 失败]
      */
-    private static boolean checkExist(OssResult<Boolean> exist) {
+    private static boolean checkExist(Result<Boolean> exist) {
         return exist.getStatus() && exist.getData();
     }
 
