@@ -40,10 +40,7 @@ public class ThreadUtil {
     public static <P, R> CallableResult<R> asyncExec(Callable<CallableResult<P>> callable, Function<P, CallableResult<R>> func) {
         try {
             CallableResult<P> call = callable.call();
-            if (!call.isSuccess()) {
-                return CallableResult.failed();
-            }
-            return func.apply(call.getData());
+            return call.isSuccess() ? func.apply(call.getData()) : CallableResult.failed();
         } catch (Exception e) {
             log.error("function async exec failed.", e);
             return CallableResult.failed();
