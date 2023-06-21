@@ -26,6 +26,10 @@ public class CallableResult<T> implements Serializable {
     @Getter
     private String message;
 
+    public boolean isSuccess() {
+        return status != null && status;
+    }
+
     public static <T> CallableResult<T> success() {
         return success(null);
     }
