@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import com.yanwu.spring.cloud.common.pojo.CallableResult;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
@@ -53,9 +53,9 @@ public class RedisUtil {
      * @return 自增系列号
      */
     public Long increment(String key) {
-        CallableResult<Long> result = executor(key, () -> {
+        Result<Long> result = executor(key, () -> {
             Long increment = operations.increment(key(REDIS_SEQ, key));
-            return CallableResult.success(increment);
+            return Result.success(increment);
         });
         return result.getData();
     }
@@ -67,9 +67,9 @@ public class RedisUtil {
      * @return 自增系列号
      */
     public Long decrement(String key) {
-        CallableResult<Long> result = executor(key, () -> {
+        Result<Long> result = executor(key, () -> {
             Long decrement = operations.decrement(key(REDIS_SEQ, key));
-            return CallableResult.success(decrement);
+            return Result.success(decrement);
         });
         return result.getData();
     }
@@ -151,7 +151,7 @@ public class RedisUtil {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public <T> CallableResult<T> executor(String key, Callable<CallableResult<T>> callable) {
+    public <T> Result<T> executor(String key, Callable<Result<T>> callable) {
         return executor(key, Thread.currentThread().getId(), callable);
     }
 
@@ -164,7 +164,7 @@ public class RedisUtil {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public <T> CallableResult<T> executor(String key, Long value, Callable<CallableResult<T>> callable) {
+    public <T> Result<T> executor(String key, Long value, Callable<Result<T>> callable) {
         return executor(key, value, EXPIRE_TIME, callable);
     }
 
@@ -177,16 +177,16 @@ public class RedisUtil {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public <T> CallableResult<T> executor(String key, Long value, Integer timeout, Callable<CallableResult<T>> callable) {
+    public <T> Result<T> executor(String key, Long value, Integer timeout, Callable<Result<T>> callable) {
         if (!lock(key, value, timeout)) {
             log.error("redis run failed because lock failed. key: {}, value: {}", key, value);
-            return CallableResult.failed();
+            return Result.failed();
         }
         try {
             return callable.call();
         } catch (Exception e) {
             log.error("redis execute callable error.", e);
-            return CallableResult.failed();
+            return Result.failed();
         } finally {
             unLock(key, value);
         }
@@ -198,21 +198,21 @@ public class RedisUtil {
      * @param callable 一组redis操作
      * @return 执行结果返回值
      */
-    public <T> CallableResult<T> multiExec(Callable<CallableResult<T>> callable) {
-        return executeOperations.execute(new SessionCallback<CallableResult<T>>() {
+    public <T> Result<T> multiExec(Callable<Result<T>> callable) {
+        return executeOperations.execute(new SessionCallback<Result<T>>() {
             @Override
-            public <K, V> CallableResult<T> execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
+            public <K, V> Result<T> execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
                 try {
                     // ----- 开启事务
                     operations.multi();
                     // ----- 执行
-                    CallableResult<T> result = callable.call();
+                    Result<T> result = callable.call();
                     // ----- 提交事务
                     operations.exec();
                     return result;
                 } catch (Exception e) {
                     log.error("redis multiExec callable error.", e);
-                    return CallableResult.failed();
+                    return Result.failed();
                 }
             }
         });

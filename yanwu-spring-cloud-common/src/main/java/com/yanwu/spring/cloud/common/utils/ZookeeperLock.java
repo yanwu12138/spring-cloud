@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import com.yanwu.spring.cloud.common.pojo.CallableResult;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.*;
@@ -70,7 +70,7 @@ public class ZookeeperLock {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public static <T> CallableResult<T> mutexExecutor(CuratorFramework client, String path, Callable<CallableResult<T>> callable) {
+    public static <T> Result<T> mutexExecutor(CuratorFramework client, String path, Callable<Result<T>> callable) {
         return executor(getInterProcessMutex(client, path), callable);
     }
 
@@ -82,7 +82,7 @@ public class ZookeeperLock {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public static <T> CallableResult<T> readExecutor(CuratorFramework client, String path, Callable<CallableResult<T>> callable) {
+    public static <T> Result<T> readExecutor(CuratorFramework client, String path, Callable<Result<T>> callable) {
         return executor(getInterProcessReadWriteLock(client, path).readLock(), callable);
     }
 
@@ -94,7 +94,7 @@ public class ZookeeperLock {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public static <T> CallableResult<T> writeExecutor(CuratorFramework client, String path, Callable<CallableResult<T>> callable) {
+    public static <T> Result<T> writeExecutor(CuratorFramework client, String path, Callable<Result<T>> callable) {
         return executor(getInterProcessReadWriteLock(client, path).writeLock(), callable);
     }
 
@@ -106,7 +106,7 @@ public class ZookeeperLock {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public static <T> CallableResult<T> multiLockExecutor(CuratorFramework client, List<String> paths, Callable<CallableResult<T>> callable) {
+    public static <T> Result<T> multiLockExecutor(CuratorFramework client, List<String> paths, Callable<Result<T>> callable) {
         return executor(getInterProcessMultiLock(client, paths), callable);
     }
 
@@ -117,13 +117,13 @@ public class ZookeeperLock {
      * @param callable 加锁后执行的任务
      * @return 执行结果返回值
      */
-    public static <T> CallableResult<T> executor(InterProcessLock lock, Callable<CallableResult<T>> callable) {
+    public static <T> Result<T> executor(InterProcessLock lock, Callable<Result<T>> callable) {
         try {
             lock.acquire();
             return callable.call();
         } catch (Exception e) {
             log.error("zookeeper execute callable error.", e);
-            return CallableResult.failed();
+            return Result.failed();
         } finally {
             unLock(lock);
         }

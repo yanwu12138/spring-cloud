@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import com.yanwu.spring.cloud.common.pojo.CallableResult;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Callable;
@@ -21,12 +21,12 @@ public class ThreadUtil {
     }
 
     public static void main(String[] args) {
-        CallableResult<String> result = asyncExec(() -> {
+        Result<String> result = asyncExec(() -> {
             log.info("function exec 1111");
-            return CallableResult.success("function callable result. " + SystemUtil.getSystemType());
+            return Result.success("function callable result. " + SystemUtil.getSystemType());
         }, param -> {
             log.info("function exec 2222, param: {}", param);
-            return CallableResult.success("function func result.");
+            return Result.success("function func result.");
         });
         log.info("function exec 3333, result: {}", result);
     }
@@ -37,13 +37,13 @@ public class ThreadUtil {
      * @param <P> 入参类型
      * @param <R> 响应类型
      */
-    public static <P, R> CallableResult<R> asyncExec(Callable<CallableResult<P>> callable, Function<P, CallableResult<R>> func) {
+    public static <P, R> Result<R> asyncExec(Callable<Result<P>> callable, Function<P, Result<R>> func) {
         try {
-            CallableResult<P> call = callable.call();
-            return call.isSuccess() ? func.apply(call.getData()) : CallableResult.failed();
+            Result<P> call = callable.call();
+            return call.isSuccess() ? func.apply(call.getData()) : Result.failed();
         } catch (Exception e) {
             log.error("function async exec failed.", e);
-            return CallableResult.failed();
+            return Result.failed();
         }
     }
 

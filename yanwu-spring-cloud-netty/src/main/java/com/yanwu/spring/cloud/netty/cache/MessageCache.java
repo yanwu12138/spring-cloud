@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.netty.cache;
 
-import com.yanwu.spring.cloud.common.pojo.CallableResult;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.pojo.SortedList;
 import com.yanwu.spring.cloud.common.utils.RedisUtil;
 import com.yanwu.spring.cloud.netty.handler.TcpHandler;
@@ -87,9 +87,9 @@ public class MessageCache<T> {
      * @param sn       设备唯一标志
      * @param messages 消息集合
      */
-    public CallableResult<Void> addQueues(String sn, SortedList<MessageQueueBO<T>> messages) {
+    public Result<Void> addQueues(String sn, SortedList<MessageQueueBO<T>> messages) {
         if (StringUtils.isBlank(sn) || CollectionUtils.isEmpty(messages)) {
-            return CallableResult.failed("SN或queues为空");
+            return Result.failed("SN或queues为空");
         }
         return redisUtil.executor(sn, () -> {
             String queueKey = getQueueKey(sn);
@@ -111,7 +111,7 @@ public class MessageCache<T> {
                     queuesOperations.add(queueKey, range);
                 }
                 messagesOperations.multiSet(messageMap);
-                return CallableResult.success();
+                return Result.success();
             });
         });
     }
@@ -122,9 +122,9 @@ public class MessageCache<T> {
      * @param sn      设备唯一标志
      * @param message 消息
      */
-    public CallableResult<Void> addQueue(String sn, MessageQueueBO<T> message) {
+    public Result<Void> addQueue(String sn, MessageQueueBO<T> message) {
         if (StringUtils.isBlank(sn) || message == null) {
-            return CallableResult.failed("SN或queue为空");
+            return Result.failed("SN或queue为空");
         }
         return redisUtil.executor(sn, () -> {
             String queueKey = getQueueKey(sn);
@@ -142,7 +142,7 @@ public class MessageCache<T> {
                     queuesOperations.add(queueKey, range);
                 }
                 messagesOperations.set(message.getKey(), message);
-                return CallableResult.success();
+                return Result.success();
             });
         });
     }
@@ -152,10 +152,10 @@ public class MessageCache<T> {
      *
      * @return 被删除的消息
      */
-    public CallableResult<Map<String, MessageQueueBO<T>>> removeExpiredMessage() {
+    public Result<Map<String, MessageQueueBO<T>>> removeExpiredMessage() {
         Set<String> sns = statusOperations.keys(DEVICE_STATUS);
         if (CollectionUtils.isEmpty(sns)) {
-            return CallableResult.success();
+            return Result.success();
         }
         Map<String, MessageQueueBO<T>> result = new HashMap<>();
         sns.forEach(sn -> {
@@ -163,7 +163,7 @@ public class MessageCache<T> {
             redisUtil.executor(sn, () -> {
                 MessageStatusBO<T> status = statusOperations.get(DEVICE_STATUS, sn);
                 if (status == null) {
-                    return CallableResult.success();
+                    return Result.success();
                 }
                 if ((System.currentTimeMillis() - status.getLastSendTime()) > EXPIRED_TIME) {
                     String queueKey = getQueueKey(sn);
@@ -190,10 +190,10 @@ public class MessageCache<T> {
                         }
                     }
                 }
-                return CallableResult.success();
+                return Result.success();
             });
         });
-        return CallableResult.success(result);
+        return Result.success(result);
     }
 
     /**
@@ -209,7 +209,7 @@ public class MessageCache<T> {
                 // ----- 当前没有发送中状态的数据，取出队列中的第一条数据直接发送
                 Set<String> queues = queuesOperations.range(queueKey, 0, 0);
                 if (CollectionUtils.isEmpty(queues)) {
-                    return CallableResult.success();
+                    return Result.success();
                 }
                 String queue = queues.stream().findFirst().orElse(null);
                 if (StringUtils.isNotBlank(queue)) {
@@ -218,14 +218,14 @@ public class MessageCache<T> {
                     status = MessageStatusBO.nextMessage(sn, message, messageId);
                     senderMessage(sn, status);
                     queuesOperations.remove(queueKey, status.getMessage().getKey());
-                    return CallableResult.success();
+                    return Result.success();
                 }
             }
             // ----- 当前已有发送中状态的数据，判断是否可以进行下一次发送
             if (status != null && status.getMessage() != null && status.canSend()) {
                 senderMessage(sn, status);
             }
-            return CallableResult.success();
+            return Result.success();
         });
     }
 
@@ -246,7 +246,7 @@ public class MessageCache<T> {
             // ----- 删除已经发发送成功的消息
             MessageStatusBO<T> status = statusOperations.get(DEVICE_STATUS, sn);
             if (status == null || status.getMessage() == null || status.getMessageId().compareTo(messageId) != 0) {
-                return CallableResult.success();
+                return Result.success();
             }
             messagesOperations.getOperations().delete(status.getMessage().getKey());
             // ----- 看还有没有待发送的消息：如果有则取出一条新消息发送
@@ -256,11 +256,11 @@ public class MessageCache<T> {
                 // ----- 没有待发送的消息
                 status = status.clearMessage();
                 statusOperations.put(DEVICE_STATUS, sn, status);
-                return CallableResult.success();
+                return Result.success();
             }
             // ----- 有待发送的消息：取出一条新消息进行发送
             nextSenderMessage(sn, queues.stream().findFirst().orElse(null), queueKey, status);
-            return CallableResult.success();
+            return Result.success();
         });
     }
 
@@ -303,7 +303,7 @@ public class MessageCache<T> {
                 status.setTryNumber(3);
                 statusOperations.put(DEVICE_STATUS, sn, status);
             }
-            return CallableResult.success();
+            return Result.success();
         });
     }
 

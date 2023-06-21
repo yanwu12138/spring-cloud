@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.netty.scheduler;
 
-import com.yanwu.spring.cloud.common.pojo.CallableResult;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.DateUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
@@ -53,7 +53,7 @@ public class MessageScheduler<T> {
     @Scheduled(cron = "0 0 4 * * ?")
     public void removeExpiredMessage() {
         try {
-            CallableResult<Map<String, MessageQueueBO<T>>> result = messageCache.removeExpiredMessage();
+            Result<Map<String, MessageQueueBO<T>>> result = messageCache.removeExpiredMessage();
             if (!result.getStatus()) {
                 log.error("remove expired message failed. result: {}", result);
                 return;

@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @ToString
 @EqualsAndHashCode
-public class CallableResult<T> implements Serializable {
+public class Result<T> implements Serializable {
     private static final long serialVersionUID = 8137315026981867597L;
 
     @Getter
@@ -30,40 +30,40 @@ public class CallableResult<T> implements Serializable {
         return status != null && status;
     }
 
-    public static <T> CallableResult<T> success() {
+    public static <T> Result<T> success() {
         return success(null);
     }
 
-    public static <T> CallableResult<T> success(T data) {
+    public static <T> Result<T> success(T data) {
         return getInstance(data, Boolean.TRUE, null);
     }
 
-    public static <T> CallableResult<T> failed() {
+    public static <T> Result<T> failed() {
         return failed("执行失败");
     }
 
-    public static <T> CallableResult<T> failed(String message) {
+    public static <T> Result<T> failed(String message) {
         return getInstance(null, Boolean.FALSE, message);
     }
 
-    private static <T> CallableResult<T> getInstance(T data, Boolean status, String message) {
-        return new CallableResult<T>().setData(data).setStatus(status).setMessage(message);
+    private static <T> Result<T> getInstance(T data, Boolean status, String message) {
+        return new Result<T>().setData(data).setStatus(status).setMessage(message);
     }
 
-    private CallableResult() {
+    private Result() {
     }
 
-    private CallableResult<T> setData(T data) {
+    private Result<T> setData(T data) {
         this.data = data;
         return this;
     }
 
-    private CallableResult<T> setStatus(Boolean status) {
+    private Result<T> setStatus(Boolean status) {
         this.status = status;
         return this;
     }
 
-    private CallableResult<T> setMessage(String message) {
+    private Result<T> setMessage(String message) {
         this.message = message;
         return this;
     }

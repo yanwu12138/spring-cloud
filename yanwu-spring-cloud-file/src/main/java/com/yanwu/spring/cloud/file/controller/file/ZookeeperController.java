@@ -1,8 +1,8 @@
 package com.yanwu.spring.cloud.file.controller.file;
 
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
-import com.yanwu.spring.cloud.common.pojo.CallableResult;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.ZookeeperLock;
 import com.yanwu.spring.cloud.file.cache.ZookeeperClient;
 import com.yanwu.spring.cloud.file.pojo.ZookeeperNode;
@@ -80,20 +80,20 @@ public class ZookeeperController {
         CuratorFramework client = zookeeperClient.getClient();
         for (int i = 0; i < 2; i++) {
             commonsExecutors.execute(() -> {
-                CallableResult<String> writeResult = ZookeeperLock.writeExecutor(client, param.getPath(), () -> {
+                Result<String> writeResult = ZookeeperLock.writeExecutor(client, param.getPath(), () -> {
                     log.info("write 11111111 {}", Thread.currentThread().getName());
                     TimeUnit.SECONDS.sleep(2);
-                    return CallableResult.success("success");
+                    return Result.success("success");
                 });
                 log.info("write result: {}", writeResult);
             });
         }
         for (int i = 0; i < 8; i++) {
             commonsExecutors.execute(() -> {
-                CallableResult<String> readResult = ZookeeperLock.readExecutor(client, param.getPath(), () -> {
+                Result<String> readResult = ZookeeperLock.readExecutor(client, param.getPath(), () -> {
                     log.info("read 222222222 {}", Thread.currentThread().getName());
                     TimeUnit.SECONDS.sleep(1);
-                    return CallableResult.success("success");
+                    return Result.success("success");
                 });
                 log.info("read result: {}", readResult);
             });

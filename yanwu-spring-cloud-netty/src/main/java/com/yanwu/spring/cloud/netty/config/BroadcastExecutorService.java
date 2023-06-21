@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.netty.config;
 
-import com.yanwu.spring.cloud.common.pojo.CallableResult;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.netty.enums.BroadcastEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class BroadcastExecutorService {
     /**
      * 添加任务
      */
-    public synchronized <T> CallableResult<T> addRunnable(BroadcastEnum type, String magic, Callable<CallableResult<T>> callable) {
+    public synchronized <T> Result<T> addRunnable(BroadcastEnum type, String magic, Callable<Result<T>> callable) {
         String key = getKey(type, magic);
         BroadcastExecutor broadcastExecutor = executorsMap.get(key);
         try {
@@ -35,7 +35,7 @@ public class BroadcastExecutorService {
             }
         } catch (Exception e) {
             log.error("broadcast executor add runnable error.", e);
-            return CallableResult.failed();
+            return Result.failed();
         }
     }
 

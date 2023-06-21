@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.netty.handler;
 
-import com.yanwu.spring.cloud.common.pojo.CallableResult;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.netty.config.BroadcastExecutorService;
 import com.yanwu.spring.cloud.netty.enums.BroadcastEnum;
@@ -40,15 +40,15 @@ public class UpgradeHandler extends SimpleChannelInboundHandler<NioSocketChannel
         ctx.flush();
     }
 
-    public CallableResult<String> broadcastFile(String filepath, Long magic) {
+    public Result<String> broadcastFile(String filepath, Long magic) {
         if (executorService.isActive(BroadcastEnum.UPGRADE, String.valueOf(magic))) {
-            return CallableResult.failed("error");
+            return Result.failed("error");
         }
         return executorService.addRunnable(BroadcastEnum.UPGRADE, String.valueOf(magic), () -> {
             try {
                 File file = new File(filepath);
                 if (!file.exists() || !file.isFile()) {
-                    return CallableResult.failed("文件不存在或不是文件");
+                    return Result.failed("文件不存在或不是文件");
                 }
                 long length = file.length(), offset = 0;
                 while (offset < length) {
@@ -56,10 +56,10 @@ public class UpgradeHandler extends SimpleChannelInboundHandler<NioSocketChannel
                     broadcastServer.broadcast(FileUtil.read(file.getPath(), offset, size));
                     offset += size;
                 }
-                return CallableResult.success("success");
+                return Result.success("success");
             } catch (Exception e) {
                 log.error("broadcast upgrade addRunnable error.", e);
-                return CallableResult.failed("error");
+                return Result.failed("error");
             }
         });
     }
