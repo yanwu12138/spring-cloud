@@ -12,6 +12,7 @@ import java.io.Serializable;
 
 /**
  * @author Administrator
+ * descreption: controller响应实体
  */
 @ToString
 @EqualsAndHashCode

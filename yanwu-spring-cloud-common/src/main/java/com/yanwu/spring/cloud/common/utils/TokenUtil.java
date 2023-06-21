@@ -33,7 +33,7 @@ public class TokenUtil {
         AccessToken accessToken = new AccessToken();
         accessToken.setId(id);
         accessToken.setExpire(System.currentTimeMillis() + Contents.TOKEN_TIME_OUT);
-        return Aes128Util.encryptToStr(JsonUtil.formatJson(accessToken), Contents.TOKEN);
+        return Aes128Util.encryptToStr(JsonUtil.toString(accessToken), Contents.TOKEN);
     }
 
     /**

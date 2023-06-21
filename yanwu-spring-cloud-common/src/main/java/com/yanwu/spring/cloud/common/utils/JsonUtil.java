@@ -202,7 +202,7 @@ public final class JsonUtil {
         if (source == null) {
             return null;
         }
-        return toObject(formatJson(source), clazz);
+        return toObject(toString(source), clazz);
     }
 
     /**
