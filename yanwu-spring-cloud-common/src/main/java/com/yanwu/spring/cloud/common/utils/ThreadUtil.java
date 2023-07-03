@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -23,14 +22,15 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public class ThreadUtil {
 
-    private static final Map<String, ThreadInfo> THREAD_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, ThreadInfo<?>> THREAD_CACHE = new ConcurrentHashMap<>();
     private static final AtomicLong THREAD_TASK_ID = new AtomicLong(1);
 
     private ThreadUtil() {
         throw new UnsupportedOperationException("ThreadUtil should never be instantiated");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        System.out.println("==================================================");
         Result<String> result = asyncExec(() -> {
             log.info("function exec 1111");
             return Result.success("function callable result. " + SystemUtil.getSystemType());
@@ -40,38 +40,60 @@ public class ThreadUtil {
         });
         log.info("function exec 3333, result: {}", result);
 
+
+        System.out.println("==================================================");
+        // ----- 等待线程
+        ThreadInfo<String> instance = ThreadInfo.getInstance(ThreadUtil.getUniId(), new Thread(() -> {
+        }), 3000L);
+
+        Thread testThread1 = new Thread(() -> {
+            AtomicBoolean isWait = new AtomicBoolean(false);
+            Result<String> waitResult = ThreadUtil.threadWait(instance, isWait);
+            log.info("instance result: {}", waitResult);
+        });
+        testThread1.setName("test1");
+
+        Thread testThread2 = new Thread(() -> {
+            ThreadUtil.sleep(1000L);
+            ThreadUtil.threadNotify(instance.getKey(), "线程唤醒");
+        });
+        testThread2.setName("test2");
+
+        testThread1.start();
+        testThread2.start();
     }
 
     /**
      * 获取一个唯一的自增ID
      */
-    public static long getUniId() {
-        return THREAD_TASK_ID.getAndIncrement();
+    public static String getUniId() {
+        return String.valueOf(THREAD_TASK_ID.getAndIncrement());
     }
 
     /**
      * 线程等待
      */
-    public static Result<Object> threadWait(ThreadInfo threadInfo, AtomicBoolean isWait) throws Exception {
+    public static <T> Result<T> threadWait(ThreadInfo<T> threadInfo, AtomicBoolean isWait) {
         String key = threadInfo.getKey();
         Long timeout = threadInfo.getTimeout();
         log.info("thread wait, threadInfo: {}, timeout: {}", key, timeout);
         THREAD_CACHE.put(threadInfo.getKey(), threadInfo);
-        threadWait(threadInfo.getTimeout(), isWait);
+        threadWait(key, threadInfo.getTimeout(), isWait);
         if (!threadInfo.getIsNotify()) {
             log.info("thread wait timeout failed, key:{} timeout:{}", key, timeout);
-            throw new TimeoutException("thread wait timeout, key: " + key + ", timeout: " + timeout);
+            return Result.failed("thread wait timeout");
         }
-        return threadInfo.getResult();
+        return Result.success(threadInfo.getResult());
     }
 
-    private static void threadWait(Long timeout, AtomicBoolean isWait) {
-        synchronized (Thread.currentThread()) {
+    private static void threadWait(String key, Long timeout, AtomicBoolean isWait) {
+        Thread thread = Thread.currentThread();
+        synchronized (thread) {
             try {
                 isWait.set(true);
-                Thread.currentThread().wait(timeout);
+                thread.wait(timeout);
             } catch (InterruptedException e) {
-                log.info("thread wait timeout failed, timeout:{}", timeout, e);
+                log.info("thread wait failed, key: {}", key, e);
             }
         }
     }
@@ -79,17 +101,19 @@ public class ThreadUtil {
     /**
      * 唤醒线程
      */
-    public static void threadNotify(String threadKey, Object result) {
-        log.info("thread notify key: {}, result: {}", threadKey, result);
+    public static <T> Result<Void> threadNotify(String threadKey, T result) {
         if (THREAD_CACHE.containsKey(threadKey)) {
+            log.info("thread notify key: {}, result: {}", threadKey, result);
             ThreadInfo threadInfo = THREAD_CACHE.get(threadKey);
             threadInfo.setResult(result);
             threadInfo.setIsNotify(true);
-            synchronized (threadInfo.getThread()) {
-                threadInfo.getThread().notify();
+            Thread thread = threadInfo.getThread();
+            synchronized (thread) {
+                thread.notify();
             }
             THREAD_CACHE.remove(threadKey);
         }
+        return Result.success();
     }
 
     /**
