@@ -73,7 +73,15 @@ public class RequestInfo<T> implements Serializable {
         if (ArrayUtils.isEmpty(variable)) {
             return this;
         }
-        this.variable = variable;
+        String[] sourceVar = getVariable();
+        if (ArrayUtils.isEmpty(sourceVar)) {
+            this.variable = variable;
+            return this;
+        }
+        String[] temp = new String[sourceVar.length + variable.length];
+        System.arraycopy(sourceVar, 0, temp, 0, sourceVar.length);
+        System.arraycopy(variable, 0, temp, sourceVar.length, variable.length);
+        this.variable = temp;
         return this;
     }
 

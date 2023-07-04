@@ -45,17 +45,19 @@ public class ThreadUtil {
         ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.sequenceNo(), 5000L);
         AtomicBoolean isWait = new AtomicBoolean(false);
 
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             ThreadUtil.sleep(2000L);
             for (int i = 0; i < 200; i++) {
                 if (isWait.get()) {
-                    Result<Void> notify = ThreadUtil.threadNotify(instance.getKey(), "线程唤醒1111111111");
+                    Result<Void> notify = ThreadUtil.threadNotify(instance.getKey(), "线程唤醒1111");
                     log.info("thread notify result: {}", notify);
-                    return;
+                    break;
                 }
                 ThreadUtil.sleep(100L);
             }
-        }).start();
+        });
+        thread.setName(sequenceNo());
+        thread.start();
 
         Result<?> wait = ThreadUtil.threadWait(instance, isWait);
         log.info("thread wait result: {}", wait);

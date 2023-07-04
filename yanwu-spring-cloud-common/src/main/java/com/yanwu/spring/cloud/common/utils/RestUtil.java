@@ -39,6 +39,7 @@ public class RestUtil {
                 .buildHeaders("appId", "421433d4133348c52265")
                 .buildHeaders("secret", "7c74136544d75684c788588836868d7c")
                 .buildVariable("123", "234", "345")
+                .buildVariable("aaa", "bbb", "ccc")
                 .buildParams(params)
                 .buildParams("aaa", "bbb")
                 .buildBody(new PageParam<>().setPage(1).setSize(10).setData("test"));
