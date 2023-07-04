@@ -42,7 +42,7 @@ public class ThreadUtil {
 
 
         System.out.println("==================================================");
-        ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.getUniOnlyId(), 5000L);
+        ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.sequenceNo(), 5000L);
         AtomicBoolean isWait = new AtomicBoolean(false);
 
         new Thread(() -> {
@@ -62,10 +62,10 @@ public class ThreadUtil {
     }
 
     /**
-     * 获取一个唯一的自增ID
+     * 获取一个唯一的自增标识
      */
-    public static String getUniOnlyId() {
-        return String.valueOf(THREAD_TASK_ID.getAndIncrement());
+    public static String sequenceNo() {
+        return "SEQ:" + String.format("%016d", THREAD_TASK_ID.getAndIncrement());
     }
 
     /**

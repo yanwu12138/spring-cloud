@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.pojo;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * description:
  */
 @Getter
+@EqualsAndHashCode
 @ToString(exclude = {"thread", "result", "isNotify"})
 public class ThreadInfo implements Serializable {
     private static final long serialVersionUID = 7223163407992445294L;
