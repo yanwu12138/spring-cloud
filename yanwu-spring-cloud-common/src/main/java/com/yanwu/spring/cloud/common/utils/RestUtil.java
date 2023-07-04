@@ -29,7 +29,6 @@ import java.util.List;
 public class RestUtil {
 
     private static RestTemplate template = null;
-    private static final Object LOCK = new Object();
 
     public static void main(String[] args) {
         HashMap<String, String> params = new HashMap<>();
@@ -46,6 +45,14 @@ public class RestUtil {
         log.info("get ship list, request: {}", instance);
         Result<Object> result = execute(instance);
         log.info("get ship list, response: {}", result);
+
+        url = "https://test1monitor.boxingtong.net:9014/sea/fishery/gb/cameraInfoByShipId";
+        instance = RequestInfo.getInstance(url, Object.class)
+                .buildHeaders("appId", "421433d4133348c52265")
+                .buildHeaders("secret", "7c74136544d75684c788588836868d7c")
+                .buildParams("shipId", "14264");
+        log.info("get ship cameraInfoByShipId, request: {}", instance);
+        log.info("get ship cameraInfoByShipId, response: {}", execute(instance));
     }
 
     /**
@@ -58,16 +65,12 @@ public class RestUtil {
             log.error("execute rest request failed, because request info is empty.");
             return Result.failed();
         }
-        if (getTemplate() == null) {
-            log.error("execute rest request failed, because rest template is empty.");
-            return Result.failed();
-        }
         String requestId = ThreadUtil.sequenceNo();
         log.info("execute rest begin, txId: {}, request: {},", requestId, request);
         try {
             String url = disposeRestUrl(request);
             HttpEntity<Object> httpEntity = disposeEntity(request);
-            ResponseEntity<T> response = template.exchange(url, request.getMethod(), httpEntity, request.getClazz());
+            ResponseEntity<T> response = initTemplate().exchange(url, request.getMethod(), httpEntity, request.getClazz());
             log.info("execute rest done, txId: {}, response: {}", requestId, response.getBody());
             return disposeResult(response, request.getClazz());
         } catch (Exception e) {
@@ -77,18 +80,15 @@ public class RestUtil {
     }
 
     /*** 懒加载的方式初始化template ***/
-    private static RestTemplate getTemplate() {
-        synchronized (LOCK) {
-            if (template == null) {
-                synchronized (LOCK) {
-                    template = ContextUtil.getBean(RestTemplate.class);
-                    if (template == null) {
-                        template = createRestTemplate();
-                    }
-                }
-            }
+    private static RestTemplate initTemplate() {
+        if (template != null) {
             return template;
         }
+        if ((template = ContextUtil.getBean(RestTemplate.class)) != null) {
+            return template;
+        }
+        template = createRestTemplate();
+        return template;
     }
 
     private static RestTemplate createRestTemplate() {
