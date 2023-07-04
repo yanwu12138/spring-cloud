@@ -42,74 +42,85 @@ public class ThreadUtil {
 
 
         System.out.println("==================================================");
-        // ----- 等待线程
-        ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.getUniId(), 5000L);
+        ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.getUniOnlyId(), 5000L);
         AtomicBoolean isWait = new AtomicBoolean(false);
 
         new Thread(() -> {
             ThreadUtil.sleep(2000L);
             for (int i = 0; i < 200; i++) {
                 if (isWait.get()) {
-                    ThreadUtil.threadNotify(instance.getKey(), "线程唤醒1111111111");
-                    break;
+                    Result<Void> notify = ThreadUtil.threadNotify(instance.getKey(), "线程唤醒1111111111");
+                    log.info("thread notify result: {}", notify);
+                    return;
                 }
-                ThreadUtil.sleep(10L);
+                ThreadUtil.sleep(100L);
             }
         }).start();
 
-        Result<?> waitResult = ThreadUtil.threadWait(instance, isWait);
-        log.info("instance result: {}", waitResult);
+        Result<?> wait = ThreadUtil.threadWait(instance, isWait);
+        log.info("thread wait result: {}", wait);
     }
 
     /**
      * 获取一个唯一的自增ID
      */
-    public static String getUniId() {
+    public static String getUniOnlyId() {
         return String.valueOf(THREAD_TASK_ID.getAndIncrement());
     }
 
     /**
-     * 线程等待
+     * 将当前线程阻塞，等待其它线程唤醒当前线程
+     *
+     * @param threadInfo 当前线程，需要被阻塞
+     * @param isWait     是否已经成功阻塞当前线程
      */
     public static Result<?> threadWait(ThreadInfo threadInfo, AtomicBoolean isWait) {
-        String key = threadInfo.getKey();
-        Long timeout = threadInfo.getTimeout();
-        log.info("thread wait, threadInfo: {}, timeout: {}", key, timeout);
+        log.info("thread wait, threadInfo: {}", threadInfo);
         threadInfoWait(threadInfo, isWait);
         if (!threadInfo.getIsNotify()) {
-            THREAD_CACHE.remove(key);
-            log.info("thread wait timeout failed, key:{} timeout:{}", key, timeout);
-            return Result.failed("thread wait timeout");
+            THREAD_CACHE.remove(threadInfo.getKey());
+            log.info("thread wait timeout failed, threadInfo: {}", threadInfo);
+            return Result.failed("thread wait timeout.");
         }
         return Result.success(threadInfo.getResult());
     }
 
+    /**
+     * 将当前线程阻塞
+     *
+     * @param threadInfo 当前线程，需要被阻塞
+     * @param isWait     是否已经成功阻塞当前线程的标识
+     */
     private static void threadInfoWait(ThreadInfo threadInfo, AtomicBoolean isWait) {
         synchronized (threadInfo.getThread()) {
             try {
+                isWait.compareAndSet(false, true);
                 THREAD_CACHE.put(threadInfo.getKey(), threadInfo);
-                isWait.set(true);
                 threadInfo.getThread().wait(threadInfo.getTimeout());
             } catch (InterruptedException e) {
-                log.info("thread wait failed, key: {}", threadInfo.getThread(), e);
+                log.info("thread wait failed, threadInfo: {}", threadInfo, e);
             }
         }
     }
 
     /**
-     * 唤醒线程
+     * 根据线程的唯一标识唤醒执行线程
+     *
+     * @param threadKey 阻塞线程的唯一标识
+     * @param result    唤醒阻塞线程时传递给阻速线程的返回值
      */
     public static Result<Void> threadNotify(String threadKey, Object result) {
         if (!THREAD_CACHE.containsKey(threadKey)) {
             log.error("thread notify failed, because no threadKey in cache. threadKey: {}, result: {}", threadKey, result);
+            return Result.failed("no threadKey in cache");
         }
-        log.info("thread notify key: {}, result: {}", threadKey, result);
         ThreadInfo threadInfo = THREAD_CACHE.get(threadKey);
+        log.info("thread notify threadInfo: {}, result: {}", threadInfo, result);
         synchronized (threadInfo.getThread()) {
             threadInfo.setResult(result);
             threadInfo.setIsNotify(true);
-            threadInfo.getThread().notify();
             THREAD_CACHE.remove(threadKey);
+            threadInfo.getThread().notify();
         }
         return Result.success();
     }

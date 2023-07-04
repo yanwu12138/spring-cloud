@@ -27,6 +27,7 @@ public class RestUtil {
     private static RestTemplate template = null;
     private static final Object LOCK = new Object();
 
+    /*** 懒加载的方式初始化template ***/
     private static RestTemplate getTemplate() {
         synchronized (LOCK) {
             if (template == null) {
