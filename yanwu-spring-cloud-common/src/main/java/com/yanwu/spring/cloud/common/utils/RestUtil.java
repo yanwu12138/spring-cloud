@@ -126,16 +126,16 @@ public class RestUtil {
             log.error("execute rest request failed, because template is empty.");
             return Result.failed();
         }
-        String txId = UUID.randomUUID().toString();
+        String txId = UUID.randomUUID().toString().replaceAll("-", "").toLowerCase();
+        log.info("execute rest request, txId: {}, method: {}, url: {}, params: {}", txId, method, url, paramMap);
         try {
             url = disposeRestUrl(url, paramMap);
             HttpHeaders headers = disposeHeader(headerMap);
-            log.info("execute rest request start, txId: {}, method: {}, url: {}, params: {}", txId, method, url, paramMap);
             ResponseEntity<T> response = template.exchange(url, method, new HttpEntity<>(headers), clazz);
-            log.info("execute rest request success, txId: {}, result: {}", txId, response.getBody());
+            log.info("execute rest response, txId: {}, result: {}", txId, response.getBody());
             return disposeResult(response, clazz);
         } catch (Exception e) {
-            log.error("execute rest request failed, txId: {}, method: {}, url: {}, param: {}", txId, method, url, paramMap, e);
+            log.error("execute rest request failed, txId: {}", txId, e);
             return Result.failed();
         }
     }
