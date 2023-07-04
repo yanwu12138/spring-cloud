@@ -31,12 +31,11 @@ public class ThreadInfo implements Serializable {
     /*** 判断是否被唤醒 ***/
     private Boolean isNotify;
 
-    public static ThreadInfo getInstance(String key, Thread thread, long timeout) {
+    public static ThreadInfo getInstance(String key, long timeout) {
+        Thread thread = Thread.currentThread();
         ThreadInfo instance = new ThreadInfo();
         instance.setKey(String.join(":", key, thread.getName(), String.valueOf(thread.getId())));
-        instance.setThread(thread);
-        instance.setTimeout(timeout);
-        instance.setIsNotify(false);
+        instance.setThread(thread).setTimeout(timeout).setIsNotify(false);
         return instance;
     }
 

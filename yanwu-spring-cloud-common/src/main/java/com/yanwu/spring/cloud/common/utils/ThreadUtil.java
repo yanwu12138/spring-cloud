@@ -43,24 +43,24 @@ public class ThreadUtil {
 
         System.out.println("==================================================");
         // ----- 等待线程
-        ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.getUniId(), new Thread(() -> {
-        }), 3000L);
+        ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.getUniId(), 3000L);
+        AtomicBoolean isWait = new AtomicBoolean(false);
 
         Thread testThread1 = new Thread(() -> {
-            AtomicBoolean isWait = new AtomicBoolean(false);
-            Result<?> waitResult = ThreadUtil.threadWait(instance, isWait);
-            log.info("instance result: {}", waitResult);
+            ThreadUtil.sleep(1000L);
+            for (int i = 0; i < 200; i++) {
+                if (isWait.get()) {
+                    ThreadUtil.threadNotify(instance.getKey(), "线程唤醒");
+                    break;
+                }
+                ThreadUtil.sleep(10L);
+            }
         });
         testThread1.setName("test1");
-
-        Thread testThread2 = new Thread(() -> {
-            ThreadUtil.sleep(1000L);
-            ThreadUtil.threadNotify(instance.getKey(), "线程唤醒");
-        });
-        testThread2.setName("test2");
-
         testThread1.start();
-        testThread2.start();
+
+        Result<?> waitResult = ThreadUtil.threadWait(instance, isWait);
+        log.info("instance result: {}", waitResult);
     }
 
     /**
