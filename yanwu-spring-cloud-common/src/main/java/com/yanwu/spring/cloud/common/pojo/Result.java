@@ -27,12 +27,12 @@ public class Result<T> implements Serializable {
     @Getter
     private String message;
 
-    public boolean isSuccess() {
+    public boolean successful() {
         return status != null && status;
     }
 
     public boolean nonNull() {
-        return isSuccess() && data != null;
+        return successful() && data != null;
     }
 
     public static <T> Result<T> success() {

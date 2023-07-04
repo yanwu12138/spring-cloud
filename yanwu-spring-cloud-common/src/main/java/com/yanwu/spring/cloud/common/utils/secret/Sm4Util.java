@@ -33,20 +33,19 @@ public class Sm4Util {
         throw new UnsupportedOperationException("Sm4Util should never be instantiated");
     }
 
-
     /**
-     * 根据小站SN获取密钥
+     * 根据设备SN获取密钥
      *
-     * @param sn 小站SN
+     * @param deviceSn 设备SN
      * @return 密钥
      */
-    public static String getSecretKey(String sn) {
-        StringBuilder pwd = new StringBuilder();
-        byte[] bytes = DigestUtils.md5Hex(sn.getBytes()).getBytes(StandardCharsets.UTF_8);
+    public static String getSecretKey(String deviceSn) {
+        StringBuilder password = new StringBuilder();
+        byte[] bytes = DigestUtils.md5Hex(deviceSn.getBytes()).getBytes(StandardCharsets.UTF_8);
         for (byte temp : bytes) {
-            pwd.append(BASE_CIPHER[(int) temp % BASE_CIPHER.length]);
+            password.append(BASE_CIPHER[(int) temp % BASE_CIPHER.length]);
         }
-        return pwd.toString();
+        return password.toString();
     }
 
     static {

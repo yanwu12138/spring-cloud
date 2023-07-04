@@ -22,7 +22,7 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public class ThreadUtil {
 
-    private static final Map<String, ThreadInfo<?>> THREAD_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, ThreadInfo> THREAD_CACHE = new ConcurrentHashMap<>();
     private static final AtomicLong THREAD_TASK_ID = new AtomicLong(1);
 
     private ThreadUtil() {
@@ -43,12 +43,12 @@ public class ThreadUtil {
 
         System.out.println("==================================================");
         // ----- 等待线程
-        ThreadInfo<String> instance = ThreadInfo.getInstance(ThreadUtil.getUniId(), new Thread(() -> {
+        ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.getUniId(), new Thread(() -> {
         }), 3000L);
 
         Thread testThread1 = new Thread(() -> {
             AtomicBoolean isWait = new AtomicBoolean(false);
-            Result<String> waitResult = ThreadUtil.threadWait(instance, isWait);
+            Result<?> waitResult = ThreadUtil.threadWait(instance, isWait);
             log.info("instance result: {}", waitResult);
         });
         testThread1.setName("test1");
@@ -73,7 +73,7 @@ public class ThreadUtil {
     /**
      * 线程等待
      */
-    public static <T> Result<T> threadWait(ThreadInfo<T> threadInfo, AtomicBoolean isWait) {
+    public static Result<?> threadWait(ThreadInfo threadInfo, AtomicBoolean isWait) {
         String key = threadInfo.getKey();
         Long timeout = threadInfo.getTimeout();
         log.info("thread wait, threadInfo: {}, timeout: {}", key, timeout);
@@ -87,11 +87,10 @@ public class ThreadUtil {
     }
 
     private static void threadWait(String key, Long timeout, AtomicBoolean isWait) {
-        Thread thread = Thread.currentThread();
-        synchronized (thread) {
+        synchronized (Thread.currentThread()) {
             try {
                 isWait.set(true);
-                thread.wait(timeout);
+                Thread.currentThread().wait(timeout);
             } catch (InterruptedException e) {
                 log.info("thread wait failed, key: {}", key, e);
             }
@@ -101,15 +100,14 @@ public class ThreadUtil {
     /**
      * 唤醒线程
      */
-    public static <T> Result<Void> threadNotify(String threadKey, T result) {
+    public static Result<Void> threadNotify(String threadKey, Object result) {
         if (THREAD_CACHE.containsKey(threadKey)) {
             log.info("thread notify key: {}, result: {}", threadKey, result);
             ThreadInfo threadInfo = THREAD_CACHE.get(threadKey);
             threadInfo.setResult(result);
             threadInfo.setIsNotify(true);
-            Thread thread = threadInfo.getThread();
-            synchronized (thread) {
-                thread.notify();
+            synchronized (threadInfo.getThread()) {
+                threadInfo.getThread().notify();
             }
             THREAD_CACHE.remove(threadKey);
         }
@@ -125,7 +123,7 @@ public class ThreadUtil {
     public static <P, R> Result<R> asyncExec(Callable<Result<P>> callable, Function<P, Result<R>> func) {
         try {
             Result<P> call = callable.call();
-            return call.isSuccess() ? func.apply(call.getData()) : Result.failed();
+            return call.successful() ? func.apply(call.getData()) : Result.failed();
         } catch (Exception e) {
             log.error("function async exec failed.", e);
             return Result.failed();

@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @ToString(exclude = {"thread"})
-public class ThreadInfo<T> implements Serializable {
+public class ThreadInfo implements Serializable {
     private static final long serialVersionUID = 7223163407992445294L;
 
     /*** key：THREAD_ID, 程序中线程的唯一标识 ***/
@@ -23,7 +23,7 @@ public class ThreadInfo<T> implements Serializable {
     private Thread thread;
 
     /*** 先成执行完之后的响应 ***/
-    private T result;
+    private Object result;
 
     /*** 超时时间: 毫秒 ***/
     private Long timeout;
@@ -31,8 +31,8 @@ public class ThreadInfo<T> implements Serializable {
     /*** 判断是否被唤醒 ***/
     private Boolean isNotify;
 
-    public static <T> ThreadInfo<T> getInstance(String key, Thread thread, long timeout) {
-        ThreadInfo<T> instance = new ThreadInfo<>();
+    public static ThreadInfo getInstance(String key, Thread thread, long timeout) {
+        ThreadInfo instance = new ThreadInfo();
         instance.setKey(String.join(":", key, thread.getName(), String.valueOf(thread.getId())));
         instance.setThread(thread);
         instance.setTimeout(timeout);
@@ -43,27 +43,27 @@ public class ThreadInfo<T> implements Serializable {
     private ThreadInfo() {
     }
 
-    private ThreadInfo<T> setKey(String key) {
+    private ThreadInfo setKey(String key) {
         this.key = key;
         return this;
     }
 
-    private ThreadInfo<T> setThread(Thread thread) {
+    private ThreadInfo setThread(Thread thread) {
         this.thread = thread;
         return this;
     }
 
-    private ThreadInfo<T> setTimeout(long timeout) {
+    private ThreadInfo setTimeout(long timeout) {
         this.timeout = timeout;
         return this;
     }
 
-    public ThreadInfo<T> setResult(T result) {
+    public ThreadInfo setResult(Object result) {
         this.result = result;
         return this;
     }
 
-    public ThreadInfo<T> setIsNotify(boolean isNotify) {
+    public ThreadInfo setIsNotify(boolean isNotify) {
         this.isNotify = isNotify;
         return this;
     }
