@@ -5,9 +5,7 @@ import com.yanwu.spring.cloud.common.pojo.ThreadInfo;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -24,6 +22,7 @@ public class ThreadUtil {
 
     private static final Map<String, ThreadInfo> THREAD_CACHE = new ConcurrentHashMap<>();
     private static final AtomicLong THREAD_TASK_ID = new AtomicLong(1);
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
     private ThreadUtil() {
         throw new UnsupportedOperationException("ThreadUtil should never be instantiated");
@@ -43,23 +42,11 @@ public class ThreadUtil {
 
         System.out.println("==================================================");
         ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.sequenceNo(), 5000L);
-        AtomicBoolean isWait = new AtomicBoolean(false);
-
-        Thread thread = new Thread(() -> {
+        Result<?> wait = ThreadUtil.threadWait(instance, () -> {
             ThreadUtil.sleep(2000L);
-            for (int i = 0; i < 200; i++) {
-                if (isWait.get()) {
-                    Result<Void> notify = ThreadUtil.threadNotify(instance.getKey(), "线程唤醒1111");
-                    log.info("thread notify result: {}", notify);
-                    break;
-                }
-                ThreadUtil.sleep(100L);
-            }
+            Result<Void> notify = ThreadUtil.threadNotify(instance.getKey(), "线程唤醒1111");
+            log.info("thread notify result: {}", notify);
         });
-        thread.setName(sequenceNo());
-        thread.start();
-
-        Result<?> wait = ThreadUtil.threadWait(instance, isWait);
         log.info("thread wait result: {}", wait);
     }
 
@@ -70,13 +57,26 @@ public class ThreadUtil {
         return "SEQ:" + String.format("%016d", THREAD_TASK_ID.getAndIncrement());
     }
 
+    public static Result<?> threadWait(ThreadInfo threadInfo, Runnable runnable) {
+        AtomicBoolean isWait = new AtomicBoolean(false);
+        EXECUTOR_SERVICE.execute(() -> {
+            int count = 30;
+            while (count > 0 && !isWait.get()) {
+                count--;
+                ThreadUtil.sleep(100L);
+            }
+            runnable.run();
+        });
+        return ThreadUtil.threadWait(threadInfo, isWait);
+    }
+
     /**
      * 将当前线程阻塞，等待其它线程唤醒当前线程
      *
      * @param threadInfo 当前线程，需要被阻塞
      * @param isWait     是否已经成功阻塞当前线程
      */
-    public static Result<?> threadWait(ThreadInfo threadInfo, AtomicBoolean isWait) {
+    private static Result<?> threadWait(ThreadInfo threadInfo, AtomicBoolean isWait) {
         log.info("thread wait, threadInfo: {}", threadInfo);
         threadInfoWait(threadInfo, isWait);
         if (!threadInfo.getIsNotify()) {
