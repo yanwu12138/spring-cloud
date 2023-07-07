@@ -83,13 +83,16 @@ public class ThreadUtil {
     public static Result<?> threadWait(ThreadInfo threadInfo, Runnable runnable) {
         AtomicBoolean isWait = new AtomicBoolean(false);
         THREAD_POOL.execute(() -> {
-            int count = 10;
+            // ----- 持续 3 秒钟检查当前线程是否被成功阻塞，只有当前线程成功被阻塞时才执行runnable任务，否则放弃执行runnable任务
+            int count = 30;
             while (count > 0 && !isWait.get()) {
                 count--;
                 ThreadUtil.sleep(100L);
             }
-            runnable.run();
-        }, threadInfo.getTimeout());
+            if (count > 0) {
+                runnable.run();
+            }
+        }, 3000L);
         return ThreadUtil.threadWait(threadInfo, isWait);
     }
 
@@ -100,6 +103,7 @@ public class ThreadUtil {
      * @param isWait     是否已经成功阻塞当前线程
      */
     private static Result<?> threadWait(ThreadInfo threadInfo, AtomicBoolean isWait) {
+        ThreadUtil.sleep(5000L);
         log.info("thread wait, threadInfo: {}", threadInfo);
         executeWait(threadInfo, isWait);
         if (!threadInfo.getIsNotify()) {
