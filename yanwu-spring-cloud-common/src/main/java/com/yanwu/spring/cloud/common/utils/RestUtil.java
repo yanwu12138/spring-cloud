@@ -45,14 +45,6 @@ public class RestUtil {
         log.info("get ship list, request: {}", instance);
         Result<Object> result = execute(instance);
         log.info("get ship list, response: {}", result);
-
-        url = "https://test1monitor.boxingtong.net:9014/sea/fishery/gb/cameraInfoByShipId";
-        instance = RequestInfo.getInstance(url, Object.class)
-                .buildHeaders("appId", "421433d4133348c52265")
-                .buildHeaders("secret", "7c74136544d75684c788588836868d7c")
-                .buildParams("shipId", "14264");
-        log.info("get ship cameraInfoByShipId, request: {}", instance);
-        log.info("get ship cameraInfoByShipId, response: {}", execute(instance));
     }
 
     /**
