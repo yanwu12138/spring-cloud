@@ -840,6 +840,31 @@ public class FileUtil {
     }
 
     /**
+     * 计算输入流的MD5值
+     *
+     * @param inputStream 输入流
+     * @return MD5值
+     */
+    private static String calcStreamMd5(InputStream inputStream) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        byte[] bytes;
+        int length = inputStream.available(), position = 0, blockSize = SIZE;
+        while (length > 0) {
+            blockSize = Math.min(blockSize, length);
+            bytes = new byte[blockSize];
+            if (inputStream.read(bytes) <= 0) {
+                break;
+            }
+            digest.update(bytes);
+            position += blockSize;
+            length -= blockSize;
+        }
+        String result = ByteUtil.bytesToHexStr(digest.digest());
+        log.info("calc input stream md5 success, md5: {}", result);
+        return result;
+    }
+
+    /**
      * 计算远程文件的MD5值
      *
      * @param fileUrl 地址
@@ -1032,6 +1057,41 @@ public class FileUtil {
         } else {
             if (file.getName().contains(filename)) {
                 result.add(file.getPath());
+            }
+        }
+    }
+
+
+    public static void copyDir(String sourcePath, String targetPath) throws Exception {
+        if (StringUtils.isBlank(sourcePath) || StringUtils.isBlank(targetPath)) {
+            return;
+        }
+        checkFilePath(sourcePath, false);
+    }
+
+    private static void copyDir(File sourceFile, String targetPath) throws Exception {
+        if (sourceFile == null || sourceFile.listFiles() == null) {
+            return;
+        }
+        checkFilePath(targetPath, true);
+        for (File file : sourceFile.listFiles()) {
+            if (file.isDirectory()) {
+                copyDir(file, targetPath + File.separator + file.getName());
+            }
+            if (file.isFile()) {
+                copyFile(file, targetPath + File.separator + "00_" + file.getName());
+            }
+        }
+    }
+
+    public static void copyFile(File sourcePath, String targetPath) throws Exception {
+        checkFilePath(targetPath, true);
+        try (FileInputStream in = new FileInputStream(sourcePath);
+             FileOutputStream out = new FileOutputStream(targetPath)) {
+            byte[] buffer = new byte[SIZE];
+            int readByte = 0;
+            while ((readByte = in.read(buffer)) != -1) {
+                out.write(buffer, 0, readByte);
             }
         }
     }
