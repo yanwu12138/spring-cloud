@@ -840,7 +840,7 @@ public class FileUtil {
     }
 
     /**
-     * 计算输入流的MD5值
+     * 计算输入流的MD5值，【注意：改操作会读取inputStream所有的内容】
      *
      * @param inputStream 输入流
      * @return MD5值
