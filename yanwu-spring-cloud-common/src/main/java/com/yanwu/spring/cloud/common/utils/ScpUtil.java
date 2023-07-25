@@ -69,7 +69,7 @@ public class ScpUtil {
             return false;
         }
         File file = new File(local);
-        if (!file.exists()) {
+        if (!FileUtil.fileExists(file)) {
             return false;
         }
         try {

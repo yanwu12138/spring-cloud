@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
@@ -125,7 +126,7 @@ public class FileUtil {
         checkDirectoryPath(targetDir);
         fileName = StringUtils.isNotBlank(fileName) ? fileName : sourceFile.getName() + FileType.ZIP.getSuffix();
         File targetFile = new File(targetDir + fileName);
-        if (!targetFile.exists() || targetFile.delete()) {
+        if (!fileExists(targetFile) || targetFile.delete()) {
             try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(targetFile.toPath()))) {
                 // ----- 压缩
                 toZip(zos, sourceFile, Contents.NUL);
@@ -182,7 +183,7 @@ public class FileUtil {
         String sourceName = sourceFile.getName();
         targetDir = targetDir + sourceName.substring(0, sourceName.lastIndexOf(Contents.POINT));
         File targetFile = new File(targetDir);
-        if (!targetFile.exists() || deleteFile(targetFile)) {
+        if (!fileExists(targetFile) || deleteFile(targetFile)) {
             checkDirectoryPath(targetFile);
         }
         // ----- 解压缩
@@ -245,7 +246,7 @@ public class FileUtil {
      * @return 单个文件删除成功返回true，否则返回false
      */
     public static boolean deleteFile(File delFile) {
-        if (!delFile.exists()) {
+        if (!fileExists(delFile)) {
             return false;
         }
         if (delFile.isFile()) {
@@ -266,7 +267,7 @@ public class FileUtil {
      */
     public static boolean deleteDirectory(File dirFile) {
         // ===== 如果dir对应的文件不存在，或者不是一个目录，则退出
-        if (!dirFile.exists() || !dirFile.isDirectory()) {
+        if (!fileExists(dirFile) || !dirFile.isDirectory()) {
             return false;
         }
         boolean flag = true;
@@ -344,7 +345,7 @@ public class FileUtil {
      * @return [true: 存在; false: 不存在]
      */
     public static boolean checkDirectoryPath(File file) {
-        if (!file.exists()) {
+        if (!fileExists(file)) {
             return file.mkdirs();
         }
         return true;
@@ -364,7 +365,7 @@ public class FileUtil {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         File file = new File(filePath);
-        if (!file.exists()) {
+        if (!fileExists(file)) {
             log.error("export error, file is not exists, file: {}", file.getPath());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -510,7 +511,7 @@ public class FileUtil {
      * @param block 新内容
      */
     public static boolean resetFile(File file, byte[] block) {
-        if (!file.exists() || !file.isFile()) {
+        if (!fileExists(file) || !file.isFile()) {
             log.error("file reset failed, because file is not exists.");
             return false;
         }
@@ -571,7 +572,7 @@ public class FileUtil {
      * @param newName     新文件名
      */
     public static boolean rename(File file, String newFilepath, String newName) {
-        if (!file.exists() || !file.isFile()) {
+        if (!fileExists(file) || !file.isFile()) {
             log.error("file rename failed, because file is not exists.");
             return false;
         }
@@ -639,7 +640,7 @@ public class FileUtil {
      * @return 切片数
      */
     public static long slice(File file, Long magic, int sliceLength) throws Exception {
-        if (!file.exists() || file.isDirectory()) {
+        if (!fileExists(file) || file.isDirectory()) {
             return 0;
         }
         deleteFile((file.getParent() + File.separator + getPrefix(file.getName())));
@@ -704,7 +705,7 @@ public class FileUtil {
      * @return 合并后的文件路径
      */
     public static String merge(File sliceDir) throws Exception {
-        if (!sliceDir.exists() || sliceDir.isFile()) {
+        if (!fileExists(sliceDir) || sliceDir.isFile()) {
             return sliceDir.getPath();
         }
         File[] files = sliceDir.listFiles();
@@ -733,7 +734,7 @@ public class FileUtil {
      * 获取切片文件
      */
     private static File getSliceFile(File file, long index) {
-        if (!file.exists() || index < 0) {
+        if (!fileExists(file) || index < 0) {
             return null;
         }
         String filename = file.getName();
@@ -760,7 +761,7 @@ public class FileUtil {
      * @throws Exception e
      */
     public static void checkFilePath(File file, Boolean flag) throws Exception {
-        if (file.exists()) {
+        if (fileExists(file)) {
             return;
         }
         // ----- 当文件不存在时，是创建文件还是抛出异常[true: 创建; false: 抛出异常]
@@ -792,7 +793,7 @@ public class FileUtil {
      * @return 校验结果【true: 校验通过; false: 校验不通过】
      */
     public static boolean checkFileMd5(File file, String md5) throws Exception {
-        if (!file.exists() || !file.isFile()) {
+        if (!fileExists(file) || !file.isFile()) {
             log.error("get file md5 failed, because file is empty.");
             return false;
         }
@@ -822,7 +823,7 @@ public class FileUtil {
      */
     public static String calcFileMd5(File file) throws Exception {
         BasicFileAttributes fileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-        if (!file.exists() || !fileAttributes.isRegularFile()) {
+        if (!fileExists(file) || !fileAttributes.isRegularFile()) {
             log.error("calc file md5 failed, because file does not exist or is not a file.");
             return null;
         }
@@ -840,7 +841,7 @@ public class FileUtil {
     }
 
     /**
-     * 计算输入流的MD5值
+     * 计算输入流的MD5值，【注意：改操作会读取inputStream所有的内容】
      *
      * @param inputStream 输入流
      * @return MD5值
@@ -973,7 +974,7 @@ public class FileUtil {
      * @return 文件所在绝对路径
      */
     public static String findFilepath(File file, String filename) {
-        if (!file.exists() || StringUtils.isBlank(filename)) {
+        if (!fileExists(file) || StringUtils.isBlank(filename)) {
             return null;
         }
         if (file.isDirectory()) {
@@ -1022,7 +1023,7 @@ public class FileUtil {
      * @return 文件所在绝对路径集合
      */
     public static Set<String> fuzzyFindFilepath(File file, String filename) {
-        if (!file.exists() || StringUtils.isBlank(filename)) {
+        if (!fileExists(file) || StringUtils.isBlank(filename)) {
             return Collections.emptySet();
         }
         Set<String> result = new HashSet<>();
@@ -1038,7 +1039,7 @@ public class FileUtil {
      * @param result   符合条件的文件路径集合
      */
     private static void fuzzyFindFilepath(File file, String filename, Set<String> result) {
-        if (!file.exists() || StringUtils.isBlank(filename)) {
+        if (!fileExists(file) || StringUtils.isBlank(filename)) {
             return;
         }
         if (file.isDirectory()) {
@@ -1061,37 +1062,93 @@ public class FileUtil {
         }
     }
 
-
-    public static void copyDir(String sourcePath, String targetPath) throws Exception {
-        if (StringUtils.isBlank(sourcePath) || StringUtils.isBlank(targetPath)) {
-            return;
-        }
-        checkFilePath(sourcePath, false);
+    /**
+     * 检查文件是否存在
+     *
+     * @param filepath 文件路径
+     */
+    public static boolean fileExists(String filepath) {
+        return StringUtils.isNotBlank(filepath) && fileExists(new File(filepath));
     }
 
-    private static void copyDir(File sourceFile, String targetPath) throws Exception {
-        if (sourceFile == null || sourceFile.listFiles() == null) {
+    /**
+     * 检查文件是否存在
+     *
+     * @param file 文件
+     */
+    public static boolean fileExists(File file) {
+        return file != null && file.exists();
+    }
+
+    /**
+     * 根据路径和保留天数删除文件
+     *
+     * @param filepath 文件路径
+     * @param minusDay 删除几天之前的文件
+     */
+    public static void removeExpiredFile(String filepath, int minusDay) {
+        if (StringUtils.isBlank(filepath) || minusDay <= 0) {
             return;
         }
-        checkFilePath(targetPath, true);
-        for (File file : sourceFile.listFiles()) {
-            if (file.isDirectory()) {
-                copyDir(file, targetPath + File.separator + file.getName());
-            }
-            if (file.isFile()) {
-                copyFile(file, targetPath + File.separator + "00_" + file.getName());
-            }
+        removeExpiredFile(new File(filepath), minusDay);
+    }
+
+    /**
+     * 根据路径和保留天数删除文件
+     *
+     * @param rootFile 文件
+     * @param minusDay 删除几天之前的文件
+     */
+    public static void removeExpiredFile(File rootFile, int minusDay) {
+        if (!fileExists(rootFile) || minusDay <= 0) {
+            return;
+        }
+        long lastTime = DateUtil.datetime(LocalDateTime.now().minusDays(minusDay));
+        log.info("remove expire file begin, path: {}", rootFile.getPath());
+        if (rootFile.isFile()) {
+            checkExpiredFile(rootFile, lastTime);
+        } else {
+            checkExpiredDir(rootFile, lastTime);
+        }
+        log.info("remove expire file done, path: {}", rootFile.getPath());
+    }
+
+    /**
+     * 判断文件是否过时，如果过时直接删除
+     *
+     * @param file     文件
+     * @param lastTime 过时时间
+     */
+    private static void checkExpiredFile(final File file, final long lastTime) {
+        if (fileExists(file) && file.lastModified() < lastTime) {
+            deleteFile(file);
+            log.info("remove expire file item, path: {}", file.getPath());
         }
     }
 
-    public static void copyFile(File sourcePath, String targetPath) throws Exception {
-        checkFilePath(targetPath, true);
-        try (FileInputStream in = new FileInputStream(sourcePath);
-             FileOutputStream out = new FileOutputStream(targetPath)) {
-            byte[] buffer = new byte[SIZE];
-            int readByte = 0;
-            while ((readByte = in.read(buffer)) != -1) {
-                out.write(buffer, 0, readByte);
+    /**
+     * 递归文件夹中的文件；
+     * * 如果是文件则检查过期时间，判断是否需要删除
+     * * 如果是文件夹则检测文件夹下是否还有文件，如果没有则删除文件夹
+     *
+     * @param dir      文件夹
+     * @param lastTime 过期时间
+     */
+    private static void checkExpiredDir(final File dir, final long lastTime) {
+        if (!fileExists(dir)) {
+            return;
+        }
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            deleteFile(dir);
+            log.info("remove expire dir item, path: {}", dir.getPath());
+            return;
+        }
+        for (File item : files) {
+            if (item.isFile()) {
+                checkExpiredFile(item, lastTime);
+            } else {
+                checkExpiredDir(item, lastTime);
             }
         }
     }

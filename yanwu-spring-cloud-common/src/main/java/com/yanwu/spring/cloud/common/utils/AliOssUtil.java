@@ -61,7 +61,7 @@ public class AliOssUtil {
      * @throws Exception Exception.class
      */
     public static Result<String> upload(OssProperties properties, OssFileTypeEnum type, File file) throws Exception {
-        if (!file.exists() || !file.isFile()) {
+        if (!FileUtil.fileExists(file) || !file.isFile()) {
             return Result.failed("OSS upload failed: file is not exists or file is not file.");
         }
         try (InputStream is = Files.newInputStream(file.toPath())) {
@@ -119,7 +119,7 @@ public class AliOssUtil {
      * @throws Exception Exception.class
      */
     public static Result<String> upload(OSS ossClient, String bucket, OssFileTypeEnum type, File file) throws Exception {
-        if (!file.exists() || !file.isFile()) {
+        if (!FileUtil.fileExists(file) || !file.isFile()) {
             return Result.failed("OSS upload failed: file is not exists or file is not file.");
         }
         try (InputStream is = Files.newInputStream(file.toPath())) {
@@ -381,10 +381,10 @@ public class AliOssUtil {
         if (StringUtils.isBlank(fileUrl)) {
             return Result.failed("OSS download failed: targetPath is blank.");
         }
-        if (file.exists() && file.isDirectory()) {
+        if (FileUtil.fileExists(file) && file.isDirectory()) {
             file = new File((file.getPath() + SEPARATOR + fileUrl.substring(fileUrl.lastIndexOf(SEPARATOR))));
         }
-        if (file.exists() && file.isFile() && !FileUtil.deleteFile(file)) {
+        if (FileUtil.fileExists(file) && file.isFile() && !FileUtil.deleteFile(file)) {
             return Result.failed("OSS download failed: delete file error.");
         }
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {

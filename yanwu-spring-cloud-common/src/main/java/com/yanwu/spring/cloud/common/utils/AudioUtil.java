@@ -40,7 +40,7 @@ public class AudioUtil {
      * @return 播放结果[true: 成功; false: 失败]
      */
     public synchronized static boolean playFlac(File file) {
-        if (!file.isFile() || !file.exists() || !file.getName().toLowerCase().endsWith(AudioEnum.FLAC.getSuffix())) {
+        if (!FileUtil.fileExists(file) || !file.getName().toLowerCase().endsWith(AudioEnum.FLAC.getSuffix())) {
             log.error("play flac audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
             return false;
         }
@@ -82,7 +82,7 @@ public class AudioUtil {
      * @return 播放结果[true: 成功; false: 失败]
      */
     public synchronized static boolean playWav(File file) {
-        if (!file.isFile() || !file.exists() || !file.getName().toLowerCase().endsWith(AudioEnum.WAV.getSuffix())) {
+        if (!FileUtil.fileExists(file) || !file.getName().toLowerCase().endsWith(AudioEnum.WAV.getSuffix())) {
             log.error("play wav audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
             return false;
         }
@@ -120,7 +120,7 @@ public class AudioUtil {
      * @return 播放结果[true: 成功; false: 失败]
      */
     public synchronized static boolean playPcm(File file) {
-        if (!file.isFile() || !file.exists() || !file.getName().toLowerCase().endsWith(AudioEnum.PCM.getSuffix())) {
+        if (!FileUtil.fileExists(file) || !file.getName().toLowerCase().endsWith(AudioEnum.PCM.getSuffix())) {
             log.error("play pcm audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
             return false;
         }
@@ -158,7 +158,7 @@ public class AudioUtil {
      * @return 播放结果[true: 成功; false: 失败]
      */
     public synchronized static boolean playMp3(File file) {
-        if (!file.isFile() || !file.exists() || !file.getName().toLowerCase().endsWith(AudioEnum.MP3.getSuffix())) {
+        if (!FileUtil.fileExists(file) || !file.getName().toLowerCase().endsWith(AudioEnum.MP3.getSuffix())) {
             log.error("play mp3 audio failed, because is not a file or the file does not exist. file: {}", file.getPath());
             return false;
         }

@@ -47,7 +47,7 @@ public class UpgradeHandler extends SimpleChannelInboundHandler<NioSocketChannel
         return executorService.addRunnable(BroadcastEnum.UPGRADE, String.valueOf(magic), () -> {
             try {
                 File file = new File(filepath);
-                if (!file.exists() || !file.isFile()) {
+                if (!FileUtil.fileExists(file) || !file.isFile()) {
                     return Result.failed("文件不存在或不是文件");
                 }
                 long length = file.length(), offset = 0;

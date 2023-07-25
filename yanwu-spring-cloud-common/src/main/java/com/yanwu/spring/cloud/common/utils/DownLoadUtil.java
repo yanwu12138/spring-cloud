@@ -79,7 +79,7 @@ public class DownLoadUtil {
 
         // ----- 检查文件[父目录是否存在 && 文件是否存在]
         File file = new File(localPath);
-        if (file.exists() && file.isFile()) {
+        if (FileUtil.fileExists(file)) {
             Assert.isTrue(file.delete(), "file delete error.");
         }
         FileUtil.checkDirectoryPath(file.getParentFile());

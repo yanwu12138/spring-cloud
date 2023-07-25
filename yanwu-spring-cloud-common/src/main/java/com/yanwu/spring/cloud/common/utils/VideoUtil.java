@@ -36,7 +36,7 @@ public class VideoUtil {
             return;
         }
         File file = new File(filepath);
-        if (!file.exists() || !file.isFile()) {
+        if (!FileUtil.fileExists(file) || !file.isFile()) {
             log.error("play video failed, because file is not exists. file: {}", filepath);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
