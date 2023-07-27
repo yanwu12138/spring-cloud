@@ -1138,8 +1138,8 @@ public class FileUtil {
         if (!fileExists(dir)) {
             return;
         }
-        File[] files = dir.listFiles();
-        if (files == null || files.length == 0) {
+        File[] files;
+        if ((files = dir.listFiles()) == null) {
             deleteFile(dir);
             log.info("remove expire dir item, path: {}", dir.getPath());
             return;
@@ -1150,6 +1150,48 @@ public class FileUtil {
             } else {
                 checkExpiredDir(item, lastTime);
             }
+        }
+        if ((files = dir.listFiles()) == null || files.length == 0) {
+            deleteFile(dir);
+            log.info("remove expire dir item, path: {}", dir.getPath());
+        }
+    }
+
+    /**
+     * 删除指定目录下的空文件夹
+     *
+     * @param filepath 指定目录路径
+     */
+    public static void removeEmptyDir(String filepath) {
+        if (StringUtils.isBlank(filepath)) {
+            return;
+        }
+        removeEmptyDir(new File(filepath));
+    }
+
+    /**
+     * 删除指定目录下的空文件夹
+     *
+     * @param dir 指定目录
+     */
+    public static void removeEmptyDir(File dir) {
+        if (!fileExists(dir)) {
+            return;
+        }
+        File[] files;
+        if ((files = dir.listFiles()) == null) {
+            log.info("remove empty dir, path: {}", dir.getPath());
+            deleteFile(dir);
+            return;
+        }
+        for (File item : files) {
+            if (item.isDirectory()) {
+                removeEmptyDir(item);
+            }
+        }
+        if ((files = dir.listFiles()) == null || files.length == 0) {
+            log.info("remove empty dir, path: {}", dir.getPath());
+            deleteFile(dir);
         }
     }
 
