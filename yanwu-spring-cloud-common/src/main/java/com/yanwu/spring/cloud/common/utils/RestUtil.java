@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.HttpConstants;
-import com.yanwu.spring.cloud.common.pojo.PageParam;
 import com.yanwu.spring.cloud.common.pojo.RequestInfo;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,20 +29,11 @@ public class RestUtil {
     private static RestTemplate template = null;
 
     public static void main(String[] args) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("cameraMac", "18:68:cb:15:8b:a8");
-        String url = "https://test1monitor.boxingtong.net:9014/sea/fishery/shipList";
-        RequestInfo<Object> instance = RequestInfo.getInstance(url, Object.class)
-                .buildHeaders("appId", "421433d4133348c52265")
-                .buildHeaders("secret", "7c74136544d75684c788588836868d7c")
-                .buildVariable("123", "234", "345")
-                .buildVariable("aaa", "bbb", "ccc")
-                .buildParams(params)
-                .buildParams("aaa", "bbb")
-                .buildBody(new PageParam<>().setPage(1).setSize(10).setData("test"));
-        log.info("get ship list, request: {}", instance);
-        Result<Object> result = execute(instance);
-        log.info("get ship list, response: {}", result);
+        String url = "https://api.foreocean.com/warning/seaWave";
+        RequestInfo<Object> instance = RequestInfo.getInstance(url, Object.class);
+        instance.buildHeaders("Token", "5b38b3915f742082719e2a3197c694e7");
+        Result<Object> execute = execute(instance);
+        System.out.println(execute);
     }
 
     /**
