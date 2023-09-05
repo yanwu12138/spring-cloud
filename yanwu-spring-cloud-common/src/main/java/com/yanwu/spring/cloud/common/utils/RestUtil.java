@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,11 +30,18 @@ public class RestUtil {
     private static RestTemplate template = null;
 
     public static void main(String[] args) {
-        String url = "https://api.foreocean.com/warning/seaWave";
-        RequestInfo<Object> instance = RequestInfo.getInstance(url, Object.class);
-        instance.buildHeaders("Token", "5b38b3915f742082719e2a3197c694e7");
+        String url = "http://test1bxtapi.boxingtong.net:6241/bxt-api/user/login";
+        HashMap<String, String> param = new HashMap<>();
+        param.put("phone", "13121909171");
+        param.put("password", "123456");
+        RequestInfo<Object> instance = RequestInfo.getInstance(HttpMethod.POST, url, Object.class);
+        instance.buildHeaders("Content-Type", "application/json")
+                .buildHeaders("AppId", "78282017716134526319")
+                .buildHeaders("Timestamp", "1692409837577")
+                .buildHeaders("BXT_Token", "5edaa2bab8ef21d6cb632c917c2c7cd4")
+                .buildBody(param);
         Result<Object> execute = execute(instance);
-        System.out.println(execute);
+        log.info("test rest, url: {}, param: {}, result: {}", url, param, execute);
     }
 
     /**

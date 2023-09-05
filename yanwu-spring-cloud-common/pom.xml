@@ -33,7 +33,7 @@
         <jflac.codec.version>1.5.2</jflac.codec.version>
         <jmh.version>1.21</jmh.version>
         <jts.core.version>1.18.2</jts.core.version>
-        <lombok.version>1.16.18</lombok.version>
+        <lombok.version>1.18.20</lombok.version>
         <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <mp3spi.version>1.9.5.4</mp3spi.version>
