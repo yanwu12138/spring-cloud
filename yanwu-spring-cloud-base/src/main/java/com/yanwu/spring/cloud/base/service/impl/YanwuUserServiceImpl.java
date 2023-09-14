@@ -6,6 +6,7 @@ import com.yanwu.spring.cloud.base.consumer.DeviceLightConsumer;
 import com.yanwu.spring.cloud.base.data.mapper.YanwuUserMapper;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
+import com.yanwu.spring.cloud.common.core.annotation.RedisLock;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,6 +36,7 @@ public class YanwuUserServiceImpl extends ServiceImpl<YanwuUserMapper, YanwuUser
     }
 
     @Override
+    @RedisLock(suffix = "#yanwuUser.account")
     public void updatePortrait(YanwuUser yanwuUser) {
         yanwuUserMapper.updatePortrait(yanwuUser.getId(), yanwuUser.getPortrait());
     }

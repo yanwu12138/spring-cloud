@@ -68,6 +68,15 @@ public class AspectUtil {
     }
 
     /**
+     * 获取每次请求的全局txID
+     *
+     * @return ClassName
+     */
+    public static String getClassName(Method method) {
+        return method.getDeclaringClass().getSimpleName();
+    }
+
+    /**
      * 获取请求信息
      *
      * @return request
