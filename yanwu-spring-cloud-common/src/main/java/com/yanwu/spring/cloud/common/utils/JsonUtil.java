@@ -49,6 +49,10 @@ public final class JsonUtil {
         throw new UnsupportedOperationException("JsonUtil should never be instantiated");
     }
 
+    public static ObjectMapper getMapper() {
+        return MAPPER;
+    }
+
     /**
      * 从JsonNode取出字符串
      *
