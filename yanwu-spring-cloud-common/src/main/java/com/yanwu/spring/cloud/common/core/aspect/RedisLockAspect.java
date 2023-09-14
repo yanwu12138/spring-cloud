@@ -10,7 +10,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -51,7 +50,7 @@ public class RedisLockAspect {
         String lockKey = null;
         boolean lockFlag = false;
         try {
-            lockKey = getRedisLockKey(method.getAnnotation(RedisLock.class), joinPoint);
+            lockKey = getRedisLockKey(method.getAnnotation(RedisLock.class), method, joinPoint.getArgs());
             if (StringUtils.isBlank(lockKey)) {
                 log.error("RedisLock Failed: [txId]: {}, [class]: {}, [method]: {}, [key]: {}", txId, className, method.getName(), lockKey);
                 throw new BusinessException("Failed to obtain Redis lock, because lockKey is empty.");
@@ -75,20 +74,21 @@ public class RedisLockAspect {
     /***
      * 获取缓存的key
      * @param redisLock 定义在注解上，支持SPEL表达式
-     * @param joinPoint 函数
+     * @param method    函数
+     * @param args      函数
      * @return redis锁的KEY
      */
-    public String getRedisLockKey(RedisLock redisLock, ProceedingJoinPoint joinPoint) {
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        String[] paramNames = defaultParameterNameDiscoverer.getParameterNames(methodSignature.getMethod());
+    private String getRedisLockKey(RedisLock redisLock, Method method, Object[] args) {
+        if (redisLock.lockMethod()) {
+            return String.join("#", method.getDeclaringClass().getName(), method.getName());
+        }
+        String[] param = defaultParameterNameDiscoverer.getParameterNames(method);
         EvaluationContext context = new StandardEvaluationContext();
-        Object[] args = joinPoint.getArgs();
         for (int i = 0; i < args.length; i++) {
-            if (paramNames != null && paramNames.length > 0) {
-                context.setVariable(paramNames[i], args[i]);
+            if (param != null && param.length > 0) {
+                context.setVariable(param[i], args[i]);
             }
         }
         return String.valueOf(spelExpressionParser.parseExpression(redisLock.suffix()).getValue(context));
     }
-
 }

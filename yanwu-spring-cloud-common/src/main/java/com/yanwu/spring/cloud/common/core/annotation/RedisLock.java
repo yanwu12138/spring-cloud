@@ -16,4 +16,9 @@ public @interface RedisLock {
     /*** redis锁的key: spel表达式 ***/
     String suffix();
 
+    /*** 是否根据{类路径+方法}名来上锁, 从未锁定整个方法
+     * 当根据{类路径+方法}来上锁时，不校验suffix属性
+     * ***/
+    boolean lockMethod() default false;
+
 }
