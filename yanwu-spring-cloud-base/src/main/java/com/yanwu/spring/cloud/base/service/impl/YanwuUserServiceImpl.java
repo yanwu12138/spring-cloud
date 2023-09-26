@@ -36,7 +36,7 @@ public class YanwuUserServiceImpl extends ServiceImpl<YanwuUserMapper, YanwuUser
     }
 
     @Override
-    @RedisLock(suffix = "#yanwuUser.account")
+    @RedisLock(lockMethod = true, suffix = "#yanwuUser.account")
     public void updatePortrait(YanwuUser yanwuUser) {
         yanwuUserMapper.updatePortrait(yanwuUser.getId(), yanwuUser.getPortrait());
     }
