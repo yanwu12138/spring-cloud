@@ -55,9 +55,9 @@ public class RedisLockAspect {
                 log.error("RedisLock Failed: [txId]: {}, [class]: {}, [method]: {}, [key]: {}", txId, className, method.getName(), lockKey);
                 throw new BusinessException("Failed to obtain Redis lock, because lockKey is empty.");
             }
-            log.info("RedisLock Success: [txId]: {}, [class]: {}, [method]: {}, [key]: {}", txId, className, method.getName(), lockKey);
+            log.info("RedisLock: [txId]: {}, [class]: {}, [method]: {}, [key]: {}", txId, className, method.getName(), lockKey);
             lockFlag = redisUtil.lock(lockKey, Thread.currentThread().getId());
-            if (!lockFlag) {
+            if (lockFlag) {
                 return joinPoint.proceed();
             } else {
                 log.error("RedisLock Failed: [txId]: {}, [class]: {}, [method]: {}, [key]: {}", txId, className, method.getName(), lockKey);
@@ -66,7 +66,7 @@ public class RedisLockAspect {
         } finally {
             if (StringUtils.isNotBlank(lockKey) && lockFlag) {
                 redisUtil.unLock(lockKey, Thread.currentThread().getId());
-                log.info("RedisUnlock Success: [txId]: {}, [class]: {}, [method]: {}, [param]: {}", txId, className, method.getName(), lockKey);
+                log.info("RedisUnlock: [txId]: {}, [class]: {}, [method]: {}, [param]: {}", txId, className, method.getName(), lockKey);
             }
         }
     }
