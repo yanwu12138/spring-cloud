@@ -21,9 +21,9 @@ public class BxtApiTestUtil {
     public static void main(String[] args) {
         String appId = "30674910590919340749";
         String accessToken = "1KwR2lac1pWEYLrVAnU8Kq4j85sagxLDqRaOuyhRcxwcKEbfQSakw7kAt9b7FTtBAOgBBXvWfwwQ5QMvOya3wClTPhJaSQksNWmQcvTFSjIVVPm9URbuRNnYRUP8SuB9";
-//        testLogin(appId, System.currentTimeMillis());
+        testLogin(appId, System.currentTimeMillis());
 //        testGetBalance(appId, System.currentTimeMillis(), accessToken);
-        testBobyPay(appId, System.currentTimeMillis(), accessToken);
+//        testBobyPay(appId, System.currentTimeMillis(), accessToken);
     }
 
 
@@ -71,7 +71,7 @@ public class BxtApiTestUtil {
     }
 
     private static String getBxtToken(String appId, long timestamp) {
-        String secret = "809E42FAFE73C8DC386D427234208AFC";
+        String secret = "B05DF532E466FE1C783213AFA8F6DAB9";
         String md5Str = DigestUtils.md5Hex((appId + secret).getBytes(StandardCharsets.UTF_8));
         md5Str = DigestUtils.md5Hex((md5Str + timestamp).getBytes(StandardCharsets.UTF_8));
         return md5Str;

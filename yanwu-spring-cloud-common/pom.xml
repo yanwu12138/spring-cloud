@@ -33,7 +33,7 @@
         <jflac.codec.version>1.5.2</jflac.codec.version>
         <jmh.version>1.21</jmh.version>
         <jts.core.version>1.18.2</jts.core.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <mp3spi.version>1.9.5.4</mp3spi.version>
@@ -379,12 +379,6 @@
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,6 +1,8 @@
 package com.yanwu.spring.cloud.base.vo;
 
+
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -14,7 +16,9 @@ import java.io.Serializable;
  * description:
  */
 @Data
+@Accessors(chain = true)
 public class LoginVO implements Serializable {
+    private static final long serialVersionUID = 8380621164523427254L;
 
     @NotBlank(
             message = "账号不能为空"
@@ -43,6 +47,5 @@ public class LoginVO implements Serializable {
             message = "密码仅支持英文大小写字母，数字，符号"
     )
     private String password;
-
 
 }
