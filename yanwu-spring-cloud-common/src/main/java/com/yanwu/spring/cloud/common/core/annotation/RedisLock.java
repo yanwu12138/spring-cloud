@@ -21,4 +21,9 @@ public @interface RedisLock {
      * ***/
     boolean lockMethod() default false;
 
+    /***
+     * redis锁的加锁时间，单位：秒，该值未-1时，时长为默认时长
+     */
+    int lockTime() default -1;
+
 }

@@ -50,12 +50,17 @@ public class RedisLockAspect {
         String lockKey = null;
         boolean lockFlag = false;
         try {
-            lockKey = getRedisLockKey(method.getAnnotation(RedisLock.class), method, joinPoint.getArgs());
+            RedisLock annotation = method.getAnnotation(RedisLock.class);
+            lockKey = getRedisLockKey(annotation, method, joinPoint.getArgs());
             if (StringUtils.isBlank(lockKey)) {
                 log.error("RedisLock Failed: [txId]: {}, [class]: {}, [method]: {}, [key]: {}", txId, className, method.getName(), lockKey);
                 throw new BusinessException("Failed to obtain Redis lock, because lockKey is empty.");
             }
-            lockFlag = redisUtil.lock(lockKey, Thread.currentThread().getId());
+            if (annotation.lockTime() == -1) {
+                lockFlag = redisUtil.lock(lockKey, Thread.currentThread().getId());
+            } else {
+                lockFlag = redisUtil.lock(lockKey, Thread.currentThread().getId(), annotation.lockTime());
+            }
             if (lockFlag) {
                 log.info("RedisLock: [txId]: {}, [class]: {}, [method]: {}, [key]: {}", txId, className, method.getName(), lockKey);
                 return joinPoint.proceed();
