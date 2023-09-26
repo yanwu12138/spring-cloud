@@ -31,9 +31,9 @@ import java.lang.reflect.Method;
 public class RedisLockAspect {
 
     /*** 用于SpEL表达式解析 ***/
-    private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
+    private final SpelExpressionParser expressionParser = new SpelExpressionParser();
     /*** 用于获取方法参数定义名字 ***/
-    private final DefaultParameterNameDiscoverer defaultParameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+    private final DefaultParameterNameDiscoverer parameterDiscoverer = new DefaultParameterNameDiscoverer();
 
     @Resource
     private RedisUtil redisUtil;
@@ -82,13 +82,13 @@ public class RedisLockAspect {
         if (redisLock.lockMethod()) {
             return String.join("#", method.getDeclaringClass().getName(), method.getName());
         }
-        String[] param = defaultParameterNameDiscoverer.getParameterNames(method);
+        String[] param = parameterDiscoverer.getParameterNames(method);
         EvaluationContext context = new StandardEvaluationContext();
         for (int i = 0; i < args.length; i++) {
             if (param != null && param.length > 0) {
                 context.setVariable(param[i], args[i]);
             }
         }
-        return String.valueOf(spelExpressionParser.parseExpression(redisLock.suffix()).getValue(context));
+        return String.valueOf(expressionParser.parseExpression(redisLock.suffix()).getValue(context));
     }
 }
