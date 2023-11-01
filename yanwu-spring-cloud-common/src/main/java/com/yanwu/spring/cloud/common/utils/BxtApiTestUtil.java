@@ -19,16 +19,15 @@ public class BxtApiTestUtil {
 
 
     public static void main(String[] args) {
-        String appId = "30674910590919340749";
-        String accessToken = "1KwR2lac1pWEYLrVAnU8Kq4j85sagxLDqRaOuyhRcxwcKEbfQSakw7kAt9b7FTtBAOgBBXvWfwwQ5QMvOya3wClTPhJaSQksNWmQcvTFSjIVVPm9URbuRNnYRUP8SuB9";
-        testLogin(appId, System.currentTimeMillis());
-//        testGetBalance(appId, System.currentTimeMillis(), accessToken);
-//        testBobyPay(appId, System.currentTimeMillis(), accessToken);
+        String appId = "73039084026629282443";
+        String accessToken = "Y6gD6ziZQz63MoFlnapRO6RyfezALSRht1cU1ffCMypoUCB2BpBs2IwyVa32u8dROeVhEEv8RO93AH1XCwk6NXxubyx2VxLYL8hGYsnUtXmCF2CqfI2bNbv1ZXVaUv3I";
+//        testLogin(appId, System.currentTimeMillis());
+        testGetBalance(appId, System.currentTimeMillis(), accessToken);
     }
 
 
     private static void testLogin(String appId, long timestamp) {
-        String url = "http://test1bxtapi.boxingtong.net:6241/bxt-api/user/login";
+        String url = "http://bxtapi.boxingtong.net:6241/bxt-api/user/login";
         HashMap<String, String> param = new HashMap<>();
         param.put("phone", "13121909171");
         param.put("password", "123456");
@@ -42,7 +41,7 @@ public class BxtApiTestUtil {
     }
 
     private static void testGetBalance(String appId, long timestamp, String accessToken) {
-        String url = "http://test1bxtapi.boxingtong.net:6241/bxt-api/user/getBalance";
+        String url = "http://bxtapi.boxingtong.net:6241/bxt-api/user/getBalance";
         RequestInfo<Object> instance = RequestInfo.getInstance(url, Object.class);
         instance.buildHeaders("Content-Type", "application/json")
                 .buildHeaders("AppId", appId)
@@ -54,7 +53,7 @@ public class BxtApiTestUtil {
     }
 
     private static void testBobyPay(String appId, long timestamp, String accessToken) {
-        String url = "http://test1bxtapi.boxingtong.net:6241/bxt-api/user/bobyPay";
+        String url = "http://bxtapi.boxingtong.net:6241/bxt-api/user/bobyPay";
         HashMap<String, String> param = new HashMap<>();
         param.put("userId", "C10000336");
         param.put("boby", "6");

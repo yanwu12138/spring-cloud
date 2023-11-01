@@ -1,5 +1,7 @@
 package com.yanwu.spring.cloud.common.core.common;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 

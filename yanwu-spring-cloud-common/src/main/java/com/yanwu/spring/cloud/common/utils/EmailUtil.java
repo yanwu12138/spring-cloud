@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.Encoding;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -55,6 +56,12 @@ public class EmailUtil {
 
     private EmailUtil() {
         throw new UnsupportedOperationException("EmailUtil should never be instantiated");
+    }
+
+    public static void main(String[] args) {
+        System.out.println(RandomStringUtils.randomNumeric(20).toLowerCase());
+        System.out.println(RandomStringUtils.randomAlphanumeric(32).toLowerCase());
+        System.out.println(RandomStringUtils.randomAlphanumeric(32).toUpperCase());
     }
 
     /**
