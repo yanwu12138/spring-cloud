@@ -44,14 +44,14 @@ public class BxtApiTestUtil {
         }
 
         // ----- 信号量6.5～11
-        for (int i = 0; i < 750; i++) {
-            instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(122.001D).setGpsLatitudeDegs(31.002D).setDemodConDbAvg(9.3235D));
+        for (int i = 0; i < 160; i++) {
+            instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(122.501D).setGpsLatitudeDegs(31.002D).setDemodConDbAvg(9.3235D));
             log.info("request: {}, response: {}", instance, RestUtil.execute(instance));
             ThreadUtil.sleep(5_000L);
         }
 
         // ----- 信号量<6.5
-        for (int i = 0; i < 360; i++) {
+        for (int i = 0; i < 720; i++) {
             instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(120.001D).setGpsLatitudeDegs(30.002D).setDemodConDbAvg(4.3235D));
             log.info("request: {}, response: {}", instance, RestUtil.execute(instance));
             ThreadUtil.sleep(5_000L);
