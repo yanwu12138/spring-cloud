@@ -31,29 +31,26 @@ public class BxtApiTestUtil {
 
     private static void testAntennaStatus() {
         TAntennaStatus status = new TAntennaStatus();
-        status.setGpsSpeedKnots(10.0D).setGpsHeadingDegs(12.312D);
+        status.setGpsSpeedKnots(10.0D).setGpsHeadingDegs(52.312D);
         String url = "http://192.168.18.254:8001/api/amu/antennaStatus";
         RequestInfo<Object> instance = RequestInfo.getInstance(HttpMethod.POST, url, Object.class);
         instance.buildHeaders("Content-Type", "application/json");
 
-        // ----- 正常情况，信号量大与11
-        for (int i = 0; i < 120; i++) {
-            instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(122.001D).setGpsLatitudeDegs(31.002D).setDemodConDbAvg(15.3235D));
-            log.info("request: {}, response: {}", instance, RestUtil.execute(instance));
-            ThreadUtil.sleep(5_000L);
-        }
+//        // ----- 正常情况，信号量大与11
+//        for (int i = 0; i < 90; i++) {
+//            RestUtil.execute(instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(122.001D).setGpsLatitudeDegs(31.002D).setDemodConDbAvg(15.3235D)));
+//            ThreadUtil.sleep(5_000L);
+//        }
 
         // ----- 信号量6.5～11
-        for (int i = 0; i < 160; i++) {
-            instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(122.501D).setGpsLatitudeDegs(31.002D).setDemodConDbAvg(9.3235D));
-            log.info("request: {}, response: {}", instance, RestUtil.execute(instance));
+        for (int i = 0; i < 720; i++) {
+            RestUtil.execute(instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(122.501D).setGpsLatitudeDegs(31.002D).setDemodConDbAvg(9.3235D)));
             ThreadUtil.sleep(5_000L);
         }
 
         // ----- 信号量<6.5
         for (int i = 0; i < 720; i++) {
-            instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(120.001D).setGpsLatitudeDegs(30.002D).setDemodConDbAvg(4.3235D));
-            log.info("request: {}, response: {}", instance, RestUtil.execute(instance));
+            RestUtil.execute(instance.buildBody(status.setSatLongitudeDegs(134.1D).setGpsLongitudeDegs(120.001D).setGpsLatitudeDegs(30.002D).setDemodConDbAvg(4.3235D)));
             ThreadUtil.sleep(5_000L);
         }
     }
