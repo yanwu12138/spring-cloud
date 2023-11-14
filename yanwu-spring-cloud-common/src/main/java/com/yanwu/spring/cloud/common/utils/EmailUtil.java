@@ -49,6 +49,8 @@ public class EmailUtil {
         PROPERTIES.setProperty("mail.smtp.host", "smtp.qq.com");
         // ----- 设置ssl端口
         PROPERTIES.setProperty("mail.smtp.port", "465");
+        PROPERTIES.setProperty("mail.smtp.ssl.enable", "true");
+        PROPERTIES.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
         PROPERTIES.setProperty("mail.smtp.socketFactory.port", "465");
         PROPERTIES.setProperty("mail.smtp.socketFactory.fallback", "false");
         PROPERTIES.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
