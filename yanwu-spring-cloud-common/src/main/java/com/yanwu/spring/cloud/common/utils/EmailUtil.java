@@ -92,18 +92,24 @@ public class EmailUtil {
         Assert.isTrue(StringUtils.isNotBlank(toRecipient), "recipient address cannot be empty!");
         Assert.isTrue(StringUtils.isNotBlank(subject), "mail subject cannot be empty!");
         Assert.isTrue(StringUtils.isNotBlank(content), "mail content cannot be empty!");
-        // ===== 创建定义整个应用程序所需的环境信息的 Session 对象
-        Session session = Session.getInstance(PROPERTIES);
-        // ===== 创建邮件的实例对象
-        Message msg = createMimeMessage(session, sendAddress, toRecipient, ccRecipient, subject, content, attachments);
-        // ===== 根据session对象获取邮件传输对象Transport
-        Transport transport = session.getTransport();
-        // ----- 设置发件人的账户名和密码
-        transport.connect(account, password);
-        // ----- 发送邮件，并发送到所有收件人地址，message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
-        transport.sendMessage(msg, msg.getAllRecipients());
-        // ===== 关闭邮件连接
-        transport.close();
+        Transport transport = null;
+        try {
+            // ===== 创建定义整个应用程序所需的环境信息的 Session 对象
+            Session session = Session.getInstance(PROPERTIES);
+            // ===== 创建邮件的实例对象
+            Message msg = createMimeMessage(session, sendAddress, toRecipient, ccRecipient, subject, content, attachments);
+            // ===== 根据session对象获取邮件传输对象Transport
+            transport = session.getTransport();
+            // ----- 设置发件人的账户名和密码
+            transport.connect(account, password);
+            // ----- 发送邮件，并发送到所有收件人地址，message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
+            transport.sendMessage(msg, msg.getAllRecipients());
+        } finally {
+            // ===== 关闭邮件连接
+            if (transport != null) {
+                transport.close();
+            }
+        }
     }
 
     /**
