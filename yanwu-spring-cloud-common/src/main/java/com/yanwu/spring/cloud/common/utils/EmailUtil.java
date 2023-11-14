@@ -2,7 +2,6 @@ package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.core.common.Encoding;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -13,6 +12,7 @@ import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Properties;
 
@@ -26,11 +26,11 @@ import java.util.Properties;
 @SuppressWarnings("unused")
 public class EmailUtil {
     /*** 发件人地址 */
-    private static final String SEND_ADDRESS = "499496273@qq.com";
+    private static final String SEND_ADDRESS = "baofeng.xu@birdsat.cn";
     /*** 发件人账户名 */
-    private static final String ACCOUNT = "499496273@qq.com";
+    private static final String ACCOUNT = "baofeng.xu@birdsat.cn";
     /*** 发件人账户密码[注：此密码不是邮箱登陆密码，而是邮箱授权密码] */
-    private static final String PASSWORD = "gvoggmlkhdpncbec";
+    private static final String PASSWORD = "KTKgh8TF8J57RKE5";
 
     private static final String CONTENT_TYPE = "text/html;charset=UTF-8";
 
@@ -46,7 +46,7 @@ public class EmailUtil {
         // ----- 设置链接超时
         PROPERTIES.setProperty("mail.smtp.timeout", "10000");
         // ----- 设置发件人的SMTP服务器地址
-        PROPERTIES.setProperty("mail.smtp.host", "smtp.qq.com");
+        PROPERTIES.setProperty("mail.smtp.host", "smtp.exmail.qq.com");
         // ----- 设置ssl端口
         PROPERTIES.setProperty("mail.smtp.port", "465");
         PROPERTIES.setProperty("mail.smtp.ssl.enable", "true");
@@ -60,10 +60,12 @@ public class EmailUtil {
         throw new UnsupportedOperationException("EmailUtil should never be instantiated");
     }
 
-    public static void main(String[] args) {
-        System.out.println(RandomStringUtils.randomNumeric(20).toLowerCase());
-        System.out.println(RandomStringUtils.randomAlphanumeric(32).toLowerCase());
-        System.out.println(RandomStringUtils.randomAlphanumeric(32).toUpperCase());
+    public static void main(String[] args) throws Exception {
+        String subject = "【地中海号邮轮波束切换事件】";
+        String content = "触发事件：地中海号邮轮已成功切换至beam22" +
+                "。当前位置：[" + 120.11111 + ", " + 30.22222 + "]，切换时间：" + DateUtil.datetimeStr(LocalDateTime.now()) +
+                "，当前尝试发送次数：1";
+        sendEmail(SEND_ADDRESS, SEND_ADDRESS, PASSWORD, "yanwu0527@163.com", new String[]{"baofeng.xu@birdsat.cn"}, subject, content);
     }
 
     /**
