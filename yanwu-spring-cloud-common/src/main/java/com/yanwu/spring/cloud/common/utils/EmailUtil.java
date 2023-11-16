@@ -61,10 +61,11 @@ public class EmailUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        String subject = "【地中海号邮轮波束切换事件】";
-        String content = "触发事件：地中海号邮轮已成功切换至beam22" +
-                "。当前位置：[" + 120.11111 + ", " + 30.22222 + "]，切换时间：" + DateUtil.datetimeStr(LocalDateTime.now()) +
-                "，当前尝试发送次数：1";
+        String subject = "【Satellite Beam Switch Event of Mediterranean Cruise】";
+        String content = "Dear all: <br>" +
+                "<br>&nbsp;&nbsp;Beam Switch Event: 2.4m Ku-band antenna of the Mediterranean Cruise was switched to APStar-5D Beam 22 successfully." +
+                "<br>&nbsp;&nbsp;Current location: [" + 120.11111 + ", " + 90.22222 + "]." +
+                "<br>&nbsp;&nbsp;Switch time: " + DateUtil.datetimeStr(LocalDateTime.now());
         sendEmail(SEND_ADDRESS, SEND_ADDRESS, PASSWORD, "yanwu0527@163.com", new String[]{"baofeng.xu@birdsat.cn"}, subject, content);
     }
 
