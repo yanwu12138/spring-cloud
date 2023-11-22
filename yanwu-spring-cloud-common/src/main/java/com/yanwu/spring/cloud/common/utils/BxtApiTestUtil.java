@@ -1,12 +1,14 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import com.yanwu.spring.cloud.common.pojo.RequestInfo;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.HttpMethod;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
@@ -26,7 +28,35 @@ public class BxtApiTestUtil {
         String accessToken = "Y6gD6ziZQz63MoFlnapRO6RyfezALSRht1cU1ffCMypoUCB2BpBs2IwyVa32u8dROeVhEEv8RO93AH1XCwk6NXxubyx2VxLYL8hGYsnUtXmCF2CqfI2bNbv1ZXVaUv3I";
 //        testLogin(appId, System.currentTimeMillis());
 //        testGetBalance(appId, System.currentTimeMillis(), accessToken);
-        testAntennaStatus();
+        new Thread(() -> testAntennaStatus()).start();
+        new Thread(() -> testAttitudeStatus()).start();
+    }
+
+    private static void testAttitudeStatus() {
+        String url = "http://192.168.18.254:8001/api/amu/shipAttitude";
+        AttitudeStatus status = new AttitudeStatus().setFormatVersion(1).setAntennaSerial("DW000793N0270");
+        RequestInfo<Object> instance = RequestInfo.getInstance(HttpMethod.POST, url, Object.class).buildHeaders("Content-Type", "application/json");
+        for (int i = 0; i < 7200; i++) {
+            status.setUtc(System.currentTimeMillis() / 1000L);
+            status.setAttitudeX(10D + i / 1000D);
+            status.setAttitudeY(20D + i / 1000D);
+            status.setAttitudeZ(30D + i / 1000D);
+            Result<Object> execute = RestUtil.execute(instance.buildBody(status));
+            ThreadUtil.sleep(5_000L);
+        }
+    }
+
+    @Data
+    @Accessors(chain = true)
+    private static class AttitudeStatus implements Serializable {
+        private static final long serialVersionUID = -1934747819727445147L;
+
+        private Integer formatVersion;
+        private Long utc;
+        private String antennaSerial;
+        private Double attitudeX;
+        private Double attitudeY;
+        private Double attitudeZ;
     }
 
     private static void testAntennaStatus() {

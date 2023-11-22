@@ -141,11 +141,11 @@ public class ObjectUtil {
             return new Field[]{};
         }
         Field[] declaredFields = clazz.getDeclaredFields();
-        if (declaredFields.length <= 0) {
+        if (declaredFields.length == 0) {
             return clazz.getSuperclass().getDeclaredFields();
         }
         Field[] superDeclaredFields = clazz.getSuperclass().getDeclaredFields();
-        if (superDeclaredFields.length <= 0) {
+        if (superDeclaredFields.length == 0) {
             return declaredFields;
         }
         return ArrayUtils.addAll(declaredFields, superDeclaredFields);
@@ -173,7 +173,7 @@ public class ObjectUtil {
     }
 
     private static String[] fieldNames(Field[] fields) {
-        if (fields == null || fields.length <= 0) {
+        if (fields == null || fields.length == 0) {
             return new String[]{};
         }
         List<String> list = new ArrayList<>();
