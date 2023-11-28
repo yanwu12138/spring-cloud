@@ -26,6 +26,7 @@ public class GeoUtil {
     private static final BigDecimal MAX_LAT = BigDecimal.valueOf(90);
     private static final JtsSpatialContext JTS_GEO_SPATIAL = JtsSpatialContext.GEO;
     private static final BigDecimal KILOMETER_PER_SEA = BigDecimal.valueOf(1.852);
+    private static final BigDecimal CONSTANT = BigDecimal.valueOf(600_000);
 
     private GeoUtil() {
         throw new UnsupportedOperationException("GeoUtil should never be instantiated");
@@ -164,6 +165,33 @@ public class GeoUtil {
 
     private static Point geoPoint(double lon, double lat) {
         return new PointImpl(lon, lat, JTS_GEO_SPATIAL);
+    }
+
+    /***
+     * 将度分秒格式经纬度转换成十进制
+     * @param coordinate 度分秒格式经纬度
+     * @return 十进制经纬度
+     */
+    public static BigDecimal convertCoordinate(Integer coordinate) {
+        if (coordinate == null) {
+            return BigDecimal.valueOf(0L);
+        }
+        BigDecimal source = BigDecimal.valueOf(coordinate);
+        BigDecimal divide = source.divide(CONSTANT, 0, RoundingMode.DOWN);
+        BigDecimal subtract = source.subtract(divide.multiply(CONSTANT));
+        return divide.add(subtract.divide(CONSTANT, 7, RoundingMode.DOWN));
+    }
+
+    /***
+     * 将十进制格式经纬度转换成度分秒
+     * @param coordinate 十进制格式经纬度
+     * @return 度分秒经纬度
+     */
+    public static Integer convertCoordinate(BigDecimal coordinate) {
+        if (coordinate == null) {
+            return 0;
+        }
+        return coordinate.multiply(CONSTANT).intValue();
     }
 
 }
