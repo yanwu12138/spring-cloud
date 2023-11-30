@@ -31,6 +31,9 @@ public class FeignInterceptor implements RequestInterceptor {
                 // ===== 将请求头中的TX_ID拿出来放回template中
                 String headerName = headerNames.nextElement();
                 String headerValue = request.getHeader(headerName);
+                if ("content-length".equalsIgnoreCase(headerName)) {
+                    continue;
+                }
                 template.header(headerName, headerValue);
             }
         }
