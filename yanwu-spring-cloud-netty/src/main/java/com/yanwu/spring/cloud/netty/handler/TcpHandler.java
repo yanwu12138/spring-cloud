@@ -8,7 +8,7 @@ import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
 import com.yanwu.spring.cloud.netty.protocol.DeviceHandlerFactory;
 import com.yanwu.spring.cloud.netty.util.DeviceUtil;
-import com.yanwu.spring.cloud.netty.util.NettyUtils;
+import com.yanwu.spring.cloud.netty.util.NettyUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +51,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        String ctxId = NettyUtils.getChannelId(ctx);
+        String ctxId = NettyUtil.getChannelId(ctx);
         handler.clientSessionCache.putContext(ctxId, ctx);
         byte[] bytes = (byte[]) msg;
         // ===== 处理上行业务
@@ -87,7 +87,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         try {
-            String ctxId = NettyUtils.getChannelId(ctx);
+            String ctxId = NettyUtil.getChannelId(ctx);
             if (handler.clientSessionCache.getContext(ctxId) == null) {
                 return;
             }
@@ -97,7 +97,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
             log.error("channel close error: ", e);
         } finally {
             // ===== 处理断线业务
-            NettyUtils.close(ctx);
+            NettyUtil.close(ctx);
         }
     }
 
@@ -106,12 +106,12 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
         if (ctx == null) {
             return;
         }
-        String ctxId = NettyUtils.getChannelId(ctx);
+        String ctxId = NettyUtil.getChannelId(ctx);
         if (handler.clientSessionCache.getContext(ctxId) == null) {
             return;
         }
         handler.clientSessionCache.remove(ctxId);
-        NettyUtils.close(ctx);
+        NettyUtil.close(ctx);
         log.error("netty tcp error：", cause);
     }
 

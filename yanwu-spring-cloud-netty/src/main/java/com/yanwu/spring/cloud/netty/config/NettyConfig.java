@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.netty.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.yanwu.spring.cloud.netty.util.NettyUtils;
+import com.yanwu.spring.cloud.netty.util.NettyUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -81,7 +81,7 @@ public class NettyConfig {
 
     @JsonIgnore
     public NetworkInterface getInter() {
-        NetworkInterface anInterface = NettyUtils.getInterface(interfaceName);
+        NetworkInterface anInterface = NettyUtil.getInterface(interfaceName);
         if (Objects.isNull(anInterface)) {
             throw new RuntimeException("interface: " + interfaceName + " 不存在");
         }

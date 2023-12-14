@@ -15,10 +15,10 @@ import java.net.SocketException;
  * description:
  */
 @Slf4j
-public final class NettyUtils {
+public final class NettyUtil {
     private static final String SPLIT_PORT = ":";
 
-    private NettyUtils() {
+    private NettyUtil() {
         throw new UnsupportedOperationException("NettyUtils should never be instantiated");
     }
 

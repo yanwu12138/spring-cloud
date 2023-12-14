@@ -7,7 +7,7 @@ import com.yanwu.spring.cloud.netty.enums.DeviceTypeEnum;
 import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
 import com.yanwu.spring.cloud.netty.protocol.DeviceHandlerFactory;
 import com.yanwu.spring.cloud.netty.util.DeviceUtil;
-import com.yanwu.spring.cloud.netty.util.NettyUtils;
+import com.yanwu.spring.cloud.netty.util.NettyUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -54,7 +54,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         initContext(ctx);
         DatagramPacket packet = (DatagramPacket) msg;
-        String host = NettyUtils.getAddress(packet);
+        String host = NettyUtil.getAddress(packet);
         clientSessionCache.putSocket(host, packet.sender());
         ByteBuf byteBuf = packet.copy().content();
         byte[] bytes = new byte[byteBuf.readableBytes()];
@@ -77,7 +77,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        NettyUtils.close(ctx);
+        NettyUtil.close(ctx);
         log.error("netty udp error：", cause);
     }
 
