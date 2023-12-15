@@ -10,8 +10,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.logging.LogLevel;
@@ -71,10 +71,10 @@ public class NettyTcpServer {
                             .option(ChannelOption.IP_TOS, 0xE0)
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
-                            .handler(new ChannelInitializer<NioDatagramChannel>() {
+                            .childHandler(new ChannelInitializer<NioSocketChannel>() {
                                 @Override
-                                public void initChannel(NioDatagramChannel ndc) {
-                                    ndc.pipeline().addLast(new ByteArrayDecoder()).addLast(new ByteArrayEncoder()).addLast(tcpHandler);
+                                public void initChannel(NioSocketChannel ic) {
+                                    ic.pipeline().addLast(new ByteArrayDecoder()).addLast(new ByteArrayEncoder()).addLast(tcpHandler);
                                 }
                             });
                     ChannelFuture future = bootstrap.bind(nettyConfig.getTcpPort()).sync();
