@@ -5,6 +5,7 @@ import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.netty.config.BroadcastExecutorService;
 import com.yanwu.spring.cloud.netty.enums.BroadcastEnum;
 import com.yanwu.spring.cloud.netty.server.NettyMulticastServer;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -22,6 +23,7 @@ import java.io.File;
  */
 @Slf4j
 @Component
+@ChannelHandler.Sharable
 @SuppressWarnings("unused")
 public class MulticastHandler extends SimpleChannelInboundHandler<NioSocketChannel> {
 

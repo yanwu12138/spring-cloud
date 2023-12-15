@@ -9,6 +9,7 @@ import com.yanwu.spring.cloud.netty.protocol.AbstractHandler;
 import com.yanwu.spring.cloud.netty.protocol.DeviceHandlerFactory;
 import com.yanwu.spring.cloud.netty.util.DeviceUtil;
 import com.yanwu.spring.cloud.netty.util.NettyUtil;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.util.concurrent.Executor;
  */
 @Slf4j
 @Component
+@ChannelHandler.Sharable
 @SuppressWarnings("unused")
 public class TcpHandler extends ChannelInboundHandlerAdapter {
 
