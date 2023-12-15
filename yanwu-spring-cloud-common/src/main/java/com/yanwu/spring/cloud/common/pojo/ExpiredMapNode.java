@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 @ToString
 @Accessors(chain = true)
-public class ExpiredNodeCO<V> implements Serializable {
+public class ExpiredMapNode<V> implements Serializable {
     private static final long serialVersionUID = 1197572171199448469L;
 
     @Getter
@@ -24,11 +24,11 @@ public class ExpiredNodeCO<V> implements Serializable {
 
     private Long lastTime = System.currentTimeMillis();
 
-    private ExpiredNodeCO() {
+    private ExpiredMapNode() {
     }
 
-    public static <V> ExpiredNodeCO<V> getInstance(V value) {
-        ExpiredNodeCO<V> result = new ExpiredNodeCO<>();
+    public static <V> ExpiredMapNode<V> getInstance(V value) {
+        ExpiredMapNode<V> result = new ExpiredMapNode<>();
         return result.setValue(value);
     }
 
