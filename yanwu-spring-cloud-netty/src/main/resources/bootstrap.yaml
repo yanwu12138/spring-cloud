@@ -3,12 +3,6 @@ server:
 spring:
   application:
     name: yanwu-netty
-  cloud:
-    nacos:
-      discovery:
-        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
-        group: DEFAULT_GROUP
-        namespace: a2e2dede-d9bf-4eae-a520-82f920801ab9
   redis:
     host: 127.0.0.1
     port: 6379
@@ -26,13 +20,9 @@ netty:
     port: 7000
   radio:
     port: 9999
-  interface:
-    name: lo0
   broadcast:
     ip: 225.1.0.1
     port: 8000
-  source:
-    ip: 127.0.0.1
 feign:
   client:
     config:

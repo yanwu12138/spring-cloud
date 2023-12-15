@@ -129,6 +129,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
         if (channel == null || StringUtils.isBlank(message)) {
             return;
         }
+        message = ByteUtil.gbkStrToHexStr(message);
         byte[] bytes = ByteUtil.hexStrToBytes(message);
         log.info("send message, channel: {}, message: {}", ctxId, ByteUtil.printBytes(bytes));
         channel.writeAndFlush(bytes);
