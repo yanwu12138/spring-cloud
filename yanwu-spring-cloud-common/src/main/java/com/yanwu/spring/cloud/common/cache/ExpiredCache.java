@@ -6,6 +6,7 @@ import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -33,6 +34,9 @@ public class ExpiredCache<K, V> {
     /*** 检测Key是否过期的定时任务 ***/
     private static final ScheduledExecutorService CHECK_EXPIRE_SCHEDULE = new ScheduledThreadPoolExecutor((1));
 
+    @Value("${expired.cache.schedule.delay:5_000L}")
+    private long delay;
+
     @PostConstruct
     public void checkExpiredSchedule() {
         CHECK_EXPIRE_SCHEDULE.scheduleWithFixedDelay(() -> {
@@ -41,7 +45,7 @@ public class ExpiredCache<K, V> {
             } catch (Exception e) {
                 log.error("check timeout schedule failed.", e);
             }
-        }, 1_000L, 1_000L, TimeUnit.MILLISECONDS);
+        }, delay, delay, TimeUnit.MILLISECONDS);
     }
 
     public ExpiredNode<V> put(@Nonnull K key, @Nonnull ExpiredNode<V> value) {

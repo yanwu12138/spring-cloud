@@ -1,23 +1,23 @@
 package com.yanwu.spring.cloud.netty.controller;
 
+import com.yanwu.spring.cloud.common.cache.ExpiredCache;
 import com.yanwu.spring.cloud.common.core.annotation.LogParam;
-import com.yanwu.spring.cloud.common.pojo.CommandBO;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
-import com.yanwu.spring.cloud.common.pojo.Result;
-import com.yanwu.spring.cloud.common.pojo.SortedList;
+import com.yanwu.spring.cloud.common.pojo.*;
 import com.yanwu.spring.cloud.common.utils.RedisUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
 import com.yanwu.spring.cloud.netty.handler.TcpHandler;
 import com.yanwu.spring.cloud.netty.handler.UdpHandler;
-import com.yanwu.spring.cloud.netty.handler.UpgradeHandler;
+import com.yanwu.spring.cloud.netty.handler.UnicastHandler;
 import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import com.yanwu.spring.cloud.netty.protocol.service.AlarmLampService;
 import com.yanwu.spring.cloud.netty.protocol.service.ScreenService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Random;
 import java.util.concurrent.Executor;
 
 /**
@@ -36,7 +36,7 @@ public class NettyController {
     @Resource
     private UdpHandler udpHandler;
     @Resource
-    private UpgradeHandler upgradeHandler;
+    private UnicastHandler unicastHandler;
     @Resource
     private MessageCache<String> messageCache;
     @Resource
@@ -65,7 +65,7 @@ public class NettyController {
     @LogParam
     @PostMapping("/udp/upgrade")
     public ResponseEnvelope<Result<String>> udpUpgrade(@RequestBody CommandBO<String> command) {
-        return ResponseEnvelope.success(upgradeHandler.broadcastFile(command.getData(), System.currentTimeMillis()));
+        return ResponseEnvelope.success(unicastHandler.broadcastFile(command.getData(), System.currentTimeMillis()));
     }
 
     @LogParam
@@ -131,6 +131,57 @@ public class NettyController {
 
         ThreadUtil.sleep(20_000);
         return ResponseEnvelope.success();
+    }
+
+
+    // ================================================== test ================================================== //
+    private static final Random RANDOM = new Random();
+    @Resource
+    private ExpiredCache<String, String> stringCache;
+    @Resource
+    private ExpiredCache<String, Integer> integerCache;
+
+
+    @LogParam
+    @GetMapping("/testExpiredCache")
+    public ResponseEnvelope<Void> testExpiredCache() {
+        testCache();
+        return ResponseEnvelope.success();
+    }
+
+    private void testCache() {
+        int count = 50;
+        do {
+            String key = RandomStringUtils.randomAlphabetic(12);
+            if (RANDOM.nextBoolean()) {
+                testStringCache(key);
+            } else {
+                testIntegerCache(key);
+            }
+            count--;
+            ThreadUtil.sleep(2000L);
+        } while (count > 0);
+    }
+
+    private void testStringCache(String key) {
+        String val = RandomStringUtils.randomAlphabetic(32);
+        stringCache.put(key, ExpiredCallbackNode.getInstance(val, randomTime(), (call) -> {
+            log.info("test string cache timeout, callback: {}", call);
+            return Boolean.TRUE;
+        }));
+    }
+
+    private void testIntegerCache(String key) {
+        Integer val = Integer.parseInt(RandomStringUtils.randomNumeric(8));
+        integerCache.put(key, ExpiredCallbackNode.getInstance(val, randomTime(), (call) -> {
+            log.info("test string cache timeout, callback: {}", call);
+            return Boolean.TRUE;
+        }));
+    }
+
+    private long randomTime() {
+        int random = RANDOM.nextInt(10);
+        return (random + 1) * 1_000L;
     }
 
 }

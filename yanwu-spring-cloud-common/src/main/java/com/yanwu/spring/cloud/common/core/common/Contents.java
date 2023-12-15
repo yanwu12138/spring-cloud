@@ -2,6 +2,7 @@ package com.yanwu.spring.cloud.common.core.common;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -34,7 +35,10 @@ public interface Contents {
 
     String QR_CODE_EXT = "jpg";
 
-    public static final class Message {
+    AtomicInteger SEQ_NUM = new AtomicInteger(0);
+
+    @SuppressWarnings("unused")
+    final class Message {
         public static final String[] USERS;
         public static final Executor EXECUTOR;
         public static final Boolean TRUE = true;

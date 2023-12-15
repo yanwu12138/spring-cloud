@@ -23,10 +23,6 @@ public class ExpiredCallbackNode<V> extends ExpiredNode<V> implements Serializab
     @JsonIgnore
     private Function<V, Boolean> function;
 
-    public static <V> ExpiredCallbackNode<V> getInstance(@NotNull V value, @NotNull long expired) {
-        return getInstance(value, expired, (val) -> Boolean.TRUE);
-    }
-
     public static <V> ExpiredCallbackNode<V> getInstance(@NotNull V value, @NotNull long expired, @NotNull Function<V, Boolean> function) {
         ExpiredCallbackNode<V> instance = new ExpiredCallbackNode<>();
         instance.setValue(value);
