@@ -27,6 +27,9 @@ import java.util.function.Function;
  * @date 2023/5/24 11:04.
  * <p>
  * description: 带过期策略的HashMap
+ * *****
+ * 注意：该Map每个对象都会带有一个单独的ScheduledExecutorService，所以在使用该Map时需要注意使用那个场景，不能作为局部变量使用
+ * *****
  */
 @Slf4j
 public class ExpiredMap<K, V> extends ConcurrentHashMap<K, ExpiredMap.ExpiredNode<V>> implements Serializable {
