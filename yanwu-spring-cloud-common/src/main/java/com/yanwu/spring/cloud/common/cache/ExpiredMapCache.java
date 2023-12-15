@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.common.pojo;
+package com.yanwu.spring.cloud.common.cache;
 
 
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
@@ -29,7 +29,7 @@ import java.util.function.Function;
  * description: 带过期策略的HashMap
  */
 @Slf4j
-public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.ExpiredNode<V>> implements Serializable {
+public class ExpiredMapCache<K, V> extends ConcurrentHashMap<K, ExpiredMapCache.ExpiredNode<V>> implements Serializable {
     private static final long serialVersionUID = -7451049176327506965L;
 
     /*** 该Map中Key的过期时间，单位：毫秒 ***/
@@ -37,26 +37,24 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
     /*** 检测Key是否过期的定时任务 ***/
     private static final ScheduledExecutorService CHECK_EXPIRE_SCHEDULE = new ScheduledThreadPoolExecutor((1));
 
-    /**
+    /***
      * 构造该Map:
      * 该Map每1秒执行一次过期检测，当检测到Map中的Key过期时，会回调对应的function
-     *
      * @param expire   Key的过期时间，单位：毫秒
      * @param function Key过期时的回调函数，并通过回调的结果判断过期Key处理是否成功
      */
-    public ExpiredHashMap(@Nonnull Long expire, @Nonnull Function<Object, Boolean> function) {
+    public ExpiredMapCache(@Nonnull Long expire, @Nonnull Function<ExpiredNode<V>, Boolean> function) {
         this(1_000L, expire, function);
     }
 
-    /**
+    /***
      * 构造该Map:
-     * 该Map每1秒执行一次过期检测，当检测到Map中的Key过期时，会回调对应的function
-     *
+     * 该Map指定时间到达会执行一次过期检测，当检测到Map中的Key过期时，会回调对应的function
      * @param period   过期检测任务执行间隔时间，单位：毫秒
      * @param expire   Key的过期时间，单位：毫秒
      * @param function Key过期时的回调函数，并通过回调的结果判断过期Key处理是否成功
      */
-    public ExpiredHashMap(@Nonnull Long period, @Nonnull Long expire, @Nonnull Function<Object, Boolean> function) {
+    public ExpiredMapCache(@Nonnull Long period, @Nonnull Long expire, @Nonnull Function<ExpiredNode<V>, Boolean> function) {
         super();
         EXPIRE_TIME.set(expire);
         CHECK_EXPIRE_SCHEDULE.scheduleWithFixedDelay(() -> {
@@ -68,24 +66,23 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
         }, 0, period, TimeUnit.MILLISECONDS);
     }
 
-    /**
+    /***
      * 执行检测任务
-     *
      * @param function 回调函数
      */
-    private void checkExpiredSchedule(@Nonnull Function<Object, Boolean> function) {
+    private void checkExpiredSchedule(@Nonnull Function<ExpiredNode<V>, Boolean> function) {
         Set<Entry<K, ExpiredNode<V>>> entries = this.entrySet();
         if (CollectionUtils.isEmpty(entries)) {
             return;
         }
-        log.info("cache: {}", JsonUtil.toString(this));
+        log.debug("cache: {}", JsonUtil.toString(this));
         long localtime = System.currentTimeMillis();
         for (Entry<K, ExpiredNode<V>> entry : entries) {
             try {
-                if (entry.getValue().timeout(localtime, EXPIRE_TIME.get()) && function.apply(entry.getKey())) {
+                if (entry.getValue().timeout(localtime, EXPIRE_TIME.get()) && function.apply(entry.getValue())) {
                     // ----- Key到达过期时间并且回调过期处理成功，删除Key
                     remove(entry.getKey());
-                    log.info("callback - timeout function key: {}", entry.getKey());
+                    log.debug("callback - timeout function key: {}", entry.getKey());
                 }
             } catch (Exception e) {
                 log.error("check  key: [{}] timeout failed.", entry.getKey(), e);
@@ -158,8 +155,8 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredHashMap.Ex
     }
 
     public static void main(String[] args) {
-        ExpiredHashMap<String, String> map = new ExpiredHashMap<>(3_000L, (key) -> {
-            log.info("function - timeout function key: {}", key);
+        ExpiredMapCache<String, String> map = new ExpiredMapCache<>(3_000L, (val) -> {
+            log.info("function - timeout function key: {}", val);
             return Boolean.TRUE;
         });
         map.put("aaa", ExpiredNode.getInstance("aaa"));
