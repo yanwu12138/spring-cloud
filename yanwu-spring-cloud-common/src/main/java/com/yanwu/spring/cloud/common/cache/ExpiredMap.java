@@ -29,7 +29,7 @@ import java.util.function.Function;
  * description: 带过期策略的HashMap
  */
 @Slf4j
-public class ExpiredMapCache<K, V> extends ConcurrentHashMap<K, ExpiredMapCache.ExpiredNode<V>> implements Serializable {
+public class ExpiredMap<K, V> extends ConcurrentHashMap<K, ExpiredMap.ExpiredNode<V>> implements Serializable {
     private static final long serialVersionUID = -7451049176327506965L;
 
     /*** 该Map中Key的过期时间，单位：毫秒 ***/
@@ -43,7 +43,7 @@ public class ExpiredMapCache<K, V> extends ConcurrentHashMap<K, ExpiredMapCache.
      * @param expire   Key的过期时间，单位：毫秒
      * @param function Key过期时的回调函数，并通过回调的结果判断过期Key处理是否成功
      */
-    public ExpiredMapCache(@Nonnull Long expire, @Nonnull Function<ExpiredNode<V>, Boolean> function) {
+    public ExpiredMap(@Nonnull Long expire, @Nonnull Function<ExpiredNode<V>, Boolean> function) {
         this(1_000L, expire, function);
     }
 
@@ -54,7 +54,7 @@ public class ExpiredMapCache<K, V> extends ConcurrentHashMap<K, ExpiredMapCache.
      * @param expire   Key的过期时间，单位：毫秒
      * @param function Key过期时的回调函数，并通过回调的结果判断过期Key处理是否成功
      */
-    public ExpiredMapCache(@Nonnull Long period, @Nonnull Long expire, @Nonnull Function<ExpiredNode<V>, Boolean> function) {
+    public ExpiredMap(@Nonnull Long period, @Nonnull Long expire, @Nonnull Function<ExpiredNode<V>, Boolean> function) {
         super();
         EXPIRE_TIME.set(expire);
         CHECK_EXPIRE_SCHEDULE.scheduleWithFixedDelay(() -> {
@@ -155,7 +155,7 @@ public class ExpiredMapCache<K, V> extends ConcurrentHashMap<K, ExpiredMapCache.
     }
 
     public static void main(String[] args) {
-        ExpiredMapCache<String, String> map = new ExpiredMapCache<>(3_000L, (val) -> {
+        ExpiredMap<String, String> map = new ExpiredMap<>(3_000L, (val) -> {
             log.info("function - timeout function key: {}", val);
             return Boolean.TRUE;
         });

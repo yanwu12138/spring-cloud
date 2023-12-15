@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.utils.secret;
 
-import com.yanwu.spring.cloud.common.cache.ExpiredMapCache;
+import com.yanwu.spring.cloud.common.cache.ExpiredMap;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class RsaUtils {
     private final static int KEY_SIZE = 1024;
     private static final String ALGORITHM_NAME = "RSA";
     /*** 用于缓存公钥与私钥对, 过期时间5秒 ***/
-    private static final Map<String, ExpiredMapCache.ExpiredNode<KeyPairCO>> KEY_PAIR_CACHE = new ExpiredMapCache<>(5_000L, (key) -> Boolean.TRUE);
+    private static final Map<String, ExpiredMap.ExpiredNode<KeyPairCO>> KEY_PAIR_CACHE = new ExpiredMap<>(5_000L, (key) -> Boolean.TRUE);
 
     private RsaUtils() {
         throw new UnsupportedOperationException("RsaUtils should never be instantiated");
@@ -80,7 +80,7 @@ public class RsaUtils {
         // ----- 生成一个密钥对，保存在keyPair中
         synchronized (ALGORITHM_NAME) {
             KeyPairCO instance = KeyPairCO.getInstance(appId, keyPairGen.generateKeyPair());
-            KEY_PAIR_CACHE.put(appId, ExpiredMapCache.ExpiredNode.getInstance(instance));
+            KEY_PAIR_CACHE.put(appId, ExpiredMap.ExpiredNode.getInstance(instance));
         }
     }
 
