@@ -3,7 +3,6 @@ package com.yanwu.spring.cloud.common.cache;
 
 import com.yanwu.spring.cloud.common.pojo.ExpiredNodeCO;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
-import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -40,12 +39,12 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredNodeCO<V>>
 
     /**
      * 构造该Map:
-     * 该Map每1秒执行一次过期检测，当检测到Map中的Key过期时，直接删除，不执行回调操作
+     * 该Map每10秒执行一次过期检测，当检测到Map中的Key过期时，直接删除，不执行回调操作
      *
      * @param expire Key的过期时间，单位：毫秒
      */
     public ExpiredHashMap(@Nonnull Long expire) {
-        this(1_000L, expire);
+        this(10_000L, expire);
     }
 
     /**
@@ -61,13 +60,13 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredNodeCO<V>>
 
     /**
      * 构造该Map:
-     * 该Map每1秒执行一次过期检测，当检测到Map中的Key过期时，会回调对应的function
+     * 该Map每10秒执行一次过期检测，当检测到Map中的Key过期时，会回调对应的function
      *
      * @param expire   Key的过期时间，单位：毫秒
      * @param function Key过期时的回调函数，并通过回调的结果判断过期Key处理是否成功
      */
     public ExpiredHashMap(@Nonnull Long expire, @Nonnull Function<ExpiredNodeCO<V>, Boolean> function) {
-        this(1_000L, expire, function);
+        this(10_000L, expire, function);
     }
 
     /**
@@ -87,7 +86,7 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredNodeCO<V>>
             } catch (Exception e) {
                 log.error("check timeout schedule failed.", e);
             }
-        }, 0, period, TimeUnit.MILLISECONDS);
+        }, period, period, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -147,26 +146,6 @@ public class ExpiredHashMap<K, V> extends ConcurrentHashMap<K, ExpiredNodeCO<V>>
             value.resetTime();
         }
         return value;
-    }
-
-
-    public static void main(String[] args) {
-        ExpiredHashMap<String, String> map = new ExpiredHashMap<>(3_000L, (val) -> {
-            log.info("function - timeout function key: {}", val);
-            return Boolean.TRUE;
-        });
-        map.put("aaa", ExpiredNodeCO.getInstance("aaa"));
-        ThreadUtil.sleep(1000);
-        map.put("bbb", ExpiredNodeCO.getInstance("bbb"));
-        ThreadUtil.sleep(5000);
-        map.put("ccc", ExpiredNodeCO.getInstance("ccc"));
-        ThreadUtil.sleep(2000);
-        System.out.println(JsonUtil.toString(map.getOrDefault("ccc", ExpiredNodeCO.getInstance("123123"))));
-        ThreadUtil.sleep(2000);
-        Map<String, ExpiredNodeCO<String>> temp = new ConcurrentHashMap<>();
-        temp.put("ddd", ExpiredNodeCO.getInstance("ddd"));
-        temp.put("eee", ExpiredNodeCO.getInstance("eee"));
-        map.putAll(temp);
     }
 
 }

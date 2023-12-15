@@ -31,8 +31,8 @@ public class RsaUtils {
     /*** 密钥长度 于原文长度对应 以及越长速度越慢 ***/
     private final static int KEY_SIZE = 1024;
     private static final String ALGORITHM_NAME = "RSA";
-    /*** 用于缓存公钥与私钥对, 过期时间5秒 ***/
-    private static final Map<String, ExpiredNodeCO<KeyPairCO>> KEY_PAIR_CACHE = new ExpiredHashMap<>(5_000L);
+    /*** 用于缓存公钥与私钥对, 过期时间1分钟 ***/
+    private static final Map<String, ExpiredNodeCO<KeyPairCO>> KEY_PAIR_CACHE = new ExpiredHashMap<>(60_000L);
 
     private RsaUtils() {
         throw new UnsupportedOperationException("RsaUtils should never be instantiated");
