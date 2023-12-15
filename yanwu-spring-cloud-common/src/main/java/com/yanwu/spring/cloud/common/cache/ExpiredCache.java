@@ -34,7 +34,7 @@ public class ExpiredCache<K, V> {
     /*** 检测Key是否过期的定时任务 ***/
     private static final ScheduledExecutorService CHECK_EXPIRE_SCHEDULE = new ScheduledThreadPoolExecutor((1));
 
-    @Value("${expired.cache.schedule.delay:5_000L}")
+    @Value("${expired.cache.schedule.delay:5000}")
     private long delay;
 
     @PostConstruct

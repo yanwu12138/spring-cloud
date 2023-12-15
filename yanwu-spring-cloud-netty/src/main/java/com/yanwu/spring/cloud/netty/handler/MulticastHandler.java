@@ -4,7 +4,7 @@ import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.netty.config.BroadcastExecutorService;
 import com.yanwu.spring.cloud.netty.enums.BroadcastEnum;
-import com.yanwu.spring.cloud.netty.server.BroadcastServer;
+import com.yanwu.spring.cloud.netty.server.NettyMulticastServer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -23,12 +23,12 @@ import java.io.File;
 @Slf4j
 @Component
 @SuppressWarnings("unused")
-public class UpgradeHandler extends SimpleChannelInboundHandler<NioSocketChannel> {
+public class MulticastHandler extends SimpleChannelInboundHandler<NioSocketChannel> {
 
     @Resource
     private BroadcastExecutorService executorService;
     @Resource
-    private BroadcastServer broadcastServer;
+    private NettyMulticastServer multicastServer;
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, NioSocketChannel msg) {
@@ -53,7 +53,7 @@ public class UpgradeHandler extends SimpleChannelInboundHandler<NioSocketChannel
                 long length = file.length(), offset = 0;
                 while (offset < length) {
                     int size = (int) Math.min(1024, length - offset);
-                    broadcastServer.broadcast(FileUtil.read(file.getPath(), offset, size));
+                    multicastServer.broadcast(FileUtil.read(file.getPath(), offset, size));
                     offset += size;
                 }
                 return Result.success("success");

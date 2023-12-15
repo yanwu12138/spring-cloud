@@ -1,7 +1,8 @@
 package com.yanwu.spring.cloud.netty.server;
 
+import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.netty.config.NettyConfig;
-import com.yanwu.spring.cloud.netty.handler.UpgradeHandler;
+import com.yanwu.spring.cloud.netty.handler.MulticastHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -13,8 +14,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.InternetProtocolFamily;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.util.NetUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,8 +24,8 @@ import javax.annotation.Resource;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 
 /**
  * @author Baofeng Xu
@@ -34,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @Component
-public class BroadcastServer {
+public class NettyMulticastServer {
     private static final int MAX_LENGTH = 1024 * 8 * 5;
 
     /*** 创建bootstrap */
@@ -47,38 +48,43 @@ public class BroadcastServer {
     @Resource
     private NettyConfig nettyConfig;
     @Resource
-    private UpgradeHandler upgradeHandler;
+    private MulticastHandler multicastHandler;
 
     @PostConstruct
     public void start() {
         groupSocketAddress = new InetSocketAddress(nettyConfig.getBroadcastIp(), nettyConfig.getBroadcastPort());
-        group = new NioEventLoopGroup(1, new ThreadFactory() {
-            private final AtomicInteger index = new AtomicInteger(0);
-
-            @Override
-            public Thread newThread(@NonNull Runnable r) {
-                return new Thread(r, "multicast-upgrade-" + index.getAndIncrement());
-            }
+        group = new NioEventLoopGroup(1, r -> {
+            return new Thread(r, "multicast-upgrade-" + Contents.SEQ_NUM.getAndIncrement());
         });
+        InetAddress localAddress = null;
+        NetworkInterface loopbackIf = NetUtil.LOOPBACK_IF;
+        Enumeration<InetAddress> addresses = loopbackIf.getInetAddresses();
+        while (addresses.hasMoreElements()) {
+            InetAddress address = addresses.nextElement();
+            if (address instanceof Inet4Address) {
+                localAddress = address;
+            }
+        }
         bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channelFactory((ChannelFactory<NioDatagramChannel>) () -> new NioDatagramChannel(InternetProtocolFamily.IPv4))
-                .option(ChannelOption.IP_MULTICAST_IF, nettyConfig.getInter())
+                .localAddress(localAddress, groupSocketAddress.getPort())
+                .option(ChannelOption.IP_MULTICAST_IF, loopbackIf)
                 .option(ChannelOption.IP_MULTICAST_TTL, 64)
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .handler(new ChannelInitializer<NioDatagramChannel>() {
                     @Override
                     public void initChannel(NioDatagramChannel ch) {
-                        ch.pipeline().addLast(upgradeHandler);
+                        ch.pipeline().addLast(multicastHandler);
                     }
                 });
         try {
-            InetAddress sourceInetAddress = Inet4Address.getByName(nettyConfig.getSourceIp());
-            channel = (NioDatagramChannel) bootstrap.bind(sourceInetAddress, 0).syncUninterruptibly().channel();
-            channel.joinGroup(groupSocketAddress.getAddress(), nettyConfig.getInter(), sourceInetAddress).sync();
+            channel = (NioDatagramChannel) bootstrap.bind(groupSocketAddress.getPort()).sync().channel();
+            channel.joinGroup(groupSocketAddress, loopbackIf).sync();
         } catch (Exception e) {
             log.error("multicast upgrade start error.", e);
-            throw new RuntimeException(e);
+        } finally {
+            close();
         }
     }
 

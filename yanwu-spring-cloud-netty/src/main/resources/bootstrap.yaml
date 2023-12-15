@@ -27,12 +27,12 @@ netty:
   radio:
     port: 9999
   interface:
-    name: lo
+    name: lo0
   broadcast:
-    ip: 225.1.2.10
+    ip: 225.1.0.1
     port: 8000
   source:
-    ip: 192.168.56.101
+    ip: 127.0.0.1
 feign:
   client:
     config:

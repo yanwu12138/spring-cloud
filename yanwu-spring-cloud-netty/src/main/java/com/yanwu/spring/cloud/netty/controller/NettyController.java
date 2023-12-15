@@ -8,7 +8,7 @@ import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
 import com.yanwu.spring.cloud.netty.handler.TcpHandler;
 import com.yanwu.spring.cloud.netty.handler.UdpHandler;
-import com.yanwu.spring.cloud.netty.handler.UpgradeHandler;
+import com.yanwu.spring.cloud.netty.handler.MulticastHandler;
 import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import com.yanwu.spring.cloud.netty.protocol.service.AlarmLampService;
 import com.yanwu.spring.cloud.netty.protocol.service.ScreenService;
@@ -36,7 +36,7 @@ public class NettyController {
     @Resource
     private UdpHandler udpHandler;
     @Resource
-    private UpgradeHandler upgradeHandler;
+    private MulticastHandler multicastHandler;
     @Resource
     private MessageCache<String> messageCache;
     @Resource
@@ -65,7 +65,7 @@ public class NettyController {
     @LogParam
     @PostMapping("/udp/upgrade")
     public ResponseEnvelope<Result<String>> udpUpgrade(@RequestBody CommandBO<String> command) {
-        return ResponseEnvelope.success(upgradeHandler.broadcastFile(command.getData(), System.currentTimeMillis()));
+        return ResponseEnvelope.success(multicastHandler.broadcastFile(command.getData(), System.currentTimeMillis()));
     }
 
     @LogParam

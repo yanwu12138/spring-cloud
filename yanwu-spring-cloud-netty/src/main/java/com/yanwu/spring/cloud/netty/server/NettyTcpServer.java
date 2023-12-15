@@ -1,14 +1,19 @@
 package com.yanwu.spring.cloud.netty.server;
 
+import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.netty.config.NettyConfig;
 import com.yanwu.spring.cloud.netty.constant.Constants;
-import com.yanwu.spring.cloud.netty.handler.TcpChannelHandler;
+import com.yanwu.spring.cloud.netty.handler.TcpHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +23,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -29,7 +33,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Component
 public class NettyTcpServer {
-    private static final AtomicInteger ATOMIC_INDEX = new AtomicInteger(0);
     /*** 创建bootstrap */
     private ServerBootstrap bootstrap;
     /*** BOSS */
@@ -37,13 +40,12 @@ public class NettyTcpServer {
     /*** Worker */
     private EventLoopGroup workGroup;
 
-
     @Resource
     private NettyConfig nettyConfig;
     @Resource
     private Executor nettyExecutor;
     @Resource
-    private TcpChannelHandler channelHandler;
+    private TcpHandler tcpHandler;
 
     @PostConstruct
     public void start() {
@@ -55,10 +57,10 @@ public class NettyTcpServer {
                 }
                 bootstrap = new ServerBootstrap();
                 bossGroup = new NioEventLoopGroup(1, r -> {
-                    return new Thread(r, "netty-boos-" + ATOMIC_INDEX.getAndIncrement());
+                    return new Thread(r, "netty-boos-" + Contents.SEQ_NUM.getAndIncrement());
                 });
-                workGroup = new NioEventLoopGroup(nettyConfig.getServerWorker(), r -> {
-                    return new Thread(r, "netty-worker-" + ATOMIC_INDEX.getAndIncrement());
+                workGroup = new NioEventLoopGroup(4, r -> {
+                    return new Thread(r, "netty-worker-" + Contents.SEQ_NUM.getAndIncrement());
                 });
                 while (!Thread.currentThread().isInterrupted()) {
                     bootstrap.group(bossGroup, workGroup)
@@ -69,7 +71,12 @@ public class NettyTcpServer {
                             .option(ChannelOption.IP_TOS, 0xE0)
                             .childOption(ChannelOption.SO_KEEPALIVE, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
-                            .childHandler(channelHandler);
+                            .handler(new ChannelInitializer<NioDatagramChannel>() {
+                                @Override
+                                public void initChannel(NioDatagramChannel ndc) {
+                                    ndc.pipeline().addLast(new ByteArrayDecoder()).addLast(new ByteArrayEncoder()).addLast(tcpHandler);
+                                }
+                            });
                     ChannelFuture future = bootstrap.bind(nettyConfig.getTcpPort()).sync();
                     future.channel().closeFuture().sync();
                 }

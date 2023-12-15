@@ -2,13 +2,16 @@ package com.yanwu.spring.cloud.netty.server;
 
 import com.yanwu.spring.cloud.netty.config.NettyConfig;
 import com.yanwu.spring.cloud.netty.constant.Constants;
-import com.yanwu.spring.cloud.netty.handler.UdpChannelHandler;
+import com.yanwu.spring.cloud.netty.handler.UdpHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +41,7 @@ public class NettyUdpServer {
     @Resource
     private Executor nettyExecutor;
     @Resource
-    private UdpChannelHandler channelHandler;
+    private UdpHandler udpHandler;
 
     @PostConstruct
     public void start() {
@@ -59,7 +62,12 @@ public class NettyUdpServer {
                             // ----- 支持广播
                             .option(ChannelOption.SO_BROADCAST, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
-                            .handler(channelHandler);
+                            .handler(new ChannelInitializer<NioDatagramChannel>() {
+                                @Override
+                                public void initChannel(NioDatagramChannel ndc) {
+                                    ndc.pipeline().addLast(new ByteArrayDecoder()).addLast(new ByteArrayEncoder()).addLast(udpHandler);
+                                }
+                            });
                     ChannelFuture future = bootstrap.bind(nettyConfig.getUdpPort()).sync();
                     future.channel().closeFuture().sync();
                 }
