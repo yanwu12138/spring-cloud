@@ -39,6 +39,25 @@ public class ExpiredMap<K, V> extends ConcurrentHashMap<K, ExpiredMap.ExpiredNod
 
     /***
      * 构造该Map:
+     * 该Map每1秒执行一次过期检测，当检测到Map中的Key过期时，直接删除，不执行回调操作
+     * @param expire   Key的过期时间，单位：毫秒
+     */
+    public ExpiredMap(@Nonnull Long expire) {
+        this(1_000L, expire);
+    }
+
+    /***
+     * 构造该Map:
+     * 该Map每1秒执行一次过期检测，当检测到Map中的Key过期时，直接删除，不执行回调操作
+     * @param period   过期检测任务执行间隔时间，单位：毫秒
+     * @param expire   Key的过期时间，单位：毫秒
+     */
+    public ExpiredMap(@Nonnull Long period, @Nonnull Long expire) {
+        this(period, expire, (val) -> Boolean.TRUE);
+    }
+
+    /***
+     * 构造该Map:
      * 该Map每1秒执行一次过期检测，当检测到Map中的Key过期时，会回调对应的function
      * @param expire   Key的过期时间，单位：毫秒
      * @param function Key过期时的回调函数，并通过回调的结果判断过期Key处理是否成功
