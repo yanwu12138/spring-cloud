@@ -23,6 +23,7 @@ public class ExpiredNode<V> implements Serializable {
     @Setter
     private V value;
 
+    @Getter
     protected long expired;
 
     protected long lastTime = System.currentTimeMillis();

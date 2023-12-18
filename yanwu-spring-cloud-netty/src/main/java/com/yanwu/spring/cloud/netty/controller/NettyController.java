@@ -6,9 +6,9 @@ import com.yanwu.spring.cloud.common.pojo.*;
 import com.yanwu.spring.cloud.common.utils.RedisUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import com.yanwu.spring.cloud.netty.cache.MessageCache;
+import com.yanwu.spring.cloud.netty.handler.MulticastHandler;
 import com.yanwu.spring.cloud.netty.handler.TcpHandler;
 import com.yanwu.spring.cloud.netty.handler.UdpHandler;
-import com.yanwu.spring.cloud.netty.handler.MulticastHandler;
 import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import com.yanwu.spring.cloud.netty.protocol.service.AlarmLampService;
 import com.yanwu.spring.cloud.netty.protocol.service.ScreenService;
@@ -158,6 +158,7 @@ public class NettyController {
             } else {
                 testIntegerCache(key);
             }
+            testNoCallbackNode();
             count--;
             ThreadUtil.sleep(2000L);
         } while (count > 0);
@@ -174,9 +175,15 @@ public class NettyController {
     private void testIntegerCache(String key) {
         Integer val = Integer.parseInt(RandomStringUtils.randomNumeric(8));
         integerCache.put(key, ExpiredCallbackNode.getInstance(val, randomTime(), (call) -> {
-            log.info("test string cache timeout, callback: {}", call);
+            log.info("test integer cache timeout, callback: {}", call);
             return Boolean.TRUE;
         }));
+    }
+
+    private void testNoCallbackNode() {
+        String key = RandomStringUtils.randomAlphabetic(12);
+        String val = RandomStringUtils.randomAlphabetic(32);
+        stringCache.put(key, ExpiredNode.getInstance(val, randomTime()));
     }
 
     private long randomTime() {
