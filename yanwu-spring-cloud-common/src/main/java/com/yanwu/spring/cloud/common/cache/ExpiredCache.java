@@ -83,7 +83,6 @@ public class ExpiredCache<K, V> {
         if (CollectionUtils.isEmpty(entries)) {
             return;
         }
-        log.debug("cache len: {}", JsonUtil.toString(expiredNodeCache.size()));
         long localtime = System.currentTimeMillis();
         Iterator<Map.Entry<K, ExpiredNode<V>>> iterator = entries.iterator();
         while (iterator.hasNext()) {
