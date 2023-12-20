@@ -33,10 +33,7 @@ public class RsaUtils {
     private final static int KEY_SIZE = 1024;
     private static final String ALGORITHM_NAME = "RSA";
     /*** 用于缓存公钥与私钥对, 过期时间1分钟 ***/
-    private static final Map<String, ExpiredNode<KeyPairCO>> KEY_PAIR_CACHE = new ExpiredHashMap<>((val) -> {
-        log.info("rsa expired, cache: {}", JsonUtil.toString(val));
-        return Boolean.TRUE;
-    });
+    private static final Map<String, ExpiredNode<KeyPairCO>> KEY_PAIR_CACHE = new ExpiredHashMap<>();
 
     private RsaUtils() {
         throw new UnsupportedOperationException("RsaUtils should never be instantiated");
