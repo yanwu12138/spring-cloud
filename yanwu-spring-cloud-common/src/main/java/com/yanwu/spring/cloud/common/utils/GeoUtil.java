@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.core.enums.PositionEnum;
 import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
 import org.locationtech.spatial4j.distance.DistanceUtils;
 import org.locationtech.spatial4j.shape.Point;
@@ -20,13 +21,16 @@ import java.math.RoundingMode;
 public class GeoUtil {
     private static final String RANGE_SPLIT = ";";
     private static final String POINT_SPLIT = ",";
-    private static final BigDecimal MIN_LNG = BigDecimal.valueOf(-180);
-    private static final BigDecimal MAX_LNG = BigDecimal.valueOf(180);
-    private static final BigDecimal MIN_LAT = BigDecimal.valueOf(-90);
-    private static final BigDecimal MAX_LAT = BigDecimal.valueOf(90);
+    public static final BigDecimal MIN_LNG = BigDecimal.valueOf(-180);
+    public static final BigDecimal MAX_LNG = BigDecimal.valueOf(180);
+    public static final BigDecimal MIN_LAT = BigDecimal.valueOf(-90);
+    public static final BigDecimal MAX_LAT = BigDecimal.valueOf(90);
     private static final JtsSpatialContext JTS_GEO_SPATIAL = JtsSpatialContext.GEO;
     private static final BigDecimal KILOMETER_PER_SEA = BigDecimal.valueOf(1.852);
     private static final BigDecimal CONSTANT = BigDecimal.valueOf(600_000);
+    private static final String DEGREES = "°";
+    private static final String MINUTES = "′";
+    private static final String SECONDS = "′′";
 
     private GeoUtil() {
         throw new UnsupportedOperationException("GeoUtil should never be instantiated");
@@ -168,30 +172,85 @@ public class GeoUtil {
     }
 
     /***
-     * 将度分秒格式经纬度转换成十进制
-     * @param coordinate 度分秒格式经纬度
-     * @return 十进制经纬度
+     * 将十进制格式经纬度转换成度分秒
+     * @param point 十进制格式经纬度
+     * @return 度分秒经纬度
      */
-    public static BigDecimal convertCoordinate(Integer coordinate) {
-        if (coordinate == null) {
-            return BigDecimal.valueOf(0L);
+    public static String convertCoordinate(Point point) {
+        if (point == null || !checkLocation(point)) {
+            return null;
         }
-        BigDecimal source = BigDecimal.valueOf(coordinate);
-        BigDecimal divide = source.divide(CONSTANT, 0, RoundingMode.DOWN);
-        BigDecimal subtract = source.subtract(divide.multiply(CONSTANT));
-        return divide.add(subtract.divide(CONSTANT, 7, RoundingMode.DOWN));
+        return convertCoordinate(point.getLon(), point.getLat());
     }
 
     /***
      * 将十进制格式经纬度转换成度分秒
-     * @param coordinate 十进制格式经纬度
+     * @param lng 十进制格式经度
+     * @param lat 十进制格式纬度
      * @return 度分秒经纬度
      */
-    public static Integer convertCoordinate(BigDecimal coordinate) {
-        if (coordinate == null) {
-            return 0;
+    public static String convertCoordinate(Double lng, Double lat) {
+        if (!checkLocation(lng, lat)) {
+            return null;
         }
-        return coordinate.multiply(CONSTANT).intValue();
+        return convertCoordinate(BigDecimal.valueOf(lng), BigDecimal.valueOf(lat));
+    }
+
+    /***
+     * 将十进制格式经纬度转换成度分秒
+     * @param lng 十进制格式经度
+     * @param lat 十进制格式纬度
+     * @return 度分秒经纬度
+     */
+    public static String convertCoordinate(BigDecimal lng, BigDecimal lat) {
+        if (!checkLocation(lng, lat)) {
+            return null;
+        }
+        String lngStr = buildPosition(lng);
+        lngStr += PositionEnum.getInstance(lng, Boolean.TRUE).getCode();
+        String latStr = buildPosition(lat);
+        latStr += PositionEnum.getInstance(lat, Boolean.FALSE).getCode();
+        return String.join(",", lngStr, latStr);
+    }
+
+    private static String buildPosition(BigDecimal position) {
+        String degrees = position.intValue() + DEGREES;
+
+        position = position.subtract(BigDecimal.valueOf(position.intValue()));
+        position = position.multiply(BigDecimal.valueOf(60));
+        String minutes = position.intValue() + MINUTES;
+
+        position = position.subtract(BigDecimal.valueOf(position.intValue()));
+        position = position.multiply(BigDecimal.valueOf(60));
+        String seconds = position.intValue() + SECONDS;
+
+        return degrees + minutes + seconds;
+    }
+
+    private static int buildMinutes(BigDecimal position) {
+        position = position.subtract(BigDecimal.valueOf(position.intValue()));
+        return position.multiply(BigDecimal.valueOf(60)).intValue();
+    }
+
+    private int buildSeconds(Double position) {
+        BigDecimal decimal = BigDecimal.valueOf(position);
+
+        decimal = decimal.subtract(BigDecimal.valueOf(decimal.intValue()));
+        return decimal.multiply(BigDecimal.valueOf(60)).intValue();
+    }
+
+    public static void main(String[] args) {
+        String s = convertCoordinate(120.72931D, 29.5481D);
+        System.out.println(s);
+    }
+
+    /***
+     * 将度分秒格式经纬度转换成十进制
+     * @param coordinate 度分秒格式经纬度
+     * @return 十进制经纬度
+     */
+    public static BigDecimal convertCoordinate(String coordinate) {
+        return BigDecimal.ZERO;
     }
 
 }
