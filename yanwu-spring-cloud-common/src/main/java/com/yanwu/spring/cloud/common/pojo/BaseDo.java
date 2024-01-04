@@ -62,6 +62,7 @@ public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implement
     /*** 启用禁用 ***/
     @Getter
     @Setter
+    @TableLogic(value = "1", delval = "0")
     @TableField(value = "enabled", strategy = FieldStrategy.NOT_EMPTY, fill = FieldFill.INSERT)
     @Column(name = "enabled", type = TINYINT, length = 1, isNull = false, defaultValue = "1", comment = "更新时间")
     private Boolean enabled;
