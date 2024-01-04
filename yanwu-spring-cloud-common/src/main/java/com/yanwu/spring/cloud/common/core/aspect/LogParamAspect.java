@@ -39,10 +39,12 @@ public class LogParamAspect {
         String txId = AspectUtil.getTxId();
         Method method = AspectUtil.getMethod(joinPoint);
         try {
-            log.info("Request: [txId]: {}, [class]: {}, [method]: {}, [param]: {}", txId, AspectUtil.getClassName(method), method.getName(), args);
+            log.info("Request: [txId]: {}, [class]: {}, [method]: {}, [param]: {}",
+                    txId, AspectUtil.getClassName(method), method.getName(), AspectUtil.printArgs(args));
             return joinPoint.proceed(args);
         } catch (Throwable e) {
-            log.error("Exception: [txId]: {}, [class]: {}, [method]: {}, [param]: {}", txId, AspectUtil.getClassName(method), method.getName(), args, e);
+            log.error("Exception: [txId]: {}, [class]: {}, [method]: {}, [param]: {}",
+                    txId, AspectUtil.getClassName(method), method.getName(), AspectUtil.printArgs(args), e);
             String message;
             if (e instanceof IllegalArgumentException || e instanceof BusinessException) {
                 message = e.getMessage();
@@ -65,10 +67,13 @@ public class LogParamAspect {
         String txId = AspectUtil.getTxId();
         Method method = AspectUtil.getMethod(joinPoint);
         if (result instanceof Serializable || result instanceof ResponseEntity) {
-            log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}", txId, AspectUtil.getClassName(method), method.getName(), result);
+            log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}",
+                    txId, AspectUtil.getClassName(method), method.getName(), AspectUtil.print(result));
         } else {
-            log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}", txId, AspectUtil.getClassName(method), method.getName(), "The response could not be serialized.");
+            log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}",
+                    txId, AspectUtil.getClassName(method), method.getName(), "The response could not be serialized.");
         }
     }
+
 
 }

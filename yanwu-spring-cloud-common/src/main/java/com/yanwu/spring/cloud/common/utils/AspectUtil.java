@@ -4,12 +4,20 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.AdviceSignature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Baofeng Xu
@@ -85,4 +93,38 @@ public class AspectUtil {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         return attributes != null ? attributes.getRequest() : null;
     }
+
+    public static String print(Object obj) {
+        return JsonUtil.toString(obj, Boolean.TRUE);
+    }
+
+    public static String printArgs(Object[] args) {
+        List<Object> result = new ArrayList<>();
+        for (Object arg : args) {
+            if (arg instanceof HttpServletResponse) {
+                continue;
+            }
+            if (arg instanceof HttpServletRequest) {
+                continue;
+            }
+            if (arg instanceof Part) {
+                continue;
+            }
+            if (arg instanceof BindingResult) {
+                continue;
+            }
+            if (arg instanceof File) {
+                continue;
+            }
+            if (arg instanceof InputStream) {
+                continue;
+            }
+            if (arg instanceof OutputStream) {
+                continue;
+            }
+            result.add(arg);
+        }
+        return print(result);
+    }
+
 }
