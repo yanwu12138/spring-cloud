@@ -28,21 +28,17 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class JsonUtil {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final ObjectMapper XSS_SERIALIZER_OBJECT_MAPPER = makeBaseXssSerializerObjectMapper();
-    private static final ObjectMapper SERVLET_XSS_SERIALIZER_OBJECT_MAPPER = makeBaseXssSerializerObjectMapper();
+    private static final ObjectMapper INCLUDE_NULL_MAPPER = makeBaseXssSerializerObjectMapper();
 
     static {
         // The original two ObjectMappers allow comments.
         MAPPER.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
         MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        XSS_SERIALIZER_OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        XSS_SERIALIZER_OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         // The servlet version of the XssSerializerObjectMapper sets inclusion
         // level differently.
-        SERVLET_XSS_SERIALIZER_OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        SERVLET_XSS_SERIALIZER_OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        INCLUDE_NULL_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        INCLUDE_NULL_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     private JsonUtil() {
@@ -348,17 +344,17 @@ public final class JsonUtil {
         return mapper;
     }
 
-    private static ObjectMapper getObjectMapper(final boolean decodeForXss) {
-        return decodeForXss ? XSS_SERIALIZER_OBJECT_MAPPER : MAPPER;
+    private static ObjectMapper getObjectMapper(final boolean nonNull) {
+        return nonNull ? INCLUDE_NULL_MAPPER : MAPPER;
     }
 
     private static String toJsonStringRaw(final Object obj) throws IOException {
         return toJsonStringRaw(obj, false);
     }
 
-    private static String toJsonStringRaw(final Object obj, final boolean encodeForXss) throws IOException {
+    private static String toJsonStringRaw(final Object obj, final boolean nonNull) throws IOException {
         Writer sw = new StringWriter();
-        getObjectMapper(encodeForXss).writerWithDefaultPrettyPrinter().writeValue(sw, obj);
+        getObjectMapper(nonNull).writerWithDefaultPrettyPrinter().writeValue(sw, obj);
         return sw.toString();
     }
 
