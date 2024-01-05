@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.common.core.aspect;
 
-import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
 import com.yanwu.spring.cloud.common.core.exception.BusinessException;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.AspectUtil;
@@ -27,9 +27,9 @@ import java.lang.reflect.Method;
 @Slf4j
 @Aspect
 @Component
-public class LogParamAspect {
+public class RequestLogAspect {
 
-    @Pointcut("@annotation(com.yanwu.spring.cloud.common.core.annotation.LogParam)")
+    @Pointcut("@annotation(com.yanwu.spring.cloud.common.core.annotation.RequestLog)")
     public void logParamPointcut() {
     }
 
@@ -49,7 +49,7 @@ public class LogParamAspect {
             if (e instanceof IllegalArgumentException || e instanceof BusinessException) {
                 message = e.getMessage();
             } else {
-                LogParam annotation = method.getAnnotation(LogParam.class);
+                RequestLog annotation = method.getAnnotation(RequestLog.class);
                 message = annotation.value();
             }
             return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, message);

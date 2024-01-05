@@ -3,7 +3,7 @@ package com.yanwu.spring.cloud.base.controller.webapp;
 import com.yanwu.spring.cloud.base.common.YanwuConstants;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.secret.Aes128Util;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class WebappYanwuUserController {
     @Resource
     private YanwuUserService userService;
 
-    @LogParam
+    @RequestLog
     @PostMapping(value = "create")
     public ResponseEnvelope<Long> create(@RequestBody YanwuUser user) {
         // ===== 校验账号、邮箱、手机号是否存在
@@ -45,13 +45,13 @@ public class WebappYanwuUserController {
         return ResponseEnvelope.success(user.getId());
     }
 
-    @LogParam
+    @RequestLog
     @PutMapping(value = "update")
     public ResponseEnvelope<Boolean> update(@RequestBody YanwuUser user) {
         return ResponseEnvelope.success(Boolean.TRUE);
     }
 
-    @LogParam
+    @RequestLog
     @GetMapping("getById")
     public ResponseEnvelope<YanwuUser> getById(@RequestParam("id") Long id) {
         return ResponseEnvelope.success(userService.getById(id));

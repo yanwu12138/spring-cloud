@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.webapp;
 
-import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class TransactionsController {
     @Resource
     private AttachmentService attachmentService;
 
-    @LogParam
+    @RequestLog
     @GetMapping(value = "test1")
     public void test1() {
         attachmentService.save(new Attachment());

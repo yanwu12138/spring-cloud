@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.netty.controller;
 
 import com.yanwu.spring.cloud.common.cache.ExpiredCache;
-import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
 import com.yanwu.spring.cloud.common.pojo.*;
 import com.yanwu.spring.cloud.common.utils.RedisUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
@@ -44,31 +44,31 @@ public class NettyController {
     @Resource
     private RedisUtil redisUtil;
 
-    @LogParam
+    @RequestLog
     @PostMapping("/tcp/send")
     public void tcpSend(@RequestBody CommandBO<String> command) {
         tcpHandler.send(command.getCtxId(), String.valueOf(command.getData()));
     }
 
-    @LogParam
+    @RequestLog
     @PostMapping("/udp/send")
     public void udpSend(@RequestBody CommandBO<String> command) {
         udpHandler.send(command.getCtxId(), String.valueOf(command.getData()));
     }
 
-    @LogParam
+    @RequestLog
     @PostMapping("/udp/radio")
     public void udpRadio(@RequestBody CommandBO<String> command) {
         udpHandler.radio(String.valueOf(command.getData()));
     }
 
-    @LogParam
+    @RequestLog
     @PostMapping("/udp/upgrade")
     public ResponseEnvelope<Result<String>> udpUpgrade(@RequestBody CommandBO<String> command) {
         return ResponseEnvelope.success(multicastHandler.broadcastFile(command.getData(), System.currentTimeMillis()));
     }
 
-    @LogParam
+    @RequestLog
     @GetMapping("/test")
     public ResponseEnvelope<Void> test() {
         // ----- alarmLamp
@@ -91,14 +91,14 @@ public class NettyController {
         return ResponseEnvelope.success();
     }
 
-    @LogParam
+    @RequestLog
     @GetMapping("/remove")
     public ResponseEnvelope<Void> remove() {
         messageCache.removeExpiredMessage();
         return ResponseEnvelope.success();
     }
 
-    @LogParam
+    @RequestLog
     @GetMapping("/testRedisLock")
     public ResponseEnvelope<Void> testRedisLock() {
         //
@@ -142,7 +142,7 @@ public class NettyController {
     private ExpiredCache<String, Integer> integerCache;
 
 
-    @LogParam
+    @RequestLog
     @GetMapping("/testExpiredCache")
     public ResponseEnvelope<Void> testExpiredCache() {
         testCache();

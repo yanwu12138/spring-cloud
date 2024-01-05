@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.webapp;
 
-import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.ExcelUtil;
@@ -42,7 +42,7 @@ public class AttachmentController {
      * @param request 头像文件
      * @param userId  userId
      */
-    @LogParam
+    @RequestLog
     @PostMapping(value = "upPortrait")
     public ResponseEnvelope<Attachment> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);
@@ -56,7 +56,7 @@ public class AttachmentController {
      * @param request 头像文件
      * @param id      操作者
      */
-    @LogParam
+    @RequestLog
     @PostMapping(value = "uploadFile")
     public ResponseEnvelope<List<Attachment>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
         List<Attachment> attachments = attachmentService.uploadFile(request, id);
@@ -68,7 +68,7 @@ public class AttachmentController {
      *
      * @param id 操作者
      */
-    @LogParam
+    @RequestLog
     @GetMapping(value = "downloadFile/{id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("id") Long id, HttpServletResponse response) throws Exception {
         Attachment attachment = attachmentService.findById(id);
@@ -78,7 +78,7 @@ public class AttachmentController {
     /**
      * 下载文件
      */
-    @LogParam
+    @RequestLog
     @GetMapping(value = "downloadFile")
     public ResponseEntity<Resource> downloadFile(@RequestParam("path") String path, HttpServletResponse response) throws Exception {
         return FileUtil.exportFile(path, response);
@@ -90,7 +90,7 @@ public class AttachmentController {
      * @param file 文件
      * @param id   操作者
      */
-    @LogParam
+    @RequestLog
     @PostMapping(value = "uploadExcel")
     public ResponseEnvelope<Attachment> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
         Attachment attachment = attachmentService.uploadExcel(file, id);
@@ -100,7 +100,7 @@ public class AttachmentController {
     /**
      * 下载Excel
      */
-    @LogParam
+    @RequestLog
     @GetMapping(value = "downloadExcel")
     public ResponseEntity<Resource> downloadExcel() throws Exception {
         List<List<String>> contents = attachmentService.downloadExcel();
@@ -110,7 +110,7 @@ public class AttachmentController {
         return ExcelUtil.exportExcel(workbook, fileName);
     }
 
-    @LogParam
+    @RequestLog
     @PostMapping("updateUser")
     public ResponseEnvelope<YanwuUser> updateUser(@RequestBody YanwuUser user) {
         user = attachmentService.updateAccountById(user);

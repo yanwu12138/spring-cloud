@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.device.controller;
 
-import com.yanwu.spring.cloud.common.core.annotation.LogParam;
+import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
 import com.yanwu.spring.cloud.device.data.model.DeviceLight;
 import com.yanwu.spring.cloud.device.service.DeviceLightService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class TransactionsController {
     @Resource
     private DeviceLightService lightService;
 
-    @LogParam
+    @RequestLog
     @GetMapping(value = "test1")
     public void test1() {
         lightService.save(new DeviceLight().setPoleId(1L));
