@@ -28,7 +28,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class JsonUtil {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final ObjectMapper INCLUDE_NULL_MAPPER = makeBaseXssSerializerObjectMapper();
+    private static final ObjectMapper EXCLUDE_NULL_MAPPER = makeBaseXssSerializerObjectMapper();
 
     static {
         // The original two ObjectMappers allow comments.
@@ -37,8 +37,8 @@ public final class JsonUtil {
 
         // The servlet version of the XssSerializerObjectMapper sets inclusion
         // level differently.
-        INCLUDE_NULL_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        INCLUDE_NULL_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        EXCLUDE_NULL_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        EXCLUDE_NULL_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     private JsonUtil() {
@@ -106,10 +106,10 @@ public final class JsonUtil {
      * @param obj object
      * @return json字符串
      */
-    public static String toString(final Object obj, final boolean decodeForXss) {
+    public static String toString(final Object obj, final boolean excludeNull) {
         StringWriter sw = new StringWriter();
         try {
-            getObjectMapper(decodeForXss).writer().writeValue(sw, obj);
+            getObjectMapper(excludeNull).writer().writeValue(sw, obj);
         } catch (Exception e) {
             log.error("Failed convert {} to JSON", obj, e);
         }
@@ -132,12 +132,12 @@ public final class JsonUtil {
      * @param json json字符串
      * @return JsonNode
      */
-    public static JsonNode toJsonNode(final String json, final boolean decodeForXss) {
+    public static JsonNode toJsonNode(final String json, final boolean excludeNull) {
         try {
             if (StringUtils.isBlank(json)) {
                 return null;
             }
-            return getObjectMapper(decodeForXss).readTree(json);
+            return getObjectMapper(excludeNull).readTree(json);
         } catch (Exception e) {
             log.error("Failed convert jsonNode, json:{}", json, e);
             return null;
@@ -164,9 +164,9 @@ public final class JsonUtil {
      * @param <T>   泛型
      * @return object
      */
-    public static <T> T toObject(final String json, final Class<T> clazz, final boolean decodeForXss) {
+    public static <T> T toObject(final String json, final Class<T> clazz, final boolean excludeNull) {
         try {
-            return toObjectRaw(json, clazz, decodeForXss);
+            return toObjectRaw(json, clazz, excludeNull);
         } catch (Exception e) {
             log.error("Failed convert JSON: {} to: {}", json, clazz, e);
         }
@@ -225,9 +225,9 @@ public final class JsonUtil {
      * @param <T>   泛型
      * @return object
      */
-    public static <T> List<T> toObjectList(final String json, final Class<T> clazz, final boolean decodeForXss) {
+    public static <T> List<T> toObjectList(final String json, final Class<T> clazz, final boolean excludeNull) {
         try {
-            return toObjectListRaw(json, clazz, decodeForXss);
+            return toObjectListRaw(json, clazz, excludeNull);
         } catch (Exception e) {
             log.error("Failed convert JSON: {} to: List<{}>", json, clazz, e);
         }
@@ -344,17 +344,17 @@ public final class JsonUtil {
         return mapper;
     }
 
-    private static ObjectMapper getObjectMapper(final boolean nonNull) {
-        return nonNull ? INCLUDE_NULL_MAPPER : MAPPER;
+    private static ObjectMapper getObjectMapper(final boolean excludeNull) {
+        return excludeNull ? EXCLUDE_NULL_MAPPER : MAPPER;
     }
 
     private static String toJsonStringRaw(final Object obj) throws IOException {
         return toJsonStringRaw(obj, false);
     }
 
-    private static String toJsonStringRaw(final Object obj, final boolean nonNull) throws IOException {
+    private static String toJsonStringRaw(final Object obj, final boolean excludeNull) throws IOException {
         Writer sw = new StringWriter();
-        getObjectMapper(nonNull).writerWithDefaultPrettyPrinter().writeValue(sw, obj);
+        getObjectMapper(excludeNull).writerWithDefaultPrettyPrinter().writeValue(sw, obj);
         return sw.toString();
     }
 
@@ -362,12 +362,12 @@ public final class JsonUtil {
         return toObjectRaw(json, valueType, false);
     }
 
-    private static <T> T toObjectRaw(final String json, final Class<T> valueType, final boolean decodeForXss) throws IOException {
-        return getObjectMapper(decodeForXss).readValue(json, valueType);
+    private static <T> T toObjectRaw(final String json, final Class<T> valueType, final boolean excludeNull) throws IOException {
+        return getObjectMapper(excludeNull).readValue(json, valueType);
     }
 
-    private static <T> List<T> toObjectListRaw(final String json, final Class<T> valueType, final boolean decodeForXss) throws IOException {
-        ObjectMapper mapper = getObjectMapper(decodeForXss);
+    private static <T> List<T> toObjectListRaw(final String json, final Class<T> valueType, final boolean excludeNull) throws IOException {
+        ObjectMapper mapper = getObjectMapper(excludeNull);
         return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, valueType));
     }
 
