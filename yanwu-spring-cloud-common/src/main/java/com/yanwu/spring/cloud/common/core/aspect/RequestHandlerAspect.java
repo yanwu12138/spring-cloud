@@ -54,7 +54,7 @@ public class RequestHandlerAspect {
                 // ----- 不进行数据权限过滤
                 return joinPoint.proceed(args);
             }
-            if ((!requestHandler.dataScope().shop() && !requestHandler.dataScope().agent())) {
+            if (!requestHandler.dataScope().shop() && !requestHandler.dataScope().agent()) {
                 // ----- 不进行数据权限过滤
                 return joinPoint.proceed(args);
             }
