@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.device.controller;
 
-import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
+import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.device.data.model.DeviceLight;
 import com.yanwu.spring.cloud.device.service.DeviceLightService;
@@ -25,7 +25,7 @@ public class DeviceLightController {
     @Resource
     private DeviceLightService lightService;
 
-    @RequestLog
+    @RequestHandler
     @PostMapping("create")
     public ResponseEnvelope<Long> create() {
         DeviceLight light = new DeviceLight();

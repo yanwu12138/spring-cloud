@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.file.controller.file;
 
 import com.yanwu.spring.cloud.common.core.annotation.AccessLimit;
-import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
+import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsIndex;
 import com.yanwu.spring.cloud.file.pojo.elasticsearch.EsSearch;
@@ -34,7 +34,7 @@ public class ElasticsearchController {
     // ============================== 索引(index) ============================== //
 
 
-    @RequestLog
+    @RequestHandler
     @PutMapping("index")
     public ResponseEnvelope<Void> indexCreate(@RequestBody EsIndex param) throws Exception {
         if (elasticsearchService.indexExists(param)) {
@@ -44,7 +44,7 @@ public class ElasticsearchController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @AccessLimit(needLogin = false)
     @GetMapping("index")
     public ResponseEnvelope<Map<String, MappingMetaData>> indexSelect(@RequestBody EsIndex param) throws Exception {
@@ -54,7 +54,7 @@ public class ElasticsearchController {
         return ResponseEnvelope.success(elasticsearchService.indexSelect(param));
     }
 
-    @RequestLog
+    @RequestHandler
     @DeleteMapping("index")
     public ResponseEnvelope<Void> indexDelete(@RequestBody EsIndex param) throws Exception {
         if (elasticsearchService.indexExists(param)) {
@@ -63,7 +63,7 @@ public class ElasticsearchController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping("index/exists")
     public ResponseEnvelope<Boolean> indexExists(@RequestBody EsIndex param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.indexExists(param));
@@ -73,7 +73,7 @@ public class ElasticsearchController {
     // ============================== 类型(type) ============================== //
 
 
-    @RequestLog
+    @RequestHandler
     @PutMapping("type")
     public ResponseEnvelope<Void> typeCreate(@RequestBody EsType param) throws Exception {
         if (!elasticsearchService.indexExists(param.getIndex())) {
@@ -86,7 +86,7 @@ public class ElasticsearchController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @PutMapping("type/bulk/{index}")
     public ResponseEnvelope<Void> typeCreate(@PathVariable("index") String index,
                                              @RequestBody List<EsType> param) throws Exception {
@@ -98,13 +98,13 @@ public class ElasticsearchController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping("type")
     public ResponseEnvelope<GetResponse> typeSelect(@RequestBody EsType param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.typeSelect(param));
     }
 
-    @RequestLog
+    @RequestHandler
     @PostMapping("type")
     public ResponseEnvelope<Void> typeUpdate(@RequestBody EsType param) throws Exception {
         if (elasticsearchService.typeExists(param)) {
@@ -115,7 +115,7 @@ public class ElasticsearchController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @PostMapping("type/bulk/{index}")
     public ResponseEnvelope<Void> typeUpdate(@PathVariable("index") String index,
                                              @RequestBody List<EsType> param) throws Exception {
@@ -127,7 +127,7 @@ public class ElasticsearchController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @DeleteMapping("type")
     public ResponseEnvelope<Void> typeDelete(@RequestBody EsType param) throws Exception {
         if (elasticsearchService.typeExists(param)) {
@@ -136,7 +136,7 @@ public class ElasticsearchController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @DeleteMapping("type/bulk/{index}")
     public ResponseEnvelope<Void> typeDelete(@PathVariable("index") String index,
                                              @RequestBody List<EsType> param) throws Exception {
@@ -147,13 +147,13 @@ public class ElasticsearchController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping("type/exists")
     public ResponseEnvelope<Boolean> typeExists(@RequestBody EsType param) throws Exception {
         return ResponseEnvelope.success(elasticsearchService.typeExists(param));
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping("type/search")
     public ResponseEnvelope<List<EsTypeData>> typeSearch(@RequestBody EsSearch param) throws Exception {
         if (!elasticsearchService.indexExists(param.getType().getIndex())) {

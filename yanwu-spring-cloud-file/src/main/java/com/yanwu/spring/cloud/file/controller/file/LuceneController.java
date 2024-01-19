@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.file;
 
-import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
+import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.PageParam;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.file.pojo.LuceneDocument;
@@ -31,20 +31,20 @@ public class LuceneController {
      *
      * @param param 需要创建索引的内容
      */
-    @RequestLog
+    @RequestHandler
     @PostMapping("create")
     public ResponseEnvelope<Long> create(@RequestBody LuceneDocument param) throws Exception {
         return ResponseEnvelope.success(luceneService.create(param));
     }
 
-    @RequestLog
+    @RequestHandler
     @DeleteMapping(value = "delete/{field}/{value}")
     public ResponseEnvelope<Long> delete(@PathVariable("field") String field,
                                          @PathVariable("value") String value) throws Exception {
         return ResponseEnvelope.success(luceneService.delete(field, value));
     }
 
-    @RequestLog
+    @RequestHandler
     @PostMapping(value = "update/{id}/{field}/{value}")
     public ResponseEnvelope<Void> update(@PathVariable("id") Long id,
                                          @PathVariable("field") String field,
@@ -53,13 +53,13 @@ public class LuceneController {
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping(value = "searchAll")
     public ResponseEnvelope<List<LuceneDocument>> searchAll(@RequestBody LuceneSearch param) throws Exception {
         return ResponseEnvelope.success(luceneService.searchAll(param));
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping(value = "searchPage")
     public ResponseEnvelope<List<LuceneDocument>> searchPage(@RequestBody PageParam<LuceneSearch> param) throws Exception {
         return ResponseEnvelope.success(luceneService.pageSearch(param));

@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.base.controller.backend;
 
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
-import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
+import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -23,21 +23,21 @@ public class BackendYanwuUserController {
     @Resource
     private YanwuUserService userService;
 
-    @RequestLog
+    @RequestHandler
     @GetMapping(value = "findByUserName")
     public ResponseEnvelope<YanwuUser> findByUserName(@RequestParam("name") String name) throws Exception {
         YanwuUser yanwuUser = userService.findByUserName(name);
         return ResponseEnvelope.success(yanwuUser);
     }
 
-    @RequestLog
+    @RequestHandler
     @PostMapping(value = "updatePortrait")
     public ResponseEnvelope<Void> updatePortrait(@RequestBody YanwuUser yanwuUser) throws Exception {
         userService.updatePortrait(yanwuUser);
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @PostMapping("updateAccountById")
     public ResponseEnvelope<YanwuUser> updateAccountById(@RequestBody YanwuUser user) {
         user = userService.updateAccountById(user);

@@ -11,8 +11,11 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface RequestLog {
+public @interface RequestHandler {
 
     String value() default "服务器异常";
+
+    /*** 是否过滤role或user数据权限，默认为不过滤 ***/
+    UserAccesses dataScope() default @UserAccesses(shop = false, agent = false);
 
 }

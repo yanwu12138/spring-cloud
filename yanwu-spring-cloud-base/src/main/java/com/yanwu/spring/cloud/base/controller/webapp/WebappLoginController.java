@@ -4,7 +4,7 @@ import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.base.vo.LoginVO;
 import com.yanwu.spring.cloud.base.vo.YanwuUserVO;
-import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
+import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.utils.secret.Aes128Util;
@@ -40,7 +40,7 @@ public class WebappLoginController {
     @Autowired
     private YanwuUserService yanwuUserService;
 
-    @RequestLog
+    @RequestHandler
     @PostMapping(value = "login")
     public ResponseEnvelope<YanwuUserVO> login(@RequestBody @Valid LoginVO vo) throws Exception {
         // ----- 根据 用户名 邮箱 手机号 检索用户
@@ -60,7 +60,7 @@ public class WebappLoginController {
         return ResponseEnvelope.success(result);
     }
 
-    @RequestLog
+    @RequestHandler
     @PostMapping(value = "logout/{id}")
     public ResponseEnvelope<Boolean> logout(@PathVariable("id") Long id) throws Exception {
         Boolean result;

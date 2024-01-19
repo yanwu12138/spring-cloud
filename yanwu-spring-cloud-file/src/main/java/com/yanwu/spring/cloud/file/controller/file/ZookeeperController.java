@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.file;
 
-import com.yanwu.spring.cloud.common.core.annotation.RequestLog;
+import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.ZookeeperLock;
@@ -34,47 +34,47 @@ public class ZookeeperController {
     @Resource
     private ZookeeperService zookeeperService;
 
-    @RequestLog
+    @RequestHandler
     @PostMapping("create")
     public ResponseEnvelope<Long> create(@RequestBody ZookeeperNode param) throws Exception {
         zookeeperService.create(param);
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @DeleteMapping("delete")
     public ResponseEnvelope<Long> delete(@RequestBody ZookeeperNode param) throws Exception {
         zookeeperService.delete(param);
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @PostMapping("update")
     public ResponseEnvelope<Long> update(@RequestBody ZookeeperNode param) throws Exception {
         zookeeperService.update(param);
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping("search")
     public ResponseEnvelope<ZookeeperNode> search(@RequestBody ZookeeperNode param) throws Exception {
         return ResponseEnvelope.success(zookeeperService.search(param));
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping("children")
     public ResponseEnvelope<List<String>> children(@RequestBody ZookeeperNode param) throws Exception {
         return ResponseEnvelope.success(zookeeperService.children(param));
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping("lock")
     public ResponseEnvelope<Void> lock(@RequestBody ZookeeperNode param) throws Exception {
         zookeeperService.lock(param.getPath());
         return ResponseEnvelope.success();
     }
 
-    @RequestLog
+    @RequestHandler
     @GetMapping("test")
     public ResponseEnvelope<Void> test(@RequestBody ZookeeperNode param) {
         CuratorFramework client = zookeeperClient.getClient();
