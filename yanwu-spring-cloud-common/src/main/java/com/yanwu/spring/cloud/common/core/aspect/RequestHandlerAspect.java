@@ -34,6 +34,7 @@ import java.util.Set;
 @Slf4j
 @Aspect
 @Component
+@SuppressWarnings("unused")
 public class RequestHandlerAspect {
     private static final ThreadLocal<UserAccessesInfo> USER_ACCESSES_LOCAL = new ThreadLocal<>();
 
@@ -90,6 +91,8 @@ public class RequestHandlerAspect {
                 message = requestHandler != null ? requestHandler.value() : "服务器异常";
             }
             return Result.failed(message);
+        } finally {
+            USER_ACCESSES_LOCAL.remove();
         }
     }
 
@@ -101,6 +104,7 @@ public class RequestHandlerAspect {
      */
     @AfterReturning(returning = "result", pointcut = "logParamPointcut()")
     public void doAfterReturning(JoinPoint joinPoint, Object result) {
+        USER_ACCESSES_LOCAL.remove();
         String txId = AspectUtil.getTxId();
         Method method = AspectUtil.getMethod(joinPoint);
         if (result instanceof Serializable || result instanceof ResponseEntity) {
@@ -110,6 +114,13 @@ public class RequestHandlerAspect {
             log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}",
                     txId, AspectUtil.getClassName(method), method.getName(), "The response could not be serialized.");
         }
+    }
+
+    /***
+     * 获取ThreadLocal中的数据权限缓存
+     */
+    public static UserAccessesInfo getUserAccessesInfo() {
+        return USER_ACCESSES_LOCAL.get();
     }
 
     /**
