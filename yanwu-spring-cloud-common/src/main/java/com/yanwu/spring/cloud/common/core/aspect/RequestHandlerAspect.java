@@ -54,23 +54,27 @@ public class RequestHandlerAspect {
                 // ----- 不进行数据权限过滤
                 return joinPoint.proceed(args);
             }
+            if ((!requestHandler.dataScope().shop() && !requestHandler.dataScope().agent())) {
+                // ----- 不进行数据权限过滤
+                return joinPoint.proceed(args);
+            }
             String token = ContextUtil.header(Contents.TOKEN);
             if (StringUtils.isBlank(token)) {
-                throw new BusinessException("无数据权限");
+                return Result.failed("无数据权限");
             }
             // ----- 根据TOKEN获取有权限的数据ID集合，放入ThreadLocal中等待使用
             UserAccessesInfo instanceInfo = UserAccessesInfo.getInstance(requestHandler);
             if (requestHandler.dataScope().shop()) {
                 Set<Long> userIds = buildDataIds(token, AccessTypeEnum.USER);
                 if (CollectionUtils.isEmpty(userIds)) {
-                    throw new BusinessException("无数据权限");
+                    return Result.failed("无数据权限");
                 }
                 instanceInfo.setUserIds(userIds);
             }
             if (requestHandler.dataScope().agent()) {
                 Set<Long> roleIds = buildDataIds(token, AccessTypeEnum.ROLE);
                 if (CollectionUtils.isEmpty(roleIds)) {
-                    throw new BusinessException("无数据权限");
+                    return Result.failed("无数据权限");
                 }
                 instanceInfo.setRoleIds(roleIds);
             }
