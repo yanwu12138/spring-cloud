@@ -1,10 +1,9 @@
 package com.yanwu.spring.cloud.file.consumer.base;
 
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.file.consumer.base.fallback.YanwuUserFallbackFactory;
 import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +25,7 @@ public interface YanwuUserConsumer {
      * @return
      */
     @PostMapping(value = "backend/yanwuUser/updatePortrait")
-    ResponseEnvelope<Void> updatePortrait(@RequestBody YanwuUser yanwuUser);
+    Result<Void> updatePortrait(@RequestBody YanwuUser yanwuUser);
 
     @PostMapping(value = "backend/yanwuUser/updateAccountById")
     YanwuUser updateAccountById(@RequestBody YanwuUser user);

@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.file.controller.file;
 
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.ZookeeperLock;
 import com.yanwu.spring.cloud.file.cache.ZookeeperClient;
@@ -36,47 +35,47 @@ public class ZookeeperController {
 
     @RequestHandler
     @PostMapping("create")
-    public ResponseEnvelope<Long> create(@RequestBody ZookeeperNode param) throws Exception {
+    public Result<Long> create(@RequestBody ZookeeperNode param) throws Exception {
         zookeeperService.create(param);
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
     @RequestHandler
     @DeleteMapping("delete")
-    public ResponseEnvelope<Long> delete(@RequestBody ZookeeperNode param) throws Exception {
+    public Result<Long> delete(@RequestBody ZookeeperNode param) throws Exception {
         zookeeperService.delete(param);
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
     @RequestHandler
     @PostMapping("update")
-    public ResponseEnvelope<Long> update(@RequestBody ZookeeperNode param) throws Exception {
+    public Result<Long> update(@RequestBody ZookeeperNode param) throws Exception {
         zookeeperService.update(param);
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
     @RequestHandler
     @GetMapping("search")
-    public ResponseEnvelope<ZookeeperNode> search(@RequestBody ZookeeperNode param) throws Exception {
-        return ResponseEnvelope.success(zookeeperService.search(param));
+    public Result<ZookeeperNode> search(@RequestBody ZookeeperNode param) throws Exception {
+        return Result.success(zookeeperService.search(param));
     }
 
     @RequestHandler
     @GetMapping("children")
-    public ResponseEnvelope<List<String>> children(@RequestBody ZookeeperNode param) throws Exception {
-        return ResponseEnvelope.success(zookeeperService.children(param));
+    public Result<List<String>> children(@RequestBody ZookeeperNode param) throws Exception {
+        return Result.success(zookeeperService.children(param));
     }
 
     @RequestHandler
     @GetMapping("lock")
-    public ResponseEnvelope<Void> lock(@RequestBody ZookeeperNode param) throws Exception {
+    public Result<Void> lock(@RequestBody ZookeeperNode param) throws Exception {
         zookeeperService.lock(param.getPath());
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
     @RequestHandler
     @GetMapping("test")
-    public ResponseEnvelope<Void> test(@RequestBody ZookeeperNode param) {
+    public Result<Void> test(@RequestBody ZookeeperNode param) {
         CuratorFramework client = zookeeperClient.getClient();
         for (int i = 0; i < 2; i++) {
             commonsExecutors.execute(() -> {
@@ -98,7 +97,7 @@ public class ZookeeperController {
                 log.info("read result: {}", readResult);
             });
         }
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
 }

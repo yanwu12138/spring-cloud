@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.file.controller.webapp;
 
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.ExcelUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
@@ -44,10 +44,10 @@ public class AttachmentController {
      */
     @RequestHandler
     @PostMapping(value = "upPortrait")
-    public ResponseEnvelope<Attachment> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
+    public Result<Attachment> upPortrait(MultipartHttpServletRequest request, @RequestParam("userId") Long userId) throws Exception {
         Attachment attachment = attachmentService.upPortrait(request, userId);
         Attachment result = JsonUtil.convertObject(attachment, Attachment.class);
-        return ResponseEnvelope.success(result);
+        return Result.success(result);
     }
 
     /**
@@ -58,9 +58,9 @@ public class AttachmentController {
      */
     @RequestHandler
     @PostMapping(value = "uploadFile")
-    public ResponseEnvelope<List<Attachment>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
+    public Result<List<Attachment>> uploadFile(MultipartHttpServletRequest request, @RequestParam("id") Long id) throws Exception {
         List<Attachment> attachments = attachmentService.uploadFile(request, id);
-        return ResponseEnvelope.success(attachments);
+        return Result.success(attachments);
     }
 
     /**
@@ -92,9 +92,9 @@ public class AttachmentController {
      */
     @RequestHandler
     @PostMapping(value = "uploadExcel")
-    public ResponseEnvelope<Attachment> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
+    public Result<Attachment> uploadExcel(@RequestPart(name = "file") Part file, @RequestParam("id") Long id) throws Exception {
         Attachment attachment = attachmentService.uploadExcel(file, id);
-        return ResponseEnvelope.success(attachment);
+        return Result.success(attachment);
     }
 
     /**
@@ -112,9 +112,9 @@ public class AttachmentController {
 
     @RequestHandler
     @PostMapping("updateUser")
-    public ResponseEnvelope<YanwuUser> updateUser(@RequestBody YanwuUser user) {
+    public Result<YanwuUser> updateUser(@RequestBody YanwuUser user) {
         user = attachmentService.updateAccountById(user);
-        return ResponseEnvelope.success(user);
+        return Result.success(user);
     }
 
 }

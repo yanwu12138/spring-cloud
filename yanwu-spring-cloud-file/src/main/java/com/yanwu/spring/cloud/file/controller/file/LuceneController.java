@@ -2,7 +2,7 @@ package com.yanwu.spring.cloud.file.controller.file;
 
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.PageParam;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.file.pojo.LuceneDocument;
 import com.yanwu.spring.cloud.file.pojo.LuceneSearch;
 import com.yanwu.spring.cloud.file.service.LuceneService;
@@ -33,36 +33,36 @@ public class LuceneController {
      */
     @RequestHandler
     @PostMapping("create")
-    public ResponseEnvelope<Long> create(@RequestBody LuceneDocument param) throws Exception {
-        return ResponseEnvelope.success(luceneService.create(param));
+    public Result<Long> create(@RequestBody LuceneDocument param) throws Exception {
+        return Result.success(luceneService.create(param));
     }
 
     @RequestHandler
     @DeleteMapping(value = "delete/{field}/{value}")
-    public ResponseEnvelope<Long> delete(@PathVariable("field") String field,
-                                         @PathVariable("value") String value) throws Exception {
-        return ResponseEnvelope.success(luceneService.delete(field, value));
+    public Result<Long> delete(@PathVariable("field") String field,
+                               @PathVariable("value") String value) throws Exception {
+        return Result.success(luceneService.delete(field, value));
     }
 
     @RequestHandler
     @PostMapping(value = "update/{id}/{field}/{value}")
-    public ResponseEnvelope<Void> update(@PathVariable("id") Long id,
-                                         @PathVariable("field") String field,
-                                         @PathVariable("value") String value) throws Exception {
+    public Result<Void> update(@PathVariable("id") Long id,
+                               @PathVariable("field") String field,
+                               @PathVariable("value") String value) throws Exception {
         luceneService.update(id, field, value);
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
     @RequestHandler
     @GetMapping(value = "searchAll")
-    public ResponseEnvelope<List<LuceneDocument>> searchAll(@RequestBody LuceneSearch param) throws Exception {
-        return ResponseEnvelope.success(luceneService.searchAll(param));
+    public Result<List<LuceneDocument>> searchAll(@RequestBody LuceneSearch param) throws Exception {
+        return Result.success(luceneService.searchAll(param));
     }
 
     @RequestHandler
     @GetMapping(value = "searchPage")
-    public ResponseEnvelope<List<LuceneDocument>> searchPage(@RequestBody PageParam<LuceneSearch> param) throws Exception {
-        return ResponseEnvelope.success(luceneService.pageSearch(param));
+    public Result<List<LuceneDocument>> searchPage(@RequestBody PageParam<LuceneSearch> param) throws Exception {
+        return Result.success(luceneService.pageSearch(param));
     }
 
 }

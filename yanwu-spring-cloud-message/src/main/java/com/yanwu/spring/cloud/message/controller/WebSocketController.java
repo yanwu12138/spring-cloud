@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.message.controller;
 
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.message.service.WebSocketService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,8 +28,8 @@ public class WebSocketController {
      */
     @ResponseBody
     @RequestMapping("/sender")
-    public ResponseEnvelope<Void> sender(@RequestParam(value = "message") String message,
-                                         @RequestParam(value = "accountId", required = false) String accountId) {
+    public Result<Void> sender(@RequestParam(value = "message") String message,
+                               @RequestParam(value = "accountId", required = false) String accountId) {
         if (StringUtils.isBlank(accountId)) {
             WebSocketService.sendMessageToAll(message);
         } else {
@@ -40,7 +40,7 @@ public class WebSocketController {
                 WebSocketService.sendMessageByAccountIds(message, accountId.split(","));
             }
         }
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
 }

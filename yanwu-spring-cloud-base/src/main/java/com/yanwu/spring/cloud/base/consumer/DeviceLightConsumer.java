@@ -1,8 +1,7 @@
 package com.yanwu.spring.cloud.base.consumer;
 
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface DeviceLightConsumer {
 
     @PostMapping("/device/light/create")
-    ResponseEnvelope<Long> create();
+    Result<Long> create();
 
     @GetMapping("/device/transactions/test1")
     void test1();

@@ -6,10 +6,10 @@ import com.yanwu.spring.cloud.base.vo.LoginVO;
 import com.yanwu.spring.cloud.base.vo.YanwuUserVO;
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.core.common.Contents;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
-import com.yanwu.spring.cloud.common.utils.secret.Aes128Util;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.common.utils.TokenUtil;
+import com.yanwu.spring.cloud.common.utils.secret.Aes128Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class WebappLoginController {
 
     @RequestHandler
     @PostMapping(value = "login")
-    public ResponseEnvelope<YanwuUserVO> login(@RequestBody @Valid LoginVO vo) throws Exception {
+    public Result<YanwuUserVO> login(@RequestBody @Valid LoginVO vo) throws Exception {
         // ----- 根据 用户名 邮箱 手机号 检索用户
         YanwuUser user = yanwuUserService.findByAccount(vo.getAccount());
         // ----- 校验: 当结果为null时, 说明该用户不存在
@@ -57,12 +57,12 @@ public class WebappLoginController {
         YanwuUserVO result = JsonUtil.convertObject(user, YanwuUserVO.class);
         result.setToken(token);
         loginTokenOperations.set(Contents.LOGIN_TOKEN + user.getId(), result, Contents.TOKEN_TIME_OUT, TimeUnit.SECONDS);
-        return ResponseEnvelope.success(result);
+        return Result.success(result);
     }
 
     @RequestHandler
     @PostMapping(value = "logout/{id}")
-    public ResponseEnvelope<Boolean> logout(@PathVariable("id") Long id) throws Exception {
+    public Result<Boolean> logout(@PathVariable("id") Long id) throws Exception {
         Boolean result;
         YanwuUserVO user = loginTokenOperations.get(Contents.LOGIN_TOKEN + id);
         if (user == null) {
@@ -70,7 +70,7 @@ public class WebappLoginController {
         } else {
             result = loginTokenOperations.getOperations().delete(Contents.LOGIN_TOKEN + id);
         }
-        return ResponseEnvelope.success(result);
+        return Result.success(result);
     }
 
 }

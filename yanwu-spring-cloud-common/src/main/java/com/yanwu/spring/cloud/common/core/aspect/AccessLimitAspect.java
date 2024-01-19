@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.common.core.aspect;
 
 import com.yanwu.spring.cloud.common.core.annotation.AccessLimit;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.AspectUtil;
 import com.yanwu.spring.cloud.common.utils.IpMacUtil;
 import com.yanwu.spring.cloud.common.utils.TokenUtil;
@@ -13,7 +13,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +55,7 @@ public class AccessLimitAspect {
             HttpServletRequest request = AspectUtil.request();
             if (request == null) {
                 log.error("Exception : [txId]: {}, [method]: {}, [param]: {}. {}", txId, method, args, "the request is empty.");
-                return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, "内部服务器错误");
+                return Result.failed("内部服务器错误");
             }
             String key = null;
             if (annotation.needLogin()) {
@@ -64,7 +63,7 @@ public class AccessLimitAspect {
                 String token = TokenUtil.getToken(request);
                 if (StringUtils.isBlank(token)) {
                     log.error("Exception : [txId]: {}, [method]: {}, [param]: {}. {}", txId, method, args, "the token is empty.");
-                    return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, "token为空");
+                    return Result.failed("token为空");
                 }
                 key = String.valueOf(TokenUtil.verifyToken(token).getId());
             }
@@ -73,7 +72,7 @@ public class AccessLimitAspect {
                 String ip = IpMacUtil.getIpByRequest(request);
                 if (StringUtils.isBlank(ip)) {
                     log.error("Exception : [txId]: {}, [method]: {}, [param]: {}. {}", txId, method, args, "could not get IP address in request.");
-                    return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, "内部服务器错误");
+                    return Result.failed("内部服务器错误");
                 }
                 key = ip;
             }
@@ -87,13 +86,13 @@ public class AccessLimitAspect {
             } else {
                 // ===== 如果访问次数已经达到最大限制，则返回请求失败
                 log.error("Exception : [txId]: {}, [method]: {}, [param]: {}. {}", txId, method, args, "visit too frequently.");
-                return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, "访问过于频繁，请稍后再试");
+                return Result.failed("访问过于频繁，请稍后再试");
             }
             BOOK.put(AspectUtil.getSignature(method), expiring);
             return joinPoint.proceed(args);
         } catch (Throwable e) {
             log.error("Exception : [txId]: {}, [method]: {}, [param]: {}", txId, method, args, e);
-            return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            return Result.failed(e.getMessage());
         }
     }
 

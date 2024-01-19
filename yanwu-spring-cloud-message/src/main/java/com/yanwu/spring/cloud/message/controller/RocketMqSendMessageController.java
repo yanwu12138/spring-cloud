@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.message.controller;
 
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.rocket.WrapperMessage;
 import com.yanwu.spring.cloud.common.rocket.producer.RocketProducerWrapperBean;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
@@ -27,14 +27,14 @@ public class RocketMqSendMessageController<T extends Serializable> {
     private RocketProducerWrapperBean rocketProducerWrapperBean;
 
     @PostMapping("sender/{topic}/{tag}")
-    public ResponseEnvelope<Boolean> direct(@PathVariable("topic") String topic, @PathVariable("tag") String tag,
-                                            @RequestBody @Valid MessageBO<T> param) throws Exception {
+    public Result<Boolean> direct(@PathVariable("topic") String topic, @PathVariable("tag") String tag,
+                                  @RequestBody @Valid MessageBO<T> param) throws Exception {
         WrapperMessage message = new WrapperMessage();
         message.setTag(tag);
         message.setTopic(topic);
         message.setBody(JsonUtil.toString(param));
         rocketProducerWrapperBean.sendOneway(message);
-        return ResponseEnvelope.success(Boolean.TRUE);
+        return Result.success(Boolean.TRUE);
     }
 
 }

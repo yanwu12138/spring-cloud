@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.common.utils.pay;
 
 import com.yanwu.spring.cloud.common.pojo.PayParamBO;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.CommandUtil;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import lombok.Getter;
@@ -29,18 +29,18 @@ public class PayUtil {
      * @param param   支付参数
      * @return 支付结果
      */
-    public static ResponseEnvelope<?> pay(PayEnum payType, PayParamBO param) {
+    public static Result<?> pay(PayEnum payType, PayParamBO param) {
         try {
             if (!param.checkParam(payType)) {
                 log.error("pay failed, because param check failed. payType: {}, param: {}.", payType, param);
-                return ResponseEnvelope.failed("支付失败: 参数校验不通过.");
+                return Result.failed("支付失败: 参数校验不通过.");
             }
             Object payResult = CommandUtil.invoke(payType.getClazz(), "pay", param);
             log.info("pay done. payType: {}, param: {}, result: {}", payType, param, payResult);
-            return JsonUtil.convertObject(payResult, ResponseEnvelope.class);
+            return JsonUtil.convertObject(payResult, Result.class);
         } catch (Exception e) {
             log.error("pay failed. payType: {}, param: {}.", payType, param, e);
-            return ResponseEnvelope.failed(e.getMessage());
+            return Result.failed(e.getMessage());
         }
     }
 

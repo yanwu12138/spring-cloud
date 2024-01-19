@@ -1,6 +1,6 @@
 package com.yanwu.spring.cloud.message.service;
 
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,14 +36,14 @@ public class WebSocketService {
     public void onOpen(Session session, @PathParam("accountId") String accountId) {
         if (StringUtils.isBlank(accountId)) {
             log.error("web socket on open failed, because accountId is empty.");
-            sendMessage(JsonUtil.toString(ResponseEnvelope.failed("accountId不能为空")));
+            sendMessage(JsonUtil.toString(Result.failed("accountId不能为空")));
             return;
         }
         this.session = session;
         this.accountId = accountId;
         this.lastTime = System.currentTimeMillis();
         WEB_SOCKET_CACHE.add(this);
-        sendMessage(JsonUtil.toString(ResponseEnvelope.success("conn_success")));
+        sendMessage(JsonUtil.toString(Result.success("conn_success")));
         log.info("web socket on open, accountId: {}, count: {}", accountId, WEB_SOCKET_CACHE.size());
     }
 

@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.file.controller.webapp;
 
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.pojo.QrCodeReq;
 import com.yanwu.spring.cloud.file.service.QrCodeService;
@@ -29,14 +29,14 @@ public class QrCodeController {
 
     @PostMapping("/create")
     @RequestHandler("生成二维码失败")
-    public ResponseEnvelope<Attachment> create(@RequestBody @Valid QrCodeReq param) throws Exception {
-        return ResponseEnvelope.success(codeService.create(param));
+    public Result<Attachment> create(@RequestBody @Valid QrCodeReq param) throws Exception {
+        return Result.success(codeService.create(param));
     }
 
     @GetMapping("/check")
     @RequestHandler("识别二维码失败")
-    public ResponseEnvelope<Void> check(@RequestParam("key") @NotBlank(message = "key不能为空") String key, HttpServletResponse response) {
+    public Result<Void> check(@RequestParam("key") @NotBlank(message = "key不能为空") String key, HttpServletResponse response) {
         codeService.check(key, response);
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 }

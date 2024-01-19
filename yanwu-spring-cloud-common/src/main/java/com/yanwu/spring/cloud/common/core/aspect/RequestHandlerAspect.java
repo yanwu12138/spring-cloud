@@ -4,7 +4,7 @@ import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.core.enums.AccessTypeEnum;
 import com.yanwu.spring.cloud.common.core.exception.BusinessException;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.pojo.UserAccessesInfo;
 import com.yanwu.spring.cloud.common.utils.AspectUtil;
 import com.yanwu.spring.cloud.common.utils.ContextUtil;
@@ -17,7 +17,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -47,10 +46,10 @@ public class RequestHandlerAspect {
         Object[] args = joinPoint.getArgs();
         String txId = AspectUtil.getTxId();
         Method method = AspectUtil.getMethod(joinPoint);
+        RequestHandler requestHandler = method.getAnnotation(RequestHandler.class);
         try {
             log.info("Request: [txId]: {}, [class]: {}, [method]: {}, [param]: {}",
                     txId, AspectUtil.getClassName(method), method.getName(), AspectUtil.printArgs(args));
-            RequestHandler requestHandler = method.getAnnotation(RequestHandler.class);
             if (requestHandler == null || requestHandler.dataScope() == null) {
                 // ----- 不进行数据权限过滤
                 return joinPoint.proceed(args);
@@ -84,10 +83,9 @@ public class RequestHandlerAspect {
             if (e instanceof IllegalArgumentException || e instanceof BusinessException) {
                 message = e.getMessage();
             } else {
-                RequestHandler annotation = method.getAnnotation(RequestHandler.class);
-                message = annotation.value();
+                message = requestHandler != null ? requestHandler.value() : "服务器异常";
             }
-            return ResponseEnvelope.failed(HttpStatus.INTERNAL_SERVER_ERROR, message);
+            return Result.failed(message);
         }
     }
 

@@ -64,13 +64,13 @@ public class NettyController {
 
     @RequestHandler
     @PostMapping("/udp/upgrade")
-    public ResponseEnvelope<Result<String>> udpUpgrade(@RequestBody CommandBO<String> command) {
-        return ResponseEnvelope.success(multicastHandler.broadcastFile(command.getData(), System.currentTimeMillis()));
+    public Result<Result<String>> udpUpgrade(@RequestBody CommandBO<String> command) {
+        return Result.success(multicastHandler.broadcastFile(command.getData(), System.currentTimeMillis()));
     }
 
     @RequestHandler
     @GetMapping("/test")
-    public ResponseEnvelope<Void> test() {
+    public Result<Void> test() {
         // ----- alarmLamp
         SortedList<MessageQueueBO<String>> alarmQueues = new SortedList<>();
         messageCache.addQueue("131420210123", MessageQueueBO.getInstance(messageCache.getMessageKey("A0000001"), "A0000001", AlarmLampService.class));
@@ -88,19 +88,19 @@ public class NettyController {
         ThreadUtil.sleep(10);
         screenQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("B0000001"), "B0000003", ScreenService.class));
         messageCache.addQueues("2F30", screenQueues);
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
     @RequestHandler
     @GetMapping("/remove")
-    public ResponseEnvelope<Void> remove() {
+    public Result<Void> remove() {
         messageCache.removeExpiredMessage();
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
     @RequestHandler
     @GetMapping("/testRedisLock")
-    public ResponseEnvelope<Void> testRedisLock() {
+    public Result<Void> testRedisLock() {
         //
         nettyExecutor.execute(() -> redisUtil.executor("10000001", Thread.currentThread().getId(), () -> {
             log.info("redis lock 1-1 {}: start", Thread.currentThread().getId());
@@ -130,7 +130,7 @@ public class NettyController {
         }));
 
         ThreadUtil.sleep(20_000);
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
 
@@ -144,9 +144,9 @@ public class NettyController {
 
     @RequestHandler
     @GetMapping("/testExpiredCache")
-    public ResponseEnvelope<Void> testExpiredCache() {
+    public Result<Void> testExpiredCache() {
         testCache();
-        return ResponseEnvelope.success();
+        return Result.success();
     }
 
     private void testCache() {

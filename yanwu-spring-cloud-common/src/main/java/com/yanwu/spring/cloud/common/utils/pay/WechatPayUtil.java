@@ -12,7 +12,7 @@ import com.wechat.pay.java.service.payments.nativepay.model.Amount;
 import com.wechat.pay.java.service.payments.nativepay.model.PrepayRequest;
 import com.wechat.pay.java.service.payments.nativepay.model.PrepayResponse;
 import com.yanwu.spring.cloud.common.pojo.PayParamBO;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -40,26 +40,26 @@ public class WechatPayUtil {
      * @param param 支付参数
      * @return 支付结果
      */
-    private static ResponseEnvelope<String> pay(PayParamBO param) {
+    private static Result<String> pay(PayParamBO param) {
         try {
             PrepayResponse prepay = getServer(param).prepay(getRequest(param));
             log.info("wechat pay success. param: {}, result: {}", param, prepay);
-            return ResponseEnvelope.success(prepay.getCodeUrl());
+            return Result.success(prepay.getCodeUrl());
         } catch (HttpException e) {
             log.error("wechat pay failed. param: {}", param, e);
-            return ResponseEnvelope.failed("支付失败: 调用微信支付失败");
+            return Result.failed("支付失败: 调用微信支付失败");
         } catch (ValidationException e) {
             log.error("wechat pay failed. param: {}", param, e);
-            return ResponseEnvelope.failed("支付失败: 签名失败");
+            return Result.failed("支付失败: 签名失败");
         } catch (ServiceException e) {
             log.error("wechat pay failed. param: {}", param, e);
-            return ResponseEnvelope.failed("支付失败: 微信支付服务内部错误");
+            return Result.failed("支付失败: 微信支付服务内部错误");
         } catch (MalformedMessageException e) {
             log.error("wechat pay failed. param: {}", param, e);
-            return ResponseEnvelope.failed("支付失败: 微信支付服务返回异常");
+            return Result.failed("支付失败: 微信支付服务返回异常");
         } catch (Exception e) {
             log.error("wechat pay failed. param: {}", param, e);
-            return ResponseEnvelope.failed("支付失败: 未知错误");
+            return Result.failed("支付失败: 未知错误");
         }
     }
 

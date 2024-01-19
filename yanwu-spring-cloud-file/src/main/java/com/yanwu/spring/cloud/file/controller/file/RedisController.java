@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.file.controller.file;
 
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,8 +28,8 @@ public class RedisController {
 
     @RequestHandler
     @PostMapping("increment/{key}")
-    public ResponseEnvelope<Long> increment(@PathVariable(value = "key") String param) {
-        return ResponseEnvelope.success(redisUtil.increment(param));
+    public Result<Long> increment(@PathVariable(value = "key") String param) {
+        return Result.success(redisUtil.increment(param));
     }
 
 }

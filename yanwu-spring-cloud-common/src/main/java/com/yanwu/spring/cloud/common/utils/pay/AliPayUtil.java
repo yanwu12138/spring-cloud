@@ -7,7 +7,7 @@ import com.alipay.api.domain.AlipayTradePayModel;
 import com.alipay.api.request.AlipayTradePayRequest;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.yanwu.spring.cloud.common.pojo.PayParamBO;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -32,7 +32,7 @@ public class AliPayUtil {
         throw new UnsupportedOperationException("AliPayUtil should never be instantiated");
     }
 
-    private static ResponseEnvelope<?> pay(PayParamBO param) {
+    private static Result<?> pay(PayParamBO param) {
         try {
             AlipayClient alipayClient = getClient(param);
             // ----- 支付参数
@@ -50,10 +50,10 @@ public class AliPayUtil {
             // ----- 异步通知地址
             request.setNotifyUrl(NOTIFY_URL);
             AlipayTradePayResponse response = alipayClient.execute(request);
-            return response.isSuccess() ? ResponseEnvelope.success(response.getBody()) : ResponseEnvelope.failed("支付失败: 生成参数失败");
+            return response.isSuccess() ? Result.success(response.getBody()) : Result.failed("支付失败: 生成参数失败");
         } catch (Exception e) {
             log.error("wechat pay failed. param: {}", param, e);
-            return ResponseEnvelope.failed("支付失败: 未知错误");
+            return Result.failed("支付失败: 未知错误");
         }
     }
 

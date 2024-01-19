@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.device.controller;
 
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
-import com.yanwu.spring.cloud.common.pojo.ResponseEnvelope;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.device.data.model.DeviceLight;
 import com.yanwu.spring.cloud.device.service.DeviceLightService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +27,12 @@ public class DeviceLightController {
 
     @RequestHandler
     @PostMapping("create")
-    public ResponseEnvelope<Long> create() {
+    public Result<Long> create() {
         DeviceLight light = new DeviceLight();
         long millis = System.currentTimeMillis();
         light.setPoleId(millis).setCreator(millis);
         lightService.save(light);
-        return ResponseEnvelope.success(light.getId());
+        return Result.success(light.getId());
     }
 
 }
