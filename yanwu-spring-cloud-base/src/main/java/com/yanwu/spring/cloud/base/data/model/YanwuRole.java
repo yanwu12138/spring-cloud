@@ -6,6 +6,9 @@ import com.gitee.sunchenbin.mybatis.actable.annotation.Column;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Table;
 import com.gitee.sunchenbin.mybatis.actable.annotation.Unique;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlCharsetConstant;
+import com.yanwu.spring.cloud.common.core.annotation.DataScopeField;
+import com.yanwu.spring.cloud.common.core.annotation.DataScopeTable;
+import com.yanwu.spring.cloud.common.core.enums.AccessTypeEnum;
 import com.yanwu.spring.cloud.common.pojo.BaseDo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +30,7 @@ import static com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant.V
 @EqualsAndHashCode(callSuper = true)
 @TableName("yanwu_role")
 @Table(name = "yanwu_role", comment = "角色表", charset = MySqlCharsetConstant.UTF8MB4)
+@DataScopeTable(table = "yanwu_role", dataScope = @DataScopeField(field = "id", type = AccessTypeEnum.ROLE))
 public class YanwuRole extends BaseDo<Long> implements Serializable {
     private static final long serialVersionUID = -7133802858877953995L;
 

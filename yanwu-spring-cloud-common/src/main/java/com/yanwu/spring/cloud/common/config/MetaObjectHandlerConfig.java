@@ -1,6 +1,11 @@
 package com.yanwu.spring.cloud.common.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.yanwu.spring.cloud.common.core.common.Contents;
+import com.yanwu.spring.cloud.common.pojo.AccessToken;
+import com.yanwu.spring.cloud.common.utils.ContextUtil;
+import com.yanwu.spring.cloud.common.utils.TokenUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +44,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
         if (Objects.isNull(enabled)) {
             setFieldValByName("enabled", true, metaObject);
         }
+        handlerAccount(metaObject, "creator");
     }
 
     @Override
@@ -46,6 +52,20 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
         Object updated = getFieldValByName("updated", metaObject);
         if (updated == null) {
             setFieldValByName("updated", new Timestamp(System.currentTimeMillis()), metaObject);
+        }
+        handlerAccount(metaObject, "updator");
+    }
+
+    private void handlerAccount(MetaObject metaObject, String field) {
+        String token = ContextUtil.header(Contents.TOKEN);
+        if (StringUtils.isBlank(token)) {
+            AccessToken accessToken = TokenUtil.verifyToken(token);
+            if (accessToken.getId() != null) {
+                Object enabled = getFieldValByName(field, metaObject);
+                if (Objects.isNull(enabled)) {
+                    setFieldValByName(field, accessToken.getId(), metaObject);
+                }
+            }
         }
     }
 
