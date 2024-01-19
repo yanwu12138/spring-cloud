@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.common.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +12,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -57,6 +63,16 @@ public class ContextUtil implements ApplicationContextAware {
             return null;
         }
         return context.getBean(beanName, clazz);
+    }
+
+    public static Set<Class<?>> getClazzByAnnotation(Class<? extends Annotation> annotation) {
+        Map<String, Object> beans = context.getBeansWithAnnotation(annotation);
+        if (MapUtils.isEmpty(beans)) {
+            return Collections.emptySet();
+        }
+        Set<Class<?>> classes = new HashSet<>();
+        beans.values().forEach(bean -> classes.add(bean.getClass()));
+        return classes;
     }
 
     /**

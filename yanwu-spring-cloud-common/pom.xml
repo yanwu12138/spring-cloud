@@ -38,7 +38,7 @@
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <mp3spi.version>1.9.5.4</mp3spi.version>
         <mybatis.enhance.actable.version>1.5.0.RELEASE</mybatis.enhance.actable.version>
-        <mybatis.plus.version>3.1.1</mybatis.plus.version>
+        <mybatis.plus.version>3.4.2</mybatis.plus.version>
         <net.sf.dozer.version>5.5.1</net.sf.dozer.version>
         <poi.version>3.17</poi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

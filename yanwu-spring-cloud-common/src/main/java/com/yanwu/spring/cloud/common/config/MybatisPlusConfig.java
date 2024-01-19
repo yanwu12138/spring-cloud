@@ -2,12 +2,13 @@ package com.yanwu.spring.cloud.common.config;
 
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+
+import javax.annotation.Resource;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -17,6 +18,16 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 public class MybatisPlusConfig {
+
+    @Resource
+    private DataScopeInterceptor dataScopeInterceptor;
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+        mybatisPlusInterceptor.addInnerInterceptor(dataScopeInterceptor);
+        return mybatisPlusInterceptor;
+    }
 
     /**
      * 分页插件
@@ -34,17 +45,6 @@ public class MybatisPlusConfig {
     @Bean
     public ISqlInjector iSqlInjector() {
         return new DefaultSqlInjector();
-    }
-
-    /**
-     * sql性能分析插件，输出sql语句及所需时间
-     *
-     * @return
-     */
-    @Bean
-    @Profile({"dev", "test"})// 设置 dev test 环境开启
-    public PerformanceInterceptor performanceInterceptor() {
-        return new PerformanceInterceptor();
     }
 
     /**

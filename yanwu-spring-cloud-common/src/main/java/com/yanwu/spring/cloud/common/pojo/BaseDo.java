@@ -35,27 +35,27 @@ public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implement
     /*** 创建者 ***/
     @Getter
     @Setter
-    @TableField(value = "creator", strategy = FieldStrategy.NOT_EMPTY)
+    @TableField(value = "creator")
     @Column(name = "creator", type = BIGINT, length = 20, comment = "创建者")
     private Long creator;
 
     /*** 创建时间 ***/
     @Getter
-    @TableField(value = "created", strategy = FieldStrategy.NOT_EMPTY, fill = FieldFill.INSERT)
+    @TableField(value = "created", fill = FieldFill.INSERT)
     @Column(name = "created", type = DATETIME, isNull = false, defaultValue = "CURRENT_TIMESTAMP", comment = "创建时间")
     private LocalDateTime created;
 
     /*** 更新者 ***/
     @Getter
     @Setter
-    @TableField(value = "updator", strategy = FieldStrategy.IGNORED)
+    @TableField(value = "updator")
     @Column(name = "updator", type = BIGINT, length = 20, comment = "更新者")
     private Long updator;
 
     /*** 更新时间 ***/
     @Getter
     @Version
-    @TableField(value = "updated", strategy = FieldStrategy.NOT_EMPTY, fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "updated", fill = FieldFill.INSERT_UPDATE)
     @Column(name = "updated", type = DATETIME, isNull = false, defaultValue = "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", comment = "更新时间")
     private LocalDateTime updated;
 
@@ -63,14 +63,14 @@ public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implement
     @Getter
     @Setter
     @TableLogic(value = "1", delval = "0")
-    @TableField(value = "enabled", strategy = FieldStrategy.NOT_EMPTY, fill = FieldFill.INSERT)
+    @TableField(value = "enabled", fill = FieldFill.INSERT)
     @Column(name = "enabled", type = TINYINT, length = 1, isNull = false, defaultValue = "1", comment = "更新时间")
     private Boolean enabled;
 
     /*** 描述 ***/
     @Getter
     @Setter
-    @TableField(value = "description", strategy = FieldStrategy.IGNORED)
+    @TableField(value = "description")
     @Column(name = "description", type = VARCHAR, comment = "描述")
     private String description;
 

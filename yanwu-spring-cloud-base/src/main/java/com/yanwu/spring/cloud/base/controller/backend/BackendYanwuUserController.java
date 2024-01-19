@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.base.controller.backend;
 import com.yanwu.spring.cloud.base.data.model.YanwuUser;
 import com.yanwu.spring.cloud.base.service.YanwuUserService;
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
+import com.yanwu.spring.cloud.common.core.annotation.UserAccesses;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class BackendYanwuUserController {
     @Resource
     private YanwuUserService userService;
 
-    @RequestHandler
+    @RequestHandler(dataScope = @UserAccesses(agent = false))
     @GetMapping(value = "findByUserName")
     public Result<YanwuUser> findByUserName(@RequestParam("name") String name) throws Exception {
         YanwuUser yanwuUser = userService.findByUserName(name);
