@@ -110,7 +110,8 @@ public class DataScopeInterceptor extends JsqlParserSupport implements InnerInte
      */
     public String getTableName(PlainSelect plainSelect) {
         Table table = (Table) plainSelect.getFromItem();
-        return table.getName();
+        String tableName = table.getName();
+        return tableName.replaceAll("`", "");
     }
 
     /***
