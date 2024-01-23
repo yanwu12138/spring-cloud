@@ -19,9 +19,7 @@ import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -82,10 +80,22 @@ public class DataScopeInterceptor extends JsqlParserSupport implements InnerInte
         SelectBody selectBody = select.getSelectBody();
         PlainSelect plainSelect = (PlainSelect) selectBody;
         // ----- 获取表名/别名(如果是关联查询是取第一个join左侧的表名/别名)
-        String tableName = getTableName(plainSelect);
-        String aliasName = getAliasName(plainSelect);
-        // ----- 构建用户权限控制条件
-        buildPermissionSql(plainSelect, sql, tableName, aliasName);
+        FromItem fromItem = plainSelect.getFromItem();
+        if (fromItem instanceof Table) {
+            // ===== 查询：构建用户权限控制条件
+            String tableName = getTableName(plainSelect);
+            String aliasName = getAliasName(plainSelect);
+            buildPermissionSql(plainSelect, tableName, aliasName);
+        } else if (fromItem instanceof SubSelect) {
+            // ===== 子查询：构建用户权限控制条件
+            SubSelect subSelect = (SubSelect) fromItem;
+            PlainSelect subPlainSelect = (PlainSelect) subSelect.getSelectBody();
+            String tableName = getTableName(subPlainSelect);
+            String aliasName = getAliasName(subPlainSelect);
+            buildPermissionSql(subPlainSelect, tableName, aliasName);
+        }
+        log.info("[DataScopeInterceptor] before SQL:[{}]", sql);
+        log.info("[DataScopeInterceptor] after SQL:[{}]", plainSelect);
     }
 
     /***
@@ -126,10 +136,9 @@ public class DataScopeInterceptor extends JsqlParserSupport implements InnerInte
     /***
      * 构建数据权限控制条件
      * @param plainSelect 用于解析SQL的类
-     * @param sql         原始SQL
      * @param tableName   表名/别名(join查询左侧表名)
      */
-    private void buildPermissionSql(PlainSelect plainSelect, String sql, String tableName, String aliasName) {
+    private void buildPermissionSql(PlainSelect plainSelect, String tableName, String aliasName) {
         UserAccessesInfo userAccesses = RequestHandlerAspect.getUserAccessesInfo();
         if (dataScopeIgnore(userAccesses)) {
             return;
@@ -154,8 +163,6 @@ public class DataScopeInterceptor extends JsqlParserSupport implements InnerInte
                 }
                 appendExpression(plainSelect, buildInExpression(aliasName, scopeTable, scopeField, values));
             }
-            log.info("[DataScopeInterceptor] before SQL:[{}]", sql);
-            log.info("[DataScopeInterceptor] after SQL:[{}]", plainSelect);
         }
     }
 
