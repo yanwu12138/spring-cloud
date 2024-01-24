@@ -98,8 +98,7 @@ public class ExcelUtil {
             workbook.dispose();
         }
         String fileDisposition = "attachment;filename=" + URLEncoder.encode(fileName, Encoding.UTF_8);
-        return ResponseEntity
-                .ok()
+        return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
                 .header(HttpHeaders.CONTENT_ENCODING, Encoding.UTF_8)

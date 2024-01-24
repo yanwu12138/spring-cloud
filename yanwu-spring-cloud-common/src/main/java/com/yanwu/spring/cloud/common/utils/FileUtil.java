@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.common.utils;
 import com.yanwu.spring.cloud.common.core.common.Contents;
 import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
+import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -25,6 +26,7 @@ import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -36,6 +38,8 @@ import java.util.concurrent.Future;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 
 /**
  * @author XuBaofeng.
@@ -398,8 +402,7 @@ public class FileUtil {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         String fileDisposition = "attachment;filename=" + URLEncoder.encode(file.getName(), Encoding.UTF_8);
-        return ResponseEntity
-                .ok()
+        return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
                 .header(HttpHeaders.CONTENT_ENCODING, Encoding.UTF_8)
@@ -460,6 +463,31 @@ public class FileUtil {
             // ----- 下载完成后删除压缩包
             deleteFile(zipFile);
         }
+    }
+
+    /**
+     * 导出文件时，异常情况导出
+     *
+     * @param message 错误说明
+     */
+    public static ResponseEntity<Resource> exportFailed(String message) {
+        return exportFailed(StringUtils.isBlank(message) ? Result.failed() : Result.failed(message));
+    }
+
+    /**
+     * 导出文件时，异常情况导出
+     *
+     * @param result 错误说明
+     */
+    public static <T> ResponseEntity<Resource> exportFailed(Result<T> result) {
+        if (result == null) {
+            result = Result.failed();
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
+                .header(HttpHeaders.CONTENT_ENCODING, UTF_8)
+                .body(new ByteArrayResource(JsonUtil.toString(result).getBytes(StandardCharsets.UTF_8)));
     }
 
     /**

@@ -10,6 +10,7 @@ import com.yanwu.spring.cloud.file.data.model.Attachment;
 import com.yanwu.spring.cloud.file.pojo.YanwuUser;
 import com.yanwu.spring.cloud.file.service.AttachmentService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +73,9 @@ public class AttachmentController {
     @GetMapping(value = "downloadFile/{id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("id") Long id, HttpServletResponse response) throws Exception {
         Attachment attachment = attachmentService.findById(id);
+        if (attachment == null || StringUtils.isBlank(attachment.getAttachmentAddress())) {
+            return FileUtil.exportFailed("文件不存在");
+        }
         return FileUtil.exportFile(attachment.getAttachmentAddress(), response);
     }
 
