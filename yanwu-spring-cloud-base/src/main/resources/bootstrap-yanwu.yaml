@@ -1,0 +1,13 @@
+CONFIG_SERVER_URL: 139.224.200.13:8848
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 139.224.200.13:8848
+        group: DEFAULT_GROUP
+        namespace: fcea3251-4f08-4f95-a872-d9a863704764
+      config:
+        server-addr: 139.224.200.13:8848
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        namespace: fcea3251-4f08-4f95-a872-d9a863704764

@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: yanwu-device
+  profiles:
+    active: yanwu
   cloud:
     nacos:
       discovery:

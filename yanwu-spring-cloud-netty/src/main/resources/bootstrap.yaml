@@ -4,11 +4,11 @@ spring:
   application:
     name: yanwu-netty
   redis:
-    host: 127.0.0.1
+    host: 139.224.200.13
     port: 6379
-    password: yanwu12138
+    password: r)NPrv39Hpj#cwckuTL0JsxJ
     timeout: 10000
-    database: 4
+    database: 14
   main:
     allow-bean-definition-overriding: true
   autoconfigure:

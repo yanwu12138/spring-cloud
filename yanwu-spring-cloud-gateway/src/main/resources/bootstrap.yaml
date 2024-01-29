@@ -1,15 +1,91 @@
-#################### NACOS CONFIG ####################
+server:
+  port: 9999
 spring:
   application:
     name: yanwu-gateway
+  profiles:
+    active: yanwu
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: yanwu12138
+    timeout: 10000
+    database: 1
   cloud:
-    nacos:
+    gateway:
       discovery:
-        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
-        group: DEFAULT_GROUP
-        namespace: a2e2dede-d9bf-4eae-a520-82f920801ab9
-      config:
-        group: DEFAULT_GROUP
-        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
-        namespace: a2e2dede-d9bf-4eae-a520-82f920801ab9
-        file-extension: yaml
+        locator:
+          enabled: true
+      routes:
+        ###  id: 路由的唯一标识
+        ###  uri：lb[固定写法，启动负载均衡]；fishbone-base[根据注册中心服务名进行请求转发]
+        ###  predicates：配置规则，所有的/base/开头的请求全部会被转发到fishbone-base服务
+        ###  filters：过滤器，若有StripPrefix过滤器时，gateway会根据StripPrefix=1所配的值（这里是1）去掉URL路径中的部分前缀（这里去掉一个前缀，即去掉base）
+        - id: yanwu-base
+          uri: lb://yanwu-base
+          predicates:
+            - Path=/base/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                # 令牌桶每秒填充平均速率
+                redis-rate-limiter.replenishRate: 1
+                # 令牌桶的上限
+                redis-rate-limiter.burstCapacity: 2
+                # 使用SpEL表达式从Spring容器中获取Bean对象
+                key-resolver: "#{@routeKeyResolver}"
+        - id: yanwu-device
+          uri: lb://yanwu-device
+          predicates:
+            - Path=/device/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                # 令牌桶每秒填充平均速率
+                redis-rate-limiter.replenishRate: 1
+                # 令牌桶的上限
+                redis-rate-limiter.burstCapacity: 2
+                # 使用SpEL表达式从Spring容器中获取Bean对象
+                key-resolver: "#{@routeKeyResolver}"
+        - id: yanwu-file
+          uri: lb://yanwu-file
+          predicates:
+            - Path=/file/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                # 令牌桶每秒填充平均速率
+                redis-rate-limiter.replenishRate: 1
+                # 令牌桶的上限
+                redis-rate-limiter.burstCapacity: 2
+                # 使用SpEL表达式从Spring容器中获取Bean对象
+                key-resolver: "#{@routeKeyResolver}"
+        - id: yanwu-message
+          uri: lb://yanwu-message
+          predicates:
+            - Path=/message/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                # 令牌桶每秒填充平均速率
+                redis-rate-limiter.replenishRate: 1
+                # 令牌桶的上限
+                redis-rate-limiter.burstCapacity: 2
+                # 使用SpEL表达式从Spring容器中获取Bean对象
+                key-resolver: "#{@routeKeyResolver}"
+  main:
+    allow-bean-definition-overriding: true
+feign:
+  hystrix:
+    enabled:  true
+  client:
+    config:
+      default:
+        connectTimeout: 50000
+        readTimeout: 50000

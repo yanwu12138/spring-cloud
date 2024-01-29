@@ -3,12 +3,8 @@ server:
 spring:
   application:
     name: yanwu-base
-  cloud:
-    nacos:
-      discovery:
-        server-addr: ${CONFIG_SERVER_URL:127.0.0.1:8848}
-        group: DEFAULT_GROUP
-        namespace: a2e2dede-d9bf-4eae-a520-82f920801ab9
+  profiles:
+    active: yanwu
   ### 解决数据库查询结果返回数据时的时区问题
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
