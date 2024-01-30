@@ -5,7 +5,6 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.yanwu.spring.cloud.common.utils.DownLoadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -94,7 +93,4 @@ public class QrCodeUtil {
         graph.dispose();
     }
 
-    public static void main(String[] args) throws Exception {
-        DownLoadUtil.download("https://bird-ops.oss-cn-shanghai.aliyuncs.com/upgrade/package/2.0/1002/1002-2.2.1.4.bin", "E:\\download\\111.zip", "330ea82fdc0a27370ee59652f4fb8f24");
-    }
 }
