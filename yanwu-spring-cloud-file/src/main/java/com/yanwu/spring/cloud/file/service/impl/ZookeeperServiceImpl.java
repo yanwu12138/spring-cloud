@@ -7,6 +7,7 @@ import com.yanwu.spring.cloud.file.service.ZookeeperService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessLock;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +52,13 @@ public class ZookeeperServiceImpl implements ZookeeperService {
     @Override
     public ZookeeperNode search(ZookeeperNode param) throws Exception {
         CuratorFramework client = zookeeperClient.getClient();
-        byte[] bytes = client.getData().storingStatIn(new Stat()).forPath(param.getPath());
-        return ZookeeperNode.getInstance(param.getPath(), new String(bytes));
+        try {
+            byte[] bytes = client.getData().storingStatIn(new Stat()).forPath(param.getPath());
+            return ZookeeperNode.getInstance(param.getPath(), new String(bytes));
+        } catch (KeeperException e) {
+            log.error("search zookeeper path failed. param: {}", param, e);
+            return null;
+        }
     }
 
     @Override

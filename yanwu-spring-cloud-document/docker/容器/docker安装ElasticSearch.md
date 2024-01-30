@@ -92,7 +92,7 @@ systemctl restart firewalld
 
 ##### 配置文件
 
->   kibana.xml
+>   kibana.yml
 >
 >   ```xml
 >   #################################################
