@@ -42,7 +42,18 @@ public class DateUtil {
      * @return 时间日期
      */
     public static String toTimeStr(Long time, DateFormat format) {
-        return new SimpleDateFormat(format.getFormat()).format(new Date(time));
+        return toTimeStr(new Date(time), format);
+    }
+
+    /**
+     * 根据时间戳和格式获取时间字符串
+     *
+     * @param time   时间
+     * @param format 格式
+     * @return 时间日期
+     */
+    public static String toTimeStr(Date time, DateFormat format) {
+        return new SimpleDateFormat(format.getFormat()).format(time);
     }
 
     /**

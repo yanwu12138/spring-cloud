@@ -1,5 +1,6 @@
-package com.yanwu.spring.cloud.common.utils;
+package com.yanwu.spring.cloud.common.test;
 
+import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -38,7 +39,7 @@ public class SynchronizedTest {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println();
         log.info("---------- test01 ----------");
         test01();
