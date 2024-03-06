@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,7 @@ public class JdbcTemplateTest {
 
     private static final JdbcTemplate JDBC_TEMPLATE;
     private static final String JDBC_URL = "";
-    private static final String DRIVER_CLASS = "com.mysql.jdbc.Driver";
+    private static final String DRIVER_CLASS = "";
     private static final String USERNAME = "";
     private static final String PASSWORD = "";
 
@@ -53,22 +54,19 @@ public class JdbcTemplateTest {
             log.error("file to shipInfos failed. filepath: {}", filepath);
             return;
         }
-        for (ShipInfo shipInfo : shipInfos) {
+        List<DeviceInfo> devices = new ArrayList<>();
+        shipInfos.forEach(shipInfo -> {
             try {
                 if (shipInfo == null || shipInfo.getShipId() == null) {
-                    continue;
+                    return;
                 }
-                if (CollectionUtils.isEmpty(shipInfo.getDevices())) {
-                    shipInfo.setDevices(new ArrayList<>());
-                }
-                buildEdge(shipInfo);
-                buildAntenna(shipInfo);
-                buildCamera(shipInfo);
                 buildShipName(shipInfo);
+                buildDevices(shipInfo, devices);
             } catch (Exception e) {
                 log.error("build ship device failed, shipId: {}, shipName: {}", shipInfo.getShipId(), shipInfo.getShipName(), e);
             }
-        }
+        });
+        FileUtil.appendWrite("/Users/xubaofeng/Downloads/奉化船只列表.json", JsonUtil.toString(devices).getBytes(StandardCharsets.UTF_8));
     }
 
     private static void buildShipName(ShipInfo shipInfo) {
@@ -78,40 +76,12 @@ public class JdbcTemplateTest {
         shipInfo.setShipName(shipInfo.getShipName().substring(0, shipInfo.getShipName().indexOf("-")));
     }
 
-    private static void buildEdge(ShipInfo shipInfo) {
-        String sql = " select " +
-                " td.box_code as box_code, " +
-                " td.mac_addr as mac_addr, " +
-                " td.create_time as create_time, " +
-                " tbm.type_name as model, " +
-                " tbp.type_name as location " +
-                " from t_device as td " +
-                "   left join t_base_type as tbm on td.device_model = tbm.id " +
-                "   left join t_base_type tbp on td.location  = tbp.id " +
-                " where " +
-                "   td.ship_id = " + shipInfo.getShipId() +
-                "   and td.type = 1 " +
-                "   order by td.id desc " +
-                "   limit 1;";
-        JDBC_TEMPLATE.query(sql, handler -> {
-            DeviceInfo instance = new DeviceInfo();
-            instance.setType(2);
-            instance.setBrand("波星通");
-            instance.setModel(handler.getString("model"));
-            instance.setSn(handler.getString("box_code"));
-            instance.setMac(handler.getString("mac_addr"));
-            instance.setTime(handler.getDate("create_time"));
-            instance.setPosition(handler.getString("location"));
-            instance.setPositionMark(buildPosition(instance.getPosition()));
-            shipInfo.getDevices().add(instance);
-        });
-    }
-
-    private static void buildCamera(ShipInfo shipInfo) {
+    private static void buildDevices(ShipInfo shipInfo, List<DeviceInfo> devices) {
         String sql = " select " +
                 " td.box_code as box_code,  " +
                 " td.mac_addr as mac_addr,  " +
                 " td.create_time as create_time,  " +
+                " td.type as device_type, " +
                 " tbd.type_name as brand, " +
                 " tbm.type_name as model, " +
                 " tbp.type_name as location " +
@@ -121,48 +91,37 @@ public class JdbcTemplateTest {
                 "   left join t_base_type as tbd on td.model = tbd.id " +
                 " where " +
                 "   td.ship_id = " + shipInfo.getShipId() +
-                "   and td.type = 6 " +
+                "   and td.type in (1, 2, 6) " +
                 "   order by td.id desc; ";
         JDBC_TEMPLATE.query(sql, handler -> {
+            int deviceType = handler.getInt("device_type");
             DeviceInfo instance = new DeviceInfo();
-            instance.setType(6);
-            instance.setBrand(handler.getString("brand"));
+            instance.setShipName(shipInfo.getShipName());
             instance.setModel(handler.getString("model"));
-            instance.setMac(handler.getString("mac_addr"));
-            instance.setSn(buildSn(handler.getString("box_code"), instance.getMac()));
-            instance.setTime(handler.getDate("create_time"));
-            instance.setPosition(handler.getString("location"));
-            instance.setPositionMark(buildPosition(instance.getPosition()));
-            shipInfo.getDevices().add(instance);
-        });
-    }
-
-    private static void buildAntenna(ShipInfo shipInfo) {
-        String sql = " select " +
-                " td.box_code as box_code, " +
-                " td.mac_addr as mac_addr, " +
-                " td.create_time as create_time, " +
-                " tbm.type_name as model, " +
-                " tbp.type_name as location " +
-                " from t_device as td " +
-                "   left join t_base_type as tbm on td.device_model = tbm.id " +
-                "   left join t_base_type tbp on td.location  = tbp.id " +
-                " where " +
-                "   td.ship_id = " + shipInfo.getShipId() +
-                "   and td.type = 2 " +
-                "   order by td.id desc " +
-                "   limit 1;";
-        JDBC_TEMPLATE.query(sql, handler -> {
-            DeviceInfo instance = new DeviceInfo();
-            instance.setType(1);
-            instance.setBrand("波星通");
-            instance.setModel(handler.getString("model"));
-            instance.setSn(handler.getString("box_code"));
             instance.setMac(handler.getString("mac_addr"));
             instance.setTime(handler.getDate("create_time"));
             instance.setPosition(handler.getString("location"));
             instance.setPositionMark(buildPosition(instance.getPosition()));
-            shipInfo.getDevices().add(instance);
+            switch (deviceType) {
+                case 1:
+                    instance.setType(1);
+                    instance.setBrand("波星通");
+                    instance.setSn(handler.getString("box_code"));
+                    break;
+                case 2:
+                    instance.setType(2);
+                    instance.setBrand("波星通");
+                    instance.setSn(handler.getString("box_code"));
+                    break;
+                case 6:
+                    instance.setType(6);
+                    instance.setBrand(handler.getString("brand"));
+                    instance.setSn(buildSn(handler.getString("box_code"), instance.getMac()));
+                    break;
+                default:
+                    break;
+            }
+            devices.add(instance);
         });
     }
 
@@ -174,6 +133,9 @@ public class JdbcTemplateTest {
     }
 
     private static String buildPosition(String position) {
+        if (StringUtils.isBlank(position)) {
+            return "驾驶室";
+        }
         switch (position) {
             case "前甲板":
             case "右前方-2":
@@ -211,6 +173,8 @@ public class JdbcTemplateTest {
     @Accessors(chain = true)
     public static class DeviceInfo implements Serializable {
         private static final long serialVersionUID = -2173510009765550861L;
+        /*** 船只ID ***/
+        private String shipName;
         /*** 设备类型：【1: 主机盒; 2: 天线; 6: 摄像头】 ***/
         private Integer type;
         /*** 设备SN序列号 ***/
@@ -232,6 +196,24 @@ public class JdbcTemplateTest {
             this.time = DateUtil.toTimeStr(date, DateUtil.DateFormat.YYYY_MM_DD_HH_MM_SS);
             return this;
         }
+
+        public DeviceInfo setPosition(String position) {
+            if (StringUtils.isNotBlank(position)) {
+                this.position = position;
+            } else {
+                this.position = "驾驶室";
+            }
+            return this;
+        }
+
+        public DeviceInfo setModel(String model) {
+            if (StringUtils.isNotBlank(model)) {
+                this.model = model;
+            } else {
+                this.model = "球形";
+            }
+            return this;
+        }
     }
 
     @Data
@@ -242,8 +224,6 @@ public class JdbcTemplateTest {
         private Integer shipId;
         /*** 船只ID ***/
         private String shipName;
-        /*** 船只设备列表 ***/
-        private List<DeviceInfo> devices;
     }
 
 }
