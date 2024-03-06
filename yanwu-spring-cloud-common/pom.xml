@@ -363,6 +363,11 @@
             <artifactId>snmp4j</artifactId>
             <version>3.7.7</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
