@@ -1,9 +1,8 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.yanwu.spring.cloud.common.core.enums.AccessTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-
-import java.lang.reflect.Method;
 
 /**
  * @author XuBaofeng.
@@ -12,6 +11,7 @@ import java.lang.reflect.Method;
  * description:
  */
 @Slf4j
+@SuppressWarnings("all")
 public class EnumUtil {
 
     private EnumUtil() {
@@ -20,9 +20,7 @@ public class EnumUtil {
 
     public static void checkEnumUniqueness(Class<? extends Enum<?>> clazz) {
         try {
-            Method method = clazz.getDeclaredMethod("checkUniqueness");
-            method.setAccessible(true);
-            Boolean result = (Boolean) method.invoke(null);
+            Boolean result = (Boolean) CommandUtil.invoke(clazz, "checkUniqueness", null);
             if (BooleanUtils.isFalse(result)) {
                 throw new RuntimeException();
             }
@@ -31,6 +29,10 @@ public class EnumUtil {
             System.exit(-1);
         }
         log.info("enum check uniqueness success. class: {}", clazz.getName());
+    }
+
+    public static void main(String[] args) {
+        EnumUtil.checkEnumUniqueness(AccessTypeEnum.class);
     }
 
 }
