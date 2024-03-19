@@ -25,7 +25,7 @@ public class ArrayUtil {
      * @return [true: 空; false: 不为空]
      */
     public static boolean isEmpty(Object[] source) {
-        if (source == null || source.length == 0) {
+        if (source == null) {
             return true;
         }
         for (Object obj : source) {
