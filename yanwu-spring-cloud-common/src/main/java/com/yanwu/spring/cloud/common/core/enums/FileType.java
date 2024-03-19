@@ -15,7 +15,7 @@ import java.util.Set;
  * description:
  * 文件类型
  */
-public enum FileType {
+public enum FileType implements AbstractBaseEnum {
 
     /*** 文件类型 ***/
     OTHERS(""),

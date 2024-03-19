@@ -26,12 +26,6 @@ public class ObjectUtil {
         throw new UnsupportedOperationException("ObjectUtil should never be instantiated");
     }
 
-    public static void main(String[] args) {
-        for (Class<?> subType : getClazz("com.yanwu.spring", RuntimeException.class)) {
-            System.out.println(subType.getName());
-        }
-    }
-
     /***
      * 根据扫描路径和指定的Class找到该Class所有的实现
      * @param path  扫描路径

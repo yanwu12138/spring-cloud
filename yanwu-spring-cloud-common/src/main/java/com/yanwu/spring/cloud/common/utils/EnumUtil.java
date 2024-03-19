@@ -1,8 +1,10 @@
 package com.yanwu.spring.cloud.common.utils;
 
-import com.yanwu.spring.cloud.common.core.enums.AccessTypeEnum;
+import com.yanwu.spring.cloud.common.core.enums.AbstractBaseEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
+
+import java.util.Set;
 
 /**
  * @author XuBaofeng.
@@ -18,7 +20,7 @@ public class EnumUtil {
         throw new UnsupportedOperationException("EnumUtil should never be instantiated");
     }
 
-    public static void checkEnumUniqueness(Class<? extends Enum<?>> clazz) {
+    public static <E extends AbstractBaseEnum> void checkEnumUniqueness(Class<E> clazz) {
         try {
             Boolean result = (Boolean) CommandUtil.invoke(clazz, "checkUniqueness", null);
             if (BooleanUtils.isFalse(result)) {
@@ -32,7 +34,11 @@ public class EnumUtil {
     }
 
     public static void main(String[] args) {
-        EnumUtil.checkEnumUniqueness(AccessTypeEnum.class);
+        Set<Class<? extends AbstractBaseEnum>> clazzSet = ObjectUtil.getClazz("com.yanwu.spring.cloud", AbstractBaseEnum.class);
+        for (Class<? extends AbstractBaseEnum> clazz : clazzSet) {
+            checkEnumUniqueness(clazz);
+        }
+
     }
 
 }

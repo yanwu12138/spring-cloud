@@ -14,7 +14,7 @@ import java.util.Set;
  * description:
  */
 @Getter
-public enum AccessTypeEnum {
+public enum AccessTypeEnum implements AbstractBaseEnum {
 
     USER(1),
     ROLE(2),
