@@ -4,6 +4,7 @@ import com.yanwu.spring.cloud.common.pojo.UserAccessesInfo;
 import lombok.Getter;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -48,6 +49,17 @@ public enum AccessTypeEnum {
             default:
                 return Collections.emptySet();
         }
+    }
+
+    public static boolean checkUniqueness() {
+        Set<Integer> keySet = new HashSet<>();
+        for (AccessTypeEnum value : AccessTypeEnum.values()) {
+            if (keySet.contains(value.type)) {
+                return false;
+            }
+            keySet.add(value.type);
+        }
+        return true;
     }
 
 }

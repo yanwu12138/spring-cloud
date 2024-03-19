@@ -5,6 +5,9 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
  * @date 2019-08-26 14:22.
@@ -70,4 +73,16 @@ public enum FileType {
         }
         return null;
     }
+
+    public static boolean checkUniqueness() {
+        Set<String> keySet = new HashSet<>();
+        for (FileType value : FileType.values()) {
+            if (keySet.contains(value.suffix)) {
+                return false;
+            }
+            keySet.add(value.suffix);
+        }
+        return true;
+    }
+
 }
