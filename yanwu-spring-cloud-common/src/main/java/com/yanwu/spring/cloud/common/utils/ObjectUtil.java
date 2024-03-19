@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -23,6 +24,26 @@ public class ObjectUtil {
 
     private ObjectUtil() {
         throw new UnsupportedOperationException("ObjectUtil should never be instantiated");
+    }
+
+    public static void main(String[] args) {
+        for (Class<?> subType : getClazz("com.yanwu.spring", RuntimeException.class)) {
+            System.out.println(subType.getName());
+        }
+    }
+
+    /***
+     * 根据扫描路径和指定的Class找到该Class所有的实现
+     * @param path  扫描路径
+     * @param clazz 基类或接口的Class
+     * @return Class所有的实现集合
+     */
+    public static <E> Set<Class<? extends E>> getClazz(String path, Class<E> clazz) {
+        if (StringUtils.isBlank(path) || clazz == null) {
+            return Collections.emptySet();
+        }
+        Set<Class<? extends E>> clazzSet = new Reflections(path).getSubTypesOf(clazz);
+        return CollectionUtils.isEmpty(clazzSet) ? Collections.emptySet() : clazzSet;
     }
 
     /***
