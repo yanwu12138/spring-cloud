@@ -13,16 +13,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Part;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -156,16 +154,13 @@ public class ExcelUtil {
      */
     public static List<String> analysisHead(Part file) throws IOException {
         List<String> result = new ArrayList<>();
-        String fileName = file.getSubmittedFileName();
-        // ----- 检查文件后缀, 是否是Excel
-        String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
-        if (!FileType.EXCEL_07.getSuffix().equals(fileSuffix) && !FileType.EXCEL_03.getSuffix().equals(fileSuffix)) {
-            return result;
+        Boolean excelType = analysisExcelType(file);
+        if (excelType == null) {
+            return Collections.emptyList();
         }
         // ----- 读取文件
-        boolean flag = FileType.EXCEL_07.getSuffix().equals(fileSuffix);
         try (InputStream inputStream = file.getInputStream();
-             Workbook workbook = flag ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream)) {
+             Workbook workbook = excelType ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             if (sheet == null) {
                 return result;
@@ -194,16 +189,13 @@ public class ExcelUtil {
      */
     public static List<List<String>> analysisExcel(Part file, Integer index) throws IOException {
         List<List<String>> result = new ArrayList<>();
-        String fileName = file.getSubmittedFileName();
-        // ----- 检查文件后缀, 是否是Excel
-        String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
-        if (!FileType.EXCEL_07.getSuffix().equals(fileSuffix) && !FileType.EXCEL_03.getSuffix().equals(fileSuffix)) {
-            return result;
+        Boolean excelType = analysisExcelType(file);
+        if (excelType == null) {
+            return Collections.emptyList();
         }
         // ----- 读取文件
-        boolean flag = FileType.EXCEL_07.getSuffix().equals(fileSuffix);
         try (InputStream inputStream = file.getInputStream();
-             Workbook workbook = flag ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream)) {
+             Workbook workbook = excelType ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(index);
             if (sheet == null) {
                 return result;
@@ -212,7 +204,7 @@ public class ExcelUtil {
             if (!row.hasNext()) {
                 return result;
             }
-            // ----- 去除标题头
+            // ----- 去除表头
             row.next();
             // ----- 读取数据域
             while (row.hasNext()) {
@@ -225,6 +217,17 @@ public class ExcelUtil {
             }
             return result;
         }
+    }
+
+    private static Boolean analysisExcelType(Part file) {
+        // ----- 检查文件后缀, 是否是Excel
+        String fileName = file.getSubmittedFileName();
+        if (StringUtils.isEmpty(fileName)) {
+            return null;
+        }
+        String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
+        FileType excelType = FileType.getTypeBySuffix(fileSuffix);
+        return excelType == null ? null : FileType.EXCEL_07.getSuffix().equals(fileSuffix);
     }
 
     /**

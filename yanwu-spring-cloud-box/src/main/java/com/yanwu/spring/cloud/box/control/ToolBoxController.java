@@ -107,13 +107,13 @@ public class ToolBoxController {
         if (file == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        List<String> head = ExcelUtil.analysisHead(file);
+        List<String> heads = ExcelUtil.analysisHead(file);
         List<List<String>> contents = ExcelUtil.analysisExcel(file, 0);
         List<ObjectNode> result = new ArrayList<>();
         contents.forEach(content -> {
             ObjectNode nodes = JsonUtil.getMapper().createObjectNode();
             for (int index = 0; index < content.size(); index++) {
-                String field = head.get(index);
+                String field = heads.get(index);
                 String value = content.get(index);
                 nodes.put(field, value);
             }
