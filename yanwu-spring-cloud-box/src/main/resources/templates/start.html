@@ -15,22 +15,53 @@
 
 </style>
 
-<body>
+<body onload="defaultValue()">
 <div id="tool-box-index" v-cloak>
-    <div id="random-password-div" style="top: 20px;left: 100px">
-        <input id="random-password-button" value="随机生成密码" onclick="randomPassword()"
-               style="width: 120px" type="button"/>
-        <input id="random-password-length" type="number" value="32" style="width: 50Px"/>
-        <input id="random-password-result" type="text" readonly="readonly" style="width: 512px;"/>
+    <div id="random-password-div" style="margin-top: 20px;margin-left: 60px">
+        <input id="random-password-button" value="随机生成密码" onclick="randomPassword()" type="button"
+               style="width: 120px"/>
+        <input id="random-password-length" type="number" style="width: 60Px"/>
+        <input id="random-password-result" type="text" readonly="readonly" style="width: 500px;"/>
+    </div>
+    <div id="datestamp-toTime-index" style="margin-top: 10px;margin-left: 60px">
+        <input id="datestamp-toTime-button" value="时间戳 转 时间" onclick="stampToTime()" type="button"
+               style="width: 120px"/>
+        <input id="datestamp-source-stamp" type="text" style="width: 150px"/>
+        <input id="datestamp-target-time" type="text" readonly="readonly" style="width: 150px"/>
+    </div>
+    <div id="datestamp-toStamp-index" style="margin-top: 10px;margin-left: 60px">
+        <input id="datestamp-toStamp-button" value="时间 转 时间戳" onclick="timeToStamp()" type="button"
+               style="width: 120px"/>
+        <input id="datestamp-source-time" type="text" style="width: 150px"/>
+        <input id="datestamp-target-stamp" type="text" readonly="readonly" style="width: 150px"/>
     </div>
 </div>
 </body>
 
 <script th:inline="javascript">
+
+    /** 默认值处理 **/
+    function defaultValue() {
+        $("#random-password-length").val(32)
+
+        $("#datestamp-source-stamp").val(Date.now())
+
+        const localtime = new Date();
+        const date = localtime.getFullYear() + '-' + filling(localtime.getMonth() + 1) + '-' + filling(localtime.getDate())
+        const time = filling(localtime.getHours()) + ':' + filling(localtime.getMinutes()) + ':' + filling(localtime.getSeconds())
+        $("#datestamp-source-time").val(date + ' ' + time)
+    }
+
+    /** 获取根据指定长度获取随机密码 **/
     function randomPassword() {
-        const randomLen = $("#random-password-length").val()
+        const param = {
+            data: $("#random-password-length").val()
+        };
         $.ajax({
-            url: '/tool/randomPassword/' + randomLen,
+            url: '/tool/randomPassword',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(param),
             dataType: 'json',
             success: function (response) {
                 if (response.status) {
@@ -43,7 +74,59 @@
                 console.error(response, textStatus, errorThrown)
             }
         })
+    }
 
+    function stampToTime() {
+        const param = {
+            data: $("#datestamp-source-stamp").val()
+        };
+        $.ajax({
+            url: '/tool/stampToTime',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(param),
+            dataType: 'json',
+            success: function (response) {
+                if (response.status) {
+                    $("#datestamp-target-time").val(response.data)
+                } else {
+                    console.error(response.message)
+                }
+            },
+            error: function (response, textStatus, errorThrown) {
+                console.error(response, textStatus, errorThrown)
+            }
+        })
+    }
+
+    function timeToStamp() {
+        const param = {
+            data: $("#datestamp-source-time").val()
+        };
+        $.ajax({
+            url: '/tool/timeToStamp',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(param),
+            dataType: 'json',
+            success: function (response) {
+                if (response.status) {
+                    $("#datestamp-target-stamp").val(response.data)
+                } else {
+                    console.error(response.message)
+                }
+            },
+            error: function (response, textStatus, errorThrown) {
+                console.error(response, textStatus, errorThrown)
+            }
+        })
+    }
+
+    function filling(source) {
+        if (source.toString().length < 2) {
+            source = '0' + source
+        }
+        return source
     }
 </script>
 </html>
