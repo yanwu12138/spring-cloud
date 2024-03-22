@@ -38,7 +38,7 @@ import java.util.Set;
 public class ToolBoxController {
     private static final Random RANDOM = new Random();
     private static final Integer DEFAULT_LENGTH = 24;
-    private static final Integer BYTE_SIZE = 1024 * 1024;
+    private static final Integer BYTE_SIZE = 10 * 1024 * 1024;
     private static final String PASSWORD_KEY = "J3mqGev7!SlytCTLEzc1g-ZYxD=QIRWkKUjF+d9hi4a6B8pPwr5AMo2fV^nNsbuH0X";
 
     @RequestHandler
@@ -102,24 +102,18 @@ public class ToolBoxController {
         return ExcelUtil.exportExcel(workbook, fileName);
     }
 
+    @RequestHandler
     @PostMapping(value = "excelToJson")
     public ResponseEntity<Resource> excelToJson(@RequestPart(name = "file") Part file) throws Exception {
         if (file == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        List<String> heads = ExcelUtil.analysisHead(file);
-        List<List<String>> contents = ExcelUtil.analysisExcel(file, 0);
-        List<ObjectNode> result = new ArrayList<>();
-        contents.forEach(content -> {
-            ObjectNode nodes = JsonUtil.getMapper().createObjectNode();
-            for (int index = 0; index < content.size(); index++) {
-                String field = heads.get(index);
-                String value = content.get(index);
-                nodes.put(field, value);
-            }
-            result.add(nodes);
-        });
-        return FileUtil.exportFailed(Result.success(result));
+        List<ObjectNode> result = ExcelUtil.analysisExcel(file, ObjectNode.class);
+        if (CollectionUtils.isEmpty(result)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        String filename = "excelToJson" + DateUtil.toTimeStr(System.currentTimeMillis(), DateUtil.DateFormat.YYYYMMDDHHMMSS) + FileType.JSON.getSuffix();
+        return FileUtil.exportContents(Result.success(result), filename);
     }
 
 }

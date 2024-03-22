@@ -356,6 +356,26 @@ public class FileUtil {
     }
 
     /**
+     * 将结果对象数据作为文件到处
+     *
+     * @param contents 结果
+     * @param filename 文件名
+     * @throws Exception .
+     */
+    public static <T> ResponseEntity<Resource> exportContents(Result<T> contents, String filename) throws Exception {
+        if (contents == null) {
+            contents = Result.failed();
+        }
+        String fileDisposition = "attachment;filename=" + URLEncoder.encode(filename, Encoding.UTF_8);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
+                .header(HttpHeaders.CONTENT_ENCODING, UTF_8)
+                .header(HttpHeaders.CONTENT_DISPOSITION, fileDisposition)
+                .body(new ByteArrayResource(JsonUtil.toString(contents).getBytes(StandardCharsets.UTF_8)));
+    }
+
+    /**
      * 导出文件
      *
      * @param filePath 文件路径

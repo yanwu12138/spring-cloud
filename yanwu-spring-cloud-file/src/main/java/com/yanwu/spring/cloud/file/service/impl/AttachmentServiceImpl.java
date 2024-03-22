@@ -42,8 +42,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Attachment uploadExcel(Part file, Long id) throws Exception {
-        List<List<String>> result = ExcelUtil.analysisExcel(file, 0);
-        log.info("uploadExcel: {}", result);
+        List<Attachment> attachments = ExcelUtil.analysisExcel(file, Attachment.class);
+        log.info("uploadExcel: {}", attachments);
         Attachment attachment = new Attachment();
         attachment.setAttachmentSize(file.getSize());
         attachment.setName(file.getSubmittedFileName());
