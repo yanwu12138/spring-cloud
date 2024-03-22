@@ -14,9 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
@@ -47,6 +45,46 @@ public final class JsonUtil {
 
     public static ObjectMapper getMapper() {
         return MAPPER;
+    }
+
+    /**
+     * 获取json字符串中所有的Field
+     *
+     * @param json json字符串
+     * @return Field集合
+     */
+    public static Set<String> findAllField(String json) {
+        if (StringUtils.isBlank(json)) {
+            return Collections.emptySet();
+        }
+        return findAllField(toJsonNode(json));
+    }
+
+    /**
+     * 获取jsonNode中所有的Field
+     *
+     * @param node jsonNode
+     * @return Field集合
+     */
+    public static Set<String> findAllField(JsonNode node) {
+        if (node == null) {
+            return Collections.emptySet();
+        }
+        HashSet<String> fieldSet = new HashSet<>();
+        findAllField(node, fieldSet);
+        return fieldSet;
+    }
+
+    private static void findAllField(JsonNode node, HashSet<String> fieldSet) {
+        if (node.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> entry = fields.next();
+                fieldSet.add(entry.getKey());
+            }
+        } else if (node.isArray()) {
+            node.forEach(item -> findAllField(item, fieldSet));
+        }
     }
 
     /**

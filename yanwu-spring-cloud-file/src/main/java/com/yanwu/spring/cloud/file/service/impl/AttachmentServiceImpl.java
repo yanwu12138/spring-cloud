@@ -55,20 +55,8 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
     }
 
     @Override
-    public List<List<String>> downloadExcel() {
-        List<Attachment> attachments = list();
-        List<List<String>> contents = new ArrayList<>();
-        for (Attachment attachment : attachments) {
-            List<String> content = new ArrayList<>();
-            content.add(String.valueOf(attachment.getId()));
-            content.add(String.valueOf(attachment.getCreated()));
-            content.add(String.valueOf(attachment.getUpdated()));
-            content.add(attachment.getName());
-            content.add(String.valueOf(attachment.getAttachmentSize()));
-            content.add(String.valueOf(attachment.getAttachmentType()));
-            contents.add(content);
-        }
-        return contents;
+    public List<Attachment> downloadExcel() {
+        return list();
     }
 
     @Override

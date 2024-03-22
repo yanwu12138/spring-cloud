@@ -1,71 +1,85 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<html xmlns:th='http://www.thymeleaf.org' lang='zh-CN'>
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset='UTF-8'/>
     <title>tool-box-index</title>
     <script src='//alinw.alicdn.com/platform/c/jquery/1.11.3/dist/jquery.min.js'></script>
 </head>
 <!-- 引入样式 -->
-<script src="https://cdn.jsdelivr.net/npm/jsoneditor@5.26.3/dist/jsoneditor-minimalist.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.9"></script>
-<script src="https://cdn.jsdelivr.net/npm/element-ui@2.6.1/lib/index.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/jsoneditor@5.26.3/dist/jsoneditor-minimalist.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/vue@2.6.9'></script>
+<script src='https://cdn.jsdelivr.net/npm/element-ui@2.6.1/lib/index.js'></script>
 <style>
 
 </style>
 
-<body onload="defaultValue()">
-<div id="tool-box-index" v-cloak>
-    <div id="random-password-div" style="margin-top: 20px;margin-left: 60px">
-        <input id="random-password-button" value="随机生成密码" onclick="randomPassword()" type="button"
-               style="width: 120px"/>
-        <label for="random-password-length">
-            <input id="random-password-length" type="number" style="width: 60Px"/>
+<body onload='defaultValue()'>
+<div id='tool-box-index' v-cloak>
+    <div id='random-password-div' style='margin-top: 20px;margin-left: 60px'>
+        <input id='random-password-button' value='随机生成密码' onclick='randomPassword()' type='button'
+               style='width: 120px'/>
+        <label for='random-password-length'>
+            <input id='random-password-length' type='number' style='width: 60Px'/>
         </label>
-        <label for="random-password-result">
-            <input id="random-password-result" type="text" readonly="readonly" style="width: 500px;"/>
-        </label>
-    </div>
-    <div id="datestamp-toTime-index" style="margin-top: 10px;margin-left: 60px">
-        <input id="datestamp-toTime-button" value="时间戳 转 时间" onclick="stampToTime()" type="button"
-               style="width: 120px"/>
-        <label for="datestamp-source-stamp">
-            <input id="datestamp-source-stamp" type="text" style="width: 150px"/>
-        </label>
-        <label for="datestamp-target-time">
-            <input id="datestamp-target-time" type="text" readonly="readonly" style="width: 150px"/>
+        <label for='random-password-result'>
+            <input id='random-password-result' type='text' readonly='readonly' style='width: 500px;'/>
         </label>
     </div>
-    <div id="datestamp-toStamp-index" style="margin-top: 10px;margin-left: 60px">
-        <input id="datestamp-toStamp-button" value="时间 转 时间戳" onclick="timeToStamp()" type="button"
-               style="width: 120px"/>
-        <label for="datestamp-source-time">
-            <input id="datestamp-source-time" type="text" style="width: 150px"/>
+    <div id='datestamp-toTime-index' style='margin-top: 10px;margin-left: 60px'>
+        <input id='datestamp-toTime-button' value='时间戳 转 时间' onclick='stampToTime()' type='button'
+               style='width: 120px'/>
+        <label for='datestamp-source-stamp'>
+            <input id='datestamp-source-stamp' type='text' style='width: 150px'/>
         </label>
-        <label for="datestamp-target-stamp">
-            <input id="datestamp-target-stamp" type="text" readonly="readonly" style="width: 150px"/>
+        <label for='datestamp-target-time'>
+            <input id='datestamp-target-time' type='text' readonly='readonly' style='width: 150px'/>
+        </label>
+    </div>
+    <div id='datestamp-toStamp-index' style='margin-top: 10px;margin-left: 60px'>
+        <input id='datestamp-toStamp-button' value='时间 转 时间戳' onclick='timeToStamp()' type='button'
+               style='width: 120px'/>
+        <label for='datestamp-source-time'>
+            <input id='datestamp-source-time' type='text' style='width: 150px'/>
+        </label>
+        <label for='datestamp-target-stamp'>
+            <input id='datestamp-target-stamp' type='text' readonly='readonly' style='width: 150px'/>
+        </label>
+    </div>
+    <div id='json-to-excel-index' style='margin-top: 10px;margin-left: 60px'>
+        <input id='json-to-excel-button' value='JSON 转 Excel' onclick='jsonToExcel()' type='button'
+               style='width: 120px'>
+        <label for='source-json'>
+            <input id='source-json' type='file' accept='.json' style='width: 500px'>
+        </label>
+    </div>
+    <div id='excel-to-json-index' style='margin-top: 10px;margin-left: 60px'>
+        <input id='excel-to-json-button' value='Excel 转 JSON' onclick='excelToJson()' type='button'
+               style='width: 120px'>
+        <label for='source-excel'>
+            <input id='source-excel' type='file' accept='.xlsx' style='width: 500px'>
         </label>
     </div>
 </div>
 </body>
 
-<script th:inline="javascript">
+<script th:inline='javascript'>
 
     /*** 默认值处理 ***/
     function defaultValue() {
-        $("#random-password-length").val(32)
+        $('#random-password-length').val(32)
 
-        $("#datestamp-source-stamp").val(Date.now())
+        $('#datestamp-source-stamp').val(Date.now())
 
-        const localtime = new Date();
+        const localtime = new Date()
         const date = localtime.getFullYear() + '-' + filling(localtime.getMonth() + 1) + '-' + filling(localtime.getDate())
         const time = filling(localtime.getHours()) + ':' + filling(localtime.getMinutes()) + ':' + filling(localtime.getSeconds())
-        $("#datestamp-source-time").val(date + ' ' + time)
+        $('#datestamp-source-time').val(date + ' ' + time)
     }
 
     /*** 获取根据指定长度获取随机密码 ***/
     function randomPassword() {
         const param = {
-            data: $("#random-password-length").val()
+            data: $('#random-password-length').val()
         };
         $.ajax({
             url: '/tool/randomPassword',
@@ -75,7 +89,7 @@
             dataType: 'json',
             success: function (response) {
                 if (response.status) {
-                    $("#random-password-result").val(response.data)
+                    $('#random-password-result').val(response.data)
                 } else {
                     console.error(response.message)
                 }
@@ -89,7 +103,7 @@
     /*** 时间戳转时间 ***/
     function stampToTime() {
         const param = {
-            data: $("#datestamp-source-stamp").val()
+            data: $('#datestamp-source-stamp').val()
         };
         $.ajax({
             url: '/tool/stampToTime',
@@ -99,7 +113,7 @@
             dataType: 'json',
             success: function (response) {
                 if (response.status) {
-                    $("#datestamp-target-time").val(response.data)
+                    $('#datestamp-target-time').val(response.data)
                 } else {
                     console.error(response.message)
                 }
@@ -113,7 +127,7 @@
     /*** 时间转时间戳 ***/
     function timeToStamp() {
         const param = {
-            data: $("#datestamp-source-time").val()
+            data: $('#datestamp-source-time').val()
         };
         $.ajax({
             url: '/tool/timeToStamp',
@@ -123,7 +137,7 @@
             dataType: 'json',
             success: function (response) {
                 if (response.status) {
-                    $("#datestamp-target-stamp").val(response.data)
+                    $('#datestamp-target-stamp').val(response.data)
                 } else {
                     console.error(response.message)
                 }
@@ -134,11 +148,59 @@
         })
     }
 
+    function jsonToExcel() {
+        const file = new FormData()
+        file.append('file', $('#source-json')[0].files[0])
+        convertFile(file, '/tool/jsonToExcel', 'jsonToExcel.xlsx')
+    }
+
+    function excelToJson() {
+        const file = new FormData()
+        file.append('file', $('#source-excel')[0].files[0])
+        convertFile(file, '/tool/excelToJson', 'excelToJson.json')
+    }
+
+    function convertFile(file, url, defaultFilename) {
+        const xhr = new XMLHttpRequest()
+        xhr.open('POST', url, true)
+        xhr.responseType = 'blob'
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                let filename;
+                const contentDisposition = xhr.getResponseHeader('Content-Disposition')
+                if (contentDisposition) {
+                    filename = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[0]
+                } else {
+                    filename = defaultFilename
+                }
+                downloadFile(filename, xhr.response)
+            } else {
+                console.log('文件转换失败', xhr.status)
+            }
+        };
+        xhr.send(file);
+    }
+
+    function downloadFile(filename, response) {
+        filename = String(filename).replaceAll('filename=', '')
+        const reader = new FileReader()
+        reader.readAsDataURL(response)
+        reader.onload = function (e) {
+            const a = document.createElement('a')
+            a.download = filename
+            a.href = e.target.result
+            document.documentElement.appendChild(a)
+            a.click()
+            a.remove()
+        }
+    }
+
     function filling(source) {
         if (source.toString().length < 2) {
             source = '0' + source
         }
         return source
     }
+
 </script>
 </html>

@@ -17,7 +17,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -107,7 +106,7 @@ public class RequestHandlerAspect {
         USER_ACCESSES_LOCAL.remove();
         String txId = AspectUtil.getTxId();
         Method method = AspectUtil.getMethod(joinPoint);
-        if (result instanceof Serializable || result instanceof ResponseEntity) {
+        if (result instanceof Serializable) {
             log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}",
                     txId, AspectUtil.getClassName(method), method.getName(), AspectUtil.print(result));
         } else {

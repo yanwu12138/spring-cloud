@@ -19,7 +19,7 @@ public interface AttachmentService extends IService<Attachment> {
 
     Attachment uploadExcel(Part file, Long id) throws Exception;
 
-    List<List<String>> downloadExcel() throws Exception;
+    List<Attachment> downloadExcel() throws Exception;
 
     List<Attachment> uploadFile(MultipartHttpServletRequest request, Long id) throws Exception;
 

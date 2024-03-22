@@ -107,9 +107,9 @@ public class AttachmentController {
     @RequestHandler
     @GetMapping(value = "downloadExcel")
     public ResponseEntity<Resource> downloadExcel() throws Exception {
-        List<List<String>> contents = attachmentService.downloadExcel();
+        List<Attachment> contents = attachmentService.downloadExcel();
         List<String> head = ExcelUtil.assembleHead("id", "created", "update", "name", "att_name", "att_size", "att_type");
-        SXSSFWorkbook workbook = ExcelUtil.assembleExcel(head, contents);
+        SXSSFWorkbook workbook = ExcelUtil.assembleExcelByList(head, contents);
         String fileName = "downloadExcel" + LocalDate.now() + LocalTime.now().toString() + FileType.EXCEL_07.getSuffix();
         return ExcelUtil.exportExcel(workbook, fileName);
     }

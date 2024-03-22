@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author XuBaofeng.
@@ -44,7 +46,7 @@ public class ExcelUtil {
      * @param contents 数据集合
      * @return excel
      */
-    public static SXSSFWorkbook assembleExcel(List<String> head, List<List<String>> contents) {
+    public static <T> SXSSFWorkbook assembleExcelByList(List<String> head, List<T> contents) {
         // ---- 创建excel文件
         SXSSFWorkbook workbook = new SXSSFWorkbook();
         // ---- 创建工作簿
@@ -52,21 +54,60 @@ public class ExcelUtil {
         // ---- 设置默认列宽
         sheet.setDefaultColumnWidth(15);
         // ---- 创建标题行
-        Row titleRow = sheet.createRow(0);
+        AtomicInteger index = new AtomicInteger();
+        createHead(workbook, sheet, head, index);
+        // ---- 创建数据行
+        contents.forEach(content -> {
+            Row row = sheet.createRow(index.getAndIncrement());
+            for (int j = 0; j < head.size(); j++) {
+                row.createCell(j).setCellValue(JsonUtil.pathText(JsonUtil.toJsonNode(JsonUtil.toString(content)), head.get(j)));
+            }
+        });
+        return workbook;
+    }
+
+    /**
+     * 组装Excel的方法, 通过该方法传入标题栏和数据体得到一个Excel07文件
+     * 只组装Excel07，不做Excel03的处理
+     *
+     * @param head     标题栏
+     * @param contents 数据集合
+     * @return excel
+     */
+    public static SXSSFWorkbook assembleExcelByNode(List<String> head, JsonNode contents) {
+        // ---- 创建excel文件
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        // ---- 创建工作簿
+        Sheet sheet = workbook.createSheet();
+        // ---- 设置默认列宽
+        sheet.setDefaultColumnWidth(15);
+        // ---- 创建标题行
+        AtomicInteger index = new AtomicInteger();
+        createHead(workbook, sheet, head, index);
+        // ---- 创建数据行
+        if (contents.isArray()) {
+            contents.forEach(content -> {
+                Row row = sheet.createRow(index.getAndIncrement());
+                for (int j = 0; j < head.size(); j++) {
+                    row.createCell(j).setCellValue(JsonUtil.pathText(content, head.get(j)));
+                }
+            });
+        } else if (contents.isObject()) {
+            Row row = sheet.createRow(index.getAndIncrement());
+            for (int j = 0; j < head.size(); j++) {
+                row.createCell(j).setCellValue(JsonUtil.pathText(contents, head.get(j)));
+            }
+        }
+        return workbook;
+    }
+
+    private static void createHead(SXSSFWorkbook workbook, Sheet sheet, List<String> head, AtomicInteger index) {
+        Row titleRow = sheet.createRow(index.getAndIncrement());
         for (int i = 0; i < head.size(); i++) {
             Cell cell = titleRow.createCell(i);
             cell.setCellValue(head.get(i));
             cell.setCellStyle(getHeadCellStyle(workbook));
         }
-        // ---- 创建数据行
-        for (int i = 0; i < contents.size(); i++) {
-            List<String> content = contents.get(i);
-            Row row = sheet.createRow(i + 1);
-            for (int j = 0; j < content.size(); j++) {
-                row.createCell(j).setCellValue(content.get(j));
-            }
-        }
-        return workbook;
     }
 
     /**
