@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 <head>
     <meta charset="UTF-8"/>
     <title>tool-box-index</title>
     <script src='//alinw.alicdn.com/platform/c/jquery/1.11.3/dist/jquery.min.js'></script>
 </head>
 <!-- 引入样式 -->
-<link href="https://cdn.jsdelivr.net/npm/jsoneditor@5.26.3/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
-<link href="https://cdn.jsdelivr.net/npm/element-ui@2.6.1/lib/theme-chalk/index.css" rel="stylesheet" type="text/css">
 <script src="https://cdn.jsdelivr.net/npm/jsoneditor@5.26.3/dist/jsoneditor-minimalist.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.9"></script>
 <script src="https://cdn.jsdelivr.net/npm/element-ui@2.6.1/lib/index.js"></script>
@@ -20,27 +18,39 @@
     <div id="random-password-div" style="margin-top: 20px;margin-left: 60px">
         <input id="random-password-button" value="随机生成密码" onclick="randomPassword()" type="button"
                style="width: 120px"/>
-        <input id="random-password-length" type="number" style="width: 60Px"/>
-        <input id="random-password-result" type="text" readonly="readonly" style="width: 500px;"/>
+        <label for="random-password-length">
+            <input id="random-password-length" type="number" style="width: 60Px"/>
+        </label>
+        <label for="random-password-result">
+            <input id="random-password-result" type="text" readonly="readonly" style="width: 500px;"/>
+        </label>
     </div>
     <div id="datestamp-toTime-index" style="margin-top: 10px;margin-left: 60px">
         <input id="datestamp-toTime-button" value="时间戳 转 时间" onclick="stampToTime()" type="button"
                style="width: 120px"/>
-        <input id="datestamp-source-stamp" type="text" style="width: 150px"/>
-        <input id="datestamp-target-time" type="text" readonly="readonly" style="width: 150px"/>
+        <label for="datestamp-source-stamp">
+            <input id="datestamp-source-stamp" type="text" style="width: 150px"/>
+        </label>
+        <label for="datestamp-target-time">
+            <input id="datestamp-target-time" type="text" readonly="readonly" style="width: 150px"/>
+        </label>
     </div>
     <div id="datestamp-toStamp-index" style="margin-top: 10px;margin-left: 60px">
         <input id="datestamp-toStamp-button" value="时间 转 时间戳" onclick="timeToStamp()" type="button"
                style="width: 120px"/>
-        <input id="datestamp-source-time" type="text" style="width: 150px"/>
-        <input id="datestamp-target-stamp" type="text" readonly="readonly" style="width: 150px"/>
+        <label for="datestamp-source-time">
+            <input id="datestamp-source-time" type="text" style="width: 150px"/>
+        </label>
+        <label for="datestamp-target-stamp">
+            <input id="datestamp-target-stamp" type="text" readonly="readonly" style="width: 150px"/>
+        </label>
     </div>
 </div>
 </body>
 
 <script th:inline="javascript">
 
-    /** 默认值处理 **/
+    /*** 默认值处理 ***/
     function defaultValue() {
         $("#random-password-length").val(32)
 
@@ -52,7 +62,7 @@
         $("#datestamp-source-time").val(date + ' ' + time)
     }
 
-    /** 获取根据指定长度获取随机密码 **/
+    /*** 获取根据指定长度获取随机密码 ***/
     function randomPassword() {
         const param = {
             data: $("#random-password-length").val()
@@ -76,6 +86,7 @@
         })
     }
 
+    /*** 时间戳转时间 ***/
     function stampToTime() {
         const param = {
             data: $("#datestamp-source-stamp").val()
@@ -99,6 +110,7 @@
         })
     }
 
+    /*** 时间转时间戳 ***/
     function timeToStamp() {
         const param = {
             data: $("#datestamp-source-time").val()
