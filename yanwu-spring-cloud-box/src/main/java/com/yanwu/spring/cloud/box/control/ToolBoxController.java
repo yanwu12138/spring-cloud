@@ -1,11 +1,13 @@
 package com.yanwu.spring.cloud.box.control;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.pojo.BaseParam;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.DateUtil;
 import com.yanwu.spring.cloud.common.utils.ExcelUtil;
+import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -14,15 +16,15 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Part;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * @author XuBaofeng.
@@ -36,6 +38,7 @@ import java.util.*;
 public class ToolBoxController {
     private static final Random RANDOM = new Random();
     private static final Integer DEFAULT_LENGTH = 24;
+    private static final Integer BYTE_SIZE = 1024 * 1024;
     private static final String PASSWORD_KEY = "J3mqGev7!SlytCTLEzc1g-ZYxD=QIRWkKUjF+d9hi4a6B8pPwr5AMo2fV^nNsbuH0X";
 
     @RequestHandler
@@ -79,33 +82,44 @@ public class ToolBoxController {
 
     @RequestHandler
     @PostMapping(value = "jsonToExcel")
-    public ResponseEntity<Resource> jsonToExcel(MultipartHttpServletRequest request) throws Exception {
-        List<MultipartFile> fileList = request.getMultiFileMap().get("file");
-        if (CollectionUtils.isEmpty(fileList)) {
+    public ResponseEntity<Resource> jsonToExcel(@RequestPart(name = "file") Part file) throws Exception {
+        if (file == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        Optional<MultipartFile> anyOptional = fileList.parallelStream().findAny();
-        if (!anyOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        StringBuilder fileContent = new StringBuilder();
+        byte[] bytes = new byte[BYTE_SIZE];
+        try (InputStream stream = file.getInputStream()) {
+            while (stream.read(bytes) >= 0) {
+                fileContent.append(new String(bytes, StandardCharsets.UTF_8));
+            }
         }
-        String fileContent = new String(anyOptional.get().getBytes(), StandardCharsets.UTF_8);
-        Set<String> fieldSet = JsonUtil.findAllField(fileContent);
+        Set<String> fieldSet = JsonUtil.findAllField(fileContent.toString());
         if (CollectionUtils.isEmpty(fieldSet)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        SXSSFWorkbook workbook = ExcelUtil.assembleExcelByNode(new ArrayList<>(fieldSet), JsonUtil.toJsonNode(fileContent));
+        SXSSFWorkbook workbook = ExcelUtil.assembleExcelByNode(new ArrayList<>(fieldSet), JsonUtil.toJsonNode(fileContent.toString()));
         String fileName = "jsonToExcel" + DateUtil.toTimeStr(System.currentTimeMillis(), DateUtil.DateFormat.YYYYMMDDHHMMSS) + FileType.EXCEL_07.getSuffix();
         return ExcelUtil.exportExcel(workbook, fileName);
     }
 
-
     @PostMapping(value = "excelToJson")
-    public Result<String> excelToJson(MultipartHttpServletRequest request) {
-        List<MultipartFile> fileList = request.getMultiFileMap().get("file");
-        if (CollectionUtils.isEmpty(fileList)) {
-            return Result.failed("文件为空");
+    public ResponseEntity<Resource> excelToJson(@RequestPart(name = "file") Part file) throws Exception {
+        if (file == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return Result.success("文件不为空");
+        List<String> head = ExcelUtil.analysisHead(file);
+        List<List<String>> contents = ExcelUtil.analysisExcel(file, 0);
+        List<ObjectNode> result = new ArrayList<>();
+        contents.forEach(content -> {
+            ObjectNode nodes = JsonUtil.getMapper().createObjectNode();
+            for (int index = 0; index < content.size(); index++) {
+                String field = head.get(index);
+                String value = content.get(index);
+                nodes.put(field, value);
+            }
+            result.add(nodes);
+        });
+        return FileUtil.exportFailed(Result.success(result));
     }
 
 }

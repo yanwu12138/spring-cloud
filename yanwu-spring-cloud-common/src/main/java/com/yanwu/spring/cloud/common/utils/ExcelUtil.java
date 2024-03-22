@@ -150,6 +150,43 @@ public class ExcelUtil {
     /**
      * 读取Excel文件内容
      *
+     * @param file Excel文件
+     * @return 文件内容
+     * @throws IOException e
+     */
+    public static List<String> analysisHead(Part file) throws IOException {
+        List<String> result = new ArrayList<>();
+        String fileName = file.getSubmittedFileName();
+        // ----- 检查文件后缀, 是否是Excel
+        String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
+        if (!FileType.EXCEL_07.getSuffix().equals(fileSuffix) && !FileType.EXCEL_03.getSuffix().equals(fileSuffix)) {
+            return result;
+        }
+        // ----- 读取文件
+        boolean flag = FileType.EXCEL_07.getSuffix().equals(fileSuffix);
+        try (InputStream inputStream = file.getInputStream();
+             Workbook workbook = flag ? new XSSFWorkbook(inputStream) : new HSSFWorkbook(inputStream)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            if (sheet == null) {
+                return result;
+            }
+            Iterator<Row> row = sheet.rowIterator();
+            if (!row.hasNext()) {
+                return result;
+            }
+            // ----- 读取表头
+            Iterator<Cell> cell = row.next().cellIterator();
+            List<String> rowList = new ArrayList<>();
+            while (cell.hasNext()) {
+                result.add(cell.next().getStringCellValue());
+            }
+            return result;
+        }
+    }
+
+    /**
+     * 读取Excel文件内容
+     *
      * @param file  Excel文件
      * @param index sheet位置
      * @return 文件内容
@@ -172,10 +209,10 @@ public class ExcelUtil {
                 return result;
             }
             Iterator<Row> row = sheet.rowIterator();
-            // ----- 去除标题头
             if (!row.hasNext()) {
                 return result;
             }
+            // ----- 去除标题头
             row.next();
             // ----- 读取数据域
             while (row.hasNext()) {
