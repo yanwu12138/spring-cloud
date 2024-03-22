@@ -110,7 +110,14 @@ public final class JsonUtil {
         if (node == null || StringUtils.isBlank(key)) {
             return defaultValue;
         }
-        return node.findPath(key).asText(defaultValue);
+        JsonNode value = node.findPath(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        if (value.isTextual()) {
+            return value.asText(defaultValue);
+        }
+        return value.toString();
     }
 
     /**
