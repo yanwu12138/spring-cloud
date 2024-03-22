@@ -16,12 +16,34 @@
 </style>
 
 <body>
-<div id="connect" v-cloak>
-yanwu box tool
+<div id="tool-box-index" v-cloak>
+    <div id="random-password-div" style="top: 20px;left: 100px">
+        <input id="random-password-button" value="随机生成密码" onclick="randomPassword()"
+               style="width: 120px" type="button"/>
+        <input id="random-password-length" type="number" value="32" style="width: 50Px"/>
+        <input id="random-password-result" type="text" readonly="readonly" style="width: 512px;"/>
+    </div>
 </div>
 </body>
 
 <script th:inline="javascript">
+    function randomPassword() {
+        const randomLen = $("#random-password-length").val()
+        $.ajax({
+            url: '/tool/randomPassword/' + randomLen,
+            dataType: 'json',
+            success: function (response) {
+                if (response.status) {
+                    $("#random-password-result").val(response.data)
+                } else {
+                    console.error(response.message)
+                }
+            },
+            error: function (response, textStatus, errorThrown) {
+                console.error(response, textStatus, errorThrown)
+            }
+        })
 
+    }
 </script>
 </html>
