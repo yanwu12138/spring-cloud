@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <!--<property name="LOG_HOME" value="F:/logs"/>-->
-    <property name="LOG_HOME" value="/Users/xubaofeng/yanwu/logs"/>
     <property name="CONSOLE_LOG_PATTERN"
               value="%date{yyyy-MM-dd HH:mm:ss:sss} [%thread] [%highlight(%-5level)] %logger{100} >> %msg%n"/>
     <property name="FILE_LOG_PATTERN"
               value="%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{100} >> %msg%n"/>
-
-    <property name="LOG_PATH" value="yanwu-message"/>
-    <property name="LOG_FILE_NAME" value="yanwu-message"/>
 
     <!-- 控制台输出日志 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -20,8 +16,8 @@
     <!--fishbone服务日志输出规则-->
     <appender name="logAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <MaxHistory>360</MaxHistory>
+            <fileNamePattern>../service.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
             <maxFileSize>200MB</maxFileSize>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -41,6 +37,15 @@
         </layout>
     </appender>
 
+    <logger name="java.sql.Statement" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="java.sql.PreparedStatement" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="java.sql.ResultSet" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <!--fishbone服务-->
     <logger name="com.yanwu.spring.cloud" level="INFO" additivity="false">
         <appender-ref ref="logAppender"/>
@@ -51,8 +56,7 @@
         <appender-ref ref="logAppender"/>
         <appender-ref ref="STDOUT"/>
     </logger>
-    <!--netty-->
-    <logger name="io.netty" level="INFO" additivity="false">
+    <logger name="io.seata" level="INFO" additivity="false">
         <appender-ref ref="logAppender"/>
         <appender-ref ref="STDOUT"/>
     </logger>
