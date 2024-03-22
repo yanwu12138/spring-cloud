@@ -103,7 +103,7 @@
     </dependencyManagement>
 
     <build>
-        <finalName>yanwu-base</finalName>
+        <finalName>yanwu-box</finalName>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
