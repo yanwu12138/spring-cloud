@@ -16,7 +16,7 @@
     <!--fishbone服务日志输出规则-->
     <appender name="logAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>../service.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>../logs/service.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <MaxHistory>30</MaxHistory>
             <maxFileSize>200MB</maxFileSize>
         </rollingPolicy>
