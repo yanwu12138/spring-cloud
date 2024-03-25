@@ -2,16 +2,23 @@
 <html xmlns:th='http://www.thymeleaf.org' lang='zh-CN'>
 <head>
     <meta charset='UTF-8'/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>tool-box-index</title>
     <script src='//alinw.alicdn.com/platform/c/jquery/1.11.3/dist/jquery.min.js'></script>
+
+    <style>
+        .auto-wrap {
+            width: 500px;
+            height: 300px;
+            resize: both;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
-<!-- 引入样式 -->
+<!-- 引入JS -->
 <script src='https://cdn.jsdelivr.net/npm/jsoneditor@5.26.3/dist/jsoneditor-minimalist.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/vue@2.6.9'></script>
 <script src='https://cdn.jsdelivr.net/npm/element-ui@2.6.1/lib/index.js'></script>
-<style>
-
-</style>
 
 <body onload='defaultValue()'>
 <div id='tool-box-index' v-cloak>
@@ -57,6 +64,23 @@
                style='width: 120px'>
         <label for='source-excel'>
             <input id='source-excel' type='file' accept='.xlsx' style='width: 500px'>
+        </label>
+    </div>
+    <div id='string-encode-index' style='margin-top: 10px;margin-left: 60px'>
+        <input id='string-encode-button' value='字符串加密' onclick='stringEncode()' type='button'
+               style='width: 120px'>
+        <input id='string-decode-button' value='字符串解密' onclick='stringDecode()' type='button'
+               style='width: 120px'>
+        <label for='secret-key'>
+            <input id='secret-key' type='text' accept='.xlsx' style='width: 500px'>
+        </label>
+    </div>
+    <div style='margin-top: 5px;margin-left: 60px'>
+        <label for='source-string'>
+            <textarea id='source-string' class="auto-wrap"></textarea>
+        </label>
+        <label for='target-string'>
+            <textarea id='target-string' readonly='readonly' class="auto-wrap"></textarea>
         </label>
     </div>
 </div>
@@ -153,6 +177,36 @@
         const file = new FormData()
         file.append('file', $('#source-excel')[0].files[0])
         convertFile(file, '/tool/excelToJson', 'excelToJson.json')
+    }
+
+    function stringEncode() {
+        convertString('/tool/stringEncode')
+    }
+
+    function stringDecode() {
+        convertString('/tool/stringDecode')
+    }
+
+    function convertString(url) {
+        const param = {
+            source: $('#source-string').val(),
+            secret: $('#secret-key').val()
+        }
+        xhr.open('POST', url, true)
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.responseType = 'json'
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                if (xhr.response.status) {
+                    $('#target-string').val(xhr.response.data)
+                } else {
+                    console.error(xhr.response.message)
+                }
+            } else {
+                console.log('文件转换失败', xhr.status)
+            }
+        }
+        xhr.send(JSON.stringify(param))
     }
 
     function convertFile(file, url, defaultFilename) {

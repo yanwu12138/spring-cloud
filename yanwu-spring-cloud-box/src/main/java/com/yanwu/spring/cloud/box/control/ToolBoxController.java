@@ -1,6 +1,7 @@
 package com.yanwu.spring.cloud.box.control;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yanwu.spring.cloud.box.bo.EncodeStrBO;
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.pojo.BaseParam;
@@ -9,6 +10,7 @@ import com.yanwu.spring.cloud.common.utils.DateUtil;
 import com.yanwu.spring.cloud.common.utils.ExcelUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
+import com.yanwu.spring.cloud.common.utils.secret.Aes128Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +41,7 @@ public class ToolBoxController {
     private static final Random RANDOM = new Random();
     private static final Integer DEFAULT_LENGTH = 24;
     private static final Integer BYTE_SIZE = 10 * 1024 * 1024;
+    private static final String DEFAULT_ENCODE_SECRET = "xbf_JS.2643";
     private static final String PASSWORD_KEY = "J3mqGev7!SlytCTLEzc1g-ZYxD=QIRWkKUjF+d9hi4a6B8pPwr5AMo2fV^nNsbuH0X";
 
     @RequestHandler
@@ -114,6 +117,32 @@ public class ToolBoxController {
         }
         String filename = "excelToJson" + DateUtil.toTimeStr(System.currentTimeMillis(), DateUtil.DateFormat.YYYYMMDDHHMMSS) + FileType.JSON.getSuffix();
         return FileUtil.exportContents(Result.success(result), filename);
+    }
+
+    @RequestHandler
+    @PostMapping("stringEncode")
+    public Result<String> stringEncode(@RequestBody EncodeStrBO param) {
+        if (param == null || StringUtils.isBlank(param.getSource())) {
+            return Result.failed("参数错误");
+        }
+        if (StringUtils.isBlank(param.getSecret())) {
+            param.setSecret(DEFAULT_ENCODE_SECRET);
+        }
+        String message = Aes128Util.encryptToStr(param.getSource(), param.getSecret());
+        return Result.success(message);
+    }
+
+    @RequestHandler
+    @PostMapping("stringDecode")
+    public Result<String> stringDecode(@RequestBody EncodeStrBO param) {
+        if (param == null || StringUtils.isBlank(param.getSource())) {
+            return Result.failed("参数错误");
+        }
+        if (StringUtils.isBlank(param.getSecret())) {
+            param.setSecret(DEFAULT_ENCODE_SECRET);
+        }
+        String message = Aes128Util.decryptByStr(param.getSource(), param.getSecret());
+        return Result.success(message);
     }
 
 }
