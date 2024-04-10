@@ -102,17 +102,17 @@ public class RequestHandlerAspect {
      * @param result    返回值
      */
     @AfterReturning(returning = "result", pointcut = "logParamPointcut()")
-    public void doAfterReturning(JoinPoint joinPoint, Object result) {
+    public void doAfterReturning(JoinPoint joinPoint, Object result) throws Exception {
         USER_ACCESSES_LOCAL.remove();
         String txId = AspectUtil.getTxId();
         Method method = AspectUtil.getMethod(joinPoint);
+        String message;
         if (result instanceof Serializable) {
-            log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}",
-                    txId, AspectUtil.getClassName(method), method.getName(), AspectUtil.print(result));
+            message = AspectUtil.print(result);
         } else {
-            log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}",
-                    txId, AspectUtil.getClassName(method), method.getName(), "The response could not be serialized.");
+            message = "The response could not be serialized.";
         }
+        log.info("Response: [txId]: {}, [class]: {}, [method]: {}, [return]: {}", txId, AspectUtil.getClassName(method), method.getName(), message);
     }
 
     /***
