@@ -61,7 +61,7 @@ public final class NettyUtil {
         try {
             return NetworkInterface.getByName(interfaceName);
         } catch (SocketException e) {
-            log.error("网卡: " + interfaceName + " SocketException", e);
+            log.error("网卡: {} SocketException", interfaceName, e);
         }
         return null;
     }
