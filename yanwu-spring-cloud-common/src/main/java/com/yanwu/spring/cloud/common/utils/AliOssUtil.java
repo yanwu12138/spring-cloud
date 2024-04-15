@@ -277,6 +277,53 @@ public class AliOssUtil {
     }
 
     /**
+     * 文件重命名
+     *
+     * @param properties OSS 相关配置
+     * @param source     源文件名
+     * @param target     目标文件名
+     */
+    public static Result<Boolean> rename(OssProperties properties, String source, String target) {
+        OSS ossClient = null;
+        try {
+            ossClient = buildClient(properties);
+            if (ossClient == null) {
+                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
+            }
+            return rename(ossClient, properties.getBucket(), source, target);
+        } finally {
+            closeClient(ossClient);
+        }
+    }
+
+
+    /**
+     * 文件重命名
+     *
+     * @param ossClient OSS 客户端
+     * @param bucket    OSS 桶
+     * @param source    源文件名
+     * @param target    目标文件名
+     */
+    public static Result<Boolean> rename(OSS ossClient, String bucket, String source, String target) {
+        if (StringUtils.isBlank(bucket)) {
+            return Result.failed("OSS rename failed: bucket is blank.");
+        }
+        if (StringUtils.isBlank(source)) {
+            return Result.failed("OSS rename failed: source is blank.");
+        }
+        if (StringUtils.isBlank(target)) {
+            return Result.failed("OSS rename failed: target is blank.");
+        }
+        ossClient.copyObject(bucket, source, bucket, target);
+        if (!exist(ossClient, bucket, target).successful()) {
+            return Result.failed("OSS rename failed: because copy object failed.");
+        }
+        ossClient.deleteObject(bucket, source);
+        return checkExist(exist(ossClient, bucket, source)) ? Result.success(Boolean.FALSE) : Result.success(Boolean.TRUE);
+    }
+
+    /**
      * 下载OSS文件到本地 [如果本地文件已存在, 则直接覆盖本地文件]
      *
      * @param properties OSS 相关配置
