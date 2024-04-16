@@ -9,13 +9,13 @@ import lombok.Getter;
  * description: 上传到文件到OSS时的类型, 按照不同的文件类型区分文件夹
  * * 如: DEFAULT, 则表示在 bucket 中以 /default/ 为根目录
  */
+@Getter
 public enum OssFileTypeEnum {
 
     // ----- 默认目录
     DEFAULT("default"),
     ;
 
-    @Getter
     private final String type;
 
     OssFileTypeEnum(String type) {
