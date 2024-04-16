@@ -33,11 +33,10 @@ public class EncryptUtil {
         }
         secret = StringUtils.isNotBlank(secret) ? secret : SECRET;
         String md5Str = DigestUtils.md5Hex((content + secret).getBytes(StandardCharsets.UTF_8));
-        int index = 0;
         StringBuilder encrypt = new StringBuilder();
         do {
-            String substring = md5Str.substring(index, index + 4);
-            md5Str = md5Str.substring(index + 4);
+            String substring = md5Str.substring(0, 4);
+            md5Str = md5Str.substring(4);
             int baseIndex = Integer.valueOf(substring, 16) % BASE_CIPHER.length;
             encrypt.append(BASE_CIPHER[baseIndex]);
         } while (md5Str.length() >= 4);
