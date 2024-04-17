@@ -137,9 +137,3 @@ curl --trace-ascii output.txt www.sina.com
     curl --user name:password example.com
     ```
 
-
-
-```shell
-curl -X GET --header "Authorization:Basic Z3Vlc3Q6Z3Vlc3RndWVzdA==" http://192.168.0.1:9000/RestApi/AntennaController/Monitoring
-```
-
