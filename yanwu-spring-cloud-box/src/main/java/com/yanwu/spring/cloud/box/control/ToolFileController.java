@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 
@@ -44,6 +45,7 @@ import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 public class ToolFileController {
     private static final String PARENT_DIR = "/home/photo/";
     public static final String URL_PATH = "http://114.55.74.43:12138/";
+    private static final AtomicBoolean INIT_LOCK = new AtomicBoolean(Boolean.FALSE);
 
     @javax.annotation.Resource
     private YanwuFileMapper fileMapper;
@@ -61,6 +63,10 @@ public class ToolFileController {
         if (files == null || files.length == 0) {
             return Result.failed();
         }
+        if (INIT_LOCK.get()) {
+            return Result.failed();
+        }
+        INIT_LOCK.set(Boolean.TRUE);
         commonsExecutors.execute(() -> {
             for (File item : files) {
                 if (item == null) {
@@ -68,6 +74,7 @@ public class ToolFileController {
                 }
                 readFile(item);
             }
+            INIT_LOCK.set(Boolean.FALSE);
         });
         return Result.success();
     }
