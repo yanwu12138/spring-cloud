@@ -49,6 +49,10 @@ public class YanwuFile extends BaseDo<Long> implements Serializable {
     @Column(name = "url", type = VARCHAR, isNull = false, comment = "文件播放地址")
     private String url;
 
+    @TableField("thumbnail")
+    @Column(name = "thumbnail", type = VARCHAR, isNull = false, comment = "缩略图地址")
+    private String thumbnail;
+
     @TableField("mark")
     @Index(value = "mark", columns = {"mark"})
     @Column(name = "mark", type = VARCHAR, length = 32, isNull = false, comment = "文件标签")

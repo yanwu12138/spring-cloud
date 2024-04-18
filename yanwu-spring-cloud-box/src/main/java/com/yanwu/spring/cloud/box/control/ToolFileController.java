@@ -6,6 +6,7 @@ import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.DateUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
+import com.yanwu.spring.cloud.common.utils.ImageUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 @RequestMapping("/file/")
 public class ToolFileController {
     private static final String PARENT_DIR = "/home/photo/";
-    private static final String URL_PATH = "http://114.55.74.43:12138/";
+    public static final String URL_PATH = "http://114.55.74.43:12138/";
 
     @javax.annotation.Resource
     private YanwuFileMapper fileMapper;
@@ -84,6 +85,7 @@ public class ToolFileController {
                 instance.setUrl(file.getAbsolutePath().replace("/home/", URL_PATH));
                 instance.setMark(fileMark);
                 instance.setType(FileUtil.getSuffix(file.getName()));
+                instance.setThumbnail(ImageUtil.readThumbnail(file).replace("/home/", URL_PATH));
                 fileMapper.insert(instance);
             } catch (Exception e) {
                 log.error("init file failed. file: {}", file.getAbsolutePath(), e);
