@@ -58,7 +58,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
 
     private void handlerAccount(MetaObject metaObject, String field) {
         String token = ContextUtil.header(Contents.TOKEN);
-        if (StringUtils.isBlank(token)) {
+        if (StringUtils.isNotBlank(token)) {
             AccessToken accessToken = TokenUtil.verifyToken(token);
             if (accessToken.getId() != null) {
                 Object enabled = getFieldValByName(field, metaObject);
@@ -66,6 +66,8 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
                     setFieldValByName(field, accessToken.getId(), metaObject);
                 }
             }
+        } else {
+            setFieldValByName(field, 1, metaObject);
         }
     }
 
