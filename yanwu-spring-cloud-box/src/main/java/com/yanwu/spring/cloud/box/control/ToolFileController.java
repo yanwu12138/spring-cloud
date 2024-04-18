@@ -141,7 +141,7 @@ public class ToolFileController {
 
     @RequestHandler
     @PostMapping(value = {"last", "last/{id}"})
-    public Result<Long> last(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFilePO> param) {
+    public Result<YanwuFile> last(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFilePO> param) {
         if (fileId == null || fileId <= 0L) {
             fileId = Long.MAX_VALUE;
         }
@@ -152,7 +152,7 @@ public class ToolFileController {
             long maxId = Long.MAX_VALUE;
             last = lastFile(maxId, year, month);
         }
-        return last != null && last.getId() != null ? Result.success(last.getId()) : Result.failed();
+        return last != null && last.getId() != null ? Result.success(last) : Result.failed();
     }
 
     private YanwuFile lastFile(Long fileId, String year, String month) {
@@ -169,7 +169,7 @@ public class ToolFileController {
 
     @RequestHandler
     @PostMapping(value = {"next", "next/{id}"})
-    public Result<Long> next(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFilePO> param) {
+    public Result<YanwuFile> next(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFilePO> param) {
         if (fileId == null) {
             fileId = 0L;
         }
@@ -180,7 +180,7 @@ public class ToolFileController {
             long minId = -1L;
             next = nextFile(minId, year, month);
         }
-        return next != null && next.getId() != null ? Result.success(next.getId()) : Result.failed();
+        return next != null && next.getId() != null ? Result.success(next) : Result.failed();
     }
 
     private YanwuFile nextFile(Long fileId, String year, String month) {

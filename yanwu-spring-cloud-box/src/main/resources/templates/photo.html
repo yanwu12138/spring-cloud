@@ -23,13 +23,33 @@
             <input id='tool-file-find-button' value='查询' onclick='firstFile()' type='button' style='width: 130px;margin-left: 60px'/>
         </label>
     </div>
-    <div id='tool-file-month-div' style='margin-top: 20px;margin-left: 60px'>
+    <div id='tool-file-video-div' style='margin-top: 20px; margin-left: 60px'>
     </div>
 </div>
 </body>
 
 <script th:inline='javascript'>
     const xhr = new XMLHttpRequest()
+    const imageType = ["jpeg", "", "PNG", "jpg"]
+    const videoType = ["MOV", "mp4"]
+
+    function isImage(type) {
+        for (let index = 0; index < imageType.length; index++) {
+            if (imageType[index].toLowerCase() === type.toLowerCase()) {
+                return true
+            }
+        }
+        return false
+    }
+
+    function isVideo(type) {
+        for (let index = 0; index < videoType.length; index++) {
+            if (videoType[index].toLowerCase() === type.toLowerCase()) {
+                return true
+            }
+        }
+        return false
+    }
 
     /*** 默认值处理 ***/
     function defaultValue() {
@@ -95,7 +115,21 @@
         xhr.onload = function () {
             if (xhr.status === 200) {
                 if (xhr.response.status) {
-                    console.log(xhr.response.data)
+                    if (isImage(xhr.response.data.type)) {
+                        let image = document.createElement('img')
+                        image.src = 'http://114.55.74.43:8886/file/read/' + xhr.response.data.id
+                        image.style.width = 1280
+                        image.style.height = 960
+                        document.getElementById('tool-file-video-div').innerHTML = ''
+                        document.getElementById('tool-file-video-div').appendChild(image)
+                    } else if (isVideo(xhr.response.data.type)) {
+                        let video = document.createElement('video')
+                        video.src = 'http://114.55.74.43:8886/file/read/' + xhr.response.data.id
+                        video.style.width = 1280
+                        video.style.height = 960
+                        document.getElementById('tool-file-video-div').innerHTML = ''
+                        document.getElementById('tool-file-video-div').appendChild(video)
+                    }
                 } else {
                     console.error(xhr.response.message)
                 }
