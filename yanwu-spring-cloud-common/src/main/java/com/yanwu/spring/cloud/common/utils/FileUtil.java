@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
@@ -51,11 +52,11 @@ import static org.apache.commons.codec.CharEncoding.UTF_8;
 public class FileUtil {
 
     /*** 当文件大于5M时，进行限速下载 ***/
-    private static final Long LIMIT_SIZE = 5 * 1024 * 1024L;
+    public static final Long LIMIT_SIZE = 5 * 1024 * 1024L;
     /*** 限速下载时的速度：1M/S ***/
-    private static final Long SPEED = 1024 * 1024L;
+    public static final Long SPEED = 1024 * 1024L;
     /*** 限速下载时每次写出的大小：1M ***/
-    private static final Integer SIZE = 1024 * 1024;
+    public static final Integer SIZE = 1024 * 1024;
 
     private FileUtil() {
         throw new UnsupportedOperationException("FileUtil should never be instantiated");
@@ -1241,6 +1242,52 @@ public class FileUtil {
         if ((files = dir.listFiles()) == null || files.length == 0) {
             log.info("remove empty dir, path: {}", dir.getPath());
             deleteFile(dir);
+        }
+    }
+
+    /**
+     * 获取文件的创建时间
+     *
+     * @param filePath 指定文件的绝对路径
+     * @return 创建时间
+     */
+    public static Long readFileCreateTime(String filePath) {
+        if (StringUtils.isBlank(filePath)) {
+            return -1L;
+        }
+        return readFileCreateTime(new File(filePath));
+    }
+
+    /**
+     * 获取文件的创建时间
+     *
+     * @param file 指定文件
+     * @return 创建时间
+     */
+    public static Long readFileCreateTime(File file) {
+        if (file == null || !file.exists()) {
+            return -1L;
+        }
+        return readFileCreateTime(file.toPath());
+    }
+
+    /**
+     * 获取文件的创建时间
+     *
+     * @param path 指定文件
+     * @return 创建时间
+     */
+    public static Long readFileCreateTime(Path path) {
+        try {
+            if (path == null || !path.toFile().exists()) {
+                return -1L;
+            }
+            BasicFileAttributeView attributeView = Files.getFileAttributeView(path, BasicFileAttributeView.class);
+            BasicFileAttributes basicFileAttributes = attributeView.readAttributes();
+            return basicFileAttributes.creationTime().toMillis();
+        } catch (Exception e) {
+            log.error("read file last time failed. file: {}", path, e);
+            return -1L;
         }
     }
 
