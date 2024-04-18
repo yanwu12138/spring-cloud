@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -52,7 +51,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
     public void updateFill(MetaObject metaObject) {
         Object updated = getFieldValByName("updated", metaObject);
         if (updated == null) {
-            setFieldValByName("updated", new Timestamp(System.currentTimeMillis()), metaObject);
+            setFieldValByName("updated", LocalDateTime.now(), metaObject);
         }
         handlerAccount(metaObject, "updator");
     }
