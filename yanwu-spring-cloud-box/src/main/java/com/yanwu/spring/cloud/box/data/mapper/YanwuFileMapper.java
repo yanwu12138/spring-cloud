@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author XuBaofeng.
  * @date 2024/4/18 17:00.
@@ -41,5 +43,11 @@ public interface YanwuFileMapper extends BaseMapper<YanwuFile> {
 
     @Select("select * from yanwu_file where year = #{year} and month = #{month} and id < #{fileId} order by id desc limit 1")
     YanwuFile lastByYearAndMonth(@Param("fileId") Long fileId, @Param("year") String year, @Param("month") String month);
+
+    @Select("select year from yanwu_file group by year order by year")
+    List<String> allYear();
+
+    @Select("select month from yanwu_file where year = #{year} group by month order by month")
+    List<String> allMonth(@Param("year") String year);
 
 }

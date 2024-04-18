@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -27,6 +28,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -120,7 +123,24 @@ public class ToolFileController {
     }
 
     @RequestHandler
-    @GetMapping(value = {"last", "last/{id}"})
+    @PostMapping("allYear")
+    public Result<List<String>> allYear() {
+        List<String> allYear = fileMapper.allYear();
+        return CollectionUtils.isNotEmpty(allYear) ? Result.success(allYear) : Result.success(Collections.emptyList());
+    }
+
+    @RequestHandler
+    @PostMapping(value = {"allMonth", "allMonth/{year}"})
+    public Result<List<String>> allMonth(@PathVariable(value = "year", required = false) String year) {
+        if (StringUtils.isEmpty(year)) {
+            return Result.success(Collections.emptyList());
+        }
+        List<String> allMonth = fileMapper.allMonth(year);
+        return CollectionUtils.isNotEmpty(allMonth) ? Result.success(allMonth) : Result.success(Collections.emptyList());
+    }
+
+    @RequestHandler
+    @PostMapping(value = {"last", "last/{id}"})
     public Result<Long> last(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFilePO> param) {
         if (fileId == null || fileId <= 0L) {
             fileId = Long.MAX_VALUE;
@@ -148,7 +168,7 @@ public class ToolFileController {
     }
 
     @RequestHandler
-    @GetMapping(value = {"next", "next/{id}"})
+    @PostMapping(value = {"next", "next/{id}"})
     public Result<Long> next(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFilePO> param) {
         if (fileId == null) {
             fileId = 0L;
