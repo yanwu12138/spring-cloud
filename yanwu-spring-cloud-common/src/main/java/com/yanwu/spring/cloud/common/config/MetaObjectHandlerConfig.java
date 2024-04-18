@@ -67,7 +67,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
                 }
             }
         } else {
-            setFieldValByName(field, 1, metaObject);
+            setFieldValByName(field, 1L, metaObject);
         }
     }
 
