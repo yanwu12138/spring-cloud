@@ -28,6 +28,7 @@ import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -165,7 +166,7 @@ public class FileUtil {
             if (files == null) {
                 return;
             }
-            directory = directory.length() == 0 ? Contents.NUL : directory + File.separator;
+            directory = directory.isEmpty() ? Contents.NUL : directory + File.separator;
             for (File file : files) {
                 toZip(zos, file, directory + file.getName());
             }
@@ -1240,6 +1241,50 @@ public class FileUtil {
         if ((files = dir.listFiles()) == null || files.length == 0) {
             log.info("remove empty dir, path: {}", dir.getPath());
             deleteFile(dir);
+        }
+    }
+
+    /**
+     * 获取文件最后的修改时间
+     *
+     * @param filePath 指定文件的绝对路径
+     * @return 修改时间
+     */
+    public static Long readFileLastTime(String filePath) {
+        if (StringUtils.isBlank(filePath)) {
+            return -1L;
+        }
+        return readFileLastTime(new File(filePath));
+    }
+
+    /**
+     * 获取文件最后的修改时间
+     *
+     * @param file 指定文件
+     * @return 修改时间
+     */
+    public static Long readFileLastTime(File file) {
+        if (file == null || !file.exists()) {
+            return -1L;
+        }
+        return readFileLastTime(file.toPath());
+    }
+
+    /**
+     * 获取文件最后的修改时间
+     *
+     * @param path 指定文件
+     * @return 修改时间
+     */
+    public static Long readFileLastTime(Path path) {
+        try {
+            if (path == null || !path.toFile().exists()) {
+                return -1L;
+            }
+            return Files.getLastModifiedTime(path).toMillis();
+        } catch (Exception e) {
+            log.error("read file last time failed. file: {}", path, e);
+            return -1L;
         }
     }
 
