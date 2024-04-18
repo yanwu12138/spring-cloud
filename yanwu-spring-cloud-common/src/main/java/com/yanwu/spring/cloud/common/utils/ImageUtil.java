@@ -7,10 +7,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.time.LocalDateTime;
-
-import static com.fasterxml.jackson.core.JsonPointer.SEPARATOR;
-import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 
 /**
  * @author XuBaofeng.
@@ -20,7 +16,7 @@ import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
  */
 @Slf4j
 public class ImageUtil {
-    private static final String ROOT_DIR = "/home/thumbnail/";
+    private static final String ROOT_DIR = "/thumbnail/";
     private static final int width = 480, height = 720;
 
     private ImageUtil() {
@@ -39,7 +35,7 @@ public class ImageUtil {
             return null;
         }
         try {
-            String thumbnailPath = buildThumbnailPath(file);
+            String thumbnailPath = file.getAbsolutePath().replace("/photo/", ROOT_DIR);
             BufferedImage originalImage = ImageIO.read(file);
             Image image = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             BufferedImage thumbnail = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -57,10 +53,4 @@ public class ImageUtil {
         }
     }
 
-    private static String buildThumbnailPath(File file) {
-        Long lastTime = FileUtil.readFileCreateTime(file);
-        LocalDateTime datetime = DateUtil.datetime(lastTime);
-        String filepath = datetime.getYear() + SEPARATOR + filling(datetime.getMonthValue()) + SEPARATOR + DateUtil.dateStr(datetime.toLocalDate()) + "_" + file.getName();
-        return ROOT_DIR + filepath;
-    }
 }

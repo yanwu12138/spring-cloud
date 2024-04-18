@@ -10,6 +10,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -28,7 +29,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
      */
     @Override
     public void insertFill(MetaObject metaObject) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        LocalDateTime timestamp = LocalDateTime.now();
         // ===== 创建时间
         Object created = getFieldValByName("created", metaObject);
         if (Objects.isNull(created)) {
