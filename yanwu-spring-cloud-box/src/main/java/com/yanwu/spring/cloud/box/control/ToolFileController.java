@@ -53,6 +53,9 @@ public class ToolFileController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         YanwuFile yanwuFile = photoMapper.selectById(fileId);
+        if (yanwuFile == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         File file = new File(yanwuFile.getPath());
         BasicFileAttributes fileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
         if (fileAttributes.isRegularFile()) {

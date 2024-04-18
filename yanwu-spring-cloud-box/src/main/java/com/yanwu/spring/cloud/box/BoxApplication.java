@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @Slf4j
 @SpringBootApplication
-@MapperScan(basePackages = {"com.gitee.sunchenbin.mybatis.actable.dao.*"})
+@MapperScan(basePackages = {"com.yanwu.spring.cloud.box.data.mapper", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud", "com.gitee.sunchenbin.mybatis.actable.manager.*"})
 public class BoxApplication {
 
