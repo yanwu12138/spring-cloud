@@ -48,6 +48,7 @@ public class ImageUtil {
             graphics.drawImage(image, 0, 0, null);
             graphics.dispose();
             File thumbnailFile = new File(thumbnailPath);
+            FileUtil.checkFilePath(file, Boolean.TRUE);
             ImageIO.write(thumbnail, "jpg", thumbnailFile);
             return thumbnailPath;
         } catch (Exception e) {
