@@ -50,6 +50,7 @@ public class YanwuFile extends BaseDo<Long> implements Serializable {
     private String url;
 
     @TableField("mark")
+    @Index(value = "mark", columns = {"mark"})
     @Column(name = "mark", type = VARCHAR, length = 32, isNull = false, comment = "文件标签")
     private String mark;
 

@@ -4,6 +4,7 @@ import com.yanwu.spring.cloud.box.data.mapper.YanwuFileMapper;
 import com.yanwu.spring.cloud.box.data.model.YanwuFile;
 import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.Result;
+import com.yanwu.spring.cloud.common.utils.DateUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.Getter;
@@ -25,6 +26,9 @@ import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+
+import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 
 /**
  * @author XuBaofeng.
@@ -36,14 +40,65 @@ import java.nio.file.attribute.BasicFileAttributes;
 @RestController
 @RequestMapping("/file/")
 public class ToolFileController {
+    private static final String PARENT_DIR = "/home/photo/";
+    private static final String URL_PATH = "http://114.55.74.43:12138/";
 
     @javax.annotation.Resource
-    private YanwuFileMapper photoMapper;
+    private YanwuFileMapper fileMapper;
 
     @RequestHandler
     @GetMapping("init")
     public Result<Void> init() {
+        File rootDir = new File(PARENT_DIR);
+        if (!rootDir.exists() || !rootDir.isDirectory()) {
+            return Result.failed();
+        }
+        File[] files = rootDir.listFiles();
+        if (files == null || files.length == 0) {
+            return Result.failed();
+        }
+        for (File item : files) {
+            if (item == null) {
+                continue;
+            }
+            readFile(item);
+        }
         return Result.success();
+    }
+
+    private void readFile(File file) {
+        if (file.isFile()) {
+            try {
+                String fileMark = FileUtil.calcFileMd5(file);
+                YanwuFile yanwuFile = fileMapper.selectByMark(fileMark);
+                if (yanwuFile != null) {
+                    log.error("init file failed. because file mark is exists, file: {}, mark: {}", file.getAbsolutePath(), fileMark);
+                    return;
+                }
+                Long createTime = FileUtil.readFileCreateTime(file);
+                LocalDateTime datetime = DateUtil.datetime(createTime);
+                YanwuFile instance = new YanwuFile();
+                instance.setYear(String.valueOf(datetime.getYear()));
+                instance.setMonth(filling(datetime.getMonthValue()));
+                instance.setPath(file.getAbsolutePath());
+                instance.setUrl(file.getAbsolutePath().replace("/home/", URL_PATH));
+                instance.setMark(fileMark);
+                instance.setType(FileUtil.getSuffix(file.getName()));
+                fileMapper.insert(instance);
+            } catch (Exception e) {
+                log.error("init file failed. file: {}", file.getAbsolutePath(), e);
+            }
+        } else if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files == null || files.length == 0) {
+                return;
+            }
+            for (File item : files) {
+                if (item != null) {
+                    readFile(item);
+                }
+            }
+        }
     }
 
     @RequestHandler
@@ -52,7 +107,7 @@ public class ToolFileController {
         if (fileId == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        YanwuFile yanwuFile = photoMapper.selectById(fileId);
+        YanwuFile yanwuFile = fileMapper.selectById(fileId);
         if (yanwuFile == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
