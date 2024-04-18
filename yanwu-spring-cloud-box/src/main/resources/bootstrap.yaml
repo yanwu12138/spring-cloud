@@ -24,6 +24,35 @@ spring:
 #    alibaba:
 #      seata:
 #        tx-service-group: yanwu-seata-group-base
+mybatis-plus:
+  ### Mapper.xml文件所在目录
+  mapper-locations: classpath:/mapper/*Mapper.xml,classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml
+  ### 实体类所在目录，多个目录用逗号分开
+  type-aliases-package: com.yanwu.spring.cloud.box.data.model
+  global-config:
+    refresh: true
+    db-config:
+      id-type: auto
+      db-type: mysql
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+mybatis:
+  mapper-locations: classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml
+actable:
+  table:
+    auto: update
+  model:
+    pack: com.yanwu.spring.cloud.box.data.model
+  database:
+    type: mysql
+  index:
+    prefix: idx_
+  unique:
+    prefix: uni_
 feign:
   client:
     config:
