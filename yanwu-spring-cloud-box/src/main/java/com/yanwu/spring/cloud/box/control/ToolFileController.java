@@ -6,7 +6,6 @@ import com.yanwu.spring.cloud.common.core.annotation.RequestHandler;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.DateUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
-import com.yanwu.spring.cloud.common.utils.ImageUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -181,6 +180,9 @@ public class ToolFileController {
                 }
                 for (String item : value.getFileType()) {
                     if (filename.toUpperCase().endsWith(item.toUpperCase())) {
+                        return value.getContentType();
+                    }
+                    if (item.toUpperCase().endsWith(filename.toUpperCase())) {
                         return value.getContentType();
                     }
                 }
