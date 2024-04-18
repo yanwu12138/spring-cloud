@@ -15,7 +15,7 @@ import java.util.Date;
 @SuppressWarnings("all")
 public class DateUtil {
     /*** 分隔符 ***/
-    private static final String DASHES = "-", COLON = ":", SPACE = " ";
+    public static final String DASHES = "-", COLON = ":", SPACE = " ";
     /*** 中国时区 ***/
     private static final ZoneOffset UTC_8 = ZoneOffset.ofHours(8);
 

@@ -20,4 +20,9 @@ public class PageController {
         return "start.html";
     }
 
+    @RequestMapping("photo")
+    public String photo() {
+        return "photo.html";
+    }
+
 }
