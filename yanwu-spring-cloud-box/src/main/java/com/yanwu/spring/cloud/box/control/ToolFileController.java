@@ -97,7 +97,6 @@ public class ToolFileController {
                 instance.setUrl(file.getAbsolutePath().replace("/home/", URL_PATH));
                 instance.setMark(fileMark);
                 instance.setType(FileUtil.getSuffix(file.getName()));
-                instance.setThumbnail(ImageUtil.readThumbnail(file).replace("/home/", URL_PATH));
                 fileMapper.insert(instance);
             } catch (Exception e) {
                 log.error("init file failed. file: {}", file.getAbsolutePath(), e);
