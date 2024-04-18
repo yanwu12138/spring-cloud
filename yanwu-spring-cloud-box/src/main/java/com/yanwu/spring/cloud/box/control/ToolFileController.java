@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
+import java.util.concurrent.Executor;
 
 import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 
@@ -46,6 +47,8 @@ public class ToolFileController {
 
     @javax.annotation.Resource
     private YanwuFileMapper fileMapper;
+    @javax.annotation.Resource
+    private Executor commonsExecutors;
 
     @RequestHandler
     @GetMapping("init")
@@ -58,12 +61,14 @@ public class ToolFileController {
         if (files == null || files.length == 0) {
             return Result.failed();
         }
-        for (File item : files) {
-            if (item == null) {
-                continue;
+        commonsExecutors.execute(() -> {
+            for (File item : files) {
+                if (item == null) {
+                    continue;
+                }
+                readFile(item);
             }
-            readFile(item);
-        }
+        });
         return Result.success();
     }
 
