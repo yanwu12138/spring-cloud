@@ -11,19 +11,25 @@
 <body onload='defaultValue()'>
 <div id='tool-file-index'>
     <div id='tool-file-date-div' style='margin-top: 20px;margin-left: 60px'>
+        <label for='file-id-cache'>
+            <input id="file-id-cache" type="text" value="0" style="display: none">
+        </label>
         <label for='tool-file-year-select'>
             <select id='tool-file-year-select' onchange="findMonthByYear()" style='width: 130px;margin-left: 60px'></select>
         </label>
         <label for='tool-file-month-select'>
-            <select id='tool-file-month-select' onchange="firstFile()" style='width: 130px;margin-left: 60px'>
+            <select id='tool-file-month-select' onchange="nextFile()" style='width: 130px;margin-left: 60px'>
                 <option value="">-- 请选择月份 --</option>
             </select>
         </label>
-        <label for="tool-file-find-button">
-            <input id='tool-file-find-button' value='查询' onclick='firstFile()' type='button' style='width: 130px;margin-left: 60px'/>
+        <label for="tool-file-last-button">
+            <input id='tool-file-last-button' value='上一张' onclick='lastFile()' type='button' style='width: 130px;margin-left: 60px'/>
+        </label>
+        <label for="tool-file-next-button">
+            <input id='tool-file-next-button' value='下一张' onclick='nextFile()' type='button' style='width: 130px;margin-left: 60px'/>
         </label>
     </div>
-    <div id='tool-file-video-div' style='margin-top: 20px; margin-left: 60px'>
+    <div id='tool-file-video-div' style='margin-top: 20px; margin-left: 60px; width: 600px; height: 500px'>
     </div>
 </div>
 </body>
@@ -73,6 +79,7 @@
             }
         }
         xhr.send()
+        nextFile()
     }
 
     function findMonthByYear() {
@@ -102,31 +109,43 @@
         xhr.send()
     }
 
-    function firstFile() {
+    function lastFile() {
+        findFile('/file/last/' + $('#file-id-cache').val())
+    }
+
+    function nextFile() {
+        findFile('/file/next/' + $('#file-id-cache').val())
+    }
+
+    function findFile(url) {
         const param = {
             data: {
                 year: $('#tool-file-year-select').val(),
                 month: $('#tool-file-month-select').val()
             }
         }
-        xhr.open('POST', '/file/next/0', true)
+        xhr.open('POST', url, true)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.responseType = 'json'
         xhr.onload = function () {
             if (xhr.status === 200) {
                 if (xhr.response.status) {
+                    $('#file-id-cache').val(xhr.response.data.id)
                     if (isImage(xhr.response.data.type)) {
                         let image = document.createElement('img')
-                        image.src = 'http://114.55.74.43:8886/file/read/' + xhr.response.data.id
-                        image.style.width = 1280
-                        image.style.height = 960
+                        image.src = xhr.response.data.url
+                        image.style.width = '100%'
+                        image.style.height = 'auto'
                         document.getElementById('tool-file-video-div').innerHTML = ''
                         document.getElementById('tool-file-video-div').appendChild(image)
                     } else if (isVideo(xhr.response.data.type)) {
                         let video = document.createElement('video')
-                        video.src = 'http://114.55.74.43:8886/file/read/' + xhr.response.data.id
-                        video.style.width = 1280
-                        video.style.height = 960
+                        video.src = xhr.response.data.url
+                        video.style.width = '100%'
+                        video.style.height = 'auto'
+                        video.controls = true
+                        video.autoplay = true
+                        video.loop = false
                         document.getElementById('tool-file-video-div').innerHTML = ''
                         document.getElementById('tool-file-video-div').appendChild(video)
                     }
