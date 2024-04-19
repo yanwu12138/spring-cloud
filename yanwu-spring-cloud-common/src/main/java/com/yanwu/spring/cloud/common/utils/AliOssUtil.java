@@ -4,6 +4,7 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.DeleteObjectsRequest;
 import com.aliyun.oss.model.GetObjectRequest;
+import com.aliyun.oss.model.PutObjectResult;
 import com.yanwu.spring.cloud.common.core.enums.OssFileTypeEnum;
 import com.yanwu.spring.cloud.common.pojo.OssProperties;
 import com.yanwu.spring.cloud.common.pojo.Result;
@@ -144,6 +145,40 @@ public class AliOssUtil {
         String urlPath = randomFilePath(type, fileName);
         ossClient.putObject(bucket, urlPath, is);
         return checkExist(exist(ossClient, bucket, urlPath)) ? Result.success(urlPath) : Result.failed();
+    }
+
+    public static void main(String[] args) throws Exception {
+        String accessId = "", accessKey = "", endpoint = "", bucket = "";
+        OssProperties properties = OssProperties.getInstance(accessId, accessKey, endpoint, bucket);
+        OSS ossClient = buildClient(properties);
+        if (ossClient == null) {
+            log.error("upload failed: OSS properties configuration error. properties: {}", properties);
+            return;
+        }
+        File dir = new File("/Users/xubaofeng/yanwu/file/");
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            return;
+        }
+        int fileCount = files.length;
+        for (File file : files) {
+            if (file.getName().contains("DS_Store")) {
+                continue;
+            }
+            try {
+                Long lastTime = FileUtil.readFileCreateTime(file);
+                LocalDateTime datetime = DateUtil.datetime(lastTime);
+                String filepath = datetime.getYear() + SEPARATOR + filling(datetime.getMonthValue()) + SEPARATOR + DateUtil.dateStr(datetime.toLocalDate()) + "_" + file.getName();
+                PutObjectResult putObjectResult = ossClient.putObject(bucket, filepath, file);
+                if (exist(ossClient, bucket, filepath).successful()) {
+                    log.info("index: {}, file {} last time: {}, filepath: {}", fileCount--, file.getName(), DateUtil.datetimeStr(datetime), filepath);
+                    FileUtil.deleteFile(file);
+                    ThreadUtil.sleep(30_000);
+                }
+            } catch (Exception e) {
+                log.error("read file failed. file: {}", file.getName(), e);
+            }
+        }
     }
 
     /**
@@ -539,7 +574,7 @@ public class AliOssUtil {
      */
     private static String randomFilePath(OssFileTypeEnum type, String fileName) {
         LocalDateTime date = LocalDateTime.now();
-        return type.getType() + SEPARATOR + date.getYear() + SEPARATOR + filling(date.getMonthValue()) + SEPARATOR +
+        return date.getYear() + SEPARATOR + filling(date.getMonthValue()) + SEPARATOR +
                 filling(date.getDayOfMonth()) + SEPARATOR + filling(date.getHour()) + filling(date.getMinute()) +
                 filling(date.getSecond()) + filling(date.getNano()) + "_" + fileName;
     }
