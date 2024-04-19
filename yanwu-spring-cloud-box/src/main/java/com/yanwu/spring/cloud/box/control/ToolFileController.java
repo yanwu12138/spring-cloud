@@ -188,6 +188,7 @@ public class ToolFileController {
     @Accessors(chain = true)
     public static class FindFileVO implements Serializable {
         private static final long serialVersionUID = -4452800943719601968L;
+        private Long id;
         private String year;
         private String month;
         private String path;
