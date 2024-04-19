@@ -8,7 +8,7 @@
     <script src='//alinw.alicdn.com/platform/c/jquery/1.11.3/dist/jquery.min.js'></script>
 </head>
 
-<body onload='defaultValue()'>
+<body onload='findAllYear()'>
 <div id='tool-file-index'>
     <div id='tool-file-date-div' style='margin-top: 20px;margin-left: 60px'>
         <label for='file-id-cache'>
@@ -57,8 +57,7 @@
         return false
     }
 
-    /*** 默认值处理 ***/
-    function defaultValue() {
+    function findAllYear() {
         const selectElement = document.getElementById('tool-file-year-select');
         while (selectElement.options.length > 0) {
             selectElement.remove(0);
@@ -77,9 +76,9 @@
                     console.error(xhr.response.message)
                 }
             }
+            nextFile()
         }
         xhr.send()
-        nextFile()
     }
 
     function findMonthByYear() {
