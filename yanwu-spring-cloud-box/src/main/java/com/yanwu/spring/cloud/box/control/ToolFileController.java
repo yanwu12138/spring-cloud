@@ -7,6 +7,7 @@ import com.yanwu.spring.cloud.common.pojo.BaseParam;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.utils.DateUtil;
 import com.yanwu.spring.cloud.common.utils.FileUtil;
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -129,7 +130,7 @@ public class ToolFileController {
 
     @RequestHandler
     @PostMapping(value = {"last", "last/{id}"})
-    public Result<YanwuFile> last(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFilePO> param) {
+    public Result<FindFileVO> last(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFileVO> param) {
         if (fileId == null || fileId <= 0L) {
             fileId = Long.MAX_VALUE;
         }
@@ -140,7 +141,7 @@ public class ToolFileController {
             long maxId = Long.MAX_VALUE;
             last = lastFile(maxId, year, month);
         }
-        return last != null && last.getId() != null ? Result.success(last) : Result.failed();
+        return last != null && last.getId() != null ? Result.success(JsonUtil.convertObject(last, FindFileVO.class)) : Result.failed();
     }
 
     private YanwuFile lastFile(Long fileId, String year, String month) {
@@ -157,7 +158,7 @@ public class ToolFileController {
 
     @RequestHandler
     @PostMapping(value = {"next", "next/{id}"})
-    public Result<YanwuFile> next(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFilePO> param) {
+    public Result<FindFileVO> next(@PathVariable(value = "id", required = false) Long fileId, @RequestBody(required = false) BaseParam<FindFileVO> param) {
         if (fileId == null) {
             fileId = 0L;
         }
@@ -168,7 +169,7 @@ public class ToolFileController {
             long minId = -1L;
             next = nextFile(minId, year, month);
         }
-        return next != null && next.getId() != null ? Result.success(next) : Result.failed();
+        return next != null && next.getId() != null ? Result.success(JsonUtil.convertObject(next, FindFileVO.class)) : Result.failed();
     }
 
     private YanwuFile nextFile(Long fileId, String year, String month) {
@@ -185,10 +186,14 @@ public class ToolFileController {
 
     @Data
     @Accessors(chain = true)
-    public static class FindFilePO implements Serializable {
+    public static class FindFileVO implements Serializable {
         private static final long serialVersionUID = -4452800943719601968L;
         private String year;
         private String month;
+        private String path;
+        private String url;
+        private String mark;
+        private String type;
     }
 
 }

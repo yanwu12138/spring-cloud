@@ -20,47 +20,44 @@ import static com.gitee.sunchenbin.mybatis.actable.constants.MySqlTypeConstant.*
  * <p>
  * description:
  */
+@Getter
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implements Serializable {
     private static final long serialVersionUID = -5667178676337792115L;
 
     /*** 主键 ***/
-    @Getter
     @Setter
     @TableId(value = "id", type = IdType.AUTO)
     @Column(name = "id", type = BIGINT, length = 20, isNull = false, comment = "主键ID", isKey = true, isAutoIncrement = true)
     private PK id;
 
     /*** 创建者 ***/
-    @Getter
     @Setter
     @TableField(value = "creator")
     @Column(name = "creator", type = BIGINT, length = 20, comment = "创建者")
     private Long creator;
 
     /*** 创建时间 ***/
-    @Getter
+    @SuppressWarnings("unused")
     @TableField(value = "created", fill = FieldFill.INSERT)
     @Column(name = "created", type = DATETIME, isNull = false, defaultValue = "CURRENT_TIMESTAMP", comment = "创建时间")
     private LocalDateTime created;
 
     /*** 更新者 ***/
-    @Getter
     @Setter
     @TableField(value = "updator")
     @Column(name = "updator", type = BIGINT, length = 20, comment = "更新者")
     private Long updator;
 
     /*** 更新时间 ***/
-    @Getter
     @Version
+    @SuppressWarnings("unused")
     @TableField(value = "updated", fill = FieldFill.INSERT_UPDATE)
     @Column(name = "updated", type = DATETIME, isNull = false, defaultValue = "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", comment = "更新时间")
     private LocalDateTime updated;
 
     /*** 启用禁用 ***/
-    @Getter
     @Setter
     @TableLogic(value = "1", delval = "0")
     @TableField(value = "enabled", fill = FieldFill.INSERT)
@@ -68,7 +65,6 @@ public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implement
     private Boolean enabled;
 
     /*** 描述 ***/
-    @Getter
     @Setter
     @TableField(value = "description")
     @Column(name = "description", type = VARCHAR, comment = "描述")
@@ -79,6 +75,7 @@ public class BaseDo<PK extends Serializable> extends Model<BaseDo<PK>> implement
         return this.id;
     }
 
+    @SuppressWarnings("unused")
     static public class LongIdComparator implements Comparator<BaseDo<Long>> {
         @Override
         public int compare(BaseDo<Long> o1, BaseDo<Long> o2) {
