@@ -1,7 +1,6 @@
 package com.yanwu.spring.cloud.box;
 
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,8 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @Slf4j
 @SpringBootApplication
-@MapperScan(basePackages = {"com.yanwu.spring.cloud.box.data.mapper", "com.gitee.sunchenbin.mybatis.actable.dao.*"})
-@ComponentScan(basePackages = {"com.yanwu.spring.cloud", "com.gitee.sunchenbin.mybatis.actable.manager.*"})
+@ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
 public class BoxApplication {
 
     public static void main(String[] args) {
