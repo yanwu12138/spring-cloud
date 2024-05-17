@@ -14,10 +14,10 @@ import org.springframework.context.annotation.ComponentScan;
 @Slf4j
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.yanwu.spring.cloud"})
-public class BoxApplication {
+public class PostApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BoxApplication.class, args);
+        SpringApplication.run(PostApiApplication.class, args);
     }
 
 }

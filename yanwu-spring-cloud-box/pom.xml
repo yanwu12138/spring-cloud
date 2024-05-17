@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.yanwu.spring.cloud.box</groupId>
-    <artifactId>yanwu-spring-cloud-box</artifactId>
+    <groupId>com.yanwu.spring.cloud.postApi</groupId>
+    <artifactId>yanwu-spring-cloud-postApi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>yanwu-spring-cloud-box</name>
-    <description>yanwu-spring-cloud-box</description>
+    <name>yanwu-spring-cloud-postApi</name>
+    <description>yanwu-spring-cloud-postApi</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -61,7 +61,7 @@
     </dependencyManagement>
 
     <build>
-        <finalName>yanwu-box</finalName>
+        <finalName>yanwu-postApi</finalName>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
