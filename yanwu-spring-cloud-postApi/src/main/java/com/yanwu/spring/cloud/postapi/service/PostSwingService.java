@@ -6,5 +6,5 @@ package com.yanwu.spring.cloud.postapi.service;
  * <p>
  * description:
  */
-public interface BoxToolService {
+public interface PostSwingService {
 }

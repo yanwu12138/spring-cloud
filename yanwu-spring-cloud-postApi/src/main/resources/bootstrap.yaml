@@ -2,6 +2,4 @@ server:
   port: 8886
 spring:
   application:
-    name: yanwu-box
-  profiles:
-    active: yanwu
+    name: yanwu-postApi

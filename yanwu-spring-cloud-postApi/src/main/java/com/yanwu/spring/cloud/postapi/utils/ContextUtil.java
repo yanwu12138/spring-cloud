@@ -63,16 +63,6 @@ public class ContextUtil implements ApplicationContextAware {
         return context.getBean(beanName, clazz);
     }
 
-    public static Set<Class<?>> getClazzByAnnotation(Class<? extends Annotation> annotation) {
-        Map<String, Object> beans = context.getBeansWithAnnotation(annotation);
-        if (MapUtils.isEmpty(beans)) {
-            return Collections.emptySet();
-        }
-        Set<Class<?>> classes = new HashSet<>();
-        beans.values().forEach(bean -> classes.add(bean.getClass()));
-        return classes;
-    }
-
     /**
      * 获取请求信息
      *
