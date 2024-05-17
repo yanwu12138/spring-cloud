@@ -55,30 +55,27 @@ public class CommandUtil {
         } else {
             command = new String[]{"/bin/sh", "-c", cmd};
         }
-        BufferedReader reader = null, errorReader = null;
-        InputStreamReader streamReader = null, errorStreamReader = null;
         try {
             Process proc = Runtime.getRuntime().exec(command);
-            streamReader = new InputStreamReader(proc.getInputStream());
-            reader = new BufferedReader(streamReader);
-            String line;
-            StringBuilder builder = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                builder.append(line).append("\r\n");
+            try (InputStreamReader streamReader = new InputStreamReader(proc.getInputStream());
+                 BufferedReader reader = new BufferedReader(streamReader);
+                 InputStreamReader errorStreamReader = new InputStreamReader(proc.getErrorStream());
+                 BufferedReader errorReader = new BufferedReader(errorStreamReader)) {
+                String line;
+                StringBuilder builder = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line).append("\r\n");
+                }
+                while ((line = errorReader.readLine()) != null) {
+                    builder.append(line).append("\r\n");
+                }
+                proc.waitFor();
+                log.info("exec command success, cmd: {}", cmd);
+                return builder.toString();
             }
-            errorStreamReader = new InputStreamReader(proc.getErrorStream());
-            errorReader = new BufferedReader(errorStreamReader);
-            while ((line = errorReader.readLine()) != null) {
-                builder.append(line).append("\r\n");
-            }
-            proc.waitFor();
-            log.info("exec command success, cmd: {}", cmd);
-            return builder.toString();
         } catch (Exception e) {
             log.error("exec command failed. cmd: {}.", cmd, e);
             return null;
-        } finally {
-            IOUtil.closes(errorReader, errorStreamReader, reader, streamReader);
         }
     }
 

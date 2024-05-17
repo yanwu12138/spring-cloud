@@ -1335,4 +1335,78 @@ public class FileUtil {
         }
     }
 
+
+    /***
+     * copy 文件
+     * @param source 源文件绝对路径
+     * @param target 目标文件绝对路径
+     * @return [true: copy成功; false: copy失败]
+     */
+    public static boolean copy(String source, String target) {
+        if (StringUtils.isBlank(source) || StringUtils.isBlank(target)) {
+            return false;
+        }
+        File sourceFile = new File(source);
+        if (!fileExists(sourceFile)) {
+            return false;
+        }
+        return sourceFile.isFile() ? copyFile(source, target) : sourceFile.isDirectory() && copyDir(source, target);
+    }
+
+    /***
+     * copy 文件
+     * @param source 源文件绝对路径
+     * @param target 目标文件绝对路径
+     * @return [true: copy成功; false: copy失败]
+     */
+    public static boolean copyFile(String source, String target) {
+        if (StringUtils.isBlank(source) || StringUtils.isBlank(target)) {
+            return false;
+        }
+        File sourceFile = new File(source);
+        if (!fileExists(sourceFile) || !sourceFile.isFile()) {
+            return false;
+        }
+        try {
+            String sourceMd5 = calcFileMd5(sourceFile);
+            if (StringUtils.isBlank(sourceMd5)) {
+                return false;
+            }
+            deleteFile(target);
+            String command = "cp -f " + source + " " + target;
+            CommandUtil.execCommand(command);
+            log.info("copy file success, source: {}, target: {}", source, target);
+            return fileExists(target) && sourceMd5.equalsIgnoreCase(calcFileMd5(target));
+        } catch (Exception e) {
+            log.error("copy file failed, source: {}, target: {}", source, target, e);
+            return false;
+        }
+    }
+
+    /***
+     * copy 目录
+     * @param source 源目录绝对路径
+     * @param target 目标目录绝对路径
+     * @return [true: copy成功; false: copy失败]
+     */
+    public static boolean copyDir(String source, String target) {
+        if (StringUtils.isBlank(source) || StringUtils.isBlank(target)) {
+            return false;
+        }
+        File sourceFile = new File(source);
+        if (!fileExists(sourceFile) || !sourceFile.isDirectory()) {
+            return false;
+        }
+        try {
+            deleteFile(target);
+            String command = "cp -r -f " + source + " " + target;
+            CommandUtil.execCommand(command);
+            log.info("copy file success, source: {}, target: {}", source, target);
+            return fileExists(target);
+        } catch (Exception e) {
+            log.error("copy file failed, source: {}, target: {}", source, target, e);
+            return false;
+        }
+    }
+
 }
