@@ -2,9 +2,12 @@ package com.yanwu.spring.cloud.postapi.service;
 
 /**
  * @author XuBaofeng.
- * @date 2024/3/19 11:04.
+ * @date 2024/5/17 14:45.
  * <p>
  * description:
  */
-public interface PostSwingService {
+public interface RibbonService {
+
+    void createRibbon(RootSwing window);
+
 }
