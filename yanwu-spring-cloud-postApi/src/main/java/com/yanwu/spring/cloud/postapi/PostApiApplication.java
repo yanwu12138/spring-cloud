@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.box;
+package com.yanwu.spring.cloud.postapi;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;

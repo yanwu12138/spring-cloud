@@ -64,7 +64,7 @@ public class ObjectUtil {
      * @param fieldName 字段名
      */
     public static Field field(Object obj, String fieldName) {
-        if (obj == null || obj.getClass() == null || StringUtils.isBlank(fieldName)) {
+        if (obj == null || StringUtils.isBlank(fieldName)) {
             return null;
         }
         Class<?> clazz = obj.getClass();
@@ -215,7 +215,7 @@ public class ObjectUtil {
      * @return 属性值
      */
     public static Object fieldValue(Object obj, String fieldName) throws Exception {
-        if (obj == null || Objects.isNull(obj.getClass()) || StringUtils.isBlank(fieldName)) {
+        if (obj == null || StringUtils.isBlank(fieldName)) {
             return null;
         }
         Class<?> clazz = obj.getClass();

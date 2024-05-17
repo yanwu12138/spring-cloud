@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.box.service;
+package com.yanwu.spring.cloud.postapi.service;
 
 /**
  * @author XuBaofeng.
