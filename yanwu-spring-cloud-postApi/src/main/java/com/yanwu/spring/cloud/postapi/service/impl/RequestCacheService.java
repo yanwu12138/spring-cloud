@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Slf4j
 @Service("requestCacheService")
-public class RequestCacheServiceImpl implements RibbonService {
+public class RequestCacheService implements RibbonService {
     private static final String CACHE_FILE_PATH = "/Users/xubaofeng/devTool/postApi/requestCache.json";
     private static final String TREE_ROOT_NAME = "所有请求";
 
@@ -41,6 +41,7 @@ public class RequestCacheServiceImpl implements RibbonService {
             requestPanel.setPreferredSize(new Dimension(300, 0));
             requestPanel.add(createRequestTree(requests));
             window.add(requestPanel, BorderLayout.WEST);
+            log.info("init requestCacheService success.");
         } catch (Exception e) {
             log.error("init requestCacheService failed.", e);
             System.exit(-1);

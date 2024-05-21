@@ -24,7 +24,6 @@ public class RootSwing extends JFrame {
     private void initUI() {
         setTitle("PostApi");
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
         setSize(1200, 800);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
