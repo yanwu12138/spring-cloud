@@ -59,12 +59,12 @@ yum install -y openssl openssl-devel
 tar -zxvf nginx-1.12.0.tar.gz
 ```
 
-##### 编译安装
+##### 编译安装（并添加https相关组件）
 
 ```shell
 cd nginx-1.12.0
-./configure && make
-./configure && make install
+./configure --with-http_ssl_module --with-http_v2_module && make
+./configure --with-http_ssl_module --with-http_v2_module && make install
 ```
 
 #### 启动与停止
