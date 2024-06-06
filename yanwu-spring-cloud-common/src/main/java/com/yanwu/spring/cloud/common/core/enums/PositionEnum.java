@@ -41,10 +41,22 @@ public enum PositionEnum {
         return null;
     }
 
+    /***
+     * 根据十进制经纬度和类型获取方位枚举
+     * @param position 十进制经纬度
+     * @param flag     类型[true: 经度; false: 纬度]
+     * @return 方位枚举数据
+     */
     public static PositionEnum getInstance(double position, boolean flag) {
         return getInstance(BigDecimal.valueOf(position), flag);
     }
 
+    /***
+     * 根据十进制经纬度和类型获取方位枚举
+     * @param position 十进制经纬度
+     * @param flag     类型[true: 经度; false: 纬度]
+     * @return 方位枚举数据
+     */
     public static PositionEnum getInstance(BigDecimal position, boolean flag) {
         if (flag) {
             // ----- 经度
@@ -58,6 +70,20 @@ public enum PositionEnum {
                 return null;
             }
             return position.compareTo(BigDecimal.ZERO) >= 0 ? NORTH : SOUTH;
+        }
+    }
+
+    /***
+     * 根据度分秒格式的经纬度计算十进制经纬度的符号
+     * @param decimal  十进制经纬度
+     * @param position 度分秒经纬度
+     * @return 计算符号后的十进制经纬度
+     */
+    public static BigDecimal calcSymbols(BigDecimal decimal, String position) {
+        if (position.endsWith(EAST.getCode()) || position.endsWith(NORTH.getCode())) {
+            return decimal;
+        } else {
+            return BigDecimal.ZERO.subtract(decimal);
         }
     }
 
