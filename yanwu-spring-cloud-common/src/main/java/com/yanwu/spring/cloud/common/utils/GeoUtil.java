@@ -28,10 +28,16 @@ public class GeoUtil {
     public static final BigDecimal MAX_LAT = BigDecimal.valueOf(90);
     private static final JtsSpatialContext JTS_GEO_SPATIAL = JtsSpatialContext.GEO;
     private static final BigDecimal KILOMETER_PER_SEA = BigDecimal.valueOf(1.852);
-    private static final BigDecimal CONSTANT = BigDecimal.valueOf(600_000);
     private static final String DEGREES = "°";
     private static final String MINUTES = "′";
     private static final String SECONDS = "′′";
+
+    /*** 地球长半径: a=6378137 米 ***/
+    public static final double EARTH_END_RADIUS = 6378137;
+    /*** 地球短半径: b=6356752.3142 ***/
+    public static final double EARTH_MINOR_RADIUS = 6356752.3142;
+    /*** 地球扁率: f=1/298.2572236 ***/
+    public static final double FLATNESS = 1 / 298.2572236;
 
     private GeoUtil() {
         throw new UnsupportedOperationException("GeoUtil should never be instantiated");
@@ -285,11 +291,83 @@ public class GeoUtil {
         return result;
     }
 
+    /**
+     * 已知一点经纬度，方位角，距离，求另一点经纬度
+     * 通过三角函数求终点坐标-球面坐标系
+     *
+     * @param point    初始坐标
+     * @param angle    角度(单位: 度)
+     * @param distance 距离(单位: 米)
+     * @return 目标位置经纬度
+     */
+    public static Point positionOffset(Point point, double angle, double distance) {
+        double lon = point.getLon();
+        double lat = point.getLat();
+
+        double alpha1 = rad(angle);
+        double sinAlpha1 = Math.sin(alpha1);
+        double cosAlpha1 = Math.cos(alpha1);
+
+        double tanU1 = (1 - FLATNESS) * Math.tan(rad(lat));
+        double cosU1 = 1 / Math.sqrt((1 + tanU1 * tanU1));
+        double sinU1 = tanU1 * cosU1;
+        double sigma1 = Math.atan2(tanU1, cosAlpha1);
+        double sinAlpha = cosU1 * sinAlpha1;
+        double cosSqAlpha = 1 - sinAlpha * sinAlpha;
+        double uSq = cosSqAlpha * (EARTH_END_RADIUS * EARTH_END_RADIUS - EARTH_MINOR_RADIUS * EARTH_MINOR_RADIUS) / (EARTH_MINOR_RADIUS * EARTH_MINOR_RADIUS);
+        double A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
+        double B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
+
+        double cos2SigmaM = 0;
+        double sinSigma = 0;
+        double cosSigma = 0;
+        double sigma = distance / (EARTH_MINOR_RADIUS * A), sigmaP = 2 * Math.PI;
+        while (Math.abs(sigma - sigmaP) > 1e-12) {
+            cos2SigmaM = Math.cos(2 * sigma1 + sigma);
+            sinSigma = Math.sin(sigma);
+            cosSigma = Math.cos(sigma);
+            double deltaSigma = B * sinSigma * (cos2SigmaM + B / 4 * (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)
+                    - B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM * cos2SigmaM)));
+            sigmaP = sigma;
+            sigma = distance / (EARTH_MINOR_RADIUS * A) + deltaSigma;
+        }
+
+        double tmp = sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1;
+        double lat2 = Math.atan2(sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1,
+                (1 - FLATNESS) * Math.sqrt(sinAlpha * sinAlpha + tmp * tmp));
+        double lambda = Math.atan2(sinSigma * sinAlpha1, cosU1 * cosSigma - sinU1 * sinSigma * cosAlpha1);
+        double C = FLATNESS / 16 * cosSqAlpha * (4 + FLATNESS * (4 - 3 * cosSqAlpha));
+        double L = lambda - (1 - C) * FLATNESS * sinAlpha
+                * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)));
+
+        return geoPoint(lon + deg(L), deg(lat2));
+    }
+
+    /***
+     * 度换成弧度
+     * @param deg 度
+     * @return 弧度
+     */
+    private static double rad(double deg) {
+        return deg * Math.PI / 180;
+    }
+
+
+    /***
+     * 弧度换成度
+     * @param rad 弧度
+     * @return 度
+     */
+    private static double deg(double rad) {
+        return rad * 180 / Math.PI;
+    }
+
     public static void main(String[] args) {
-        System.out.println("120.72931D, -29.5481D");
-        String position = convertCoordinate(120.72931D, -29.5481D);
-        System.out.println(position);
-        System.out.println(convertCoordinate(position));
+        Point source = geoPoint(120.72931D, -29.5481D);
+        Point target = positionOffset(source, 90, 2 * 1.852 * 1000);
+        System.out.println(source);
+        System.out.println(target);
+        System.out.println(getDistance(source, target));
     }
 
 }
