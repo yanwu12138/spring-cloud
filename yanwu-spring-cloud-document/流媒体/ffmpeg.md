@@ -25,7 +25,7 @@ ffmpeg -version
 
 
 
-#### Linux
+#### Linux（编译安装）
 
 ##### 下载
 
@@ -92,6 +92,36 @@ ffmpeg -version
 ```
 
 ![image-20220526180239553](https://typroa12138.oss-cn-hangzhou.aliyuncs.com/image/2022/05/20220526180239606.png)
+
+
+
+#### Linux（yum安装）
+
+> 使用 `yum` 从 `RPM Fusion` 存储库安装
+
+- `RPM Fusion` 存储库依赖于`EPEL`软件存储库，如果您的系统上未启用`EPEL`，请使用以下命令：
+
+```shell
+sudo yum install epel-release
+```
+
+- 接下来，通过安装 `rpm` 包启用` RPM Fusion` 存储库 ：
+
+```shell
+sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
+```
+
+- 启用存储库后，安装` FFmpeg`：
+
+```shell
+sudo yum install ffmpeg ffmpeg-devel
+```
+
+- 通过检查其版本来验证 `FFmpeg` 安装：
+
+```shell
+ffmpeg -version
+```
 
 
 
