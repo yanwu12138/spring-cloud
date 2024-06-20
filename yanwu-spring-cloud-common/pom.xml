@@ -26,7 +26,7 @@
         <commons.httpclient.version>4.5.13</commons.httpclient.version>
         <disruptor.version>3.4.2</disruptor.version>
         <ganymed.ssh2.version>262</ganymed.ssh2.version>
-        <guava.version>30.0-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <java.mail.version>1.4.7</java.mail.version>
         <java.version>1.8</java.version>
         <jdk.version>1.8</jdk.version>
