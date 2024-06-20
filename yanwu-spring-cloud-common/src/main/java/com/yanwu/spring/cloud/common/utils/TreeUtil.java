@@ -52,7 +52,7 @@ public class TreeUtil {
         }
         List<T> result = new ArrayList<>(childToNode(nodes));
         result.forEach(item -> item.getChild().clear());
-        return result;
+        return result.stream().sorted(Comparator.comparing(T::getNodeId)).collect(Collectors.toList());
     }
 
     /**
@@ -119,6 +119,7 @@ public class TreeUtil {
             long begin, done;
             String json = new String(FileUtil.read(filepath), StandardCharsets.UTF_8);
             List<TestNode> listNode1 = JsonUtil.toObjectList(json, TestNode.class);
+            listNode1 = listNode1.stream().sorted(Comparator.comparing(TestNode::getNodeId)).collect(Collectors.toList());
             System.out.println("============================================================");
             System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()));
             List<TestNode> treeNode1 = listToTree(listNode1);
@@ -139,6 +140,10 @@ public class TreeUtil {
         }
 
         private static void checkListNodes(List<TestNode> listNode1, List<TestNode> listNode2) {
+            if (listNode1.equals(listNode2)) {
+                System.out.println("------- EQUALS -------");
+                return;
+            }
             if (listNode1.size() != listNode2.size()) {
                 System.out.println("------- ERROR -------");
                 throw new RuntimeException();
