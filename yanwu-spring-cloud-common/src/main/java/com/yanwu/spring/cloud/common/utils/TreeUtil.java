@@ -82,10 +82,8 @@ public class TreeUtil {
             return result;
         }
         nodes.forEach(node -> {
-            if (CollectionUtils.isNotEmpty(node.getChild())) {
-                result.addAll(childToNode(node.getChild()));
-            }
             result.add(node);
+            result.addAll(childToNode(node.getChild()));
         });
         return result;
     }
