@@ -58,6 +58,7 @@ public class SmsUtil {
 
     @Data
     @Accessors(chain = true)
+    @SuppressWarnings("unused")
     public static class SmsParam implements Serializable {
         private static final long serialVersionUID = -3612771395199772499L;
         private String account;
@@ -81,6 +82,7 @@ public class SmsUtil {
 
     @Data
     @Accessors(chain = true)
+    @SuppressWarnings("unused")
     public static class SmsResult implements Serializable {
         private static final long serialVersionUID = -1935932578444752071L;
         /*** 响应时间 ***/
