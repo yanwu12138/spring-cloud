@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author XuBaofeng.
  * @date 2024/6/20 15:17.
  * <p>
- * description:
+ * description: 蓝创发送短信验证码
  */
 @Slf4j
 public class SmsUtil {
@@ -35,14 +35,19 @@ public class SmsUtil {
     }
 
     public static SmsResult sendSms(String url, String account, String password, SmsParam param) {
-        param.setAccount(account).setPassword(password);
         RequestInfo<SmsParam, SmsResult> requestInfo = RequestInfo.getInstance(HttpMethod.POST, url, SmsResult.class);
-        requestInfo.buildBody(param).buildHeaders("Charset", "UTF-8").buildHeaders("Content-Type", "application/json");
+        requestInfo.buildBody(param.setAccount(account).setPassword(password))
+                .buildHeaders("Charset", "UTF-8").buildHeaders("Content-Type", "application/json");
         Result<SmsResult> execute = RestUtil.execute(requestInfo);
         log.info("phone: {}，The result of sending the SMS: {}", param, execute);
         return execute.getData();
     }
 
+    /***
+     * 获取随机的验证码
+     * @param length 验证码长度
+     * @return 验证码
+     */
     public static String randomCode(int length) {
         StringBuilder code = new StringBuilder();
         for (int i = 0; i < length; i++) {
