@@ -38,29 +38,6 @@ public class TreeUtil {
      * @param nodes 节点集合
      */
     public static <T extends TreeNodeBO<T>> List<T> listToTree(List<T> nodes) {
-        return CollectionUtils.isEmpty(nodes) ? Collections.emptyList() : nodesToChild(nodes);
-    }
-
-    /**
-     * 树结构转换成list结构
-     *
-     * @param nodes 节点集合
-     */
-    public static <T extends TreeNodeBO<T>> List<T> treeToList(List<T> nodes) {
-        if (CollectionUtils.isEmpty(nodes)) {
-            return Collections.emptyList();
-        }
-        List<T> result = new ArrayList<>(childToNode(nodes));
-        result.forEach(item -> item.getChild().clear());
-        return result.stream().sorted(Comparator.comparing(T::getNodeId)).collect(Collectors.toList());
-    }
-
-    /**
-     * 递归处理节点数据
-     *
-     * @param nodes 节点集合
-     */
-    private static <T extends TreeNodeBO<T>> List<T> nodesToChild(List<T> nodes) {
         List<T> result = new ArrayList<>();
         if (CollectionUtils.isEmpty(nodes)) {
             return result;
@@ -78,6 +55,20 @@ public class TreeUtil {
         nodeMap.clear();
         result.removeIf(item -> !item.getParentId().equals(TOP_NODE_ID));
         return result;
+    }
+
+    /**
+     * 树结构转换成list结构
+     *
+     * @param nodes 节点集合
+     */
+    public static <T extends TreeNodeBO<T>> List<T> treeToList(List<T> nodes) {
+        if (CollectionUtils.isEmpty(nodes)) {
+            return Collections.emptyList();
+        }
+        List<T> result = childToNode(nodes);
+        result.forEach(item -> item.getChild().clear());
+        return result.stream().sorted(Comparator.comparing(T::getNodeId)).collect(Collectors.toList());
     }
 
     /**
