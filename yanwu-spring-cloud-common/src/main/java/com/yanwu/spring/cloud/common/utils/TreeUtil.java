@@ -126,6 +126,7 @@ public class TreeUtil {
             checkListNodes(listNode1, listNode2);
             System.out.println("| checkListNodes >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("============================================================");
+            System.out.println(treeNode1.equals(treeNode2));
         }
 
         private static void checkListNodes(List<TestNode> listNode1, List<TestNode> listNode2) {
