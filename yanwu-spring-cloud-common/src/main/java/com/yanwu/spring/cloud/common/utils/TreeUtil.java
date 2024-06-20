@@ -37,10 +37,9 @@ public class TreeUtil {
      * list结构转换成树结构
      *
      * @param nodes 节点集合
-     * @param clazz ? extends TreeNodeBO
      */
-    public static <T extends TreeNodeBO<T>> List<T> listToTree(List<T> nodes, Class<T> clazz) {
-        return CollectionUtils.isEmpty(nodes) ? Collections.emptyList() : nodesToChild(nodes, TOP_NODE_ID, clazz);
+    public static <T extends TreeNodeBO<T>> List<T> listToTree(List<T> nodes) {
+        return CollectionUtils.isEmpty(nodes) ? Collections.emptyList() : nodesToChild(nodes, TOP_NODE_ID);
     }
 
     /**
@@ -48,12 +47,12 @@ public class TreeUtil {
      *
      * @param nodes 节点集合
      */
-    public static <T extends TreeNodeBO<T>> List<T> treeToList(List<T> nodes, Class<T> clazz) {
+    public static <T extends TreeNodeBO<T>> List<T> treeToList(List<T> nodes) {
         if (CollectionUtils.isEmpty(nodes)) {
             return Collections.emptyList();
         }
         List<T> nodeList = new ArrayList<>();
-        childToNode(nodes, nodeList, clazz);
+        childToNode(nodes, nodeList);
         return nodeList;
     }
 
@@ -62,9 +61,8 @@ public class TreeUtil {
      *
      * @param nodes    节点集合
      * @param parentId 父节点ID
-     * @param clazz    ? extends TreeNodeBO
      */
-    private static <T extends TreeNodeBO<T>> List<T> nodesToChild(List<T> nodes, Long parentId, Class<T> clazz) {
+    private static <T extends TreeNodeBO<T>> List<T> nodesToChild(List<T> nodes, Long parentId) {
         List<T> child = new ArrayList<>();
         if (CollectionUtils.isEmpty(nodes) || parentId == null) {
             return child;
@@ -77,7 +75,7 @@ public class TreeUtil {
         });
         child.forEach(node -> {
             if (isLeaf(nodes, node.getNodeId())) {
-                node.setChild(nodesToChild(nodes, node.getNodeId(), clazz));
+                node.setChild(nodesToChild(nodes, node.getNodeId()));
             }
         });
         return child;
@@ -88,16 +86,15 @@ public class TreeUtil {
      *
      * @param nodes  当前递归的节点集合
      * @param result 总结果响应集
-     * @param clazz  ? extends TreeNodeBO
      */
-    private static <T extends TreeNodeBO<T>> void childToNode(List<T> nodes, List<T> result, Class<T> clazz) {
+    private static <T extends TreeNodeBO<T>> void childToNode(List<T> nodes, List<T> result) {
         if (CollectionUtils.isEmpty(nodes)) {
             return;
         }
         nodes.forEach(node -> {
-            childToNode(node.getNodeId(), nodes, result, clazz);
+            childToNode(node.getNodeId(), nodes, result);
             if (CollectionUtils.isNotEmpty(node.getChild())) {
-                childToNode(node.getChild(), result, clazz);
+                childToNode(node.getChild(), result);
             }
         });
     }
@@ -108,9 +105,8 @@ public class TreeUtil {
      * @param nodeId 当前递归到的节点ID
      * @param nodes  当前递归的节点集合
      * @param result 总结果响应集
-     * @param clazz  ? extends TreeNodeBO
      */
-    private static <T extends TreeNodeBO<T>> void childToNode(Long nodeId, List<T> nodes, List<T> result, Class<T> clazz) {
+    private static <T extends TreeNodeBO<T>> void childToNode(Long nodeId, List<T> nodes, List<T> result) {
         if (CollectionUtils.isEmpty(nodes) || nodeId == null || nodeId.equals(TOP_NODE_ID)) {
             return;
         }
@@ -121,7 +117,7 @@ public class TreeUtil {
             if (nodeId.equals(node.getNodeId())) {
                 result.add(node);
                 if (isTop(node)) {
-                    childToNode(node.getParentId(), nodes, result, clazz);
+                    childToNode(node.getParentId(), nodes, result);
                 }
             }
         });
@@ -162,15 +158,15 @@ public class TreeUtil {
             List<TestNode> listNode1 = listNodes();
             System.out.println("============================================================");
             System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()));
-            List<TestNode> treeNode1 = listToTree(listNode1, TestNode.class);
+            List<TestNode> treeNode1 = listToTree(listNode1);
             System.out.println("| listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("|-----------------------------------------------------------");
             System.out.println("| treeToList >> start: " + (begin = System.currentTimeMillis()));
-            List<TestNode> listNode2 = treeToList(treeNode1, TestNode.class);
+            List<TestNode> listNode2 = treeToList(treeNode1);
             System.out.println("| treeToList >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("|-----------------------------------------------------------");
             System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()));
-            List<TestNode> treeNode2 = listToTree(listNode2, TestNode.class);
+            List<TestNode> treeNode2 = listToTree(listNode2);
             System.out.println("| listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("|-----------------------------------------------------------");
             System.out.println("| checkListNodes >> start: " + (begin = System.currentTimeMillis()));
