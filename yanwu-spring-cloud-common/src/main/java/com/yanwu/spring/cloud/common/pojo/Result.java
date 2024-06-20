@@ -12,19 +12,17 @@ import java.io.Serializable;
  * <p>
  * description:
  */
+@Getter
 @ToString
 @EqualsAndHashCode
 public class Result<T> implements Serializable {
     private static final long serialVersionUID = 8137315026981867597L;
     private static final String ERROR = "执行失败!";
 
-    @Getter
     private T data;
 
-    @Getter
     private Boolean status;
 
-    @Getter
     private String message;
 
     public boolean successful() {

@@ -49,7 +49,7 @@ public class SmsUtil {
         requestInfo.buildBody(param).buildHeaders("Charset", "UTF-8").buildHeaders("Content-Type", "application/json");
         Result<SmsResult> execute = RestUtil.execute(requestInfo);
         log.info("The result of sending the SMS: {}, message: {}", execute, param);
-        if (execute.getData() != null && execute.getData().successful()) {
+        if (execute.nonNull() && execute.getData().successful()) {
             return Result.success(randomCode);
         }
         return Result.failed();
