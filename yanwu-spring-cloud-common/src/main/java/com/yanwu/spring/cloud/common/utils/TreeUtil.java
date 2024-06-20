@@ -71,9 +71,8 @@ public class TreeUtil {
         }
         nodes.forEach(node -> {
             if (node.getParentId().equals(parentId)) {
-                T instance = createNodeInstance(node, clazz);
-                instance.setParentId(parentId);
-                child.add(instance);
+                node.setParentId(parentId);
+                child.add(node);
             }
         });
         child.forEach(node -> {
@@ -120,7 +119,7 @@ public class TreeUtil {
         }
         nodes.forEach(node -> {
             if (nodeId.equals(node.getNodeId())) {
-                result.add(createNodeInstance(node, clazz));
+                result.add(node);
                 if (isTop(node)) {
                     childToNode(node.getParentId(), nodes, result, clazz);
                 }
@@ -147,18 +146,6 @@ public class TreeUtil {
      */
     private static <T extends TreeNodeBO<T>> boolean isTop(TreeNodeBO<T> node) {
         return node.getParentId() == null || node.getParentId().equals(TOP_NODE_ID);
-    }
-
-    /**
-     * 获取节点实例
-     *
-     * @param node  节点数据
-     * @param clazz ? extends TreeNodeBO
-     */
-    private static <T extends TreeNodeBO<T>> T createNodeInstance(T node, Class<T> clazz) {
-        T instance = JsonUtil.toObject(JsonUtil.toString(node), clazz);
-        instance.setChild(new ArrayList<>());
-        return instance;
     }
 
     @Data
@@ -190,7 +177,7 @@ public class TreeUtil {
             checkListNodes(listNode1, listNode2);
             System.out.println("| checkListNodes >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("============================================================");
-            System.out.println(JsonUtil.toString(treeNode2));
+//            System.out.println(JsonUtil.toString(treeNode2));
         }
 
         private static void checkListNodes(List<TestNode> listNode1, List<TestNode> listNode2) {
@@ -215,7 +202,7 @@ public class TreeUtil {
             nodes.add(topNode);
             int level = 1;
             long index = 2;
-            while (index < 10000) {
+            while (index < 20000) {
                 TestNode instance = new TestNode();
                 String code;
                 Long parentId;
