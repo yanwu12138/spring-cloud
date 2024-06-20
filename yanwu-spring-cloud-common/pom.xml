@@ -40,7 +40,7 @@
         <mybatis.enhance.actable.version>1.5.0.RELEASE</mybatis.enhance.actable.version>
         <mybatis.plus.version>3.4.2</mybatis.plus.version>
         <net.sf.dozer.version>5.5.1</net.sf.dozer.version>
-        <poi.version>3.17</poi.version>
+        <poi.version>4.1.1</poi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reflections.version>0.9.11</reflections.version>
         <spatial4j.version>0.8</spatial4j.version>
