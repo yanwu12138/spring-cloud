@@ -50,7 +50,9 @@ public class TreeUtil {
         if (CollectionUtils.isEmpty(nodes)) {
             return Collections.emptyList();
         }
-        return new ArrayList<>(childToNode(nodes));
+        List<T> result = new ArrayList<>(childToNode(nodes));
+        result.forEach(item -> item.getChild().clear());
+        return result;
     }
 
     /**
@@ -90,7 +92,7 @@ public class TreeUtil {
         }
         nodes.forEach(node -> {
             if (CollectionUtils.isNotEmpty(node.getChild())) {
-                childToNode(node.getChild());
+                result.addAll(childToNode(node.getChild()));
             }
             result.add(node);
         });
