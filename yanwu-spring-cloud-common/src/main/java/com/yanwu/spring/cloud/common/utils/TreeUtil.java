@@ -50,9 +50,7 @@ public class TreeUtil {
         if (CollectionUtils.isEmpty(nodes)) {
             return Collections.emptyList();
         }
-        List<T> nodeList = new ArrayList<>();
-        childToNode(nodes, nodeList);
-        return nodeList;
+        return new ArrayList<>(childToNode(nodes));
     }
 
     /**
@@ -83,64 +81,20 @@ public class TreeUtil {
     /**
      * 递归处理节点数据
      *
-     * @param nodes  当前递归的节点集合
-     * @param result 总结果响应集
+     * @param nodes 当前递归的节点集合
      */
-    private static <T extends TreeNodeBO<T>> void childToNode(List<T> nodes, List<T> result) {
+    private static <T extends TreeNodeBO<T>> List<T> childToNode(List<T> nodes) {
+        List<T> result = new ArrayList<>();
         if (CollectionUtils.isEmpty(nodes)) {
-            return;
+            return result;
         }
         nodes.forEach(node -> {
-            childToNode(node.getNodeId(), nodes, result);
             if (CollectionUtils.isNotEmpty(node.getChild())) {
-                childToNode(node.getChild(), result);
+                childToNode(node.getChild());
             }
+            result.add(node);
         });
-    }
-
-    /**
-     * 递归处理节点数据
-     *
-     * @param nodeId 当前递归到的节点ID
-     * @param nodes  当前递归的节点集合
-     * @param result 总结果响应集
-     */
-    private static <T extends TreeNodeBO<T>> void childToNode(Long nodeId, List<T> nodes, List<T> result) {
-        if (CollectionUtils.isEmpty(nodes) || nodeId == null || nodeId.equals(TOP_NODE_ID)) {
-            return;
-        }
-        if (result.stream().anyMatch(node -> nodeId.equals(node.getNodeId()))) {
-            return;
-        }
-        nodes.forEach(node -> {
-            if (nodeId.equals(node.getNodeId())) {
-                result.add(node);
-                if (isTop(node)) {
-                    childToNode(node.getParentId(), nodes, result);
-                }
-            }
-        });
-    }
-
-    /**
-     * 检查该节点是否有子节点，如果有则递归该节点，找到该节点的子节点
-     *
-     * @param nodes  节点集合
-     * @param nodeId 节点ID
-     * @return [true: 不是子节点，继续递归; false: 是子节点，跳出]
-     */
-    private static <T extends TreeNodeBO<T>> boolean isLeaf(List<T> nodes, Long nodeId) {
-        return nodes.stream().anyMatch(item -> nodeId.equals(item.getParentId()));
-    }
-
-    /**
-     * 检查该节点是否是顶级节点
-     *
-     * @param node 节点
-     * @return [true: 是顶级节点，跳出; false: 不是顶级节点，继续递归]
-     */
-    private static <T extends TreeNodeBO<T>> boolean isTop(TreeNodeBO<T> node) {
-        return node.getParentId() == null || node.getParentId().equals(TOP_NODE_ID);
+        return result;
     }
 
     @Data
