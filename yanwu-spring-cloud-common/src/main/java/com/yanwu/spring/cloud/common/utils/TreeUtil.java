@@ -122,29 +122,11 @@ public class TreeUtil {
             List<TestNode> treeNode2 = listToTree(listNode2);
             System.out.println("| listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("|-----------------------------------------------------------");
-            System.out.println("| checkListNodes >> start: " + (begin = System.currentTimeMillis()));
-            checkListNodes(listNode1, listNode2);
-            System.out.println("| checkListNodes >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+            System.out.println("| check >> start: " + (begin = System.currentTimeMillis()));
+            System.out.println("| check list: " + listNode1.equals(listNode2));
+            System.out.println("| check tree: " + treeNode1.equals(treeNode2));
+            System.out.println("| check >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("============================================================");
-            System.out.println(treeNode1.equals(treeNode2));
-        }
-
-        private static void checkListNodes(List<TestNode> listNode1, List<TestNode> listNode2) {
-            if (listNode1.equals(listNode2)) {
-                System.out.println("------- EQUALS -------");
-                return;
-            }
-            if (listNode1.size() != listNode2.size()) {
-                System.out.println("------- ERROR -------");
-                throw new RuntimeException();
-            }
-            for (TestNode node : listNode1) {
-                List<TestNode> collect = listNode2.stream().filter(item -> item.getNodeCode().equals(node.getNodeCode())).collect(Collectors.toList());
-                if (collect.size() != 1) {
-                    System.out.println("------- ERROR -------");
-                    throw new RuntimeException();
-                }
-            }
         }
 
         private static List<TestNode> listNodes() {
