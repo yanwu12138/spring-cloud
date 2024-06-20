@@ -13,7 +13,7 @@
     <properties>
         <aismessages.version>2.2.3</aismessages.version>
         <aspectjrt.version>1.8.13</aspectjrt.version>
-        <apache.zookeeper.version>3.4.14</apache.zookeeper.version>
+        <apache.zookeeper.version>3.8.4</apache.zookeeper.version>
         <zookeeper.curator.version>4.0.0</zookeeper.curator.version>
         <aliyun.sdk.oss.version>3.8.0</aliyun.sdk.oss.version>
         <cglib.version>3.2.5</cglib.version>
