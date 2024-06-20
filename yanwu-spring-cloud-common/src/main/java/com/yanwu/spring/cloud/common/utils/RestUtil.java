@@ -34,7 +34,7 @@ public class RestUtil {
         HashMap<String, String> param = new HashMap<>();
         param.put("phone", "13121909171");
         param.put("password", "123456");
-        RequestInfo<Object> instance = RequestInfo.getInstance(HttpMethod.POST, url, Object.class);
+        RequestInfo<Object, Object> instance = RequestInfo.getInstance(HttpMethod.POST, url, Object.class);
         instance.buildHeaders("Content-Type", "application/json")
                 .buildHeaders("AppId", "78282017716134526319")
                 .buildHeaders("Timestamp", "1692409837577")
@@ -49,7 +49,7 @@ public class RestUtil {
      *
      * @param request 请求的各类参数
      */
-    public synchronized static <T> Result<T> execute(RequestInfo<T> request) {
+    public synchronized static <P, R> Result<R> execute(RequestInfo<P, R> request) {
         if (request == null) {
             log.error("execute rest request failed, because request info is empty.");
             return Result.failed();
@@ -59,7 +59,7 @@ public class RestUtil {
         try {
             String url = disposeRestUrl(request);
             HttpEntity<Object> httpEntity = disposeEntity(request);
-            ResponseEntity<T> response = initTemplate().exchange(url, request.getMethod(), httpEntity, request.getClazz());
+            ResponseEntity<R> response = initTemplate().exchange(url, request.getMethod(), httpEntity, request.getClazz());
             log.info("execute rest done, txId: {}, response: {}", requestId, response.getBody());
             return disposeResult(response, request.getClazz());
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class RestUtil {
     /***
      * 组装URL
      */
-    private static <T> String disposeRestUrl(RequestInfo<T> restInfo) {
+    private static <P, R> String disposeRestUrl(RequestInfo<P, R> restInfo) {
         String url = restInfo.getUrl();
         // ----- 参数: PathVariable
         if (ArrayUtils.isNotEmpty(restInfo.getVariable())) {
@@ -113,7 +113,7 @@ public class RestUtil {
     /***
      * 组装请求头
      */
-    private static <T> HttpEntity<Object> disposeEntity(RequestInfo<T> restInfo) {
+    private static <P, R> HttpEntity<Object> disposeEntity(RequestInfo<P, R> restInfo) {
         // ----- 参数: RequestHeader
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -131,7 +131,7 @@ public class RestUtil {
     /***
      * 组装响应
      */
-    private static <T> Result<T> disposeResult(ResponseEntity<T> response, Class<T> clazz) {
+    private static <R> Result<R> disposeResult(ResponseEntity<R> response, Class<R> clazz) {
         if (response == null) {
             return Result.failed();
         }

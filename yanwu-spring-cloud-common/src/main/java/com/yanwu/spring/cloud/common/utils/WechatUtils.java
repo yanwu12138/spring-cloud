@@ -40,7 +40,7 @@ public class WechatUtils {
 
     public static String getAccessToken() {
         String tokenUrl = "https://api.weixin.qq.com/cgi-bin/token";
-        RequestInfo<TokenInfo> instance = RequestInfo.getInstance(tokenUrl, TokenInfo.class);
+        RequestInfo<Object, TokenInfo> instance = RequestInfo.getInstance(tokenUrl, TokenInfo.class);
         instance.buildParams("grant_type", "client_credential")
                 .buildParams("appid", APP_ID)
                 .buildParams("secret", SECRET);
