@@ -10,9 +10,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +28,7 @@ public class TreeUtil {
         throw new UnsupportedOperationException("TreeUtil should never be instantiated");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         TestNode.test();
     }
 
@@ -39,7 +38,7 @@ public class TreeUtil {
      * @param nodes 节点集合
      */
     public static <T extends TreeNodeBO<T>> List<T> listToTree(List<T> nodes) {
-        return CollectionUtils.isEmpty(nodes) ? Collections.emptyList() : nodesToChild(nodes, TOP_NODE_ID);
+        return CollectionUtils.isEmpty(nodes) ? Collections.emptyList() : nodesToChild(nodes);
     }
 
     /**
@@ -59,26 +58,26 @@ public class TreeUtil {
     /**
      * 递归处理节点数据
      *
-     * @param nodes    节点集合
-     * @param parentId 父节点ID
+     * @param nodes 节点集合
      */
-    private static <T extends TreeNodeBO<T>> List<T> nodesToChild(List<T> nodes, Long parentId) {
-        List<T> child = new ArrayList<>();
-        if (CollectionUtils.isEmpty(nodes) || parentId == null) {
-            return child;
+    private static <T extends TreeNodeBO<T>> List<T> nodesToChild(List<T> nodes) {
+        List<T> result = new ArrayList<>();
+        if (CollectionUtils.isEmpty(nodes)) {
+            return result;
         }
-        nodes.forEach(node -> {
-            if (node.getParentId().equals(parentId)) {
-                node.setParentId(parentId);
-                child.add(node);
+        Map<Long, T> nodeMap = nodes.stream().collect(Collectors.toMap(T::getNodeId, item -> item, (x, y) -> x, LinkedHashMap::new));
+        nodes.clear();
+        nodeMap.forEach((id, node) -> {
+            T parentNode = nodeMap.get(node.getParentId());
+            if (parentNode != null) {
+                parentNode.getChild().add(node);
+            } else {
+                result.add(node);
             }
         });
-        child.forEach(node -> {
-            if (isLeaf(nodes, node.getNodeId())) {
-                node.setChild(nodesToChild(nodes, node.getNodeId()));
-            }
-        });
-        return child;
+        nodeMap.clear();
+        result.removeIf(item -> !item.getParentId().equals(TOP_NODE_ID));
+        return result;
     }
 
     /**
@@ -153,9 +152,17 @@ public class TreeUtil {
         private String nodeName;
         private String nodeCode;
 
-        private static void test() {
+        private static void test() throws Exception {
+            String filepath = "/Users/xubaofeng/yanwu/file/testTree.json";
+
+            // ----- 创建测试数据
+//            FileUtil.deleteFile(filepath);
+//            FileUtil.appendWrite(filepath, JsonUtil.toString(listNodes()).getBytes(StandardCharsets.UTF_8));
+
+            // ----- 读取测试数据
             long begin, done;
-            List<TestNode> listNode1 = listNodes();
+            String json = new String(FileUtil.read(filepath), StandardCharsets.UTF_8);
+            List<TestNode> listNode1 = JsonUtil.toObjectList(json, TestNode.class);
             System.out.println("============================================================");
             System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()));
             List<TestNode> treeNode1 = listToTree(listNode1);
@@ -173,7 +180,6 @@ public class TreeUtil {
             checkListNodes(listNode1, listNode2);
             System.out.println("| checkListNodes >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
             System.out.println("============================================================");
-//            System.out.println(JsonUtil.toString(treeNode2));
         }
 
         private static void checkListNodes(List<TestNode> listNode1, List<TestNode> listNode2) {
@@ -198,7 +204,7 @@ public class TreeUtil {
             nodes.add(topNode);
             int level = 1;
             long index = 2;
-            while (index < 20000) {
+            while (index < 100_000) {
                 TestNode instance = new TestNode();
                 String code;
                 Long parentId;
