@@ -110,22 +110,30 @@ public class TreeUtil {
             List<TestNode> listNode1 = JsonUtil.toObjectList(json, TestNode.class);
             listNode1 = listNode1.stream().sorted(Comparator.comparing(TestNode::getNodeId)).collect(Collectors.toList());
             System.out.println("============================================================");
-            System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()));
+
+            System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()) + ", len: " + listNode1.size());
             List<TestNode> treeNode1 = listToTree(listNode1);
             System.out.println("| listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+
             System.out.println("|-----------------------------------------------------------");
-            System.out.println("| treeToList >> start: " + (begin = System.currentTimeMillis()));
+
+            System.out.println("| treeToList >> start: " + (begin = System.currentTimeMillis()) + ", len: " + treeNode1.size());
             List<TestNode> listNode2 = treeToList(treeNode1);
             System.out.println("| treeToList >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+
             System.out.println("|-----------------------------------------------------------");
-            System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()));
+
+            System.out.println("| listToTree >> start: " + (begin = System.currentTimeMillis()) + ", len: " + listNode2.size());
             List<TestNode> treeNode2 = listToTree(listNode2);
             System.out.println("| listToTree >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+
             System.out.println("|-----------------------------------------------------------");
+
             System.out.println("| check >> start: " + (begin = System.currentTimeMillis()));
             System.out.println("| check list: " + listNode1.equals(listNode2));
             System.out.println("| check tree: " + treeNode1.equals(treeNode2));
             System.out.println("| check >> done: " + (done = System.currentTimeMillis()) + ", time: " + (done - begin));
+
             System.out.println("============================================================");
         }
 
