@@ -101,8 +101,8 @@ public class TreeUtil {
             String filepath = "/Users/xubaofeng/yanwu/file/testTree.json";
 
             // ----- 创建测试数据
-            FileUtil.deleteFile(filepath);
-            FileUtil.appendWrite(filepath, JsonUtil.toString(listNodes()).getBytes(StandardCharsets.UTF_8));
+//            FileUtil.deleteFile(filepath);
+//            FileUtil.appendWrite(filepath, JsonUtil.toString(listNodes()).getBytes(StandardCharsets.UTF_8));
 
             // ----- 读取测试数据
             long begin, done;
