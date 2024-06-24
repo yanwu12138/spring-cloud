@@ -530,10 +530,10 @@ public class AliOssUtil {
      *
      * @param properties OSS 客户端
      * @param bucket     OSS 桶
-     * @param fileDir    OSS fileDir
+     * @param prefix     待下载目录的完整路径，完整路径中不包含Bucket名称
      * @param targetDir  本地目录路径
      */
-    public static Result<Void> downloadDir(OssProperties properties, String bucket, String fileDir, String targetDir) {
+    public static Result<Void> downloadDir(OssProperties properties, String bucket, String prefix, String targetDir) {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
@@ -543,7 +543,7 @@ public class AliOssUtil {
             String nextMarker = null;
             ObjectListing objectListing;
             do {
-                objectListing = ossClient.listObjects(new ListObjectsRequest(bucket).withMarker(nextMarker));
+                objectListing = ossClient.listObjects(new ListObjectsRequest(bucket).withPrefix(prefix).withMarker(nextMarker));
                 if (objectListing == null) {
                     return Result.failed("OSS delete failed: objectListing is empty.");
                 }
