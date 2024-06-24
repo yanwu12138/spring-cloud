@@ -182,46 +182,6 @@ public class AliOssUtil {
     }
 
     /**
-     * 下载OSS目录到本地 [如果本地文件已存在, 则直接覆盖本地文件]
-     *
-     * @param properties OSS 客户端
-     * @param bucket     OSS 桶
-     * @param fileDir    OSS fileDir
-     * @param targetDir  本地目录路径
-     */
-    public static Result<Void> downloadDir(OssProperties properties, String bucket, String fileDir, String targetDir) {
-        OSS ossClient = null;
-        try {
-            ossClient = buildClient(properties);
-            if (ossClient == null) {
-                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
-            }
-            String nextMarker = null;
-            ObjectListing objectListing;
-            do {
-                objectListing = ossClient.listObjects(new ListObjectsRequest(bucket).withMarker(nextMarker));
-                if (objectListing == null) {
-                    return Result.failed("OSS delete failed: objectListing is empty.");
-                }
-                if (objectListing.getObjectSummaries().isEmpty()) {
-                    return Result.success();
-                }
-                for (OSSObjectSummary item : objectListing.getObjectSummaries()) {
-                    try {
-                        download(ossClient, bucket, item.getKey(), (targetDir + item.getKey()));
-                    } catch (Exception e) {
-                        log.error("download dir failed: {}", item.getKey(), e);
-                    }
-                }
-                nextMarker = objectListing.getNextMarker();
-            } while (objectListing.isTruncated());
-        } finally {
-            closeClient(ossClient);
-        }
-        return Result.success();
-    }
-
-    /**
      * 删除OSS文件
      *
      * @param properties OSS 相关配置
@@ -563,6 +523,46 @@ public class AliOssUtil {
         }
         log.info("download file check md5 success, file: {}, md5: {}", file.getPath(), md5);
         return download;
+    }
+
+    /**
+     * 下载OSS目录到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     *
+     * @param properties OSS 客户端
+     * @param bucket     OSS 桶
+     * @param fileDir    OSS fileDir
+     * @param targetDir  本地目录路径
+     */
+    public static Result<Void> downloadDir(OssProperties properties, String bucket, String fileDir, String targetDir) {
+        OSS ossClient = null;
+        try {
+            ossClient = buildClient(properties);
+            if (ossClient == null) {
+                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
+            }
+            String nextMarker = null;
+            ObjectListing objectListing;
+            do {
+                objectListing = ossClient.listObjects(new ListObjectsRequest(bucket).withMarker(nextMarker));
+                if (objectListing == null) {
+                    return Result.failed("OSS delete failed: objectListing is empty.");
+                }
+                if (objectListing.getObjectSummaries().isEmpty()) {
+                    return Result.success();
+                }
+                for (OSSObjectSummary item : objectListing.getObjectSummaries()) {
+                    try {
+                        download(ossClient, bucket, item.getKey(), (targetDir + item.getKey()));
+                    } catch (Exception e) {
+                        log.error("download dir failed: {}", item.getKey(), e);
+                    }
+                }
+                nextMarker = objectListing.getNextMarker();
+            } while (objectListing.isTruncated());
+        } finally {
+            closeClient(ossClient);
+        }
+        return Result.success();
     }
 
     /**
