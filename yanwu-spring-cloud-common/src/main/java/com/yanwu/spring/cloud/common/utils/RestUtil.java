@@ -49,7 +49,7 @@ public class RestUtil {
      *
      * @param request 请求的各类参数
      */
-    public synchronized static <P, R> Result<R> execute(RequestInfo<P, R> request) {
+    public static <P, R> Result<R> execute(RequestInfo<P, R> request) {
         if (request == null) {
             log.error("execute rest request failed, because request info is empty.");
             return Result.failed();
