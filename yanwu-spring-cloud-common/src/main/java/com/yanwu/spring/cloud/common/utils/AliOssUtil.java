@@ -271,6 +271,58 @@ public class AliOssUtil {
     }
 
     /**
+     * 递归删除OSS目录到本地
+     *
+     * @param properties OSS 客户端
+     * @param prefix     待删除目录的完整路径，完整路径中不包含Bucket名称
+     */
+    public static Result<Void> deleteDir(OssProperties properties, String prefix) {
+        OSS ossClient = null;
+        try {
+            ossClient = buildClient(properties);
+            if (ossClient == null) {
+                return Result.failed("OSS properties configuration error. properties: " + properties.toString());
+            }
+            return deleteDir(ossClient, properties.getBucket(), prefix);
+        } finally {
+            closeClient(ossClient);
+        }
+    }
+
+    /**
+     * 递归删除OSS目录到本地
+     * <p>
+     * 该方法不会释放 ossClient 资源
+     * <p>
+     *
+     * @param ossClient OSS 客户端
+     * @param bucket    OSS 桶
+     * @param prefix    待删除目录的完整路径，完整路径中不包含Bucket名称
+     */
+    public static Result<Void> deleteDir(OSS ossClient, String bucket, String prefix) {
+        String nextMarker = null;
+        ObjectListing objectListing;
+        do {
+            objectListing = ossClient.listObjects(new ListObjectsRequest(bucket).withPrefix(prefix).withMarker(nextMarker));
+            if (objectListing == null) {
+                return Result.failed("OSS deleteDir failed: objectListing is empty.");
+            }
+            if (objectListing.getObjectSummaries().isEmpty()) {
+                return Result.success();
+            }
+            for (OSSObjectSummary item : objectListing.getObjectSummaries()) {
+                try {
+                    delete(ossClient, bucket, item.getKey());
+                } catch (Exception e) {
+                    log.error("download dir failed: {}", item.getKey(), e);
+                }
+            }
+            nextMarker = objectListing.getNextMarker();
+        } while (objectListing.isTruncated());
+        return Result.success();
+    }
+
+    /**
      * 根据OSS fileUrls判断文件是否存在
      *
      * @param properties OSS 相关配置
@@ -562,7 +614,7 @@ public class AliOssUtil {
         do {
             objectListing = ossClient.listObjects(new ListObjectsRequest(bucket).withPrefix(prefix).withMarker(nextMarker));
             if (objectListing == null) {
-                return Result.failed("OSS delete failed: objectListing is empty.");
+                return Result.failed("OSS downloadDir failed: objectListing is empty.");
             }
             if (objectListing.getObjectSummaries().isEmpty()) {
                 return Result.success();
