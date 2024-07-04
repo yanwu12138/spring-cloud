@@ -529,39 +529,53 @@ public class AliOssUtil {
      * 下载OSS目录到本地 [如果本地文件已存在, 则直接覆盖本地文件]
      *
      * @param properties OSS 客户端
-     * @param bucket     OSS 桶
      * @param prefix     待下载目录的完整路径，完整路径中不包含Bucket名称
      * @param targetDir  本地目录路径
      */
-    public static Result<Void> downloadDir(OssProperties properties, String bucket, String prefix, String targetDir) {
+    public static Result<Void> downloadDir(OssProperties properties, String prefix, String targetDir) {
         OSS ossClient = null;
         try {
             ossClient = buildClient(properties);
             if (ossClient == null) {
                 return Result.failed("OSS properties configuration error. properties: " + properties.toString());
             }
-            String nextMarker = null;
-            ObjectListing objectListing;
-            do {
-                objectListing = ossClient.listObjects(new ListObjectsRequest(bucket).withPrefix(prefix).withMarker(nextMarker));
-                if (objectListing == null) {
-                    return Result.failed("OSS delete failed: objectListing is empty.");
-                }
-                if (objectListing.getObjectSummaries().isEmpty()) {
-                    return Result.success();
-                }
-                for (OSSObjectSummary item : objectListing.getObjectSummaries()) {
-                    try {
-                        download(ossClient, bucket, item.getKey(), (targetDir + item.getKey()));
-                    } catch (Exception e) {
-                        log.error("download dir failed: {}", item.getKey(), e);
-                    }
-                }
-                nextMarker = objectListing.getNextMarker();
-            } while (objectListing.isTruncated());
+            return downloadDir(ossClient, properties.getBucket(), prefix, targetDir);
         } finally {
             closeClient(ossClient);
         }
+    }
+
+    /**
+     * 下载OSS目录到本地 [如果本地文件已存在, 则直接覆盖本地文件]
+     * <p>
+     * 该方法不会释放 ossClient 资源
+     * <p>
+     *
+     * @param ossClient OSS 客户端
+     * @param bucket    OSS 桶
+     * @param prefix    待下载目录的完整路径，完整路径中不包含Bucket名称
+     * @param targetDir 本地目录路径
+     */
+    public static Result<Void> downloadDir(OSS ossClient, String bucket, String prefix, String targetDir) {
+        String nextMarker = null;
+        ObjectListing objectListing;
+        do {
+            objectListing = ossClient.listObjects(new ListObjectsRequest(bucket).withPrefix(prefix).withMarker(nextMarker));
+            if (objectListing == null) {
+                return Result.failed("OSS delete failed: objectListing is empty.");
+            }
+            if (objectListing.getObjectSummaries().isEmpty()) {
+                return Result.success();
+            }
+            for (OSSObjectSummary item : objectListing.getObjectSummaries()) {
+                try {
+                    download(ossClient, bucket, item.getKey(), (targetDir + item.getKey()));
+                } catch (Exception e) {
+                    log.error("download dir failed: {}", item.getKey(), e);
+                }
+            }
+            nextMarker = objectListing.getNextMarker();
+        } while (objectListing.isTruncated());
         return Result.success();
     }
 
