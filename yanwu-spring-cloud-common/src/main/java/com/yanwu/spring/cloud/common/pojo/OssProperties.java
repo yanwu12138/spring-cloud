@@ -24,15 +24,12 @@ public class OssProperties implements Serializable {
     private String accessKeySecret;
     /*** OSS Endpoint ***/
     private String endpoint;
-    /*** OSS bucket ***/
-    private String bucket;
 
     private OssProperties() {
     }
 
-    public static OssProperties getInstance(String keyId, String keySecret, String endpoint, String bucket) {
+    public static OssProperties newInstance(String keyId, String keySecret, String endpoint, String bucket) {
         OssProperties properties = new OssProperties();
-        properties.bucket = bucket;
         properties.endpoint = endpoint;
         properties.accessKeyId = keyId;
         properties.accessKeySecret = keySecret;
