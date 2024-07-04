@@ -12,7 +12,7 @@ import java.util.List;
  * <p>
  * description:
  */
-public class BxtOssClientTest {
+public class BxtOssClearTest {
 
     private static final String ACCESS_ID = "";
     private static final String ACCESS_KEY = "";
