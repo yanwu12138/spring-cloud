@@ -19,7 +19,7 @@ public class BxtOssClearTest {
     private static final String ENDPOINT = "";
     private static final String BUCKET = "";
     private static final List<String> PREFIX_LIST = Arrays.asList("fisherOne/hstt/zip/", "fisherOne/hstt/jpg/"
-            , "fisherOne/dyjx/video/", "fisherOne/dyjx/zip/", "fisherOne/filmSource/prod/unzip/");
+            , "fisherOne/dyjx/video/", "fisherOne/dyjx/zip/");
 
     public static void main(String[] args) {
         OssProperties properties = OssProperties.getInstance(ACCESS_ID, ACCESS_KEY, ENDPOINT, BUCKET);
