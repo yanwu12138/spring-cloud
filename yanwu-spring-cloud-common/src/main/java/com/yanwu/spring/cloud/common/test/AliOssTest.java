@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AliOssTest {
 
     public static void main(String[] args) throws Exception {
-        String accessId = "LTAI5tFudRXZ1t9dNFfbg4Zf", accessKey = "lmqpltx40vcpOsmDnHcz1PzJb7XfvY", endpoint = "oss-cn-hangzhou.aliyuncs.com", bucket = "yanwu-spring-cloud";
+        String accessId = "", accessKey = "", endpoint = "", bucket = "";
         OssProperties properties = OssProperties.newInstance(accessId, accessKey, endpoint);
         AliOssUtil instance = AliOssUtil.newInstance(properties);
         new Thread(() -> {

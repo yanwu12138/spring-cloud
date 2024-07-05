@@ -29,7 +29,7 @@ import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 @SuppressWarnings("unused")
 public class AliOssUtil {
 
-    private static OSS ossClient = null;
+    private static volatile OSS ossClient = null;
     private static final AliOssUtil INSTANCE = new AliOssUtil();
 
     private AliOssUtil() {
