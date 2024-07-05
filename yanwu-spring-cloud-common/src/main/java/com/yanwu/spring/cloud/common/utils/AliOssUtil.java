@@ -29,16 +29,16 @@ import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
 public class AliOssUtil {
 
     private static OSS ossClient = null;
-    private static final AliOssUtil instance = new AliOssUtil();
+    private static final AliOssUtil INSTANCE = new AliOssUtil();
 
     private AliOssUtil() {
     }
 
-    public static synchronized AliOssUtil init(OssProperties ossProperties) {
+    public static synchronized AliOssUtil getInstance(OssProperties ossProperties) {
         if (ossClient == null) {
             ossClient = buildClient(ossProperties);
         }
-        return instance;
+        return INSTANCE;
     }
 
     /**
