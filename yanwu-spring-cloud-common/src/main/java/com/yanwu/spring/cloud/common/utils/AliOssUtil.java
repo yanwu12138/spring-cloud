@@ -35,7 +35,7 @@ public class AliOssUtil {
     private AliOssUtil() {
     }
 
-    public static synchronized AliOssUtil newInstance(OssProperties ossProperties) {
+    public static synchronized AliOssUtil getInstance(OssProperties ossProperties) {
         if (ossClient == null) {
             ossClient = buildClient(ossProperties);
         }

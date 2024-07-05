@@ -18,14 +18,18 @@ public class AliOssTest {
         OssProperties properties = OssProperties.newInstance(accessId, accessKey, endpoint);
         new Thread(() -> {
             try {
-                AliOssUtil.newInstance(properties).upload(bucket, "/Users/xubaofeng/Downloads/网安整改说明.zip", "");
+                AliOssUtil instance = AliOssUtil.getInstance(properties);
+                instance.upload(bucket, "/Users/xubaofeng/Downloads/波束切换-主站端.drawio", "");
+                log.error("instance: {}", instance.hashCode());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }).start();
         new Thread(() -> {
             try {
-                AliOssUtil.newInstance(properties).upload(bucket, "/Users/xubaofeng/Downloads/网安整改说明.zip", "");
+                AliOssUtil instance = AliOssUtil.getInstance(properties);
+                instance.upload(bucket, "/Users/xubaofeng/Downloads/波束切换控制-初始化操作.md", "");
+                log.error("instance: {}", instance.hashCode());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
