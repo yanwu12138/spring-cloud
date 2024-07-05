@@ -29,7 +29,7 @@ public class SshUtil {
 
     private static String checkDiskOccupy(String partition) {
         String command = "df -h | grep " + partition + " | awk '{print $5}'";
-        RemoteServer server = RemoteServer.getInstance("192.168.56.50", "root", "Js_2643.");
+        RemoteServer server = RemoteServer.newInstance("192.168.56.50", "root", "Js_2643.");
         String diskOccupy = execCommand(server, command);
         if (StringUtils.isBlank(diskOccupy)) {
             return partition + "分区磁盘占用检查异常";

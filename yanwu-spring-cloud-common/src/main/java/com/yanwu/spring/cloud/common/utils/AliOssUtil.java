@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.yanwu.spring.cloud.common.utils.DateUtil.filling;
@@ -34,7 +35,7 @@ public class AliOssUtil {
     private AliOssUtil() {
     }
 
-    public static synchronized AliOssUtil getInstance(OssProperties ossProperties) {
+    public static synchronized AliOssUtil newInstance(OssProperties ossProperties) {
         if (ossClient == null) {
             ossClient = buildClient(ossProperties);
         }
@@ -46,14 +47,15 @@ public class AliOssUtil {
      *
      * @param bucket   OSS 桶
      * @param filePath 本地文件路径
+     * @param prefix   OSS 文件路径
      * @return 上传结果
      * @throws Exception Exception.class
      */
-    public Result<String> upload(String bucket, String filePath) throws Exception {
+    public synchronized Result<String> upload(String bucket, String filePath, String prefix) throws Exception {
         if (StringUtils.isBlank(filePath)) {
             return Result.failed("OSS upload failed: filePath is blank.");
         }
-        return upload(bucket, new File(filePath));
+        return upload(bucket, new File(filePath), prefix);
     }
 
     /**
@@ -61,15 +63,16 @@ public class AliOssUtil {
      *
      * @param bucket OSS 桶
      * @param file   文件
+     * @param prefix OSS 文件路径
      * @return 上传结果
      * @throws Exception Exception.class
      */
-    public Result<String> upload(String bucket, File file) throws Exception {
+    public synchronized Result<String> upload(String bucket, File file, String prefix) throws Exception {
         if (!FileUtil.fileExists(file) || !file.isFile()) {
             return Result.failed("OSS upload failed: file is not exists or file is not file.");
         }
         try (InputStream is = Files.newInputStream(file.toPath())) {
-            return upload(bucket, is, file.getName());
+            return upload(bucket, is, prefix, file.getName());
         }
     }
 
@@ -78,14 +81,15 @@ public class AliOssUtil {
      *
      * @param bucket   OSS 桶
      * @param is       输入流
+     * @param prefix   OSS 文件路径
      * @param fileName 本地文件名称
      * @return 上传结果
      */
-    public Result<String> upload(String bucket, InputStream is, String fileName) {
+    public synchronized Result<String> upload(String bucket, InputStream is, String prefix, String fileName) {
         if (StringUtils.isBlank(bucket)) {
             return Result.failed("OSS upload failed: bucket is blank.");
         }
-        String urlPath = randomFilePath(fileName);
+        String urlPath = randomFilePath(prefix, fileName);
         ossClient.putObject(bucket, urlPath, is);
         return checkExist(exist(bucket, urlPath)) ? Result.success(urlPath) : Result.failed();
     }
@@ -97,7 +101,7 @@ public class AliOssUtil {
      * @param fileUrl OSS fileUrl
      * @return data: [true: 删除成功; false: 删除失败]
      */
-    public Result<Boolean> delete(String bucket, String fileUrl) {
+    public synchronized Result<Boolean> delete(String bucket, String fileUrl) {
         if (StringUtils.isBlank(bucket)) {
             return Result.failed("OSS delete failed: bucket is blank.");
         }
@@ -115,7 +119,7 @@ public class AliOssUtil {
      * @param fileUrls OSS fileUrls
      * @return 未被删除掉的文件
      */
-    public Result<List<String>> deletes(String bucket, List<String> fileUrls) {
+    public synchronized Result<List<String>> deletes(String bucket, List<String> fileUrls) {
         if (StringUtils.isBlank(bucket)) {
             return Result.failed("OSS deletes failed: bucket is blank.");
         }
@@ -138,7 +142,7 @@ public class AliOssUtil {
      * @param bucket OSS 桶
      * @param prefix 待删除目录的完整路径，完整路径中不包含Bucket名称
      */
-    public Result<Void> deleteDir(String bucket, String prefix) {
+    public synchronized Result<Void> deleteDir(String bucket, String prefix) {
         String nextMarker = null;
         ObjectListing objectListing;
         do {
@@ -168,7 +172,7 @@ public class AliOssUtil {
      * @param fileUrl OSS fileUrls
      * @return [true: 存在; false: 不存在]
      */
-    public Result<Boolean> exist(String bucket, String fileUrl) {
+    public synchronized Result<Boolean> exist(String bucket, String fileUrl) {
         if (StringUtils.isBlank(bucket)) {
             return Result.failed("OSS exist failed: bucket is blank.");
         }
@@ -185,7 +189,7 @@ public class AliOssUtil {
      * @param source 源文件名
      * @param target 目标文件名
      */
-    public Result<Boolean> rename(String bucket, String source, String target) {
+    public synchronized Result<Boolean> rename(String bucket, String source, String target) {
         if (StringUtils.isBlank(bucket)) {
             return Result.failed("OSS rename failed: bucket is blank.");
         }
@@ -211,7 +215,7 @@ public class AliOssUtil {
      * @param targetPath 本地文件路径
      * @throws Exception Exception.class
      */
-    public Result<Void> download(String bucket, String fileUrl, String targetPath) throws Exception {
+    public synchronized Result<Void> download(String bucket, String fileUrl, String targetPath) throws Exception {
         return download(bucket, fileUrl, new File(targetPath));
     }
 
@@ -222,7 +226,7 @@ public class AliOssUtil {
      * @param fileUrl OSS fileUrl
      * @param file    本地文件
      */
-    public Result<Void> download(String bucket, String fileUrl, File file) throws Exception {
+    public synchronized Result<Void> download(String bucket, String fileUrl, File file) throws Exception {
         if (StringUtils.isBlank(bucket)) {
             return Result.failed("OSS download failed: bucket is blank.");
         }
@@ -257,7 +261,7 @@ public class AliOssUtil {
      * @param targetPath 本地文件路径
      * @param md5        文件的MD5值
      */
-    public Result<Void> download(String bucket, String fileUrl, String targetPath, String md5) throws Exception {
+    public synchronized Result<Void> download(String bucket, String fileUrl, String targetPath, String md5) throws Exception {
         return download(bucket, fileUrl, new File(targetPath), md5);
     }
 
@@ -270,7 +274,7 @@ public class AliOssUtil {
      * @param file    本地文件
      * @param md5     文件的MD5值
      */
-    public Result<Void> download(String bucket, String fileUrl, File file, String md5) throws Exception {
+    public synchronized Result<Void> download(String bucket, String fileUrl, File file, String md5) throws Exception {
         Result<Void> download = download(bucket, fileUrl, file);
         if (!download.getStatus()) {
             return download;
@@ -291,7 +295,7 @@ public class AliOssUtil {
      * @param prefix    待下载目录的完整路径，完整路径中不包含Bucket名称
      * @param targetDir 本地目录路径
      */
-    public Result<Void> downloadDir(String bucket, String prefix, String targetDir) {
+    public synchronized Result<Void> downloadDir(String bucket, String prefix, String targetDir) {
         String nextMarker = null;
         ObjectListing objectListing;
         do {
@@ -347,11 +351,17 @@ public class AliOssUtil {
      * @param fileName 文件名
      * @return 随机文件路径
      */
-    private String randomFilePath(String fileName) {
+    private String randomFilePath(String prefix, String fileName) {
         LocalDateTime date = LocalDateTime.now();
-        return date.getYear() + File.separator + filling(date.getMonthValue()) + File.separator +
-                filling(date.getDayOfMonth()) + File.separator + filling(date.getHour()) + filling(date.getMinute()) +
-                filling(date.getSecond()) + filling(date.getNano()) + "_" + fileName;
+        List<String> paths;
+        if (StringUtils.isBlank(prefix)) {
+            paths = Arrays.asList(String.valueOf(date.getYear()),
+                    filling(date.getMonthValue()), filling(date.getDayOfMonth()), System.currentTimeMillis() + "_" + fileName);
+        } else {
+            paths = Arrays.asList(prefix, String.valueOf(date.getYear()),
+                    filling(date.getMonthValue()), filling(date.getDayOfMonth()), System.currentTimeMillis() + "_" + fileName);
+        }
+        return StringUtils.join(paths, File.separator);
     }
 
     /**

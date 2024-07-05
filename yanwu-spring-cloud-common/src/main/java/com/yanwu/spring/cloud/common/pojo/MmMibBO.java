@@ -28,7 +28,7 @@ public class MmMibBO implements Serializable {
     private String access;
     private String status;
 
-    public static MmMibBO getInstance(MibValueSymbol mvs, String parent, String syntax, String access, String status) {
+    public static MmMibBO newInstance(MibValueSymbol mvs, String parent, String syntax, String access, String status) {
         return new MmMibBO()
                 .setName(mvs.getName())
                 .setValue(mvs.getValue().toString())

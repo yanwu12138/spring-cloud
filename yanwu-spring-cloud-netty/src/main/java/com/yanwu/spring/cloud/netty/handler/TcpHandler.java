@@ -143,7 +143,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
      * @throws Exception .
      */
     public <T> void send(String sn, MessageQueueBO<T> queue) throws Exception {
-        AbstractHandler abstractHandler = (AbstractHandler) ContextUtil.getBean(queue.getInstance());
+        AbstractHandler abstractHandler = (AbstractHandler) ContextUtil.getBean(queue.newInstance());
         Assert.notNull(abstractHandler, "send message error, because handler is null.");
         send(handler.clientSessionCache.getDevice(sn), abstractHandler.assemble(queue));
     }

@@ -25,7 +25,7 @@ public enum AccessTypeEnum {
         this.type = type;
     }
 
-    public static AccessTypeEnum getInstance(int accesses) {
+    public static AccessTypeEnum newInstance(int accesses) {
         for (AccessTypeEnum value : AccessTypeEnum.values()) {
             if (value.type == accesses) {
                 return value;

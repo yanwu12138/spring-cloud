@@ -31,7 +31,7 @@ public class FFMpegUtil {
         String exePath = "ffmpeg";
         String input = "rtsp://admin:bxtbxtbxt4g@192.168.18.224/cam/realmonitor?channel=1&subtype=0";
         String output = "rtmp://192.168.33.151:1935/live/hj";
-        FFMpegBuilder builder = FFMpegBuilder.getInstance(exePath);
+        FFMpegBuilder builder = FFMpegBuilder.newInstance(exePath);
         builder.input(input).output(output);
         String command = builder.build();
         System.out.println(command);
@@ -89,7 +89,7 @@ public class FFMpegUtil {
          *
          * @param commandPath FFMpeg命令路径
          */
-        public static FFMpegBuilder getInstance(String commandPath) {
+        public static FFMpegBuilder newInstance(String commandPath) {
             if (StringUtils.isBlank(commandPath)) {
                 throw new NullPointerException("the ffmpeg command path is empty.");
             }

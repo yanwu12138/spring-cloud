@@ -24,7 +24,7 @@ public class UserAccessesInfo implements Serializable {
     private boolean roleScope;
     private Set<Long> roleIds;
 
-    public static UserAccessesInfo getInstance(RequestHandler annotation) {
+    public static UserAccessesInfo newInstance(RequestHandler annotation) {
         UserAccessesInfo instance = new UserAccessesInfo();
         instance.setUserScope(annotation.dataScope().shop());
         instance.setRoleScope(annotation.dataScope().agent());

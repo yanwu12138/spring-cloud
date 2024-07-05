@@ -24,7 +24,7 @@ public class Singleton02 {
      * @return Singleton02对象
      * descreption: 使用双重检查可以避免线程不安全问题
      */
-    public static Singleton02 getInstance() {
+    public static Singleton02 newInstance() {
         if (INSTANCE == null) {
             synchronized (Singleton02.class) {
                 if (INSTANCE == null) {
@@ -37,7 +37,7 @@ public class Singleton02 {
 
     public static void main(String[] args) {
         for (int i = 0; i < 100; i++) {
-            new Thread(() -> System.out.println(Singleton02.getInstance().hashCode())).start();
+            new Thread(() -> System.out.println(Singleton02.newInstance().hashCode())).start();
         }
     }
 }

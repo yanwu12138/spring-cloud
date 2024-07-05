@@ -16,7 +16,7 @@ public class SystemUtil {
 
     public static SystemType getSystemType() {
         String sysType = System.getProperty("os.name").toUpperCase();
-        return SystemType.getInstance(sysType);
+        return SystemType.newInstance(sysType);
     }
 
     public static boolean isWindows() {
@@ -39,7 +39,7 @@ public class SystemUtil {
             this.osName = osName;
         }
 
-        public static SystemType getInstance(String sysType) {
+        public static SystemType newInstance(String sysType) {
             for (SystemType value : SystemType.values()) {
                 for (String osName : value.getOsName()) {
                     if (sysType.contains(osName)) {

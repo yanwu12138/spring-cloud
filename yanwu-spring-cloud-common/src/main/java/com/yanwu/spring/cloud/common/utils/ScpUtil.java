@@ -140,21 +140,21 @@ public class ScpUtil {
         protected ScpServer() {
         }
 
-        public static ScpServer getInstance(String host, String account, String password) {
-            return getInstance(host, DEFAULT_PORT, account, password);
+        public static ScpServer newInstance(String host, String account, String password) {
+            return newInstance(host, DEFAULT_PORT, account, password);
         }
 
-        public static ScpServer getInstance(String host, Integer port, String account, String password) {
-            return getInstance(host, port, account, password, VerifyType.PASSWORD);
+        public static ScpServer newInstance(String host, Integer port, String account, String password) {
+            return newInstance(host, port, account, password, VerifyType.PASSWORD);
         }
 
-        public static ScpServer getInstance(String host, String account, String password, VerifyType verifyType) {
-            return getInstance(host, DEFAULT_PORT, account, password, verifyType);
+        public static ScpServer newInstance(String host, String account, String password, VerifyType verifyType) {
+            return newInstance(host, DEFAULT_PORT, account, password, verifyType);
         }
 
-        public static ScpServer getInstance(String host, Integer port, String account, String password, VerifyType verifyType) {
+        public static ScpServer newInstance(String host, Integer port, String account, String password, VerifyType verifyType) {
             if (StringUtils.isBlank(host) || StringUtils.isBlank(account) || StringUtils.isBlank(password)) {
-                log.error("remote server getInstance failed. host: {}, account: {}, password: {}", host, account, password);
+                log.error("remote server newInstance failed. host: {}, account: {}, password: {}", host, account, password);
                 throw new RuntimeException("remote server get instance failed.");
             }
             ScpServer instance = new ScpServer();

@@ -36,7 +36,7 @@ public class FtpUtil {
     private static final Integer FTP_PORT = 21;
     private static final String USERNAME = "hoolink";
     private static final String PASSWORD = "hoolink123";
-    private static final RemoteServer REMOTE_SERVER = RemoteServer.getInstance(FTP_HOST, FTP_PORT, USERNAME, PASSWORD);
+    private static final RemoteServer REMOTE_SERVER = RemoteServer.newInstance(FTP_HOST, FTP_PORT, USERNAME, PASSWORD);
 
     private FtpUtil() {
         throw new UnsupportedOperationException("FtpUtil should never be instantiated");

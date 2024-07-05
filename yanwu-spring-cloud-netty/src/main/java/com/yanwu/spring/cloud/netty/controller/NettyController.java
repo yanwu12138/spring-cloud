@@ -73,20 +73,20 @@ public class NettyController {
     public Result<Void> test() {
         // ----- alarmLamp
         SortedList<MessageQueueBO<String>> alarmQueues = new SortedList<>();
-        messageCache.addQueue("131420210123", MessageQueueBO.getInstance(messageCache.getMessageKey("A0000001"), "A0000001", AlarmLampService.class));
+        messageCache.addQueue("131420210123", MessageQueueBO.newInstance(messageCache.getMessageKey("A0000001"), "A0000001", AlarmLampService.class));
         ThreadUtil.sleep(10);
-        alarmQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("A0000002"), "A0000002", AlarmLampService.class));
+        alarmQueues.add(MessageQueueBO.newInstance(messageCache.getMessageKey("A0000002"), "A0000002", AlarmLampService.class));
         ThreadUtil.sleep(10);
-        alarmQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("A0000001"), "A0000003", AlarmLampService.class));
+        alarmQueues.add(MessageQueueBO.newInstance(messageCache.getMessageKey("A0000001"), "A0000003", AlarmLampService.class));
         messageCache.addQueues("131420210123", alarmQueues);
 
         // ----- screen
         SortedList<MessageQueueBO<String>> screenQueues = new SortedList<>();
-        messageCache.addQueue("2F30", MessageQueueBO.getInstance(messageCache.getMessageKey("B0000001"), "B0000001", ScreenService.class));
+        messageCache.addQueue("2F30", MessageQueueBO.newInstance(messageCache.getMessageKey("B0000001"), "B0000001", ScreenService.class));
         ThreadUtil.sleep(10);
-        screenQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("B0000002"), "B0000002", ScreenService.class));
+        screenQueues.add(MessageQueueBO.newInstance(messageCache.getMessageKey("B0000002"), "B0000002", ScreenService.class));
         ThreadUtil.sleep(10);
-        screenQueues.add(MessageQueueBO.getInstance(messageCache.getMessageKey("B0000001"), "B0000003", ScreenService.class));
+        screenQueues.add(MessageQueueBO.newInstance(messageCache.getMessageKey("B0000001"), "B0000003", ScreenService.class));
         messageCache.addQueues("2F30", screenQueues);
         return Result.success();
     }
@@ -166,7 +166,7 @@ public class NettyController {
 
     private void testStringCache(String key) {
         String val = RandomStringUtils.randomAlphabetic(32);
-        stringCache.put(key, ExpiredCallbackNode.getInstance(val, randomTime(), (call) -> {
+        stringCache.put(key, ExpiredCallbackNode.newInstance(val, randomTime(), (call) -> {
             log.info("test string cache timeout, callback: {}", call);
             return Boolean.TRUE;
         }));
@@ -174,7 +174,7 @@ public class NettyController {
 
     private void testIntegerCache(String key) {
         Integer val = Integer.parseInt(RandomStringUtils.randomNumeric(8));
-        integerCache.put(key, ExpiredCallbackNode.getInstance(val, randomTime(), (call) -> {
+        integerCache.put(key, ExpiredCallbackNode.newInstance(val, randomTime(), (call) -> {
             log.info("test integer cache timeout, callback: {}", call);
             return Boolean.TRUE;
         }));
@@ -183,7 +183,7 @@ public class NettyController {
     private void testNoCallbackNode() {
         String key = RandomStringUtils.randomAlphabetic(12);
         String val = RandomStringUtils.randomAlphabetic(32);
-        stringCache.put(key, ExpiredNode.getInstance(val, randomTime()));
+        stringCache.put(key, ExpiredNode.newInstance(val, randomTime()));
     }
 
     private long randomTime() {

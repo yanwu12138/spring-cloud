@@ -39,13 +39,13 @@ public class PingBO implements Serializable {
     private PingBO() {
     }
 
-    public static PingBO getInstance(String address, int times) {
+    public static PingBO newInstance(String address, int times) {
         return new PingBO().setAddress(address).setMax(times);
     }
 
-    public static PingBO getInstance(String address, int times, String commandResult) {
+    public static PingBO newInstance(String address, int times, String commandResult) {
         commandResult = commandResult.toLowerCase();
-        PingBO instance = getInstance(address, times);
+        PingBO instance = newInstance(address, times);
         if (StringUtils.isBlank(commandResult)) {
             return instance;
         }

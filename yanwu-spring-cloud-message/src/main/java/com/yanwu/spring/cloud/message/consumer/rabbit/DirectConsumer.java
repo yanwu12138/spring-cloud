@@ -26,7 +26,7 @@ public class DirectConsumer {
 
     @RabbitListener(queues = DIRECT_QUEUE_NAME)
     public void reader(Message message, Channel channel) throws Exception {
-        MessageBO messageBO = MessageBO.getInstance(message.getBody());
+        MessageBO messageBO = MessageBO.newInstance(message.getBody());
         log.info("direct reader, queue: {}, message: {}", DIRECT_QUEUE_NAME, messageBO);
         myAckConsumer.basicAck(message, channel);
     }

@@ -20,7 +20,7 @@ public class ZookeeperNode implements Serializable {
 
     private String value;
 
-    public static ZookeeperNode getInstance(String path, String value) {
+    public static ZookeeperNode newInstance(String path, String value) {
         return new ZookeeperNode().setPath(path).setValue(value);
     }
 }

@@ -45,7 +45,7 @@ public class SmsUtil {
         String msg = "【波星通】您的验证码是：" + randomCode + "，5分钟内有效。如非您本人操作，请忽略。";
         SmsParam param = SmsParam.newInstance(msg, phone, "true", null).setAccount(account).setPassword(password);
 
-        RequestInfo<SmsParam, SmsResult> requestInfo = RequestInfo.getInstance(HttpMethod.POST, url, SmsResult.class);
+        RequestInfo<SmsParam, SmsResult> requestInfo = RequestInfo.newInstance(HttpMethod.POST, url, SmsResult.class);
         requestInfo.buildBody(param).buildHeaders("Charset", "UTF-8").buildHeaders("Content-Type", "application/json");
         Result<SmsResult> execute = RestUtil.execute(requestInfo);
         log.info("The result of sending the SMS: {}, message: {}", execute, param);

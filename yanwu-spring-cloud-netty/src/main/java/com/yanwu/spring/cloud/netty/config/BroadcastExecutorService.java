@@ -29,7 +29,7 @@ public class BroadcastExecutorService {
             if (broadcastExecutor != null) {
                 return broadcastExecutor.submit(callable).get();
             } else {
-                BroadcastExecutor executor = BroadcastExecutor.getInstance(key);
+                BroadcastExecutor executor = BroadcastExecutor.newInstance(key);
                 executorsMap.put(key, executor);
                 return executor.submit(callable).get();
             }

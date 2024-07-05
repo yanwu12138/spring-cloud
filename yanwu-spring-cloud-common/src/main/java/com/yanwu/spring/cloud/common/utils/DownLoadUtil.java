@@ -90,7 +90,7 @@ public class DownLoadUtil {
         long offset = 0, start = System.currentTimeMillis();
         while (fileSize > 0) {
             long length = fileSize > UNIT_SIZE ? UNIT_SIZE : fileSize;
-            EXECUTOR.execute(DownLoadTask.getInstance(fileUrl, localPath, offset, length, end));
+            EXECUTOR.execute(DownLoadTask.newInstance(fileUrl, localPath, offset, length, end));
             fileSize -= length;
             offset += UNIT_SIZE;
         }
@@ -161,7 +161,7 @@ public class DownLoadUtil {
             }
         }
 
-        static DownLoadTask getInstance(String url, String fileName, long offset, long length, CountDownLatch end) {
+        static DownLoadTask newInstance(String url, String fileName, long offset, long length, CountDownLatch end) {
             return new DownLoadTask().setUrl(url).setFileName(fileName).setOffset(offset)
                     .setLength(length).setEnd(end).setContext(new BasicHttpContext());
         }

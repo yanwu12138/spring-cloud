@@ -26,7 +26,7 @@ public class TopicYanwuConsumer {
 
     @RabbitListener(queues = TOPIC_QUEUE_YANWU_QUEUE)
     public void reader(Message message, Channel channel) throws Exception {
-        MessageBO messageBO = MessageBO.getInstance(message.getBody());
+        MessageBO messageBO = MessageBO.newInstance(message.getBody());
         log.info("topic reader, queue: {}, message: {}", TOPIC_QUEUE_YANWU_QUEUE, messageBO);
         myAckConsumer.basicAck(message, channel);
     }

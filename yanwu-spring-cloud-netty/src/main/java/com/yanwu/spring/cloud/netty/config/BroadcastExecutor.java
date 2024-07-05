@@ -18,7 +18,7 @@ public class BroadcastExecutor extends ThreadPoolTaskExecutor {
     private BroadcastExecutor() {
     }
 
-    protected static BroadcastExecutor getInstance(String key) {
+    protected static BroadcastExecutor newInstance(String key) {
         BroadcastExecutor executor = new BroadcastExecutor();
         executor.key = key;
         // ----- 每个线程池最大线程数为1
