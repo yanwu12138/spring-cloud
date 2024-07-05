@@ -16,17 +16,16 @@ public class AliOssTest {
     public static void main(String[] args) throws Exception {
         String accessId = "", accessKey = "", endpoint = "", bucket = "";
         OssProperties properties = OssProperties.newInstance(accessId, accessKey, endpoint);
-        AliOssUtil instance = AliOssUtil.newInstance(properties);
         new Thread(() -> {
             try {
-                instance.upload(bucket, "", "/Users/xubaofeng/Downloads/网安整改说明.zip");
+                AliOssUtil.newInstance(properties).upload(bucket, "/Users/xubaofeng/Downloads/网安整改说明.zip", "");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }).start();
         new Thread(() -> {
             try {
-                instance.upload(bucket, "", "/Users/xubaofeng/Downloads/网安整改说明.zip");
+                AliOssUtil.newInstance(properties).upload(bucket, "/Users/xubaofeng/Downloads/网安整改说明.zip", "");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
