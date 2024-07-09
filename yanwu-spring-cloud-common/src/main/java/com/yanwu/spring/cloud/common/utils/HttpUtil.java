@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.common.utils;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yanwu.spring.cloud.common.pojo.HttpDelete;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
@@ -46,6 +47,18 @@ public class HttpUtil {
     private HttpUtil() {
         throw new UnsupportedOperationException("HttpUtil should never be instantiated");
     }
+
+    public static void main(String[] args) throws IOException {
+        login();
+    }
+
+    public static void login() throws IOException {
+        String url = "http://121.40.33.176:2643/api/session";
+        ObjectNode param = JsonUtil.getMapper().createObjectNode().put("password", "BirdSat@123.");
+        Object post = post(url, param, Object.class);
+        System.out.println(post);
+    }
+
 
     /**
      * 发送GET无参请求
