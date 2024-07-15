@@ -131,6 +131,25 @@ ffmpeg -version
 
 >   命令是在ffmpeg.exe可执行文件环境下执行，ffmpeg.exe用于音视频的转码，加水印，去水印，视频剪切，提取音频，提取视频，码率控制等等功能。
 
+```shell
+ffmpeg -i https://monitorFlow.boxingtong.net/rtp/33020000001180001095_33020000001320003878.live.flv -vf "drawtext=fontfile=/usr/share/fonts/chinese/myfonts.ttc:text='顺行1':x=20:y=100:fontsize=30:fontcolor=white,drawtext=text='lat 48° 32′ 43′′ N':x=20:y=140:fontsize=30:fontcolor=white,drawtext=text='lon 161° 53′ 41′′ E':x=20:y=175:fontsize=30:fontcolor=white" -c:v h264 -f flv rtmp://47.116.178.27:1985/live/aaaaaa
+
+ffmpeg -i https://monitorFlow.boxingtong.net/live/79881-1024/hls.m3u8 -vf "drawtext=fontfile=/usr/share/fonts/chinese/myfonts.ttc:text='顺行1':x=20:y=100:fontsize=30:fontcolor=white,drawtext=text='lat 48° 32′ 43′′ N':x=20:y=140:fontsize=30:fontcolor=white,drawtext=text='lon 161° 53′ 41′′ E':x=20:y=175:fontsize=30:fontcolor=white" -c:v h264 -pix_fmt yuv420p -preset veryfast -g 48 -sc_threshold 0 -b:v 2500k -maxrate 4500k -bufsize 7500k -c:a aac -b:a 160k -ac 2 -ar 44100 -f flv rtmp://127.0.0.1:1985/live/aaaaaa
+
+http://47.116.178.27:11936/live?port=1985&app=live&stream=aaaaaa
+
+
+rtmp://47.100.10.179:1935/rtp/33020000001180001493_33020000001320005505
+https://monitorFlow.boxingtong.net/rtp/33020000001180001095_33020000001320003878.live.flv
+
+
+https://monitorFlow.boxingtong.net/live/68751-1024.live.flv
+https://monitorFlow.boxingtong.net/live/68751-1024/hls.m3u8
+rtmp://47.100.10.179:1935/rtp/68751-1024
+```
+
+
+
 
 
 #### ffplay
