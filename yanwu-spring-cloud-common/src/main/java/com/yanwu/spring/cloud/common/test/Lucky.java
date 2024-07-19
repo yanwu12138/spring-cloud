@@ -18,10 +18,10 @@ public class Lucky {
 
 
     public static void main(String[] args) {
-        int lucky = RandomUtils.nextInt(BLUE_BALL.size(), RED_BALL.size());
+        int lucky = 2643;
         int nextInt;
         do {
-            nextInt = RandomUtils.nextInt(0, BLUE_BALL.size() * RED_BALL.size());
+            nextInt = RandomUtils.nextInt(RED_BALL.size() + BLUE_BALL.size(), Integer.MAX_VALUE);
         } while (nextInt % lucky != 0);
         System.out.println("lucky: " + lucky + ", nextInt: " + nextInt);
         String[] numbers = randomRed();

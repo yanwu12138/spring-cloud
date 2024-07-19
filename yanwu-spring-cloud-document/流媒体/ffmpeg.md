@@ -136,7 +136,7 @@ ffmpeg -i https://monitorFlow.boxingtong.net/rtp/33020000001180001095_3302000000
 
 ffmpeg -i https://monitorFlow.boxingtong.net/live/79881-1024/hls.m3u8 -vf "drawtext=fontfile=/usr/share/fonts/chinese/myfonts.ttc:text='顺行1':x=20:y=100:fontsize=30:fontcolor=white,drawtext=text='lat 48° 32′ 43′′ N':x=20:y=140:fontsize=30:fontcolor=white,drawtext=text='lon 161° 53′ 41′′ E':x=20:y=175:fontsize=30:fontcolor=white" -c:v h264 -pix_fmt yuv420p -preset veryfast -g 48 -sc_threshold 0 -b:v 2500k -maxrate 4500k -bufsize 7500k -c:a aac -b:a 160k -ac 2 -ar 44100 -f flv rtmp://127.0.0.1:1985/live/aaaaaa
 
-http://47.116.178.27:11936/live?port=1985&app=live&stream=aaaaaa
+http://47.116.178.27:11936/live?port=1985&app=live&stream=33020000001320005278-0
 
 
 rtmp://47.100.10.179:1935/rtp/33020000001180001493_33020000001320005505
