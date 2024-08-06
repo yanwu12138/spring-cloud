@@ -26,8 +26,6 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class RestUtil {
 
-    private static RestTemplate template = null;
-
     /**
      * 执行rest请求
      *
@@ -43,25 +41,13 @@ public class RestUtil {
         try {
             String url = disposeRestUrl(request);
             HttpEntity<Object> httpEntity = disposeEntity(request);
-            ResponseEntity<R> response = initTemplate().exchange(url, request.getMethod(), httpEntity, request.getClazz());
+            ResponseEntity<R> response = createRestTemplate().exchange(url, request.getMethod(), httpEntity, request.getClazz());
             log.info("execute rest done, txId: {}, response: {}", requestId, response.getBody());
             return disposeResult(response, request.getClazz());
         } catch (Exception e) {
             log.error("execute rest request failed, txId: {}", requestId, e);
             return Result.failed();
         }
-    }
-
-    /*** 懒加载的方式初始化template ***/
-    private static RestTemplate initTemplate() {
-        if (template != null) {
-            return template;
-        }
-        if ((template = ContextUtil.getBean(RestTemplate.class)) != null) {
-            return template;
-        }
-        template = createRestTemplate();
-        return template;
     }
 
     private static RestTemplate createRestTemplate() {
