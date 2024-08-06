@@ -3,6 +3,7 @@ package com.yanwu.spring.cloud.common.test;
 import com.yanwu.spring.cloud.common.test.temp.ApTemplate;
 import com.yanwu.spring.cloud.common.test.temp.DeviceInfo;
 import com.yanwu.spring.cloud.common.test.temp.EdgeTemplate;
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.zaxxer.hikari.util.DriverDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +35,7 @@ public class JdbcTemplateTest {
     }
 
     public static void main(String[] args) throws Exception {
-        String shipNames = "";
+        String shipNames = "浙岱渔03587";
         String[] split = shipNames.split("\n");
 
         for (int i = 0; i < split.length; i++) {
@@ -55,7 +56,7 @@ public class JdbcTemplateTest {
                 if (deviceInfo == null) {
                     continue;
                 }
-                log.info("deviceSn: {}, deviceInfo: {}", deviceSn, deviceInfo);
+                log.info("deviceSn: {}, deviceInfo: {}", deviceSn, JsonUtil.toString(deviceInfo));
             } catch (Exception e) {
                 log.error("error, ship", split[i], e);
                 continue;
@@ -70,7 +71,7 @@ public class JdbcTemplateTest {
                 " WHERE ship_name = '" + shipName + "'; ";
         AtomicReference<String> deviceSnRef = new AtomicReference<>("");
         JDBC_TEMPLATE.query(sql, handler -> {
-            deviceSnRef.set(handler.getString("device_type"));
+            deviceSnRef.set(handler.getString("box_code"));
         });
         if (StringUtils.isBlank(deviceSnRef.get())) {
             log.info("selectDeviceSn failed. shipName = {}", shipName);
