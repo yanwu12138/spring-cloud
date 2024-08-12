@@ -29,15 +29,17 @@ import java.util.concurrent.atomic.AtomicReference;
 public class JdbcTemplateTest {
 
     private static final JdbcTemplate JDBC_TEMPLATE;
-    private static final String JDBC_URL = "";
-    private static final String DRIVER_CLASS = "";
-    private static final String USERNAME = "";
-    private static final String PASSWORD = "";
+    private static final String JDBC_URL = "jdbc:mysql://xxx.xxx.xxx.xxx:3306/centerdb?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&useAffectedRows=true&serverTimezone=Asia/Shanghai";
+    private static final String DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
+    private static final String USERNAME = "xxxxxx";
+    private static final String PASSWORD = "xxxxxx";
 
     static {
         DataSource dataSource = new DriverDataSource(JDBC_URL, DRIVER_CLASS, new Properties(), USERNAME, PASSWORD);
         JDBC_TEMPLATE = new JdbcTemplate(dataSource);
     }
+
+    private static final String PUSH_DEVICE_INFO_URL = "http://xxx.xxx.xxx.xxx:8001/device/setDeviceInfo";
 
     public static void main(String[] args) throws Exception {
         String shipNames = "浙岱渔03587";

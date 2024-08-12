@@ -14,10 +14,10 @@ import java.util.Properties;
  */
 public class EdgeTemplate {
     private static final JdbcTemplate EDGE_TEMPLATE;
-    private static final String JDBC_URL = "";
-    private static final String DRIVER_CLASS = "";
-    private static final String USERNAME = "";
-    private static final String PASSWORD = "";
+    private static final String JDBC_URL = "jdbc:mysql://xxx.xxx.xxx.xxx:3306/centerdb?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&useAffectedRows=true&serverTimezone=Asia/Shanghai";
+    private static final String DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
+    private static final String USERNAME = "xxxxxx";
+    private static final String PASSWORD = "xxxxxx";
 
     static {
         EDGE_TEMPLATE = new JdbcTemplate(new DriverDataSource(JDBC_URL, DRIVER_CLASS, new Properties(), USERNAME, PASSWORD));

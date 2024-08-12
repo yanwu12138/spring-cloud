@@ -15,10 +15,10 @@ import java.util.Properties;
  */
 public class ApTemplate {
     private static final JdbcTemplate AP_TEMPLATE;
-    private static final String JDBC_URL = "";
-    private static final String DRIVER_CLASS = "";
-    private static final String USERNAME = "";
-    private static final String PASSWORD = "";
+    private static final String JDBC_URL = "jdbc:mysql://xxx.xxx.xxx.xxx:3306/ap_server?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8&connectTimeout=6000&socketTimeout=6000";
+    private static final String DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
+    private static final String USERNAME = "xxxxxx";
+    private static final String PASSWORD = "xxxxxx";
 
     static {
         DataSource dataSource = new DriverDataSource(JDBC_URL, DRIVER_CLASS, new Properties(), USERNAME, PASSWORD);
