@@ -1245,6 +1245,54 @@ public class FileUtil {
         }
     }
 
+    /***
+     * 根据MD5值对目录下的所有文件进行去重删除
+     * @param sourceDir 扫描目录
+     */
+    public static void removeDuplicate(String sourceDir) throws Exception {
+        if (StringUtils.isBlank(sourceDir)) {
+            return;
+        }
+        removeDuplicate(new File(sourceDir));
+    }
+
+    /***
+     * 根据MD5值对目录下的所有文件进行去重删除
+     * @param sourceDir 扫描目录
+     */
+    public static void removeDuplicate(File sourceDir) throws Exception {
+        if (sourceDir == null || !sourceDir.exists() || !sourceDir.isDirectory()) {
+            return;
+        }
+        removeDuplicate(sourceDir, new HashMap<>());
+    }
+
+    private static void removeDuplicate(File itemFile, Map<String, String> duplicateMark) throws Exception {
+        if (itemFile == null || !itemFile.exists()) {
+            return;
+        }
+        if (itemFile.isDirectory()) {
+            File[] itemFiles = itemFile.listFiles();
+            if (itemFiles == null || itemFiles.length == 0) {
+                return;
+            }
+            for (File itemChild : itemFiles) {
+                removeDuplicate(itemChild, duplicateMark);
+            }
+        } else if (itemFile.isFile()) {
+            String itemMd5 = calcFileMd5(itemFile);
+            if (StringUtils.isBlank(itemMd5)) {
+                return;
+            }
+            if (!duplicateMark.containsKey(itemMd5)) {
+                duplicateMark.put(itemMd5, itemFile.getPath());
+                return;
+            }
+            log.info("remove duplicate file, md5: {}, source: {}, item: {}", itemMd5, duplicateMark.get(itemMd5), itemFile.getPath());
+            deleteFile(itemFile);
+        }
+    }
+
     /**
      * 获取文件的创建时间
      *
