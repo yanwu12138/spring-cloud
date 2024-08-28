@@ -218,7 +218,6 @@ public class ObjectUtil {
         if (obj == null || StringUtils.isBlank(fieldName)) {
             return null;
         }
-        Class<?> clazz = obj.getClass();
         Field field = field(obj, fieldName);
         if (field == null) {
             return null;

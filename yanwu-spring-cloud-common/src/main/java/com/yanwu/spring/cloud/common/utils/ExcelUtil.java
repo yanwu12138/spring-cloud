@@ -19,10 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.Part;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @SuppressWarnings("unused")
 public class ExcelUtil {
+    public static final String CELL_NULL_VALUE = "--";
 
     private ExcelUtil() {
         throw new UnsupportedOperationException("ExcelUtil should never be instantiated");
@@ -73,7 +77,12 @@ public class ExcelUtil {
         contents.forEach(content -> {
             Row row = sheet.createRow(index.getAndIncrement());
             for (int j = 0; j < head.size(); j++) {
-                row.createCell(j).setCellValue(JsonUtil.pathText(JsonUtil.toJsonNode(JsonUtil.toString(content)), head.get(j)));
+                try {
+                    Object value = ObjectUtil.fieldValue(content, head.get(j));
+                    createCell(row, j, value == null ? CELL_NULL_VALUE : value);
+                } catch (Exception e) {
+                    createCell(row, j, CELL_NULL_VALUE);
+                }
             }
         });
         return workbook;
@@ -138,11 +147,27 @@ public class ExcelUtil {
      * @param index 角标
      * @param value 值
      */
-    private static void createCell(Row row, int index, String value) {
-        if (StringUtils.isBlank(value) || "null".equalsIgnoreCase(value)) {
-            value = "--";
+    private static void createCell(Row row, int index, Object value) {
+        Cell cell = row.createCell(index);
+        if (value == null) {
+            cell.setCellValue(CELL_NULL_VALUE);
+            return;
         }
-        row.createCell(index).setCellValue(value);
+        if (value instanceof Integer || value instanceof Long) {
+            cell.setCellValue((long) value);
+        } else if (value instanceof Double || value instanceof Float) {
+            cell.setCellValue((double) value);
+        } else if (value instanceof Date) {
+            cell.setCellValue((Date) value);
+        } else if (value instanceof LocalDateTime) {
+            cell.setCellValue((LocalDateTime) value);
+        } else if (value instanceof LocalDate) {
+            cell.setCellValue((LocalDate) value);
+        } else if (value instanceof String) {
+            cell.setCellValue(value.toString());
+        } else {
+            cell.setCellValue(value.toString());
+        }
     }
 
     /**
@@ -186,6 +211,25 @@ public class ExcelUtil {
                 .header(HttpHeaders.CONTENT_ENCODING, Encoding.UTF_8)
                 .header(HttpHeaders.CONTENT_DISPOSITION, fileDisposition)
                 .body(resource);
+    }
+
+    /**
+     * 将Excel写到本地磁盘
+     *
+     * @param workbook excel
+     * @param filepath 文件路径
+     * @throws Exception e
+     */
+    public static void writeExcel(SXSSFWorkbook workbook, String filepath) throws Exception {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            workbook.write(out);
+            try (InputStream inputStream = new ByteArrayInputStream(out.toByteArray())) {
+                FileUtil.deleteFile(filepath);
+                FileUtil.write(inputStream, filepath);
+            }
+        } finally {
+            workbook.dispose();
+        }
     }
 
     /**
@@ -279,7 +323,7 @@ public class ExcelUtil {
             return null;
         }
         String value;
-        CellType anEnum = cell.getCellTypeEnum();
+        CellType anEnum = cell.getCellType();
         switch (anEnum) {
             case NUMERIC:
                 value = String.valueOf(cell.getNumericCellValue());
@@ -287,10 +331,14 @@ public class ExcelUtil {
             case BOOLEAN:
                 value = String.valueOf(cell.getBooleanCellValue());
                 break;
+            case _NONE:
+                value = CELL_NULL_VALUE;
+                break;
+            case STRING:
             default:
                 value = cell.getStringCellValue();
         }
-        return "--".equalsIgnoreCase(value) ? null : value;
+        return CELL_NULL_VALUE.equalsIgnoreCase(value) ? null : value;
     }
 
 }
