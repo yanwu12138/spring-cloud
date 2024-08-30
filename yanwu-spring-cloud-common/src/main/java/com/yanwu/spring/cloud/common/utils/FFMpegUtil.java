@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,6 +21,17 @@ public class FFMpegUtil {
 
     private FFMpegUtil() {
         throw new UnsupportedOperationException("FFMpegUtil should never be instantiated");
+    }
+
+    public static void main(String[] args) throws Exception {
+        String ffmpegPath = "/Volumes/YanwuXu/视频/源代码/番号/target/ffmpeg.txt";
+        String ffmpegCmd = new String(FileUtil.read(ffmpegPath), StandardCharsets.UTF_8);
+        String[] commands = ffmpegCmd.split("\n");
+        for (String command : commands) {
+            log.info("video compression start, command: {}", command);
+            CommandUtil.execCommand(command);
+            log.info("video compression done, command: {}", command);
+        }
     }
 
     private static synchronized void videoCompression(String source, String target) {
