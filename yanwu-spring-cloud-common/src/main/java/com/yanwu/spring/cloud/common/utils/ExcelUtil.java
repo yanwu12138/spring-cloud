@@ -324,7 +324,7 @@ public class ExcelUtil {
                             nodes.put(field, value);
                         }
                         // ----- 处理每一行Excel加到返回对象列表当中
-                        contents.add(JsonUtil.toObject(JsonUtil.toString(nodes), clazz));
+                        contents.add(JsonUtil.convertObject(nodes, clazz));
                     }
                 }
             } catch (Exception e) {
