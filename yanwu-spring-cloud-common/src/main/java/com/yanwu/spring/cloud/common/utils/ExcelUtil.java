@@ -231,8 +231,9 @@ public class ExcelUtil {
         }
     }
 
-    /***
+    /**
      * 读取Excel文件内容
+     *
      * @param filepath Excel文件绝对路径
      * @throws IOException e
      */
@@ -243,8 +244,9 @@ public class ExcelUtil {
         return analysisExcel(new File(filepath), clazz);
     }
 
-    /***
+    /**
      * 读取Excel文件内容
+     *
      * @param path Excel文件绝对路径
      * @throws IOException e
      */
@@ -255,8 +257,9 @@ public class ExcelUtil {
         return analysisExcel(path.toFile(), clazz);
     }
 
-    /***
+    /**
      * 读取Excel文件内容
+     *
      * @param file Excel文件
      * @throws IOException e
      */
@@ -269,8 +272,9 @@ public class ExcelUtil {
         }
     }
 
-    /***
+    /**
      * 读取Excel文件内容
+     *
      * @param file Excel文件
      * @return 文件内容
      * @throws IOException e
@@ -282,8 +286,9 @@ public class ExcelUtil {
         }
     }
 
-    /***
+    /**
      * 读取Excel文件内容
+     *
      * @param fileName    Excel文件名
      * @param inputStream Excel文件输入流
      * @throws IOException e
