@@ -19,11 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.Part;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -232,34 +231,71 @@ public class ExcelUtil {
         }
     }
 
-    /**
+    /***
      * 读取Excel文件内容
-     *
+     * @param filepath Excel文件绝对路径
+     * @throws IOException e
+     */
+    public static <T> List<T> analysisExcel(String filepath, Class<T> clazz) throws IOException {
+        if (StringUtils.isBlank(filepath)) {
+            return Collections.emptyList();
+        }
+        return analysisExcel(new File(filepath), clazz);
+    }
+
+    /***
+     * 读取Excel文件内容
+     * @param path Excel文件绝对路径
+     * @throws IOException e
+     */
+    public static <T> List<T> analysisExcel(Path path, Class<T> clazz) throws IOException {
+        if (path == null) {
+            return Collections.emptyList();
+        }
+        return analysisExcel(path.toFile(), clazz);
+    }
+
+    /***
+     * 读取Excel文件内容
+     * @param file Excel文件
+     * @throws IOException e
+     */
+    public static <T> List<T> analysisExcel(File file, Class<T> clazz) throws IOException {
+        if (file == null || !file.exists() || !file.isFile()) {
+            return Collections.emptyList();
+        }
+        try (InputStream inputStream = Files.newInputStream(file.toPath())) {
+            return analysisExcel(file.getName(), inputStream, clazz);
+        }
+    }
+
+    /***
+     * 读取Excel文件内容
      * @param file Excel文件
      * @return 文件内容
      * @throws IOException e
      */
     public static <T> List<T> analysisExcel(Part file, Class<T> clazz) throws IOException {
-        return analysisExcel(file, 0, clazz);
+        String fileName = file.getSubmittedFileName();
+        try (InputStream inputStream = file.getInputStream()) {
+            return analysisExcel(fileName, inputStream, clazz);
+        }
     }
 
-    /**
+    /***
      * 读取Excel文件内容
-     *
-     * @param file  Excel文件
-     * @param index sheet位置
-     * @return 文件内容
+     * @param fileName    Excel文件名
+     * @param inputStream Excel文件输入流
      * @throws IOException e
      */
-    public static <T> List<T> analysisExcel(Part file, Integer index, Class<T> clazz) throws IOException {
+    private static <T> List<T> analysisExcel(String fileName, InputStream inputStream, Class<T> clazz) throws IOException {
         List<T> contents = new ArrayList<>();
         // ----- 读取文件
-        try (InputStream inputStream = file.getInputStream();
-             Workbook workbook = analysisWorkbook(file, inputStream)) {
+        try (Workbook workbook = analysisWorkbook(fileName, inputStream)) {
             if (workbook == null) {
                 return Collections.emptyList();
             }
-            Sheet sheet = workbook.getSheetAt(index);
+            Sheet sheet = workbook.getSheetAt((0));
             if (sheet == null) {
                 return Collections.emptyList();
             }
@@ -292,19 +328,18 @@ public class ExcelUtil {
                     }
                 }
             } catch (Exception e) {
-                log.error(JsonUtil.toString(row), e);
+                log.error("analysis excel failed. row: {}", JsonUtil.toString(row), e);
             }
             return contents;
         }
     }
 
-    private static Workbook analysisWorkbook(Part file, InputStream inputStream) throws IOException {
+    private static Workbook analysisWorkbook(String filename, InputStream inputStream) throws IOException {
         // ----- 检查文件后缀, 是否是Excel
-        String fileName = file.getSubmittedFileName();
-        if (StringUtils.isEmpty(fileName)) {
+        if (StringUtils.isEmpty(filename)) {
             return null;
         }
-        String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
+        String fileSuffix = filename.substring(filename.lastIndexOf("."));
         FileType excelType = FileType.getTypeBySuffix(fileSuffix);
         if (excelType == null) {
             return null;
