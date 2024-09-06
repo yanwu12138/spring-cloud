@@ -6,7 +6,7 @@ import com.yanwu.spring.cloud.common.test.temp.ApTemplate;
 import com.yanwu.spring.cloud.common.test.temp.DeviceInfo;
 import com.yanwu.spring.cloud.common.test.temp.EdgeTemplate;
 import com.yanwu.spring.cloud.common.utils.JsonUtil;
-import com.yanwu.spring.cloud.common.utils.RestUtil;
+import com.yanwu.spring.cloud.common.utils.RequestUtil;
 import com.yanwu.spring.cloud.common.utils.ThreadUtil;
 import com.zaxxer.hikari.util.DriverDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +74,7 @@ public class JdbcTemplateTest {
                     deviceInfo.setLastTime(System.currentTimeMillis());
                 }
                 RequestInfo<DeviceInfo, Void> requestParam = RequestInfo.newInstance(HttpMethod.POST, PUSH_DEVICE_INFO_URL, Void.class);
-                Result<Void> execute = RestUtil.execute(requestParam.buildBody(deviceInfo));
+                Result<Void> execute = RequestUtil.execute(requestParam.buildBody(deviceInfo));
                 log.info("shipName: {}, deviceSn: {}, deviceInfo: {}, result: {}", shipName, deviceSn, JsonUtil.toString(deviceInfo), JsonUtil.toString(execute));
                 ThreadUtil.sleep(3000L);
             } catch (Exception e) {

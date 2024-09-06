@@ -47,7 +47,7 @@ public class SmsUtil {
 
         RequestInfo<SmsParam, SmsResult> requestInfo = RequestInfo.newInstance(HttpMethod.POST, url, SmsResult.class);
         requestInfo.buildBody(param).buildHeaders("Charset", "UTF-8").buildHeaders("Content-Type", "application/json");
-        Result<SmsResult> execute = RestUtil.execute(requestInfo);
+        Result<SmsResult> execute = RequestUtil.execute(requestInfo);
         log.info("The result of sending the SMS: {}, message: {}", execute, param);
         if (execute.nonNull() && execute.getData().successful()) {
             return Result.success(randomCode);

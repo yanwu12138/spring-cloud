@@ -44,7 +44,7 @@ public class WechatUtils {
         instance.buildParams("grant_type", "client_credential")
                 .buildParams("appid", APP_ID)
                 .buildParams("secret", SECRET);
-        Result<TokenInfo> execute = RestUtil.execute(instance);
+        Result<TokenInfo> execute = RequestUtil.execute(instance);
         return execute.getData().getAccessToken();
     }
 
