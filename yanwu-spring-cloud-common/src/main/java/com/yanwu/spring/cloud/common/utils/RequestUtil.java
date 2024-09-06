@@ -70,6 +70,7 @@ public class RequestUtil {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         factory.setConnectTimeout(30 * 1_000);
         factory.setReadTimeout(300 * 1_000);
+        factory.setHttpClient(HttpUtil.HTTP_CLIENT);
         RestTemplate template = new RestTemplate(factory);
         template.getMessageConverters().removeIf(converter -> converter instanceof StringHttpMessageConverter);
         template.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
