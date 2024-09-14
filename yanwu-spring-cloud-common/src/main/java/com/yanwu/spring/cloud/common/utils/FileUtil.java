@@ -1457,4 +1457,28 @@ public class FileUtil {
         }
     }
 
+    public static void main(String[] args) {
+        String filepath = "/Users/xubaofeng/yanwu/file/reader/xxx.txt";
+        gbkToUtf8(filepath);
+    }
+
+    public static void gbkToUtf8(String filePath) {
+        if (StringUtils.isBlank(filePath)) {
+            return;
+        }
+        gbkToUtf8(new File(filePath));
+    }
+
+    public static void gbkToUtf8(File file) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        String tempName = file.getParent() + "/tempFile.txt";
+        String targetName = file.getParent() + "/target.txt";
+        CommandUtil.execCommand("cp " + file.getAbsolutePath() + " " + tempName);
+        CommandUtil.execCommand("iconv -f GBK -t UTF-8 " + tempName + " > " + targetName);
+        CommandUtil.execCommand("mv " + targetName + " " + file.getAbsolutePath());
+        deleteFile(tempName);
+    }
+
 }
