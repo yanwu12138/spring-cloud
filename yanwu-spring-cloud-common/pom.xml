@@ -40,7 +40,7 @@
         <mybatis.enhance.actable.version>1.5.0.RELEASE</mybatis.enhance.actable.version>
         <mybatis.plus.version>3.4.2</mybatis.plus.version>
         <net.sf.dozer.version>5.5.1</net.sf.dozer.version>
-        <poi.version>4.1.1</poi.version>
+        <poi.version>5.2.3</poi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reflections.version>0.9.11</reflections.version>
         <spatial4j.version>0.8</spatial4j.version>
@@ -148,6 +148,12 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <!-- word -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
             <version>${poi.version}</version>
         </dependency>
         <!-- guava -->
@@ -367,6 +373,23 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.28</version>
+        </dependency>
+        <!-- PDF工具 -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.24</version>
+        </dependency>
+        <!-- Log4j2 for logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.1</version>
         </dependency>
     </dependencies>
 
