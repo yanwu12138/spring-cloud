@@ -12,7 +12,7 @@ import com.lmax.disruptor.EventFactory;
 public class StringEventFactory implements EventFactory<StringEvent> {
 
     @Override
-    public StringEvent getInstance() {
+    public StringEvent newInstance() {
         return new StringEvent();
     }
 
