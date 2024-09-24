@@ -63,7 +63,7 @@ public class RequestHandlerAspect {
                 return Result.failed("无数据权限");
             }
             // ----- 根据TOKEN获取有权限的数据ID集合，放入ThreadLocal中等待使用
-            UserAccessesInfo instanceInfo = UserAccessesInfo.newInstance(requestHandler);
+            UserAccessesInfo instanceInfo = UserAccessesInfo.getInstance(requestHandler);
             if (requestHandler.dataScope().shop()) {
                 Set<Long> userIds = buildDataIds(token, AccessTypeEnum.USER);
                 if (CollectionUtils.isEmpty(userIds)) {

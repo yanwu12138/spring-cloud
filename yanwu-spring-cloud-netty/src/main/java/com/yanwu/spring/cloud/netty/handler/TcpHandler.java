@@ -62,7 +62,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
             // ----- 根据协议获取设备类型
             DeviceTypeEnum deviceType = DeviceUtil.getDeviceType(bytes);
             // ----- 根据设备类型获取对应的解析实现类
-            AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
+            AbstractHandler handler = DeviceHandlerFactory.getInstance(deviceType);
             // ----- 解析报文，业务处理
             Assert.notNull(handler, "handler is null");
             try {
@@ -143,7 +143,7 @@ public class TcpHandler extends ChannelInboundHandlerAdapter {
      * @throws Exception .
      */
     public <T> void send(String sn, MessageQueueBO<T> queue) throws Exception {
-        AbstractHandler abstractHandler = (AbstractHandler) ContextUtil.getBean(queue.newInstance());
+        AbstractHandler abstractHandler = (AbstractHandler) ContextUtil.getBean(queue.getInstance());
         Assert.notNull(abstractHandler, "send message error, because handler is null.");
         send(handler.clientSessionCache.getDevice(sn), abstractHandler.assemble(queue));
     }

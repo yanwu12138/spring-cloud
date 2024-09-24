@@ -61,7 +61,7 @@ public class MIBUtil {
                 if (mibValue.getParent() != null) {
                     parent = mibValue.getParent().getValue().toString();
                 }
-                result.add(MmMibBO.newInstance(mibValue, parent, syntax, access, status));
+                result.add(MmMibBO.getInstance(mibValue, parent, syntax, access, status));
             }
             log.info("read mib file success. filepath: {}, result: {}", file.getPath(), result);
             return result;

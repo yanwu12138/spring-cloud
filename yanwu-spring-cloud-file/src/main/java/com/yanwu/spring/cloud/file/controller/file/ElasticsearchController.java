@@ -90,7 +90,7 @@ public class ElasticsearchController {
     @PutMapping("type/bulk/{index}")
     public Result<Void> typeCreate(@PathVariable("index") String index,
                                    @RequestBody List<EsType> param) throws Exception {
-        EsIndex instance = EsIndex.newInstance(index);
+        EsIndex instance = EsIndex.getInstance(index);
         if (!elasticsearchService.indexExists(instance)) {
             indexCreate(instance);
         }
@@ -119,7 +119,7 @@ public class ElasticsearchController {
     @PostMapping("type/bulk/{index}")
     public Result<Void> typeUpdate(@PathVariable("index") String index,
                                    @RequestBody List<EsType> param) throws Exception {
-        EsIndex instance = EsIndex.newInstance(index);
+        EsIndex instance = EsIndex.getInstance(index);
         if (!elasticsearchService.indexExists(instance)) {
             indexCreate(instance);
         }
@@ -140,7 +140,7 @@ public class ElasticsearchController {
     @DeleteMapping("type/bulk/{index}")
     public Result<Void> typeDelete(@PathVariable("index") String index,
                                    @RequestBody List<EsType> param) throws Exception {
-        EsIndex instance = EsIndex.newInstance(index);
+        EsIndex instance = EsIndex.getInstance(index);
         if (elasticsearchService.indexExists(instance)) {
             elasticsearchService.typeBulkDelete(param);
         }

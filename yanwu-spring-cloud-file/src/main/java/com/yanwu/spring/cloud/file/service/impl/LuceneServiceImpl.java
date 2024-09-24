@@ -158,7 +158,7 @@ public class LuceneServiceImpl implements LuceneService {
             // ----- ScoreDoc：搜索到的某个文档信息
             ScoreDoc scoreDoc = scoreDocs[i];
             Document document = reader.document(scoreDoc.doc);
-            result.add(LuceneDocument.newInstance(document.get("id"), document.get("title"), document.get("content")));
+            result.add(LuceneDocument.getInstance(document.get("id"), document.get("title"), document.get("content")));
         }
         return result;
     }

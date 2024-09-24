@@ -45,14 +45,14 @@ public class BxtGameBetsTest {
 
     private static void settlement(String betsId, String cid, long sleep) {
         ThreadUtil.sleep(sleep);
-        RequestInfo<Object, Object> instance = RequestInfo.newInstance(HttpMethod.POST, GAME_SETTLEMENT_URL, Object.class);
+        RequestInfo<Object, Object> instance = RequestInfo.getInstance(HttpMethod.POST, GAME_SETTLEMENT_URL, Object.class);
         Result<Object> result = RequestUtil.execute(buildHeaders(instance).buildBody(buildBody(betsId, cid)));
         log.info("game settlement, sleep: {}, betsId: {}, cid: {}, result: {}", sleep, betsId, cid, result);
     }
 
     private static void gameStart(String betsId, String cid, long sleep) {
         ThreadUtil.sleep(sleep);
-        RequestInfo<Object, Object> instance = RequestInfo.newInstance(HttpMethod.POST, GAME_BETS_START_URL, Object.class);
+        RequestInfo<Object, Object> instance = RequestInfo.getInstance(HttpMethod.POST, GAME_BETS_START_URL, Object.class);
         Result<Object> result = RequestUtil.execute(buildHeaders(instance).buildBody(buildBody(betsId, cid)));
         log.info("game start, sleep: {}, betsId: {}, cid: {}, result: {}", sleep, betsId, cid, result);
     }

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeviceHandlerFactory {
 
-    public static AbstractHandler newInstance(DeviceTypeEnum deviceType) {
+    public static AbstractHandler getInstance(DeviceTypeEnum deviceType) {
         if (deviceType == null) {
             return null;
         }

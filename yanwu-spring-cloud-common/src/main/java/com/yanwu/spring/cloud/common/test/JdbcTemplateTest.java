@@ -73,7 +73,7 @@ public class JdbcTemplateTest {
                 if (deviceInfo.getLastTime() <= 0) {
                     deviceInfo.setLastTime(System.currentTimeMillis());
                 }
-                RequestInfo<DeviceInfo, Void> requestParam = RequestInfo.newInstance(HttpMethod.POST, PUSH_DEVICE_INFO_URL, Void.class);
+                RequestInfo<DeviceInfo, Void> requestParam = RequestInfo.getInstance(HttpMethod.POST, PUSH_DEVICE_INFO_URL, Void.class);
                 Result<Void> execute = RequestUtil.execute(requestParam.buildBody(deviceInfo));
                 log.info("shipName: {}, deviceSn: {}, deviceInfo: {}, result: {}", shipName, deviceSn, JsonUtil.toString(deviceInfo), JsonUtil.toString(execute));
                 ThreadUtil.sleep(3000L);

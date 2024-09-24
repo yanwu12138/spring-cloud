@@ -38,7 +38,7 @@ public class Result<T> implements Serializable {
     }
 
     public static <T> Result<T> success(T data) {
-        return newInstance(data, Boolean.TRUE, null);
+        return getInstance(data, Boolean.TRUE, null);
     }
 
     public static <T> Result<T> failed() {
@@ -54,10 +54,10 @@ public class Result<T> implements Serializable {
     }
 
     public static <T> Result<T> failed(T data, String message) {
-        return newInstance(data, Boolean.FALSE, message);
+        return getInstance(data, Boolean.FALSE, message);
     }
 
-    private static <T> Result<T> newInstance(T data, Boolean status, String message) {
+    private static <T> Result<T> getInstance(T data, Boolean status, String message) {
         return new Result<T>().setData(data).setStatus(status).setMessage(message);
     }
 

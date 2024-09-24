@@ -54,7 +54,7 @@ public class ZookeeperServiceImpl implements ZookeeperService {
         CuratorFramework client = zookeeperClient.getClient();
         try {
             byte[] bytes = client.getData().storingStatIn(new Stat()).forPath(param.getPath());
-            return ZookeeperNode.newInstance(param.getPath(), new String(bytes));
+            return ZookeeperNode.getInstance(param.getPath(), new String(bytes));
         } catch (KeeperException e) {
             log.error("search zookeeper path failed. param: {}", param, e);
             return null;

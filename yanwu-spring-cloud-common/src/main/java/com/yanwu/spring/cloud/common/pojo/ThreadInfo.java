@@ -33,7 +33,7 @@ public class ThreadInfo implements Serializable {
     /*** 判断是否被唤醒 ***/
     private Boolean isNotify;
 
-    public static ThreadInfo newInstance(String key, long timeout) {
+    public static ThreadInfo getInstance(String key, long timeout) {
         Thread thread = Thread.currentThread();
         ThreadInfo instance = new ThreadInfo();
         instance.setKey(String.join(":", key, thread.getName(), String.valueOf(thread.getId())));

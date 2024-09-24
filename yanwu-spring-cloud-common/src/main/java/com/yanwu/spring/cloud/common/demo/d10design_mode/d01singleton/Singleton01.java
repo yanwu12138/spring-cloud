@@ -22,7 +22,7 @@ public class Singleton01 {
      *
      * @return Singleton01对象
      */
-    public static Singleton01 newInstance() {
+    public static Singleton01 getInstance() {
         return INSTANCE;
     }
 

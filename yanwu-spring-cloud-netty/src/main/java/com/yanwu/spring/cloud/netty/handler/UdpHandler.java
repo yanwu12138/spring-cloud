@@ -66,7 +66,7 @@ public class UdpHandler extends ChannelInboundHandlerAdapter {
             // ----- 根据协议获取设备类型
             DeviceTypeEnum deviceType = DeviceUtil.getDeviceType(bytes);
             // ----- 根据设备类型获取对应的解析实现类
-            AbstractHandler handler = DeviceHandlerFactory.newInstance(deviceType);
+            AbstractHandler handler = DeviceHandlerFactory.getInstance(deviceType);
             // ----- 解析报文，业务处理
             Assert.notNull(handler, "handler is null");
             try {

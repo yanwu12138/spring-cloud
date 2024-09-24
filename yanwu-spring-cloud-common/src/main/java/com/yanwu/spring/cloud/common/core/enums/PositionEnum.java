@@ -29,7 +29,7 @@ public enum PositionEnum {
         this.desc = desc;
     }
 
-    public static PositionEnum newInstance(String code) {
+    public static PositionEnum getInstance(String code) {
         if (StringUtils.isBlank(code)) {
             return null;
         }
@@ -47,8 +47,8 @@ public enum PositionEnum {
      * @param flag     类型[true: 经度; false: 纬度]
      * @return 方位枚举数据
      */
-    public static PositionEnum newInstance(double position, boolean flag) {
-        return newInstance(BigDecimal.valueOf(position), flag);
+    public static PositionEnum getInstance(double position, boolean flag) {
+        return getInstance(BigDecimal.valueOf(position), flag);
     }
 
     /***
@@ -57,7 +57,7 @@ public enum PositionEnum {
      * @param flag     类型[true: 经度; false: 纬度]
      * @return 方位枚举数据
      */
-    public static PositionEnum newInstance(BigDecimal position, boolean flag) {
+    public static PositionEnum getInstance(BigDecimal position, boolean flag) {
         if (flag) {
             // ----- 经度
             if (position == null || position.compareTo(GeoUtil.MIN_LNG) < 0 || position.compareTo(GeoUtil.MAX_LNG) > 0) {

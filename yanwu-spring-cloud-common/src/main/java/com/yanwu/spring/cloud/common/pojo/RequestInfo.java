@@ -50,11 +50,11 @@ public class RequestInfo<P, R> implements Serializable {
     private RequestInfo() {
     }
 
-    public static <P, R> RequestInfo<P, R> newInstance(String url, Class<R> clazz) {
-        return newInstance(HttpMethod.GET, url, clazz);
+    public static <P, R> RequestInfo<P, R> getInstance(String url, Class<R> clazz) {
+        return getInstance(HttpMethod.GET, url, clazz);
     }
 
-    public static <P, R> RequestInfo<P, R> newInstance(HttpMethod method, String url, Class<R> clazz) {
+    public static <P, R> RequestInfo<P, R> getInstance(HttpMethod method, String url, Class<R> clazz) {
         if (method == null || StringUtils.isBlank(url)) {
             return null;
         }

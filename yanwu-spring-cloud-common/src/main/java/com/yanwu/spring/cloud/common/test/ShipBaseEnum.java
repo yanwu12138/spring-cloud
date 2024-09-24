@@ -59,7 +59,7 @@ public interface ShipBaseEnum {
         }
         List<EnumItem> enumValues = new ArrayList<>();
         for (E item : enumConstants) {
-            enumValues.add(EnumItem.newInstance(item.getCode(), item.getDesc()));
+            enumValues.add(EnumItem.getInstance(item.getCode(), item.getDesc()));
         }
         return enumValues;
     }
@@ -180,7 +180,7 @@ public interface ShipBaseEnum {
         private int code;
         private String desc;
 
-        public static EnumItem newInstance(int code, String desc) {
+        public static EnumItem getInstance(int code, String desc) {
             return new EnumItem().setCode(code).setDesc(desc);
         }
     }

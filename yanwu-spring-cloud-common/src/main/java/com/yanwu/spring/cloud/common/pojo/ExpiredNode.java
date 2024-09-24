@@ -31,7 +31,7 @@ public class ExpiredNode<V> implements Serializable {
     protected ExpiredNode() {
     }
 
-    public static <V> ExpiredNode<V> newInstance(@NotNull V value, @NotNull long expired) {
+    public static <V> ExpiredNode<V> getInstance(@NotNull V value, @NotNull long expired) {
         ExpiredNode<V> instance = new ExpiredNode<>();
         return instance.setValue(value).setExpired(expired);
     }

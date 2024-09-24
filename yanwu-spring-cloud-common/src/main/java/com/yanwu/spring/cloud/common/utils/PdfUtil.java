@@ -29,7 +29,7 @@ public class PdfUtil {
 
     public static void main(String[] args) {
         String source = "/Users/xubaofeng/yanwu/tools/波星通卫星通信终端安装调试确认单V3.0.pdf";
-        editPdf(source, EditPdfBO.newInstance(25, 50, "测试哦"), "/Users/xubaofeng/yanwu/tools/安装调试确认单/测试哦V3.0.pdf");
+        editPdf(source, EditPdfBO.getInstance(25, 50, "测试哦"), "/Users/xubaofeng/yanwu/tools/安装调试确认单/测试哦V3.0.pdf");
     }
 
     public static void editPdf(String sourceFile, EditPdfBO content, String targetFile) {
@@ -69,7 +69,7 @@ public class PdfUtil {
         private float ty;
         private String content;
 
-        public static EditPdfBO newInstance(float tx, float ty, String content) {
+        public static EditPdfBO getInstance(float tx, float ty, String content) {
             EditPdfBO instance = new EditPdfBO();
             instance.setTx(tx);
             instance.setTy(ty);

@@ -32,7 +32,7 @@ public class ResolverUtil {
      * @return 对象
      */
     public static DeviceBaseBO regexParse(String hexStr, DeviceRegexEnum regexEnum) throws Exception {
-        DeviceBaseBO instance = regexEnum.getClazz().newInstance();
+        DeviceBaseBO instance = regexEnum.getClazz().getInstance();
         Pattern pattern = Pattern.compile(regexEnum.getRegex());
         Matcher matcher = pattern.matcher(hexStr.toUpperCase());
         if (matcher.find()) {

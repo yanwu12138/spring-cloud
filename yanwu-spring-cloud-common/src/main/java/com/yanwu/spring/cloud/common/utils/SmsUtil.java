@@ -43,9 +43,9 @@ public class SmsUtil {
     public static Result<String> sendSms(String url, String account, String password, String phone) {
         String randomCode = randomCode(6);
         String msg = "【波星通】您的验证码是：" + randomCode + "，5分钟内有效。如非您本人操作，请忽略。";
-        SmsParam param = SmsParam.newInstance(msg, phone, "true", null).setAccount(account).setPassword(password);
+        SmsParam param = SmsParam.getInstance(msg, phone, "true", null).setAccount(account).setPassword(password);
 
-        RequestInfo<SmsParam, SmsResult> requestInfo = RequestInfo.newInstance(HttpMethod.POST, url, SmsResult.class);
+        RequestInfo<SmsParam, SmsResult> requestInfo = RequestInfo.getInstance(HttpMethod.POST, url, SmsResult.class);
         requestInfo.buildBody(param).buildHeaders("Charset", "UTF-8").buildHeaders("Content-Type", "application/json");
         Result<SmsResult> execute = RequestUtil.execute(requestInfo);
         log.info("The result of sending the SMS: {}, message: {}", execute, param);
@@ -83,11 +83,11 @@ public class SmsUtil {
         private SmsParam() {
         }
 
-        public static SmsParam newInstance(String msg, String phone, String extend) {
-            return newInstance(msg, phone, "false", extend);
+        public static SmsParam getInstance(String msg, String phone, String extend) {
+            return getInstance(msg, phone, "false", extend);
         }
 
-        public static SmsParam newInstance(String msg, String phone, String report, String extend) {
+        public static SmsParam getInstance(String msg, String phone, String report, String extend) {
             return new SmsParam().setMsg(msg).setPhone(phone).setReport(report).setExtend(extend);
         }
     }

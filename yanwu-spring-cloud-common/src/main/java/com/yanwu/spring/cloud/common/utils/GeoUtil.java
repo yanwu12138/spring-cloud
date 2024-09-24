@@ -215,10 +215,10 @@ public class GeoUtil {
         }
         // ===== 计算经度
         String lngStr = buildPosition(lng);
-        lngStr += PositionEnum.newInstance(lng, Boolean.TRUE).getCode();
+        lngStr += PositionEnum.getInstance(lng, Boolean.TRUE).getCode();
         // ===== 计算纬度
         String latStr = buildPosition(lat);
-        latStr += PositionEnum.newInstance(lat, Boolean.FALSE).getCode();
+        latStr += PositionEnum.getInstance(lat, Boolean.FALSE).getCode();
         return String.join(POINT_SPLIT, lngStr, latStr);
     }
 

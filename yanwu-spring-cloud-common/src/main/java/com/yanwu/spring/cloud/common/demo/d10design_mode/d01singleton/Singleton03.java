@@ -20,7 +20,7 @@ public class Singleton03 {
      *
      * @return Singleton03对象
      */
-    public static Singleton03 newInstance() {
+    public static Singleton03 getInstance() {
         return Singleton03Holder.INSTANCE;
     }
 

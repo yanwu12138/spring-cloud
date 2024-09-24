@@ -39,7 +39,7 @@ public class MessageBO<T extends Serializable> implements Serializable {
 
     private Timestamp create;
 
-    public static MessageBO newInstance(byte[] message) {
+    public static MessageBO getInstance(byte[] message) {
         return JsonUtil.toObject(new String(message, Charset.defaultCharset()), MessageBO.class);
     }
 }

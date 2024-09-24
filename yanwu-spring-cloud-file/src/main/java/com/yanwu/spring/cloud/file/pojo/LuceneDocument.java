@@ -25,7 +25,7 @@ public class LuceneDocument implements Serializable {
     /*** 内容 ***/
     private String content;
 
-    public static LuceneDocument newInstance(String id, String title, String content) {
+    public static LuceneDocument getInstance(String id, String title, String content) {
         return new LuceneDocument().setId(id).setTitle(title).setContent(content);
     }
 

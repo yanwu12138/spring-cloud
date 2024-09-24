@@ -103,17 +103,17 @@ public class ExpiredCache<K, V> {
 
     public static void main(String[] args) {
         ExpiredCache<String, String> cache = new ExpiredCache<>();
-        cache.put("aaa", ExpiredNode.newInstance("aaa", 3_000L));
+        cache.put("aaa", ExpiredNode.getInstance("aaa", 3_000L));
         ThreadUtil.sleep(1000);
-        cache.put("bbb", ExpiredNode.newInstance("bbb", 7_000L));
+        cache.put("bbb", ExpiredNode.getInstance("bbb", 7_000L));
         ThreadUtil.sleep(5000);
-        cache.putIfAbsent("ccc", ExpiredNode.newInstance("ccc", 5_000L));
+        cache.putIfAbsent("ccc", ExpiredNode.getInstance("ccc", 5_000L));
         ThreadUtil.sleep(2000);
         System.out.println(JsonUtil.toString(cache.get("ccc")));
         ThreadUtil.sleep(2000);
         Map<String, ExpiredNode<String>> temp = new ConcurrentHashMap<>();
-        temp.put("ddd", ExpiredNode.newInstance("ddd", 5_000L));
-        temp.put("eee", ExpiredNode.newInstance("eee", 5_000L));
+        temp.put("ddd", ExpiredNode.getInstance("ddd", 5_000L));
+        temp.put("eee", ExpiredNode.getInstance("eee", 5_000L));
         cache.putAll(temp);
     }
 

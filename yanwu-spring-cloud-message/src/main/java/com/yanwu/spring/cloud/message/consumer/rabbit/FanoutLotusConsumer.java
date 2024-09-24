@@ -26,7 +26,7 @@ public class FanoutLotusConsumer {
 
     @RabbitListener(queues = FANOUT_LOTUS_QUEUE_NAME)
     public void reader(Message message, Channel channel) throws Exception {
-        MessageBO messageBO = MessageBO.newInstance(message.getBody());
+        MessageBO messageBO = MessageBO.getInstance(message.getBody());
         log.info("fanout reader, queue: {}, message: {}", FANOUT_LOTUS_QUEUE_NAME, messageBO);
         myAckConsumer.basicAck(message, channel);
     }

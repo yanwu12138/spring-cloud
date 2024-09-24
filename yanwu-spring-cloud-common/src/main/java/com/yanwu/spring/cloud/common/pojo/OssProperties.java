@@ -28,7 +28,7 @@ public class OssProperties implements Serializable {
     private OssProperties() {
     }
 
-    public static OssProperties newInstance(String keyId, String keySecret, String endpoint) {
+    public static OssProperties getInstance(String keyId, String keySecret, String endpoint) {
         OssProperties properties = new OssProperties();
         properties.endpoint = endpoint;
         properties.accessKeyId = keyId;

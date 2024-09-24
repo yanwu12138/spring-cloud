@@ -37,21 +37,21 @@ public class RemoteServer implements Serializable {
     protected RemoteServer() {
     }
 
-    public static RemoteServer newInstance(String host, String account, String password) {
-        return newInstance(host, DEFAULT_PORT, account, password);
+    public static RemoteServer getInstance(String host, String account, String password) {
+        return getInstance(host, DEFAULT_PORT, account, password);
     }
 
-    public static RemoteServer newInstance(String host, Integer port, String account, String password) {
-        return newInstance(host, port, account, password, VerifyType.PASSWORD);
+    public static RemoteServer getInstance(String host, Integer port, String account, String password) {
+        return getInstance(host, port, account, password, VerifyType.PASSWORD);
     }
 
-    public static RemoteServer newInstance(String host, String account, String password, VerifyType verifyType) {
-        return newInstance(host, DEFAULT_PORT, account, password, verifyType);
+    public static RemoteServer getInstance(String host, String account, String password, VerifyType verifyType) {
+        return getInstance(host, DEFAULT_PORT, account, password, verifyType);
     }
 
-    public static RemoteServer newInstance(String host, Integer port, String account, String password, VerifyType verifyType) {
+    public static RemoteServer getInstance(String host, Integer port, String account, String password, VerifyType verifyType) {
         if (StringUtils.isBlank(host) || StringUtils.isBlank(account) || StringUtils.isBlank(password)) {
-            log.error("remote server newInstance failed. host: {}, account: {}, password: {}", host, account, password);
+            log.error("remote server getInstance failed. host: {}, account: {}, password: {}", host, account, password);
             throw new RuntimeException("remote server get instance failed.");
         }
         RemoteServer instance = new RemoteServer();

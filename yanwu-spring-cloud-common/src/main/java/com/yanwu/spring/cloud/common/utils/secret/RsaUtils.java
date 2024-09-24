@@ -80,8 +80,8 @@ public class RsaUtils {
         keyPairGen.initialize(KEY_SIZE, new SecureRandom(appId.getBytes(StandardCharsets.UTF_8)));
         // ----- 生成一个密钥对，保存在keyPair中
         synchronized (ALGORITHM_NAME) {
-            KeyPairCO instance = KeyPairCO.newInstance(appId, keyPairGen.generateKeyPair());
-            KEY_PAIR_CACHE.put(appId, ExpiredNode.newInstance(instance, 20_000L));
+            KeyPairCO instance = KeyPairCO.getInstance(appId, keyPairGen.generateKeyPair());
+            KEY_PAIR_CACHE.put(appId, ExpiredNode.getInstance(instance, 20_000L));
         }
     }
 
@@ -157,7 +157,7 @@ public class RsaUtils {
         private String privateKey;
         private Long lastTime;
 
-        public static KeyPairCO newInstance(String appId, KeyPair keyPair) {
+        public static KeyPairCO getInstance(String appId, KeyPair keyPair) {
             KeyPairCO instance = new KeyPairCO().setAppId(appId).setLastTime(System.currentTimeMillis());
             // ----- 获取公钥
             RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();

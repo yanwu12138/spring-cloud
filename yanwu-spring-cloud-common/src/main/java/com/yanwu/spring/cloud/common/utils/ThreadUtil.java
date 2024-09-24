@@ -58,7 +58,7 @@ public class ThreadUtil {
 
 
         System.out.println("==================================================");
-        ThreadInfo instance = ThreadInfo.newInstance(ThreadUtil.sequenceNo(), 5000L);
+        ThreadInfo instance = ThreadInfo.getInstance(ThreadUtil.sequenceNo(), 5000L);
         Result<?> wait = ThreadUtil.threadWait(instance, () -> {
             ThreadUtil.sleep(2000L);
             Result<Void> notify = ThreadUtil.threadNotify(instance.getKey(), "线程唤醒1111");
