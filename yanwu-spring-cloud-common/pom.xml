@@ -19,7 +19,7 @@
         <cglib.version>3.2.5</cglib.version>
         <cidr.ip.trie.version>1.0.1</cidr.ip.trie.version>
         <commons.collections.version>3.2.2</commons.collections.version>
-        <commons.io.version>2.7</commons.io.version>
+        <commons.io.version>2.14.0</commons.io.version>
         <commons.lang3.version>3.7</commons.lang3.version>
         <commons.net.version>3.9.0</commons.net.version>
         <commons.httpcore.version>4.4.4</commons.httpcore.version>
