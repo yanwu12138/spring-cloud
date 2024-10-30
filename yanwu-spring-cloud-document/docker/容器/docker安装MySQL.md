@@ -35,7 +35,7 @@ docker exec -ti mysql bash
 
 ```shell
 ### 登陆mysql
-mysql -uroot -pJs_2643\.
+mysql -uroot -p'Js_2643.'
 ### 开启远程连接
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Js_2643.' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
