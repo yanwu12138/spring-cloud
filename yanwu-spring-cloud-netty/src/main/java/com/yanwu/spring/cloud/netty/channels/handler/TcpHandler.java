@@ -1,4 +1,4 @@
-package com.yanwu.spring.cloud.netty.handler;
+package com.yanwu.spring.cloud.netty.channels.handler;
 
 import com.yanwu.spring.cloud.common.utils.ByteUtil;
 import com.yanwu.spring.cloud.common.utils.ContextUtil;

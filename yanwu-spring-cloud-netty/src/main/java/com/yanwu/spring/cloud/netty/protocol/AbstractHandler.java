@@ -1,7 +1,7 @@
 package com.yanwu.spring.cloud.netty.protocol;
 
-import com.yanwu.spring.cloud.netty.handler.TcpHandler;
-import com.yanwu.spring.cloud.netty.handler.UdpHandler;
+import com.yanwu.spring.cloud.netty.channels.handler.TcpHandler;
+import com.yanwu.spring.cloud.netty.channels.handler.UdpHandler;
 import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

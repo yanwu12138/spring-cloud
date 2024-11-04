@@ -1,15 +1,17 @@
-package com.yanwu.spring.cloud.netty.server;
+package com.yanwu.spring.cloud.netty.channels.server;
 
+import com.yanwu.spring.cloud.common.core.common.Contents;
+import com.yanwu.spring.cloud.netty.channels.handler.TcpHandler;
 import com.yanwu.spring.cloud.netty.config.NettyConfig;
 import com.yanwu.spring.cloud.netty.constant.Constants;
-import com.yanwu.spring.cloud.netty.handler.UdpHandler;
-import io.netty.bootstrap.Bootstrap;
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.logging.LogLevel;
@@ -24,55 +26,62 @@ import java.util.concurrent.Executor;
 
 /**
  * @author <a herf="mailto:yanwu0527@163.com">XuBaofeng</a>
- * @date 2020/4/21 11:58.
+ * @date 2019-08-09 11:29.
  * <p>
  * description:
  */
 @Slf4j
 @Component
-public class NettyUdpServer {
+public class NettyTcpServer {
     /*** 创建bootstrap */
-    private Bootstrap bootstrap;
+    private ServerBootstrap bootstrap;
     /*** BOSS */
     private EventLoopGroup bossGroup;
+    /*** Worker */
+    private EventLoopGroup workGroup;
 
     @Resource
     private NettyConfig nettyConfig;
     @Resource
     private Executor nettyExecutor;
     @Resource
-    private UdpHandler udpHandler;
+    private TcpHandler tcpHandler;
 
     @PostConstruct
     public void start() {
-        log.info("netty udp server starting ... port: {}", nettyConfig.getUdpPort());
+        log.info("netty tcp server starting ... port: {}", nettyConfig.getTcpPort());
         nettyExecutor.execute(() -> {
             try {
-                if (nettyConfig.getUdpPort() < Constants.MIN_PORT || nettyConfig.getUdpPort() > Constants.MAX_PORT) {
+                if (nettyConfig.getTcpPort() < Constants.MIN_PORT || nettyConfig.getTcpPort() > Constants.MAX_PORT) {
                     throw new RuntimeException("netty udp server start error, port is illegal!");
                 }
-                bootstrap = new Bootstrap();
-                bossGroup = new NioEventLoopGroup();
+                bootstrap = new ServerBootstrap();
+                bossGroup = new NioEventLoopGroup(1, r -> {
+                    return new Thread(r, "netty-boos-" + Contents.SEQ_NUM.getAndIncrement());
+                });
+                workGroup = new NioEventLoopGroup(4, r -> {
+                    return new Thread(r, "netty-worker-" + Contents.SEQ_NUM.getAndIncrement());
+                });
                 while (!Thread.currentThread().isInterrupted()) {
-                    bootstrap.group(bossGroup)
-                            .channel(NioDatagramChannel.class)
+                    bootstrap.group(bossGroup, workGroup)
+                            .channel(NioServerSocketChannel.class)
                             .option(ChannelOption.SO_BACKLOG, 1024)
                             .option(ChannelOption.SO_RCVBUF, 8194)
                             .option(ChannelOption.SO_SNDBUF, 8194)
-                            // ----- 支持广播
-                            .option(ChannelOption.SO_BROADCAST, true)
+                            .option(ChannelOption.IP_TOS, 0xE0)
+                            .childOption(ChannelOption.SO_KEEPALIVE, true)
                             .handler(new LoggingHandler(LogLevel.INFO))
-                            .handler(new ChannelInitializer<NioDatagramChannel>() {
+                            .childHandler(new ChannelInitializer<NioSocketChannel>() {
                                 @Override
-                                public void initChannel(NioDatagramChannel ndc) {
-                                    ndc.pipeline().addLast(new ByteArrayDecoder()).addLast(new ByteArrayEncoder()).addLast(udpHandler);
+                                public void initChannel(NioSocketChannel ic) {
+                                    ic.pipeline().addLast(new ByteArrayDecoder()).addLast(new ByteArrayEncoder()).addLast(tcpHandler);
                                 }
                             });
-                    ChannelFuture future = bootstrap.bind(nettyConfig.getUdpPort()).sync();
+                    ChannelFuture future = bootstrap.bind(nettyConfig.getTcpPort()).sync();
                     future.channel().closeFuture().sync();
                 }
             } catch (Exception e) {
-                log.error("netty udp server start error: ", e);
+                log.error("netty tcp server start error: ", e);
             } finally {
                 close();
             }
@@ -80,15 +89,18 @@ public class NettyUdpServer {
     }
 
     /**
-     * 停止服务
+     * 关闭服务器
      */
     @PreDestroy
     public void close() {
-        log.info("netty udp server is to stop ...");
+        log.info("netty tcp server is to stop ...");
         if (bossGroup != null) {
             bossGroup.shutdownGracefully();
         }
-        log.info("netty udp server stop success!");
+        if (workGroup != null) {
+            workGroup.shutdownGracefully();
+        }
+        log.info("netty tcp server stop success!");
     }
 
 }

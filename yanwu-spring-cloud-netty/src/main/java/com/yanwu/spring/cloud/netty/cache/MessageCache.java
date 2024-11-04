@@ -3,7 +3,7 @@ package com.yanwu.spring.cloud.netty.cache;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import com.yanwu.spring.cloud.common.pojo.SortedList;
 import com.yanwu.spring.cloud.common.utils.RedisUtil;
-import com.yanwu.spring.cloud.netty.handler.TcpHandler;
+import com.yanwu.spring.cloud.netty.channels.handler.TcpHandler;
 import com.yanwu.spring.cloud.netty.model.MessageQueueBO;
 import com.yanwu.spring.cloud.netty.model.MessageStatusBO;
 import lombok.extern.slf4j.Slf4j;
