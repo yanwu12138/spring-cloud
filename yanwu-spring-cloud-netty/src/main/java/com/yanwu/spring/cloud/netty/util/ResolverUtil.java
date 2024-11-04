@@ -1,5 +1,6 @@
 package com.yanwu.spring.cloud.netty.util;
 
+import com.yanwu.spring.cloud.common.utils.JsonUtil;
 import com.yanwu.spring.cloud.common.utils.ObjectUtil;
 import com.yanwu.spring.cloud.netty.enums.DeviceRegexEnum;
 import com.yanwu.spring.cloud.netty.model.DeviceBaseBO;
@@ -60,10 +61,10 @@ public class ResolverUtil {
         // 帧头：1字节；设备编号：2字节；命令字：1字节；数据域N字节；帧尾：1字节；校验码2字节
         String hexStr = "AA000000002F3001A00113489D0BFE0B";
         ScreenBaseBO screen = (ScreenBaseBO) ResolverUtil.regexParse(hexStr, DeviceRegexEnum.SCREEN_REGEX);
-        log.info("screen: {}", screen);
+        log.info("screen: {}", JsonUtil.toString(screen));
         hexStr = "484C00000000131420210123000101100207ABBF1B90DBF1FFA81413BF1B4C48";
         AlarmLampBaseBO alarmLamp = (AlarmLampBaseBO) ResolverUtil.regexParse(hexStr, DeviceRegexEnum.ALARM_LAMP_REGEX);
-        log.info("alarm lamp: {}", alarmLamp);
+        log.info("alarm lamp: {}", JsonUtil.toString(alarmLamp));
     }
 
 }
