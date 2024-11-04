@@ -11,6 +11,7 @@ import lombok.Getter;
  * <p>
  * description:
  */
+@Getter
 public enum DeviceRegexEnum {
 
     /*** 显示屏正则表达式：【帧头：1字节；设备编号：2字节；命令字：1字节；数据域N字节；帧尾：1字节；校验码：2字节】 ***/
@@ -20,13 +21,10 @@ public enum DeviceRegexEnum {
     ;
 
     /*** 设备类型 ***/
-    @Getter
     private final String type;
     /*** 设备的协议正则表达式 ***/
-    @Getter
     private final String regex;
     /*** 设备协议解析出来的对象 ***/
-    @Getter
     private final Class<? extends DeviceBaseBO> clazz;
 
     DeviceRegexEnum(String type, String regex, Class<? extends DeviceBaseBO> clazz) {
