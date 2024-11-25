@@ -1264,7 +1264,8 @@ public class FileUtil {
         if (sourceDir == null || !sourceDir.exists() || !sourceDir.isDirectory()) {
             return;
         }
-        removeDuplicate(sourceDir, new HashMap<>());
+        final Map<String, String> duplicateMark = new HashMap<>();
+        removeDuplicate(sourceDir, duplicateMark);
     }
 
     private static void removeDuplicate(File itemFile, Map<String, String> duplicateMark) throws Exception {

@@ -21,7 +21,7 @@ public class ProcessingPhotosTest {
     private static final String SOURCE_PATH = "/Users/xubaofeng/yanwu/file/未上传/";
     private static final String TARGET_PATH = "/Volumes/YanwuXu/照片";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         File sourcePath = new File(SOURCE_PATH);
         if (!sourcePath.exists() || !sourcePath.isDirectory()) {
             return;
@@ -36,12 +36,23 @@ public class ProcessingPhotosTest {
                 createTime = System.currentTimeMillis();
             }
             LocalDateTime datetime = DateUtil.datetime(createTime);
-            String targetPath = String.join(File.separator, TARGET_PATH, String.valueOf(datetime.getYear()), DateUtil.filling(datetime.getMonthValue()), sourceFile.getName());
+            String fileName = sourceFile.getName();
+            if (fileName.contains(" ")) {
+                fileName = fileName.replaceAll(" ", "");
+            }
+            if (fileName.contains("(")) {
+                fileName = fileName.replace("(", "_");
+            }
+            if (fileName.contains(")")) {
+                fileName = fileName.replace(")", "");
+            }
+            String targetPath = String.join(File.separator, TARGET_PATH, String.valueOf(datetime.getYear()), DateUtil.filling(datetime.getMonthValue()), fileName);
             if (createPath(targetPath)) {
                 String command = "mv -f " + sourceFile.getPath() + " " + targetPath;
                 log.info("file: {}, command: [{}], result: [{}]", sourceFile.getPath(), command, CommandUtil.execCommand(command));
             }
         }
+        FileUtil.removeDuplicate(TARGET_PATH);
     }
 
     private static boolean createPath(String targetPath) {
