@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author XuBaofeng.
@@ -30,7 +32,14 @@ public class ProcessingPhotosTest {
         if (files == null) {
             return;
         }
+        final Map<String, String> duplicateMark = new HashMap<>();
+        readPathDuplicateMark(new File(TARGET_PATH), duplicateMark);
         for (File sourceFile : files) {
+            String itemMd5 = FileUtil.calcFileMd5(sourceFile);
+            if (duplicateMark.containsKey(itemMd5)) {
+                log.info("duplicate mark: {}, file: {}", duplicateMark.get(itemMd5), sourceFile.getAbsolutePath());
+                continue;
+            }
             Long createTime = FileUtil.readFileCreateTime(sourceFile);
             if (createTime == null || createTime <= 0) {
                 createTime = System.currentTimeMillis();
@@ -52,7 +61,6 @@ public class ProcessingPhotosTest {
                 log.info("file: {}, command: [{}], result: [{}]", sourceFile.getPath(), command, CommandUtil.execCommand(command));
             }
         }
-        FileUtil.removeDuplicate(TARGET_PATH);
     }
 
     private static boolean createPath(String targetPath) {
@@ -60,6 +68,31 @@ public class ProcessingPhotosTest {
             return false;
         }
         return FileUtil.checkDirectoryPath(new File(targetPath).getParentFile());
+    }
+
+    private static void readPathDuplicateMark(File itemFile, Map<String, String> duplicateMark) throws Exception {
+        if (itemFile == null || !itemFile.exists()) {
+            return;
+        }
+        if (itemFile.isDirectory()) {
+            File[] itemFiles = itemFile.listFiles();
+            if (itemFiles == null || itemFiles.length == 0) {
+                return;
+            }
+            for (File itemChild : itemFiles) {
+                readPathDuplicateMark(itemChild, duplicateMark);
+            }
+        } else if (itemFile.isFile()) {
+            String itemMd5 = FileUtil.calcFileMd5(itemFile);
+            if (StringUtils.isBlank(itemMd5)) {
+                return;
+            }
+            if (!duplicateMark.containsKey(itemMd5)) {
+                duplicateMark.put(itemMd5, itemFile.getPath());
+                return;
+            }
+            log.info("remove duplicate file, md5: {}, source: {}, item: {}", itemMd5, duplicateMark.get(itemMd5), itemFile.getPath());
+        }
     }
 
 }
