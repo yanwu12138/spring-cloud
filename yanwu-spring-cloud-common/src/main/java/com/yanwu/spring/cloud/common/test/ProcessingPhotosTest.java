@@ -37,6 +37,7 @@ public class ProcessingPhotosTest {
         for (File sourceFile : files) {
             String itemMd5 = FileUtil.calcFileMd5(sourceFile);
             if (duplicateMark.containsKey(itemMd5)) {
+                FileUtil.deleteFile(sourceFile);
                 log.info("duplicate mark: {}, file: {}", duplicateMark.get(itemMd5), sourceFile.getAbsolutePath());
                 continue;
             }
