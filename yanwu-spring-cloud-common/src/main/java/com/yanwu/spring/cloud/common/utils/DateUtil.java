@@ -148,7 +148,7 @@ public class DateUtil {
         YYYY_MM_DD_HH_MM_SS("yyyy-MM-dd HH:mm:ss"),
         YYYYMMDDHHMMSS("yyyyMMddHHmmss"),
         YYYY_MM_DD_HH_MM_SS_SSS("yyyy-MM-dd HH:mm:ss:SSS"),
-
+        DD_MM_YYYY_HH_MM_SS("dd/MM/yyyy HH:mm:ss"),
         ;
 
         @Getter
