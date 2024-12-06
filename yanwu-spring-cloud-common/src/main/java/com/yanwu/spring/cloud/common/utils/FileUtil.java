@@ -5,6 +5,7 @@ import com.yanwu.spring.cloud.common.core.common.Encoding;
 import com.yanwu.spring.cloud.common.core.enums.FileType;
 import com.yanwu.spring.cloud.common.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -877,17 +878,11 @@ public class FileUtil {
             log.error("calc file md5 failed, because file does not exist or is not a file.");
             return null;
         }
-        MessageDigest digest = MessageDigest.getInstance("MD5");
-        long length = fileAttributes.size(), position = 0, blockSize = LIMIT_SIZE;
-        while (length > 0) {
-            blockSize = Math.min(blockSize, length);
-            digest.update(read(file.getPath(), position, (int) blockSize));
-            position += blockSize;
-            length -= blockSize;
+        try (FileInputStream fis = new FileInputStream(file)) {
+            String result = DigestUtils.md5Hex(fis);
+            log.info("calc file md5 success, file: {}, md5: {}", file.getPath(), result);
+            return result;
         }
-        String result = ByteUtil.bytesToHexStr(digest.digest());
-        log.info("calc file md5 success, file: {}, md5: {}", file.getPath(), result);
-        return result;
     }
 
     /**
